@@ -1,0 +1,127 @@
+1. create the database
+
+var params = {
+    TableName : "sampleControl",
+    KeySchema: [
+        { AttributeName: "_id", KeyType: "HASH" },  //Partition key
+        { AttributeName: "_class", KeyType: "RANGE" }  //Sort key
+    ],
+    AttributeDefinitions: [
+        { AttributeName: "_id", AttributeType: "S" },
+        { AttributeName: "_class", AttributeType: "S" }
+    ],
+    ProvisionedThroughput: {
+        ReadCapacityUnits: 1,
+        WriteCapacityUnits: 1
+    }
+};
+
+dynamodb.createTable(params, function(err, data) {
+    if (err)
+        console.log(JSON.stringify(err, null, 2));
+    else
+        console.log(JSON.stringify(data, null, 2));
+});
+
+2. check table def
+
+var params = {
+    TableName: "sampleControl"
+};
+
+dynamodb.describeTable(params, function(err, data) {
+    if (err)
+        console.log(JSON.stringify(err, null, 2));
+    else
+        console.log(JSON.stringify(data, null, 2));
+});
+
+3. list tables
+
+var params = {};
+
+dynamodb.listTables(params, function(err, data) {
+    if (err)
+        console.log(JSON.stringify(err, null, 2));
+    else
+        console.log(JSON.stringify(data, null, 2));
+});
+
+4. add one item
+
+var params = {
+    TableName: "sampleControl",
+    Item: {
+
+  "_id": "MDACC_1",
+  "_class": "gov.match.model.SampleControl",
+  "molecularSequenceNumber": "SampleControl_MDACC_1",
+  "dateCreated": "1439902951623",
+  "dateReceived": "1439935448236",
+  "site": "MDACC",
+  "siteIpAddress": "10.110.130.21",
+  "positiveControlVersion": 1,
+  "positiveControlDateLoaded": "1438186353752",
+  "status": "FAILED",
+  "passed": false,
+  "nextGenerationSequence": {
+    "ngsRunNumber": "1",
+    "dateReceived": "1439935448236",
+    "status": "PENDING",
+    "ionReporterResults": {
+      "jobName": "SampleControl_MDACC_1_v2_f1b8c132-1494-4193-91ec-028fe5c168f7",
+      "molecularSequenceNumber": "SampleControl_MDACC_1",
+      "dnaBamFilePath": "/local/content/ncimatch/matchfiles/SampleControl_MDACC_1/IonXpress_031_rawlib.bam",
+      "rnaBamFilePath": "/local/content/ncimatch/matchfiles/SampleControl_MDACC_1/IonXpress_023_rawlib_fusions.bam",
+      "vcfFilePath": "/local/content/ncimatch/matchfiles/SampleControl_MDACC_1/SampleControl_MDACC_1_v2_SampleControl_MDACC_1_RNA_v2.vcf",
+      "variantReport": {
+        "singleNucleotideVariants": [
+
+        ],
+        "indels": [
+
+        ],
+        "copyNumberVariants": [
+
+        ],
+        "geneFusions": [
+
+        ],
+        "unifiedGeneFusions": [
+
+        ],
+        "nonHotspotRules": [
+
+        ],
+        "createdDate": "1439935447927"
+      }
+    }
+  }
+
+
+    }
+};
+
+docClient.put(params, function(err, data) {
+    if (err)
+        console.log(JSON.stringify(err, null, 2));
+    else
+        console.log(JSON.stringify(data, null, 2));
+});
+
+5. get an item
+
+var params = {
+    TableName: "sampleControl",
+    Key: {
+        "_id": "MDACC_1",
+        "_class": "gov.match.model.SampleControl"
+    }
+};
+
+docClient.get(params, function(err, data) {
+    if (err)
+        console.log(JSON.stringify(err, null, 2));
+    else
+        console.log(JSON.stringify(data, null, 2));
+});
