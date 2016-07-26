@@ -27,7 +27,10 @@ class DynamoDBService(object):
 
     def get_db_connection(self):
         try:
-            ddb = boto3.resource(AWS_RESOURCE, aws_access_key_id=self.__access_key, aws_secret_access_key=self.__secret_key)
+            ddb = boto3.resource(AWS_RESOURCE,
+                                 aws_access_key_id=self.__access_key,
+                                 aws_secret_access_key=self.__secret_key,
+                                 region_name='us-west-2')
         except:
             print 'S3 connection cannot be established. Please double check your credentials and network connection.'
             return None
@@ -36,19 +39,22 @@ class DynamoDBService(object):
     @staticmethod
     def get_local_connection():
         try:
-            ddb = boto3.resource(AWS_RESOURCE, endpoint_url='http://localhost:8000', region_name='us-east-1')
+            ddb = boto3.resource(AWS_RESOURCE, endpoint_url='http://localhost:8000', region_name='us-west-2')
         except:
             print 'S3 local connection cannot be established. Please double check your credentials and network connection.'
             return None
         return ddb
 
     def list_all_tables(self):
-        client = boto3.client(AWS_RESOURCE, self.__access_key, self.__secret_key)
+        client = boto3.client(AWS_RESOURCE,
+                              aws_access_key_id=self.__access_key,
+                              aws_secret_access_key=self.__secret_key,
+                              region_name='us-west-2')
         tables = client.list_tables()
         return tables
 
     #     ddb = self.get_db_connection()
-    #     ddb.
+    #     ddb.q
 
 
 
