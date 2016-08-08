@@ -25,15 +25,15 @@ def create_table(table_name):
     table = dynamo_db.create_table(
         TableName=table_name,
         KeySchema=[
-        { 'AttributeName': 'molecular_id',
+        { 'AttributeName': '_id',
           'KeyType': 'HASH'},
-        { 'AttributeName': 'date_created',
+        { 'AttributeName': '_class',
           'KeyType': 'RANGE' }
     ],
         AttributeDefinitions=[
-        { 'AttributeName': 'molecular_id',
+        { 'AttributeName': '_id',
           'AttributeType': 'S' },
-        { 'AttributeName': 'date_created',
+        { 'AttributeName': '_class',
           'AttributeType': 'S' }
     ],
         ProvisionedThroughput={
@@ -65,42 +65,20 @@ def load_item(json_file):
 
         print 'adding sample control:'+molecularSequenceNumber
 
-        # Item = {
-        #
-        #
-        #     'molecular_id': molecularSequenceNumber,
-        #     'dateCreated': dateCreated,
-        #     'dateLoaded': dateReeived,
-        #     'site': site,
-        #     'siteIpAddress': siteIpAddress,
-        #
-        #     'positiveControlDateLoaded': positiveControlDateLoaded,
-        #     'status': status,
-        #
-        #     "analysis_id": "SampleControl_MDACC_1_v2_f1b8c132-1494-4193-91ec-028fe5c168f7",
-        #
-        #     "dnaBamFilePath": "/local/content/ncimatch/matchfiles/SampleControl_MDACC_1/IonXpress_031_rawlib.bam",
-        #     "rnaBamFilePath": "/local/content/ncimatch/matchfiles/SampleControl_MDACC_1/IonXpress_023_rawlib_fusions.bam",
-        #     "vcfFilePath": "/local/content/ncimatch/matchfiles/SampleControl_MDACC_1/SampleControl_MDACC_1_v2_SampleControl_MDACC_1_RNA_v2.vcf"
-
         control_table.put_item(
             Item={
-                'molecualr_id': 'sampeControl_mocha_1',
-                'date_created': '',
-                'site': 'mocha',
-                'site_IP': '',
-                'date_loaded': '',
-                'analysis_id': '',
-                'dan_bam_path': '',
-                'rna_bam_path': '',
-                'vcf_path': '',
-                'falsePositives': '',
-                'matchingCriteria': '',
-                'passed': '',
-                'positiveControls': '',
-                'positiveControlVersion': '',
-                'variantReport': '',
-                'passed': 'yes'
+                '_id': _id,
+                '_class': _class,
+                'molecularSequenceNumber': molecularSequenceNumber,
+                'dateCreated': dateCreated,
+                'dateReceived': dateReceived,
+                'site': site,
+                'siteIpAddress': siteIpAddress,
+                'positiveControlVersion': positiveControlVersion,
+                'positiveControlDateLoaded': positiveControlDateLoaded,
+                'status': status,
+                'passed': passed,
+                'nextGenerationSequence': nextGenerationSequence
             }
         )
 

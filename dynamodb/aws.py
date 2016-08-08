@@ -12,10 +12,13 @@ def aws_credentials():
     file_name = os.path.join(curr_dir, s3_conf)
     if not os.path.isfile(file_name):
         print 'aws config file missing.'
+        return
     with open(file_name) as config_file:
         config = json.load(config_file)
+        #print config
         if 'aws_access_key_id' not in config or 'aws_secret_access_key' not in config:
             print 'aws credentials not found.'
+            return
         return config['aws_access_key_id'], config['aws_secret_access_key']
 
 
@@ -52,6 +55,15 @@ class DynamoDBService(object):
                               region_name='us-west-2')
         tables = client.list_tables()
         return tables
+
+    def validate_msn(msn):
+        db_service = DynamoDBService()
+        dynamo_db = db_service.get_db_connection()
+        control_table = dynamo_db.Table('sampleControl')
+        response = control_table.query(
+            KeyConditionExpression=Key('_id').eq('_'.join(msn.split('_')[1:]))
+        )
+        return response['Items'] > 0
 
     #     ddb = self.get_db_connection()
     #     ddb.q
