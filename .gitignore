@@ -87,3 +87,7 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+resources/.aws_credentials.json
+.aws_credentials.json
+.aws*
