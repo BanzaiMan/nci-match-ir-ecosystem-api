@@ -49,6 +49,16 @@ def validate_sample_control_msn():
     return jsonify({'validation_result: '+validation})
 
 
+@app.route('/api/ir_eco/post_meesage', methods=['POST'])
+def post_message():
+    #get args paramters and make
+    #get sqs resource
+    #get ir queue
+    #post the message
+    pass
+
+
+
 def validate_sample_control_id(molecular_id):
     #molecular_id = request.args.get('molecular_id')
     db_service = DynamoDBService()
