@@ -1,7 +1,7 @@
 #import json
 import os.path
 
-#import boto3
+import boto3
 from flask import Flask, jsonify, request
 from flask.ext.cors import CORS
 from tornado.httpserver import HTTPServer
@@ -49,14 +49,46 @@ def validate_sample_control_msn():
     return jsonify({'validation_result: '+validation})
 
 
-@app.route('/api/ir_eco/post_meesage', methods=['POST'])
+@app.route('/api/ir_eco/post_message', methods=['POST'])
 def post_message():
-    #get args paramters and make
-    #get sqs resource
-    #get ir queue
-    #post the message
-    pass
+    # get args paramters and make
+   '''
+    molecular_id = request.args.get('molecular_id')
+    analysis_id = request.args.get('analysis_id')
+    patient_id = request.args.get('patient_id')
+    surgical_event_id = request.args.get('surgical_event_id')
 
+    s3_bucket_name = request.args.get('s3_bucket_name')
+    tsv_file_path_name = request.args.get('tsv_file_path_name')
+    vcf_file_path_name = request.args.get('vcf_file_path_name')
+    dna_bam_file_path_name = request.args.get('dna_bam_file_path_name')
+    cdna_bam_file_path_name = request.args.get('cdna_bam_file_path_name')
+    dna_bai_file_path_name = request.args.get('dna_bai_file_path_name')
+    cdna_bai_file_path_name = request.args.get('cdna_bai_file_path_name')
+'''
+    #get sqs resource
+
+sqs = boto3.resource('sqs', region_name='us-west-2')
+
+    #get ir queue
+
+ir_queue = sqs.get_queue_by_name(QueueName='ir_queue_dev')
+
+    #post the message
+
+message_body = '''{
+  "patient_id": "3344",
+  "molecular_id": "747",
+  "analysis_id": "job2",
+  "s3_bucket_name": "pedmatch-demo/3344/3344-bsn-msn-blood/job2",
+  "tsv_file_path_name": "3344-blood.tsv",
+  "vcf_file_path_name": "3344-blood.vcf",
+  "dna_bam_file_path_name": "dna.bam",
+  "cdna_bam_file_path_name": "cdna.bam",
+  "dna_bai_file_path_name": "dna.bam.bai",
+  "cdna_bai_file_path_name": "cdna.bam.bai"
+}'''
+response = ir_queue.send_message(MessageBody=message_body)
 
 
 def validate_sample_control_id(molecular_id):
