@@ -1,6 +1,10 @@
 language: python
 python:
 - 2.7.11
+install:
+- pip install boto3 Flask flask-cors tornado coverage codeclimate-test-reporter ddt PyJWT requests moto pysam==0.9.0
+script:
+- python -m unittest discover tests
 notifications:
   slack:
     secure: NrupJJcM7wXe4fZVKJjLt9iOtC7h8M78rhbjjR5SId7984QPpgYKqoi/bNXEjrJIWsS57DXymzLH1Rq+0IQHNTvGk0VIbO0J+pf1HELR4AM9eDCyMkaru0Le6ZM++7EZOGnYJ3ulvzJb2+9nXfm0B8va2kHTR3UVauaLgdcYSqI6PdMbGlYDNEmfQKCG52RLEzG6EXm8a3/nMNTVVvOsw2eFUc97cSvdW+WYzhr3NXj83+MFRxvO86s++vomSU8CVljRxE3QxFTPp08qIz+7taYtiiltnD61vOXoVJCO0W77CG8uAwxUFUTFxNqnlxyG5chzqp7coCdvYUuAS6Xjz1W2gg5j9SQOpzIvKM2ieUbFxo4Mdc1HO/UwC8vony0xc/mc6BytETqS417qZgoTF36ihfysUAk1dfcjTPKoFgQumUs6jBRQgBnt1AO66fWZeIWi1bMdvtLJ06/9VkvPdSdLzoQM15YdTexsaSLa+SnclxclchzifeW+ngygTg10fO6hXL5Y/LJx3LQlIupOd0SVOGZiOTEJdgop5gfuPMiDQqFVFjPbuBhbyYosT5bQb8PTXgyx9CVvPW5r3xE2Z33iqXcn+no9qGiET4lM0jMFKHZ8qONqz4B/Pelc1rtikiiXU4pyecufRL20aPWN8c2w2ThxUEgWtdjUhqUEHtk=
