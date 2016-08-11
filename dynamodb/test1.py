@@ -92,15 +92,17 @@ def load_item(json_file):
                 'date_loaded': '',
                 'analysis_id': '',
                 'dan_bam_path': '',
+                'dan_bai_path': '',
                 'rna_bam_path': '',
+                'rna_bai_path': ''
                 'vcf_path': '',
-                'falsePositives': '',
-                'matchingCriteria': '',
-                'passed': '',
-                'positiveControls': '',
-                'positiveControlVersion': '',
-                'variantReport': '',
-                'passed': 'yes'
+                'falsePositives': 'from json',
+                'matchingCriteria': 'from json',
+                'passed': 'from json',
+                'positiveControls': 'from json',
+                'positiveControlVersion': 'from json',
+                'variantReport': 'from json'
+
             }
         )
 
