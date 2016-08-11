@@ -56,16 +56,30 @@ def post_message():
     molecular_id = request.args.get('molecular_id')
     analysis_id = request.args.get('analysis_id')
     patient_id = request.args.get('patient_id')
-    surgical_event_id = request.args.get('surgical_event_id')
 
-    s3_bucket_name = request.args.get('s3_bucket_name')
-    tsv_file_path_name = request.args.get('tsv_file_path_name')
-    vcf_file_path_name = request.args.get('vcf_file_path_name')
-    dna_bam_file_path_name = request.args.get('dna_bam_file_path_name')
-    cdna_bam_file_path_name = request.args.get('cdna_bam_file_path_name')
-    dna_bai_file_path_name = request.args.get('dna_bai_file_path_name')
-    cdna_bai_file_path_name = request.args.get('cdna_bai_file_path_name')
+    s3_path = request.args.get('s3_bucket_name')
+    tsv_file_name = request.args.get('tsv_file_path_name')
+    vcf_file_name = request.args.get('vcf_file_path_name')
+    dna_bam_file_name = request.args.get('dna_bam_file_path_name')
+    cdna_bam_file_name = request.args.get('cdna_bam_file_path_name')
+    dna_bai_file_name = request.args.get('dna_bai_file_path_name')
+    cdna_bai_file_name = request.args.get('cdna_bai_file_path_name')
 '''
+    # dummy data for test
+
+    molecular_id = "3344"
+    analysis_id = "3344-bsn-msn-blood"
+    patient_id = "job2"
+
+    s3_path = "pedmatch-demo/3344/3344-bsn-msn-blood/job2"
+    tsv_file_name = "3344-blood.tsv"
+    vcf_file_name = "3344-blood.vcf"
+    dna_bam_file_name = "dna.bam"
+    cdna_bam_file_name = "cdna.bam"
+    dna_bai_file_name = "dna.bam.bai"
+    cdna_bai_file_name = "cdna.bam.bai"
+
+
     #get sqs resource
 
 sqs = boto3.resource('sqs', region_name='us-west-2')
@@ -80,13 +94,13 @@ message_body = '''{
   "patient_id": "3344",
   "molecular_id": "747",
   "analysis_id": "job2",
-  "s3_bucket_name": "pedmatch-demo/3344/3344-bsn-msn-blood/job2",
-  "tsv_file_path_name": "3344-blood.tsv",
-  "vcf_file_path_name": "3344-blood.vcf",
-  "dna_bam_file_path_name": "dna.bam",
-  "cdna_bam_file_path_name": "cdna.bam",
-  "dna_bai_file_path_name": "dna.bam.bai",
-  "cdna_bai_file_path_name": "cdna.bam.bai"
+  "s3_path": "pedmatch-demo/3344/3344-bsn-msn-blood/job2",
+  "tsv_file_name": "3344-blood.tsv",
+  "vcf_file_name": "3344-blood.vcf",
+  "dna_bam_file_name": "dna.bam",
+  "cdna_bam_file_name": "cdna.bam",
+  "dna_bai_file_name": "dna.bam.bai",
+  "cdna_bai_file_name": "cdna.bam.bai"
 }'''
 response = ir_queue.send_message(MessageBody=message_body)
 
