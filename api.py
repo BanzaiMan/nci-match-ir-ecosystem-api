@@ -1,7 +1,7 @@
 #import json
 import os.path
 
-#import boto3
+import boto3
 from flask import Flask, jsonify, request
 from flask.ext.cors import CORS
 from tornado.httpserver import HTTPServer
@@ -63,15 +63,32 @@ def validate_sample_control_msn():
     return jsonify({'validation_result': validation})
 
 
-@app.route('/api/ir_eco/post_meesage', methods=['GET'])
-def post_message():
-    #get args paramters and make
-    #get sqs resource
-    #get ir queue
-    #post the message
-    return jsonify({'validation_result': 'togo'})
-    #pass
 
+@app.route('/api/ir_eco/post_message', methods=['POST'])
+def post_message():
+
+    sqs = boto3.resource('sqs', region_name='us-west-2')
+
+        #get ir queue
+
+    ir_queue = sqs.get_queue_by_name(QueueName='ir_queue_dev')
+
+        #post the message
+
+    message_body = '''{
+      "patient_id": "3344",
+      "molecular_id": "747",
+      "analysis_id": "job2",
+      "s3_bucket_name": "pedmatch-demo/3344/3344-bsn-msn-blood/job2",
+      "tsv_file_path_name": "3344-blood.tsv",
+      "vcf_file_path_name": "3344-blood.vcf",
+      "dna_bam_file_path_name": "dna.bam",
+      "cdna_bam_file_path_name": "cdna.bam",
+      "dna_bai_file_path_name": "dna.bam.bai",
+      "cdna_bai_file_path_name": "cdna.bam.bai"
+    }'''
+    response = ir_queue.send_message(MessageBody=message_body)
+    return jsonify(response)
 
 
 def validate_sample_control_id(molecular_id):
@@ -84,6 +101,7 @@ def validate_sample_control_id(molecular_id):
         KeyConditionExpression=Key('molecualr_id').eq(molecular_id)
     )
     return int(response['Items']) > 0
+
 
 def validate_ntc_control_id(molecular_id):
     # molecular_id = request.args.get('molecular_id')

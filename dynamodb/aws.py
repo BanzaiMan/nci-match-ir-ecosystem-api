@@ -3,6 +3,8 @@ import os
 import json
 import zipfile
 
+from boto3.dynamodb.conditions import Key
+
 AWS_RESOURCE = 'dynamodb'
 
 
@@ -24,6 +26,7 @@ def aws_credentials():
 
 
 class DynamoDBService(object):
+    my_sqs = boto3.resource('sqs', region_name='us-west-2')
 
     def __init__(self):
         self.__access_key, self.__secret_key = aws_credentials()
