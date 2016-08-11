@@ -23,6 +23,16 @@ from dynamodb.aws import DynamoDBService
 app = Flask(__name__)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
+#query the max value
+'''
+from boto.dynamodb2.table import Table as awsTable
+
+tb = awsTable("MYTABLE")
+rs = list(tb.query_2(PRIMARYKEY__eq="value", reverse=True, limit=1))
+MAXVALUE = rs[0][RANGE_KEY]
+
+'''
+
 SAMPLE_CONTROL_TBL = 'sampleControl'
 SAMPLE_CONTROL_ID_PATTERN = 'SampleControl'
 NTC_CONTROL_TBL = 'ntcControl'
@@ -32,6 +42,10 @@ NTC_CONTROL_ID_PATTERN = 'NtcControl'
 @app.route('/api/ir_eco/version', methods=['GET'])
 def version():
     return jsonify({'api_version': '0.1'})
+
+@app.route('/api/ir_eco/test', methods=['GET'])
+def test():
+    return jsonify({'test': 'flask is running ok.'})
 
 #curl -X GET 'http://localhost:5000/api/ir_eco/validate_molecular_id?molecualr_id=SampleControl_MDACC_1'
 @app.route('/api/ir_eco/validate_molecular_id', methods=['GET'])
@@ -46,16 +60,17 @@ def validate_sample_control_msn():
     else:
         #to_do: call patient validation api
         validation = False
-    return jsonify({'validation_result: '+validation})
+    return jsonify({'validation_result': validation})
 
 
-@app.route('/api/ir_eco/post_meesage', methods=['POST'])
+@app.route('/api/ir_eco/post_meesage', methods=['GET'])
 def post_message():
     #get args paramters and make
     #get sqs resource
     #get ir queue
     #post the message
-    pass
+    return jsonify({'validation_result': 'togo'})
+    #pass
 
 
 
