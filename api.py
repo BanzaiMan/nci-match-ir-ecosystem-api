@@ -51,9 +51,6 @@ dna_bai_file_name: {dna_bai_file_name}
 cdna_bai_file_name: {cdna_bai_file_name}
 """
 
-data = {'patient_id': 'Hodor', 'last': 'Hodor!'}
-
-
 @app.route('/api/ir_eco/version', methods=['GET'])
 def version():
     return jsonify({'api_version': '0.1'})
