@@ -33,10 +33,9 @@ MAXVALUE = rs[0][RANGE_KEY]
 
 '''
 
-SAMPLE_CONTROL_TBL = 'sampleControl'
-SAMPLE_CONTROL_ID_PATTERN = 'SampleControl'
-NTC_CONTROL_TBL = 'ntcControl'
-NTC_CONTROL_ID_PATTERN = 'NtcControl'
+POSITIVE_CONTROL_TABLE = 'sampleControl'
+NON_TEMPLATE_CONTROL_TABLE = 'ntcControl'
+
 
 # message body template
 message_body = """patient_id: {patient_id},
@@ -51,6 +50,7 @@ dna_bai_file_name: {dna_bai_file_name}
 cdna_bai_file_name: {cdna_bai_file_name}
 """
 
+
 @app.route('/api/ir_eco/version', methods=['GET'])
 def version():
     return jsonify({'api_version': '0.1'})
@@ -59,20 +59,13 @@ def version():
 def test():
     return jsonify({'test': 'flask is running ok.'})
 
-#curl -X GET 'http://localhost:5000/api/ir_eco/validate_molecular_id?molecualr_id=SampleControl_MDACC_1'
+
+# curl -X GET 'http://localhost:5000/api/ir_eco/validate_molecular_id?molecualr_id=SampleControl_MDACC_1'
 @app.route('/api/ir_eco/validate_molecular_id', methods=['GET'])
 def validate_sample_control_msn():
     molecular_id = request.args.get('molecular_id')
-    if molecular_id.startswith(SAMPLE_CONTROL_ID_PATTERN):
-        validation = str(validate_sample_control_id(molecular_id))
-
-    elif molecular_id.startswith(NTC_CONTROL_ID_PATTERN):
-        validation = str(validate_ntc_control_id(molecular_id))
-
-    else:
-        #to_do: call patient validation api
-        validation = False
-    return jsonify({'validation_result': validation})
+    validation = validate_sample_control(molecular_id)
+    return jsonify({'validation_result': str(validation)})
 
 
 @app.route('/api/ir_eco/post_message', methods=['GET'])
@@ -114,28 +107,34 @@ def post_message():
     return jsonify(response)
 
 
-def validate_sample_control_id(molecular_id):
-    #molecular_id = request.args.get('molecular_id')
+def validate_sample_control(molecular_id):
+    tables = [POSITIVE_CONTROL_TABLE, NON_TEMPLATE_CONTROL_TABLE]
     db_service = DynamoDBService()
-    dynamo_db = db_service.get_db_connection()
-    control_table = dynamo_db.Table(SAMPLE_CONTROL_TBL)#table_name hard-coded for now
-    response = control_table.query(
-        #KeyConditionExpression=Key('molecualr_id').eq('_'.join(msn.split('_')[1:]))
-        KeyConditionExpression=Key('molecualr_id').eq(molecular_id)
-    )
-    return int(response['Items']) > 0
+
+    for table in tables:
+        dynamo_db = db_service.get_db_connection()
+        control_table = dynamo_db.Table(table)
+        response = control_table.query(
+            #KeyConditionExpression=Key('molecualr_id').eq('_'.join(msn.split('_')[1:]))
+            KeyConditionExpression=Key('molecualr_id').eq(molecular_id)
+        )
+        if int(response['Items']) > 0:
+            return True
+
+    return False
 
 
-def validate_ntc_control_id(molecular_id):
-    # molecular_id = request.args.get('molecular_id')
-    db_service = DynamoDBService()
-    dynamo_db = db_service.get_db_connection()
-    control_table = dynamo_db.Table(NTC_CONTROL_TBL)  # table_name hard-coded for now
-    response = control_table.query(
-        # KeyConditionExpression=Key('molecular_id').eq('_'.join(msn.split('_')[1:]))
-        KeyConditionExpression=Key('molecular_id').eq(molecular_id)
-    )
-    return int(response['Items']) > 0
+
+# def validate_ntc_control_id(molecular_id):
+#     # molecular_id = request.args.get('molecular_id')
+#     db_service = DynamoDBService()
+#     dynamo_db = db_service.get_db_connection()
+#     control_table = dynamo_db.Table(NTC_CONTROL_TBL)  # table_name hard-coded for now
+#     response = control_table.query(
+#         # KeyConditionExpression=Key('molecular_id').eq('_'.join(msn.split('_')[1:]))
+#         KeyConditionExpression=Key('molecular_id').eq(molecular_id)
+#     )
+#     return int(response['Items']) > 0
 
 
 
