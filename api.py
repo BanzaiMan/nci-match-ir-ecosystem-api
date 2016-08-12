@@ -10,6 +10,7 @@ from tornado.wsgi import WSGIContainer
 from werkzeug.utils import secure_filename
 
 from boto3.dynamodb.conditions import Key
+import requests
 
 #from bed_parser.ion_torrent_suite_bed import IonTorrentSuiteBed
 #from s3_transfer import aws
@@ -33,8 +34,21 @@ MAXVALUE = rs[0][RANGE_KEY]
 
 '''
 
-POSITIVE_CONTROL_TABLE = 'sampleControl'
-NON_TEMPLATE_CONTROL_TABLE = 'ntcControl'
+
+POSITIVE_CONTROL_TABLE = 'positive_sample_control'
+SAMPLE_CONTROL_ID_PATTERN = 'SampleControl'
+NON_TEMPLATE_CONTROL_TABLE = 'no_template_sample_control'
+NTC_CONTROL_ID_PATTERN = 'NtcControl'
+
+POSITIVE_SAMPLE = 'positive'
+NON_TEMPLATE_SAMPLE = 'non_template'
+
+SAVE_MOLECULAR_ID_URL = 'http://localhost:5001/api/ir/create_control_item?table_name=%s&partition_key_value=%s&molecular_id=%s&site_ip_address=129.43.127.133'
+
+sites = ['MoCha', 'MDACC']
+
+#POSITIVE_CONTROL_TABLE = 'sampleControl'
+#NON_TEMPLATE_CONTROL_TABLE = 'ntcControl'
 
 
 # message body template
@@ -51,6 +65,7 @@ cdna_bai_file_name: {cdna_bai_file_name}
 """
 
 
+
 @app.route('/api/ir_eco/version', methods=['GET'])
 def version():
     return jsonify({'api_version': '0.1'})
@@ -60,11 +75,63 @@ def test():
     return jsonify({'test': 'flask is running ok.'})
 
 
-# curl -X GET 'http://localhost:5000/api/ir_eco/validate_molecular_id?molecualr_id=SampleControl_MDACC_1'
+#curl -X GET 'http://localhost:5000/api/ir_eco/create_molecular_id?site=MoCha&sample_type=positive'
+@app.route('/api/ir_eco/create_molecular_id', methods=['GET'])
+def create_molecular_id():
+    site = request.args.get('site')
+    sample_type = request.args.get('sample_type')
+    initialize_id = request.args.get('initial')
+
+    if not site in sites:
+        return jsonify({'error': 'site missing or not valid.'})
+
+    print 'site', site
+    print 'sample_type', sample_type
+
+    #to-do: need to validate site
+
+    if sample_type == POSITIVE_SAMPLE:
+        sample_name_pattern = SAMPLE_CONTROL_ID_PATTERN
+        table_name = POSITIVE_CONTROL_TABLE
+    elif sample_type == NON_TEMPLATE_SAMPLE:
+        sample_name_pattern = NTC_CONTROL_ID_PATTERN
+        table_name = NON_TEMPLATE_CONTROL_TABLE
+    else:
+        return jsonify({'error': 'sample type missing or not valid.'})
+
+    if initialize_id == 'true':
+        new_molecular_id = sample_name_pattern+'_'+site+'_1'
+    else:
+        print 'table:', table_name
+        dynamo_db = boto3.resource('dynamodb', region_name='us-west-2')
+        #db_service = DynamoDBService()
+        #ynamo_db = db_service.get_db_connection()
+        control_table = dynamo_db.Table(table_name)
+        response = control_table.query(
+            KeyConditionExpression=Key('site').eq(site), ScanIndexForward=False, Limit=1
+        )
+        if response[u'Count'] != 1:
+            return jsonify({'error': 'site not found in the db or unknown error happened.'})
+
+        for item in response[u'Items']:
+            latest_molecular_id = item['molecular_id']
+
+        new_molecular_id = '_'.join(latest_molecular_id.split('_')[:-1])+'_'+str(int(latest_molecular_id.split('_')[-1])+1)
+    r = requests.get(SAVE_MOLECULAR_ID_URL % (table_name, site, new_molecular_id))
+    if 'SUCCESS' in r.text:
+    #to-do: call processer's API to save the molecular id to database
+        return jsonify({'new molecular id created:': new_molecular_id})
+    else:
+        return jsonify({'error:': 'failed to create new id.'})
+
+
+
+#curl -X GET 'http://localhost:5000/api/ir_eco/validate_molecular_id?molecualr_id=SampleControl_MDACC_1'
 @app.route('/api/ir_eco/validate_molecular_id', methods=['GET'])
-def validate_sample_control_msn():
+def validate_molecular_id():
+    #to-do: adding patient validation
     molecular_id = request.args.get('molecular_id')
-    validation = validate_sample_control(molecular_id)
+    validation = validate_sample_control_id(molecular_id)
     return jsonify({'validation_result': str(validation)})
 
 
@@ -107,19 +174,27 @@ def post_message():
     return jsonify(response)
 
 
-def validate_sample_control(molecular_id):
+def validate_sample_control_id(molecular_id):
     tables = [POSITIVE_CONTROL_TABLE, NON_TEMPLATE_CONTROL_TABLE]
-    db_service = DynamoDBService()
+    #db_service = DynamoDBService()
+
+    dynamo_db = boto3.resource('dynamodb', region_name='us-west-2')
 
     for table in tables:
-        dynamo_db = db_service.get_db_connection()
+        #dynamo_db = db_service.get_db_connection()
         control_table = dynamo_db.Table(table)
+        site = molecular_id.split('_')[1]
         response = control_table.query(
-            #KeyConditionExpression=Key('molecualr_id').eq('_'.join(msn.split('_')[1:]))
-            KeyConditionExpression=Key('molecualr_id').eq(molecular_id)
+            KeyConditionExpression=Key('site').eq(site)
         )
-        if int(response['Items']) > 0:
+        ids = []
+        for i in response[u'Items']:
+            ids.append(i['molecular_id'])
+        #print ids
+        #print 'molecular id exist?'
+        if molecular_id in ids:
             return True
+        #return molecular_id in ids
 
     return False
 
