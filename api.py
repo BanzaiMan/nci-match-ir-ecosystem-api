@@ -223,5 +223,5 @@ def validate_sample_control_id(molecular_id):
 
 if __name__ == '__main__':
     http_server = HTTPServer(WSGIContainer(app))
-    http_server.listen(port=5000)
+    http_server.listen(port=5001)
     IOLoop.instance().start()
