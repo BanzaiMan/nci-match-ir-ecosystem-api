@@ -33,9 +33,9 @@ MAXVALUE = rs[0][RANGE_KEY]
 
 '''
 
-SAMPLE_CONTROL_TBL = 'sampleControl'
+SAMPLE_CONTROL_TBL = 'positive_sample_control'
 SAMPLE_CONTROL_ID_PATTERN = 'SampleControl'
-NTC_CONTROL_TBL = 'ntcControl'
+NTC_CONTROL_TBL = 'no_template_sample_control'
 NTC_CONTROL_ID_PATTERN = 'NtcControl'
 
 
@@ -46,6 +46,44 @@ def version():
 @app.route('/api/ir_eco/test', methods=['GET'])
 def test():
     return jsonify({'test': 'flask is running ok.'})
+
+#curl -X GET 'http://localhost:5000/api/ir_eco/create_molecular_id?site=MoCha&sample_type=positive'
+@app.route('/api/ir_eco/create_molecular_id', methods=['GET'])
+def create_molecular_id():
+    site = request.args.get('site')
+    sample_type = request.args.get('sample_type')
+
+    #to-do: need to validate site
+
+    if sample_type == 'positive':
+        table_name = SAMPLE_CONTROL_TBL
+    elif sample_type == 'no_template':
+        table_name = NTC_CONTROL_TBL
+    else:
+        return jsonify({'error': 'sample type not valid.'})
+
+    print 'site:', site
+    print 'table:', table_name
+
+    dynamo_db = boto3.resource('dynamodb', region_name='us-west-2')
+
+    #db_service = DynamoDBService()
+    #ynamo_db = db_service.get_db_connection()
+    control_table = dynamo_db.Table(table_name)
+
+    response = control_table.query(
+        KeyConditionExpression=Key('site').eq(site), ScanIndexForward=False, Limit=1
+    )
+    if response[u'Count'] != 1:
+        return jsonify({'error': 'site not found in the db or unknown error happened.'})
+
+    for item in response[u'Items']:
+        latest_molecular_id = item['molecular_id']
+
+    new_molecular_id = '_'.join(latest_molecular_id.split('_')[:-1])+'_'+str(int(latest_molecular_id.split('_')[-1])+1)
+    return jsonify({'new molecular id created:': new_molecular_id})
+
+
 
 #curl -X GET 'http://localhost:5000/api/ir_eco/validate_molecular_id?molecualr_id=SampleControl_MDACC_1'
 @app.route('/api/ir_eco/validate_molecular_id', methods=['GET'])
