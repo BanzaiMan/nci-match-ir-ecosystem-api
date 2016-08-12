@@ -138,14 +138,6 @@ def validate_sample_control(molecular_id):
 
 
 
-
-
-
-
-
-
-
-
 if __name__ == '__main__':
     http_server = HTTPServer(WSGIContainer(app))
     http_server.listen(port=5000)
