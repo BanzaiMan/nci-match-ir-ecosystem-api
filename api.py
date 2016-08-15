@@ -132,7 +132,7 @@ def validate_molecular_id():
     #to-do: adding patient validation
     molecular_id = request.args.get('molecular_id')
     validation = validate_sample_control_id(molecular_id)
-    return jsonify({'validation_result': str(validation)})
+    return jsonify({'validation_result': bool(validation), 'date_created': str(validation)})
 
 
 @app.route('/api/ir_eco/post_message', methods=['GET'])
@@ -181,22 +181,27 @@ def validate_sample_control_id(molecular_id):
     dynamo_db = boto3.resource('dynamodb', region_name='us-west-2')
 
     for table in tables:
+        print molecular_id
         #dynamo_db = db_service.get_db_connection()
         control_table = dynamo_db.Table(table)
         site = molecular_id.split('_')[1]
         response = control_table.query(
             KeyConditionExpression=Key('site').eq(site)
         )
-        ids = []
+        id_date = {}
         for i in response[u'Items']:
-            ids.append(i['molecular_id'])
+            if not i['molecular_id'] in id_date:
+                id_date[i['molecular_id']] = [i['date_molecular_id_created']]
+            else:
+                id_date[i['molecular_id']] = id_date[i['molecular_id']].append(i['date_molecular_id_created'])
+
         #print ids
         #print 'molecular id exist?'
-        if molecular_id in ids:
-            return True
+        if molecular_id in id_date and len(id_date[molecular_id]) == 1:
+            return id_date[molecular_id]
         #return molecular_id in ids
 
-    return False
+    return None
 
 
 
