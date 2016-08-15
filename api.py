@@ -52,10 +52,11 @@ sites = ['MoCha', 'MDACC']
 
 
 # message body template
-message_body = """patient_id: {patient_id},
-molecular_id: {molecular_id},
-analysis_id: {analysis_id},
-s3_path: {s3_path}
+message_body = """patient_id: {patient_id}
+molecular_id: {molecular_id}
+analysis_id: {analysis_id}
+site: {site}
+bucket: {bucket}
 tsv_file_name: {tsv_file_name}
 vcf_file_name: {vcf_file_name}
 dna_bam_file_name: {dna_bam_file_name}
@@ -149,7 +150,8 @@ def post_message():
     molecular_id = request.args.get('molecular_id')
     analysis_id = request.args.get('analysis_id')
     patient_id = request.args.get('patient_id')
-    s3_path = request.args.get('s3_path')
+    site = request.args.get('site')
+    bucket = request.args.get('bucket')
     tsv_file_name = request.args.get('tsv_file_name')
     vcf_file_name = request.args.get('vcf_file_name')
     dna_bam_file_name = request.args.get('dna_bam_file_name')
@@ -160,7 +162,8 @@ def post_message():
     data = {'molecular_id': molecular_id,
             'analysis_id': analysis_id,
             'patient_id': patient_id,
-            's3_path': s3_path,
+            'site': site,
+            'bucket': bucket,
             'tsv_file_name': tsv_file_name,
             'vcf_file_name': vcf_file_name,
             'dna_bam_file_name': dna_bam_file_name,
@@ -171,7 +174,11 @@ def post_message():
     real_message = message_body.format(**data)
 
     response = ir_queue.send_message(MessageBody=real_message)
-    return jsonify(response)
+
+    if response['ResponseMetadata']['HTTPStatusCode']==200:
+        return jsonify(data)
+    else:
+        return jsonify({'Result': 'Message send failed'})
 
 
 def validate_sample_control_id(molecular_id):
@@ -215,14 +222,6 @@ def validate_sample_control_id(molecular_id):
 #         KeyConditionExpression=Key('molecular_id').eq(molecular_id)
 #     )
 #     return int(response['Items']) > 0
-
-
-
-
-
-
-
-
 
 
 
