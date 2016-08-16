@@ -1,3 +1,5 @@
+# PyCharm IDE files
+.idea/
 # local ignored file
 *.pyc
 resources/.aws_credentials.json
