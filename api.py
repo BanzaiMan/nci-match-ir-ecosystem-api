@@ -1,8 +1,12 @@
-#import json
+import json
 import os.path
 
 import boto3
 from flask import Flask, jsonify, request
+
+from flask_restful import Resource, Api
+from flask_restful import reqparse
+
 from flask.ext.cors import CORS
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
@@ -10,8 +14,13 @@ from tornado.wsgi import WSGIContainer
 from werkzeug.utils import secure_filename
 
 from boto3.dynamodb.conditions import Key
-import requests
 
+from dynamodb.dynamodb_utility import sanitize
+#import Requests
+
+
+from accessors.sample_control_accessor import SampleControlAccessor
+from dynamodb.dynamodb_utility import DecimalEncoder
 #from bed_parser.ion_torrent_suite_bed import IonTorrentSuiteBed
 #from s3_transfer import aws
 #from s3_transfer.aws import S3Service
@@ -22,17 +31,10 @@ from dynamodb.aws import DynamoDBService
 #from misc.progress_percentage import ProgressPercentage
 
 app = Flask(__name__)
+api = Api(app)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-#query the max value
-'''
-from boto.dynamodb2.table import Table as awsTable
 
-tb = awsTable("MYTABLE")
-rs = list(tb.query_2(PRIMARYKEY__eq="value", reverse=True, limit=1))
-MAXVALUE = rs[0][RANGE_KEY]
-
-'''
 
 
 POSITIVE_CONTROL_TABLE = 'positive_sample_control'
@@ -43,7 +45,9 @@ NTC_CONTROL_ID_PATTERN = 'NtcControl'
 POSITIVE_SAMPLE = 'positive'
 NON_TEMPLATE_SAMPLE = 'non_template'
 
-SAVE_MOLECULAR_ID_URL = 'http://localhost:5001/api/ir/create_control_item?table_name=%s&partition_key_value=%s&molecular_id=%s&site_ip_address=129.43.127.133'
+SAVE_MOLECULAR_ID_URL = 'http://localhost:5000/api/ir/create_control_item?table_name=%s&partition_key_value=%s&molecular_id=%s&site_ip_address=129.43.127.133'
+
+sample_control_tables = {POSITIVE_SAMPLE:POSITIVE_CONTROL_TABLE, NON_TEMPLATE_SAMPLE:NON_TEMPLATE_CONTROL_TABLE}
 
 sites = ['MoCha', 'MDACC']
 
@@ -67,16 +71,60 @@ cdna_bai_file_name: {cdna_bai_file_name}
 """
 
 
+class CreateSampleControl(Resource):
+    def post(self):
+        try:
+            # Parse the arguments
+            parser = reqparse.RequestParser()
+            parser.add_argument('site', type=str, help='site for clia lab')
+            parser.add_argument('type', type=str, help='sample control types: positive, no_template')
+            args = parser.parse_args()
+
+            _site = args['site']
+            _type = args['type']
+            #table_name = sample_control_tables[_type]
+
+            sample_control_accessor = SampleControlAccessor()
+            new_molecular_id = sample_control_accessor.get_new_molecular_id(_site, _type)
+
+            return {'StatusCode': '200', 'new moecular id created': new_molecular_id}
+
+
+        except Exception as e:
+            return {'error': str(e)}
+
+
+api.add_resource(CreateSampleControl, '/ir_eco/api/sample_controls')
+
+
+
 
 @app.route('/api/ir_eco/version', methods=['GET'])
 def version():
     return jsonify({'api_version': '0.1'})
+
 
 @app.route('/api/ir_eco/test', methods=['GET'])
 def test():
     return jsonify({'test': 'flask is running ok.'})
 
 
+#curl -X GET 'http://localhost:5000/api/ir_eco/sample_control?site=MoCha&type=positive'
+@app.route('/api/ir_eco/sample_control', methods=['GET'])
+def get_sample_controls():
+    site = request.args.get('site')
+    sample_type = request.args.get('type')
+    table_name = sample_control_tables[sample_type]
+
+    sample_control_accessor = SampleControlAccessor()
+    items = json.dumps(sample_control_accessor.get_sample_controls(table_name, site), cls=DecimalEncoder)
+
+    return jsonify({'status:': 'success', 'items': items})
+
+
+
+
+#@app.route('/api/ir_eco/sample_control/MoCha/no_template/post', methods=['GET'])
 #curl -X GET 'http://localhost:5000/api/ir_eco/create_molecular_id?site=MoCha&sample_type=positive'
 @app.route('/api/ir_eco/create_molecular_id', methods=['GET'])
 def create_molecular_id():
@@ -119,7 +167,10 @@ def create_molecular_id():
             latest_molecular_id = item['molecular_id']
 
         new_molecular_id = '_'.join(latest_molecular_id.split('_')[:-1])+'_'+str(int(latest_molecular_id.split('_')[-1])+1)
+        print 'new molecular id generated.'
+    #return jsonify({'new molecular id created:': new_molecular_id})
     r = requests.get(SAVE_MOLECULAR_ID_URL % (table_name, site, new_molecular_id))
+    print r
     if 'SUCCESS' in r.text:
     #to-do: call processer's API to save the molecular id to database
         return jsonify({'new molecular id created:': new_molecular_id})
@@ -134,7 +185,7 @@ def validate_molecular_id():
     #to-do: adding patient validation
     molecular_id = request.args.get('molecular_id')
     validation = validate_sample_control_id(molecular_id)
-    return jsonify({'validation_result': str(validation)})
+    return jsonify({'validation_result': bool(validation), 'date_created': str(validation)})
 
 
 @app.route('/api/ir_eco/post_message', methods=['GET'])
@@ -192,22 +243,27 @@ def validate_sample_control_id(molecular_id):
     dynamo_db = boto3.resource('dynamodb', region_name='us-west-2')
 
     for table in tables:
+        print molecular_id
         #dynamo_db = db_service.get_db_connection()
         control_table = dynamo_db.Table(table)
         site = molecular_id.split('_')[1]
         response = control_table.query(
             KeyConditionExpression=Key('site').eq(site)
         )
-        ids = []
+        id_date = {}
         for i in response[u'Items']:
-            ids.append(i['molecular_id'])
+            if not i['molecular_id'] in id_date:
+                id_date[i['molecular_id']] = [i['date_molecular_id_created']]
+            else:
+                id_date[i['molecular_id']] = id_date[i['molecular_id']].append(i['date_molecular_id_created'])
+
         #print ids
         #print 'molecular id exist?'
-        if molecular_id in ids:
-            return True
+        if molecular_id in id_date and len(id_date[molecular_id]) == 1:
+            return id_date[molecular_id]
         #return molecular_id in ids
 
-    return False
+    return None
 
 
 
@@ -226,5 +282,5 @@ def validate_sample_control_id(molecular_id):
 
 if __name__ == '__main__':
     http_server = HTTPServer(WSGIContainer(app))
-    http_server.listen(port=5000)
+    http_server.listen(port=5001)
     IOLoop.instance().start()

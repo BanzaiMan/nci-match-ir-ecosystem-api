@@ -1,6 +1,7 @@
 import boto3
 import os
 import json
+import socket
 import zipfile
 
 from boto3.dynamodb.conditions import Key
@@ -12,13 +13,14 @@ AWS_RESOURCE = 'dynamodb'
 
 
 class DynamoDBAccessor(object):
-    my_sqs = boto3.resource('sqs', region_name='us-west-2')
 
     def __init__(self):
-        self.__access_key, self.__secret_key, self.__region_name = aws_credentials()
+        self.__access_key, self.__secret_key, self.__region_name = DynamoDBAccessor.aws_credentials()
 
     @staticmethod
     def aws_credentials():
+        if socket.gethostname() == 'NCI-01967369-ML':#local machine for dev
+            return os.environ['AWS_ACCESS_KEY_ID'], os.environ['AWS_SECRET_ACCESS_KEY'], 'us-west-2'
         s3_conf = '../resources/.aws_credentials.json'
         curr_dir = os.path.dirname(__file__)
         file_name = os.path.join(curr_dir, s3_conf)
@@ -61,17 +63,19 @@ class DynamoDBAccessor(object):
         tables = client.list_tables()
         return tables
 
-    # def validate_msn(msn):
-    #     db_service = DynamoDBService()
-    #     dynamo_db = db_service.get_db_connection()
-    #     control_table = dynamo_db.Table('sampleControl')
-    #     response = control_table.query(
-    #         KeyConditionExpression=Key('_id').eq('_'.join(msn.split('_')[1:]))
-    #     )
-    #     return response['Items'] > 0
-    #
-    # #     ddb = self.get_db_connection()
-    #     ddb.q
+    def list_all_tables_local(self):
+        client = boto3.client(AWS_RESOURCE,
+                              endpoint_url='http://localhost:8000',
+                              region_name='us-west-2')
+        tables = client.list_tables()
+        print tables
+        return tables
+
+if __name__ == '__main__':
+    tst_accessor = DynamoDBAccessor()
+    #print tst_accessor.get_new_molecular_id('MoCha')
+    #print tst_accessor.get_new_molecular_id('MDACC')
+    print tst_accessor.list_all_tables_local()
 
 
 
