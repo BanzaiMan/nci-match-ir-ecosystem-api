@@ -56,16 +56,17 @@ sites = ['MoCha', 'MDACC']
 
 
 # message body template
-message_body = """patient_id: {patient_id}
-molecular_id: {molecular_id}
-analysis_id: {analysis_id}
-site: {site}
-bucket: {bucket}
-tsv_file_name: {tsv_file_name}
-vcf_file_name: {vcf_file_name}
-dna_bam_file_name: {dna_bam_file_name}
-cdna_bam_file_name: {cdna_bam_file_name}
-dna_bai_file_name: {dna_bai_file_name}
+message_body = """patient_id: {patient_id},
+molecular_id: {molecular_id},
+analysis_id: {analysis_id},
+site: {site},
+bucket: {bucket},
+date created: {date_created},
+tsv_file_name: {tsv_file_name},
+vcf_file_name: {vcf_file_name},
+dna_bam_file_name: {dna_bam_file_name},
+cdna_bam_file_name: {cdna_bam_file_name},
+dna_bai_file_name: {dna_bai_file_name},
 cdna_bai_file_name: {cdna_bai_file_name}
 """
 
@@ -195,7 +196,7 @@ def post_message():
 
         #get ir queue
 
-    ir_queue = sqs.get_queue_by_name(QueueName='ir_queue_dev')
+    ir_queue = sqs.get_queue_by_name(QueueName='after_s3_upload')
 
         #post the message
     molecular_id = request.args.get('molecular_id')
@@ -203,6 +204,7 @@ def post_message():
     patient_id = request.args.get('patient_id')
     site = request.args.get('site')
     bucket = request.args.get('bucket')
+    date_created = request.args.get('date_created')
     tsv_file_name = request.args.get('tsv_file_name')
     vcf_file_name = request.args.get('vcf_file_name')
     dna_bam_file_name = request.args.get('dna_bam_file_name')
@@ -215,6 +217,7 @@ def post_message():
             'patient_id': patient_id,
             'site': site,
             'bucket': bucket,
+            'date_created': date_created,
             'tsv_file_name': tsv_file_name,
             'vcf_file_name': vcf_file_name,
             'dna_bam_file_name': dna_bam_file_name,
@@ -222,7 +225,8 @@ def post_message():
             'dna_bai_file_name': dna_bai_file_name,
             'cdna_bai_file_name': cdna_bai_file_name}
 
-    real_message = message_body.format(**data)
+    real_message = '{' + message_body.format(**data) + '}'
+    print real_message
 
     response = ir_queue.send_message(MessageBody=real_message)
 
