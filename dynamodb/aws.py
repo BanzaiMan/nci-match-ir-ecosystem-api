@@ -26,17 +26,19 @@ def aws_credentials():
 
 
 class DynamoDBService(object):
-    my_sqs = boto3.resource('sqs', region_name='us-west-2')
+    #my_sqs = boto3.resource('sqs', region_name='us-west-2')
 
     def __init__(self):
-        self.__access_key, self.__secret_key = aws_credentials()
+        pass
+        #self.__access_key, self.__secret_key = aws_credentials()
 
     def get_db_connection(self):
         try:
-            ddb = boto3.resource(AWS_RESOURCE,
-                                 aws_access_key_id=self.__access_key,
-                                 aws_secret_access_key=self.__secret_key,
-                                 region_name='us-west-2')
+            #ddb = boto3.resource(AWS_RESOURCE,
+                                 #aws_access_key_id=self.__access_key,
+                                 #aws_secret_access_key=self.__secret_key,
+                                 #region_name='us-west-2')
+            ddb = boto3.resource(AWS_RESOURCE, region_name='us-west-2')
         except:
             print 'S3 connection cannot be established. Please double check your credentials and network connection.'
             return None
@@ -45,7 +47,7 @@ class DynamoDBService(object):
     @staticmethod
     def get_local_connection():
         try:
-            ddb = boto3.resource(AWS_RESOURCE, endpoint_url='http://localhost:8000', region_name='us-west-2')
+            ddb = boto3.resource(AWS_RESOURCE, endpoint_url='http://localhost:8000', region_name='us-east-1')
         except:
             print 'S3 local connection cannot be established. Please double check your credentials and network connection.'
             return None

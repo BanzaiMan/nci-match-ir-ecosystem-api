@@ -1,7 +1,7 @@
 1. create the database
 
 var params = {
-    TableName : "sampleControl",
+    TableName : "sample_controls",
     KeySchema: [
         { AttributeName: "_id", KeyType: "HASH" },  //Partition key
         { AttributeName: "_class", KeyType: "RANGE" }  //Sort key

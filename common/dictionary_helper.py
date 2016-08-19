@@ -21,4 +21,3 @@ class DictionaryHelper(object):
                 return False
 
         return True
-

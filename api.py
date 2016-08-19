@@ -71,7 +71,7 @@ cdna_bai_file_name: {cdna_bai_file_name}
 """
 
 
-class CreateSampleControl(Resource):
+class SampleControl(Resource):
     def post(self):
         try:
             # Parse the arguments
@@ -94,7 +94,7 @@ class CreateSampleControl(Resource):
             return {'error': str(e)}
 
 
-api.add_resource(CreateSampleControl, '/ir_eco/api/sample_controls')
+api.add_resource(SampleControl, '/ir_eco/api/sample_controls')
 
 
 
