@@ -1,8 +1,9 @@
 import random
 import string
-
+from boto3.dynamodb.conditions import Attr
 from dynamodb.dynamodb_utility import sanitize, get_utc_millisecond_timestamp, DecimalEncoder
 from dynamodb_accessor import DynamoDBAccessor
+from common.query_helper import QueryHelper
 from boto3.dynamodb.conditions import Key
 import boto3
 
@@ -19,7 +20,8 @@ class SampleControlAccessor(DynamoDBAccessor):
         # This is just a dictionary with 0 to 3 values. You Don't need to know what was passed in just create
         # a query
 
-        results = self.table.get_item(Key={'id': 'SC_45RT6', 'site': 'mocha'})
+        # fe = Attr('site').eq('mocha') & Attr('id').eq('SC_45RT6')
+        results = self.table.scan(FilterExpdression=QueryHelper.create_filter_expression(query_parameters))
         print results
 
     def get_sample_controls(self):
