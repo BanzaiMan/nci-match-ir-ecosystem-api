@@ -24,34 +24,57 @@ class SampleControlAccessor(DynamoDBAccessor):
 
         # This is just a dictionary with 0 to 3 values. You Don't need to know what was passed in just create
         # a query
-        if 'id' in query_parameters:
-            molecular_id = query_parameters['id']
-            if 'site' in query_parameters:
-                site = query_parameters['site']
-                results = get_item_by_molecular_id_and_site(site, id)
-            else:
-                results = get_item_by_molecular_id(id)
-        elif 'site' in query_parameters:
-            site = query_parameters['site']
-            if 'type' in query_parameters:
-                sample_type = query_parameters['type']
-                results = get_item_by_site_and_type(site, sample_type)
-            else:
-                results = get_item_by_site_and_type[site]
-        elif 'type' in query_parameters:
-            sample_type = query_parameters['type']
-            results = get_item_by_type(sample_type)
-        else:
-            results = get_all_items()
+        # if 'id' in query_parameters:
+        #     molecular_id = query_parameters['id']
+        #     if 'site' in query_parameters:
+        #         site = query_parameters['site']
+        #         results = get_item_by_molecular_id_and_site(site, id)
+        #     else:
+        #         results = get_item_by_molecular_id(id)
+        # elif 'site' in query_parameters:
+        #     site = query_parameters['site']
+        #     if 'type' in query_parameters:
+        #         sample_type = query_parameters['type']
+        #         results = get_item_by_site_and_type(site, sample_type)
+        #     else:
+        #         results = get_item_by_site_and_type[site]
+        # elif 'type' in query_parameters:
+        #     sample_type = query_parameters['type']
+        #     results = get_item_by_type(sample_type)
+        # else:
+        #     results = get_all_items()
 
 
 
         # fe = Attr('site').eq('mocha') & Attr('id').eq('SC_45RT6')
-        results = self.table.scan(FilterExpdression=QueryHelper.create_filter_expression(query_parameters))
-        print results
+        #results = self.table.scan(FilterExpdression=QueryHelper.create_filter_expression(query_parameters))
+        #print results
+        pass
+
 
     def get_item_by_molecualr_id(self, molecular_id):
         pass
+
+
+        # Todo: Below is example return...parse out the Items like results['Items'] and return only those
+        # {u'Count': 1, u'Items': [{u'type': u'positive', u'site': u'mocha', u'id': u'SC_45RT6'}], u'ScannedCount': 1,
+        #  'ResponseMetadata': {'HTTPStatusCode': 200, 'RequestId': 'c9207ed1-6f6f-4ea8-bb91-17393b9b3980',
+        #                       'HTTPHeaders': {'x-amzn-requestid': 'c9207ed1-6f6f-4ea8-bb91-17393b9b3980',
+        #                                       'content-length': '107', 'content-type': 'application/x-amz-json-1.0',
+        #                                       'x-amz-crc32': '2945372509', 'server': 'Jetty(8.1.12.v20130726)'}}}
+        # Todo: have to scan multiple times as data grows because there is 1MB limit on results...add loop to code to handle this
+        # using LastEvaluatedKey like this
+        # while True:
+        #     metadata = response.get('ResponseMetadata', {})
+        #     for row in response['Items']:
+        #         yield cls.from_row(row, metadata)
+        #     if response.get('LastEvaluatedKey'):
+        #         response = cls.table().scan(
+        #             ExclusiveStartKey=response['LastEvaluatedKey'],
+        #         )
+        #     else:
+        #         break
+    #
 
     def get_sample_controls(self):
         return "hi"
@@ -157,10 +180,10 @@ class SampleControlAccessor(DynamoDBAccessor):
     #     return None
     #         # return molecular_id in ids
 
-if __name__ == '__main__':
-    tst_accessor = SampleControlAccessor()
+#if __name__ == '__main__':
+    #tst_accessor = SampleControlAccessor()
     #print tst_accessor.get_new_molecular_id('MoCha')
     #print tst_accessor.get_new_molecular_id('MDACC')
-    print tst_accessor.get_new_molecular_id2('MoCha', 'positive')
+    #print tst_accessor.get_new_molecular_id2('MoCha', 'positive')
 
 
