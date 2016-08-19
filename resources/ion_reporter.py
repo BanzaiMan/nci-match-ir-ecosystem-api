@@ -1,30 +1,20 @@
-from flask_restful import abort, reqparse, Resource
+import json
+from flask_restful import abort, request, Resource
 from accessors.sequencer_file_queue import SequencerFileQueue
+from common.schemas import Schemas
+from jsonschema import validate, SchemaError
 
-# parser = reqparse.RequestParser()
-# parser.add_argument('molecular_id', type=str, required=False)
-# parser.add_argument('analysis_id', type=str, required=False)
-# parser.add_argument('site', type=str, required=False)
-# parser.add_argument('control_id', type=str, required=False)
-
+# curl -X POST -H "Content-Type: application/json" -d '{ "molecular_id":"123", "analysis_id":"fork", "patient_id":"fork", "site":"fork", "vcf_file_name":"fork", "dna_bam_file_name":"fork", "cdna_bam_file_name":"fork"}' "http://localhost:5000/ion_reporters"
 
 class IonReporter(Resource):
     def post(self):
-        SequencerFileQueue().write('')
+        input_json = request.get_json()
+        try:
+            validate(input_json, Schemas.get_sequencer_schema())
+            print('Success!, schema is valid')
+        except SchemaError, e:
+            print('You have a schema error')
+            print e
 
+        SequencerFileQueue().write(json.dumps(input_json))
 
-
-
-
-        #
-        # molecular_id: {molecular_id},
-        # analysis_id: {analysis_id},
-        # site: {site},
-        # bucket: {bucket},
-        # date_created: {date_created},
-        # tsv_file_name: {tsv_file_name},
-        # vcf_file_name: {vcf_file_name},
-        # dna_bam_file_name: {dna_bam_file_name},
-        # cdna_bam_file_name: {cdna_bam_file_name},
-        # dna_bai_file_name: {dna_bai_file_name},
-        # cdna_bai_file_name: {c}dna_bai_file_name
