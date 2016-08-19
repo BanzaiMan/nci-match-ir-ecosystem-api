@@ -15,12 +15,9 @@ api = Api(app)
 # but we pick plural because it tends to be the favored practice.
 
 api.add_resource(SampleControl, '/sample_controls')
-api.add_resource(IonReporter, '/ion_reporter')
+api.add_resource(IonReporter, '/ion_reporters')
 
 if __name__ == '__main__':
     http_server = HTTPServer(WSGIContainer(app))
     http_server.listen(port=5000)
     IOLoop.instance().start()
-
-
-
