@@ -16,13 +16,45 @@ class SampleControlAccessor(DynamoDBAccessor):
     def query_sample_controls(self, query_parameters):
 
         #TODO: CREATE QUERY DYNAMICALLY
-        # the query parameters can be passed in the format {'site':'mocha', 'type':'positive'}
+        # the query parameters can be passed in the format
+
+
+
+
+
         # This is just a dictionary with 0 to 3 values. You Don't need to know what was passed in just create
         # a query
+        # if 'id' in query_parameters:
+        #     molecular_id = query_parameters['id']
+        #     if 'site' in query_parameters:
+        #         site = query_parameters['site']
+        #         results = get_item_by_molecular_id_and_site(site, id)
+        #     else:
+        #         results = get_item_by_molecular_id(id)
+        # elif 'site' in query_parameters:
+        #     site = query_parameters['site']
+        #     if 'type' in query_parameters:
+        #         sample_type = query_parameters['type']
+        #         results = get_item_by_site_and_type(site, sample_type)
+        #     else:
+        #         results = get_item_by_site_and_type[site]
+        # elif 'type' in query_parameters:
+        #     sample_type = query_parameters['type']
+        #     results = get_item_by_type(sample_type)
+        # else:
+        #     results = get_all_items()
+
+
 
         # fe = Attr('site').eq('mocha') & Attr('id').eq('SC_45RT6')
-        results = self.table.scan(FilterExpdression=QueryHelper.create_filter_expression(query_parameters))
-        print results
+        #results = self.table.scan(FilterExpdression=QueryHelper.create_filter_expression(query_parameters))
+        #print results
+        pass
+
+
+    def get_item_by_molecualr_id(self, molecular_id):
+        pass
+
 
         # Todo: Below is example return...parse out the Items like results['Items'] and return only those
         # {u'Count': 1, u'Items': [{u'type': u'positive', u'site': u'mocha', u'id': u'SC_45RT6'}], u'ScannedCount': 1,
@@ -43,6 +75,7 @@ class SampleControlAccessor(DynamoDBAccessor):
         #     else:
         #         break
     #
+
     def get_sample_controls(self):
         return "hi"
     # def get_new_molecular_id(self, table_name, site):
@@ -147,10 +180,10 @@ class SampleControlAccessor(DynamoDBAccessor):
     #     return None
     #         # return molecular_id in ids
 
-if __name__ == '__main__':
-    tst_accessor = SampleControlAccessor()
+#if __name__ == '__main__':
+    #tst_accessor = SampleControlAccessor()
     #print tst_accessor.get_new_molecular_id('MoCha')
     #print tst_accessor.get_new_molecular_id('MDACC')
-    print tst_accessor.get_new_molecular_id2('MoCha', 'positive')
+    #print tst_accessor.get_new_molecular_id2('MoCha', 'positive')
 
 
