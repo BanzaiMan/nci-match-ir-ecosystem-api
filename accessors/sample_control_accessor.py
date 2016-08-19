@@ -24,6 +24,25 @@ class SampleControlAccessor(DynamoDBAccessor):
         results = self.table.scan(FilterExpdression=QueryHelper.create_filter_expression(query_parameters))
         print results
 
+        # Todo: Below is example return...parse out the Items like results['Items'] and return only those
+        # {u'Count': 1, u'Items': [{u'type': u'positive', u'site': u'mocha', u'id': u'SC_45RT6'}], u'ScannedCount': 1,
+        #  'ResponseMetadata': {'HTTPStatusCode': 200, 'RequestId': 'c9207ed1-6f6f-4ea8-bb91-17393b9b3980',
+        #                       'HTTPHeaders': {'x-amzn-requestid': 'c9207ed1-6f6f-4ea8-bb91-17393b9b3980',
+        #                                       'content-length': '107', 'content-type': 'application/x-amz-json-1.0',
+        #                                       'x-amz-crc32': '2945372509', 'server': 'Jetty(8.1.12.v20130726)'}}}
+        # Todo: have to scan multiple times as data grows because there is 1MB limit on results...add loop to code to handle this
+        # using LastEvaluatedKey like this
+        # while True:
+        #     metadata = response.get('ResponseMetadata', {})
+        #     for row in response['Items']:
+        #         yield cls.from_row(row, metadata)
+        #     if response.get('LastEvaluatedKey'):
+        #         response = cls.table().scan(
+        #             ExclusiveStartKey=response['LastEvaluatedKey'],
+        #         )
+        #     else:
+        #         break
+    #
     def get_sample_controls(self):
         return "hi"
     # def get_new_molecular_id(self, table_name, site):
