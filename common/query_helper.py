@@ -15,11 +15,6 @@ class QueryHelper(object):
                 fe = Attr(attr).eq(attrs[attr])
         return fe
 
-        #Todo: Build dynamaically the filter expression
-        # fe = Attr('site').eq('mocha') & Attr('id').eq('SC_45RT6')
-        #fe = True
-        #return fe
-
 if __name__ == '__main__':
     my_json = '{"site":"MoCha","type":"positive"}'
     fe = QueryHelper.create_filter_expression(my_json)

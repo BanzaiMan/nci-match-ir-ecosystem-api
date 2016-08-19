@@ -20,7 +20,7 @@ class SampleControl(Resource):
     # Good example of sending back 404 "not found"
     def get(self):
         args = parser.parse_args()
-        sample_control = SampleControlAccessor().query_sample_controls(args) if DictionaryHelper(args).has_values() \
+        sample_control = SampleControlAccessor().scan(args) if DictionaryHelper(args).has_values() \
             else SampleControlAccessor().get_sample_controls()
 
         return sample_control if sample_control is not None else \

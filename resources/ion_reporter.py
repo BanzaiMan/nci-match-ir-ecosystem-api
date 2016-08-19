@@ -8,6 +8,7 @@ from jsonschema import validate, SchemaError
 
 class IonReporter(Resource):
     def post(self):
+<<<<<<< Updated upstream
         input_json = request.get_json()
         try:
             validate(input_json, Schemas.get_sequencer_schema())
@@ -15,6 +16,28 @@ class IonReporter(Resource):
         except SchemaError, e:
             print('You have a schema error')
             print e
+=======
+        #Todo: validate
+        SequencerFileQueue().write('')
+
+
+
+>>>>>>> Stashed changes
 
         SequencerFileQueue().write(json.dumps(input_json))
 
+<<<<<<< Updated upstream
+=======
+        #
+        # molecular_id: {molecular_id},
+        # analysis_id: {analysis_id},
+        # site: {site},
+        # bucket: {bucket},
+        # date_created: {date_created},
+        # tsv_file_name: {tsv_file_name},
+        # vcf_file_name: {vcf_file_name},
+        # dna_bam_file_name: {dna_bam_file_name},
+        # cdna_bam_file_name: {cdna_bam_file_name},
+        # dna_bai_file_name: {dna_bai_file_name},
+        # cdna_bai_file_name: {c}dna_bai_file_name
+>>>>>>> Stashed changes

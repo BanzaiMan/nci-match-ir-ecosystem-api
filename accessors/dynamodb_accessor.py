@@ -1,10 +1,5 @@
 import boto3
-import os
-import json
-import socket
-import zipfile
-
-from boto3.dynamodb.conditions import Key
+from common.query_helper import QueryHelper
 
 
 class DynamoDBAccessor(object):
@@ -15,71 +10,36 @@ class DynamoDBAccessor(object):
         self.dynamodb = boto3.resource('dynamodb', region_name=region, endpoint_url=url)
         self.table = self.dynamodb.Table(table)
 
-
-    # TODO: Lets start simple and get the logic and structure all working locally on ALL our computers before trying this
-    # @staticmethod
-    # def aws_credentials():
-    #     if socket.gethostname() == 'NCI-01967369-ML':#local machine for dev
-    #         return os.environ['AWS_ACCESS_KEY_ID'], os.environ['AWS_SECRET_ACCESS_KEY'], 'us-west-2'
-    #     s3_conf = '../resources/.aws_credentials.json'
-    #     curr_dir = os.path.dirname(__file__)
-    #     file_name = os.path.join(curr_dir, s3_conf)
-    #     if not os.path.isfile(file_name):
-    #         print 'aws config file missing.'
-    #         return
-    #     with open(file_name) as config_file:
-    #         config = json.load(config_file)
-    #         # print config
-    #         if 'aws_access_key_id' not in config or 'aws_secret_access_key' not in config or 'region_name' not in config:
-    #             print 'aws credentials not found.'
-    #             return
-    #         return config['aws_access_key_id'], config['aws_secret_access_key'], config['region_name'],
+    # Generic Scan Function that handles 1MB limit and returns all results to caller
+    # {u'Count': 1, u'Items': [{u'type': u'positive', u'site': u'mocha', u'id': u'SC_45RT6'}], u'ScannedCount': 1,
+    #  'ResponseMetadata': {'HTTPStatusCode': 200, 'RequestId': 'c9207ed1-6f6f-4ea8-bb91-17393b9b3980',
+    #                       'HTTPHeaders': {'x-amzn-requestid': 'c9207ed1-6f6f-4ea8-bb91-17393b9b3980',
+    #                                       'content-length': '107', 'content-type': 'application/x-amz-json-1.0',
+    #                                       'x-amz-crc32': '2945372509', 'server': 'Jetty(8.1.12.v20130726)'}}}
+    # have to scan multiple times as data grows because there is 1MB limit on results...add loop to code to handle this
+    # using LastEvaluatedKey like this
+    # while True:
+    #     metadata = response.get('ResponseMetadata', {})
+    #     for row in response['Items']:
+    #         yield cls.from_row(row, metadata)
+    #     if response.get('LastEvaluatedKey'):
+    #         response = cls.table().scan(
+    #             ExclusiveStartKey=response['LastEvaluatedKey'],
+    #         )
+    #     else:
+    #         break
     #
-    # def get_db_connection(self):
-    #     try:
-    #         ddb = boto3.resource(AWS_RESOURCE,
-    #                              aws_access_key_id=self.__access_key,
-    #                              aws_secret_access_key=self.__secret_key,
-    #                              region_name=self.__region_name)
-    #     except:
-    #         print 'S3 connection cannot be established. Please double check your credentials and network connection.'
-    #         return None
-    #     return ddb
-    #
-    # @staticmethod
-    # def get_local_connection():
-    #     try:
-    #         ddb = boto3.resource(AWS_RESOURCE, endpoint_url='http://localhost:8000', region_name='us-west-2')
-    #     except:
-    #         print 'S3 local connection cannot be established. Please double check your credentials and network connection.'
-    #         return None
-    #     return ddb
-    #
-    # def list_all_tables(self):
-    #     client = boto3.client(AWS_RESOURCE,
-    #                           aws_access_key_id=self.__access_key,
-    #                           aws_secret_access_key=self.__secret_key,
-    #                           region_name='us-west-2')
-    #     tables = client.list_tables()
-    #     return tables
-    #
-    # def list_all_tables_local(self):
-    #     client = boto3.client(AWS_RESOURCE,
-    #                           endpoint_url='http://localhost:8000',
-    #                           region_name='us-west-2')
-    #     tables = client.list_tables()
-    #     print tables
-    #     return tables
 
-if __name__ == '__main__':
-    tst_accessor = DynamoDBAccessor()
-    #print tst_accessor.get_new_molecular_id('MoCha')
-    #print tst_accessor.get_new_molecular_id('MDACC')
-    print tst_accessor.list_all_tables_local()
+    def scan(self, query_parameters, *exclusive_start_key):
 
+        if exclusive_start_key is not None:
+            results = self.table.scan(FilterExpression=QueryHelper.create_filter_expression(query_parameters),
+                                      ExclusiveStartKey=exclusive_start_key)
+        else:
+            results = self.table.scan(FilterExpression=QueryHelper.create_filter_expression(query_parameters))
 
+        items = results['Items']
+        if results.get('LastEvaluatedKey'):
+            items += self.scan(query_parameters, results['LastEvaluatedKey'])
 
-
-
-
-
+        return items
