@@ -18,9 +18,33 @@ class SampleControlAccessor(DynamoDBAccessor):
         # the query parameters can be passed in the format {'site':'mocha', 'type':'positive'}
         # This is just a dictionary with 0 to 3 values. You Don't need to know what was passed in just create
         # a query
+        if 'id' in query_parameters:
+            molecular_id = query_parameters['id']
+            if 'site' in query_parameters:
+                site = query_parameters['site']
+                results = get_item_by_molecular_id_and_site(site, id)
+            else:
+                results = get_item_by_molecular_id(id)
+        elif 'site' in query_parameters:
+            site = query_parameters['site']
+            if 'type' in query_parameters:
+                sample_type = query_parameters['type']
+                results = get_item_by_site_and_type(site, sample_type)
+            else:
+                results = get_item_by_site_and_type[site]
+        elif 'type' in query_parameters:
+            sample_type = query_parameters['type']
+            results = get_item_by_type(sample_type)
+        else:
+            results = get_all_items()
+
+
 
         results = self.table.get_item(Key={'id': 'SC_45RT6', 'site': 'mocha'})
         print results
+
+    def get_item_by_molecualr_id(self, molecular_id):
+        pass
 
     def get_sample_controls(self):
         return "hi"
