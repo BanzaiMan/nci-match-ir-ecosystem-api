@@ -1,10 +1,11 @@
-from resources.ion_reporter import IonReporter
-from resources.sample_control import SampleControl
 from flask import Flask
 from flask_restful import Api
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 from tornado.wsgi import WSGIContainer
+
+from resources.ion_reporter import IonReporter
+from resources.sample_control import SampleControl
 
 app = Flask(__name__)
 api = Api(app)
