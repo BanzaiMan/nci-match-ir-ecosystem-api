@@ -15,10 +15,3 @@ class QueryHelper(object):
                 filter_expression = Attr(key).eq(str(value))
 
         return filter_expression
-
-if __name__ == '__main__':
-    my_json = '{"site":"MoCha","type":"positive"}'
-    fe = QueryHelper.create_filter_expression(my_json)
-    print type(fe)
-
-

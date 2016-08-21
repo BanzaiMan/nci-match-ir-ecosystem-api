@@ -5,16 +5,22 @@ from common.query_helper import QueryHelper
 
 class DynamoDBAccessor(object):
 
+    """Generic class for working with Dynamodb tables. Nothing in this class should refer to a specific table
+    or hardcode any attribute. Further, this class should never be directly called from the main application, only
+    resources. To use this class declare a child class in the resource directory and instantiate instances of that
+    class. Only overwrite in child class the methods in here when necessary."""
+
     def __init__(self, table, url='http://localhost:8000', region='us-east-1'):
         self.url = url
         self.region = region
         self.dynamodb = boto3.resource('dynamodb', region_name=region, endpoint_url=url)
         self.table = self.dynamodb.Table(table)
         self.logger = logging.getLogger(__name__)
+        self.logger.debug("DynamoDBAccessor instantiated")
 
     def scan(self, query_parameters, *exclusive_start_key):
         if query_parameters is not None:
-            self.logger.debug("dynamodb SCAN with filter expression(s) called")
+            self.logger.debug("Dynamodb SCAN with filter expression(s) called")
             self.logger.debug(str(query_parameters))
             if not all(exclusive_start_key):
                 self.logger.debug("Exclusive start key is " + str(exclusive_start_key))

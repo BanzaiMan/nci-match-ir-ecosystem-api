@@ -52,6 +52,10 @@ aws dynamodb delete-table --table-name $TABLE_NAME $END_POINT
 echo -e "${CYAN}***********************************************${NC}"
 echo -e "${RED}BUILDING TABLE${NC}"
 echo -e "${CYAN}***********************************************${NC}"
+# Note: Something to consider is do we really need or want the range key? Maybe just make the molecular_id the hash
+# key is good enough as we want the molecular_id to be completly unique and in this case its actually the site plus
+# the molecular_id that must be unique not the molecular_id. This affects the code and so I really think at the moment
+# the molecular_id should be the only key.
 aws dynamodb create-table --table-name $TABLE_NAME --attribute-definitions AttributeName=site,AttributeType=S AttributeName=molecular_id,AttributeType=S --key-schema AttributeName=site,KeyType=HASH AttributeName=molecular_id,KeyType=RANGE --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 $END_POINT
 
 echo -e "${CYAN}***********************************************${NC}"

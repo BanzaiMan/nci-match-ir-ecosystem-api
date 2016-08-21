@@ -5,7 +5,9 @@ from accessors.sequencer_file_queue import SequencerFileQueue
 from common.schemas import Schemas
 from jsonschema import validate, ValidationError
 
-# curl -X POST -H "Content-Type: application/json" -d '{ "molecular_id":"123", "analysis_id":"fork", "patient_id":"fork", "site":"fork", "vcf_file_name":"fork", "dna_bam_file_name":"fork", "cdna_bam_file_name":"fork"}' "http://localhost:5000/ion_reporters"
+# curl -X POST -H "Content-Type: application/json" -d '{ "molecular_id":"123", "analysis_id":"fork",
+# "patient_id":"fork", "site":"fork", "vcf_file_name":"fork", "dna_bam_file_name":"fork", "cdna_bam_file_name":"fork"}'
+# "http://localhost:5000/ion_reporters"
 
 
 class IonReporter(Resource):
@@ -24,5 +26,6 @@ class IonReporter(Resource):
             abort(400, message="JSON was not valid: " + e.message)
 
         self.logger.info('JSON validated')
+        # TODO: Catch errors and return appropriate error if this fails.
         SequencerFileQueue().write(json.dumps(input_json))
         self.logger.info('New Ion Reporter file names POSTED to SQS queue')
