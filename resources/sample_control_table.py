@@ -25,7 +25,7 @@ class SampleControlTable(Resource):
     will result in an error message being returned. Technically, it would be better to put the post in yet another
     class but  then we end up with 3 classes to handle sample controls (1. One for general queries 'get', 2. One
     for updates 'put, delete' 3. and yet another one for the POST.) That situation, while perfectly consistent with
-    REST standards, creates a lot of redudant code. As it is, we have 2 sample control classes."""
+    REST standards, creates a lot of redundant code. As it is, we have 2 sample control classes."""
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)
