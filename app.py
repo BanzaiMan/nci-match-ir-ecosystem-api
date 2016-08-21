@@ -9,6 +9,7 @@ from tornado.wsgi import WSGIContainer
 from resources.ion_reporter import IonReporter
 from resources.sample_control_table import SampleControlTable
 from resources.sample_control_record import SampleControlRecord
+from resources.molecular_id import MolecularId
 
 app = Flask(__name__)
 api = Api(app)
