@@ -17,7 +17,7 @@ parser.add_argument('molecular_id', type=str, required=False)
 MOLECULAR_ID_LENGTH = 5
 
 
-class SampleControls(Resource):
+class SampleControlTable(Resource):
 
     """This class is a tiny bit inconsistent by design. The argument types are all optional for the 'GET' but only the
     control_type and site are needed and required for the 'POST.' Passing in any other query parameters to the POST

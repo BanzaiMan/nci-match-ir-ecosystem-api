@@ -7,8 +7,8 @@ from tornado.ioloop import IOLoop
 from tornado.wsgi import WSGIContainer
 
 from resources.ion_reporter import IonReporter
-from resources.sample_controls import SampleControls
-from resources.sample_control import SampleControl
+from resources.sample_control_table import SampleControlTable
+from resources.sample_control_record import SampleControlRecord
 
 app = Flask(__name__)
 api = Api(app)
@@ -26,12 +26,13 @@ logger.setLevel(logging.INFO)
 # plural classes.
 
 # Path for Querying and Creating Sample Controls
-api.add_resource(SampleControls, '/sample_controls')
+api.add_resource(SampleControlTable, '/sample_controls')
 
 # Path for Updating and Deleting (marking as deleted) Sample controls
-api.add_resource(SampleControl, '/sample_controls/<string:molecular_id>')
+api.add_resource(SampleControlRecord, '/sample_controls/<string:molecular_id>')
 
 api.add_resource(IonReporter, '/ion_reporters')
+api.add_resource(MolecularId, '/molecular_id')
 
 if __name__ == '__main__':
     http_server = HTTPServer(WSGIContainer(app))
