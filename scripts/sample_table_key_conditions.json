@@ -1,8 +1,8 @@
 {
-    "site": {
+    "molecular_id": {
         "AttributeValueList": [
             {
-                "S": "mda"
+                "S": "SC_SA1CB"
             }
         ],
         "ComparisonOperator": "EQ"

@@ -18,6 +18,7 @@ class DynamoDBAccessor(object):
         self.logger = logging.getLogger(__name__)
         self.logger.debug("DynamoDBAccessor instantiated")
 
+    # Used to get items without regard to keys from table based on some parameters
     def scan(self, query_parameters, *exclusive_start_key):
         if query_parameters is not None:
             self.logger.debug("Dynamodb SCAN with filter expression(s) called")
@@ -38,3 +39,21 @@ class DynamoDBAccessor(object):
             items += self.scan(query_parameters, results['LastEvaluatedKey'])
 
         return items
+
+    # Used to get a single item by ID from the table
+    def get_item(self, key, *additional_keys):
+        self.logger.debug("Dynamodb get_item with Keys called")
+        self.logger.debug(str(key))
+        all_keys = key.copy()
+        if not all(additional_keys):
+            self.logger.debug("Additional Keys used in get: " + str(additional_keys))
+            all_keys.update(additional_keys)
+
+        # TODO: Make it print the actual table name being queried
+        self.logger.debug("Getting Item from table")
+        return self.table.get_item(Key=all_keys)
+
+    def put_item(self, item_dictionary):
+        self.logger.debug("Dynamodb put_item with called")
+        self.logger.debug(str(item_dictionary))
+        return self.table.put_item(Item=item_dictionary)
