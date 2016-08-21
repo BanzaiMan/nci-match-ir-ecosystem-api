@@ -1,4 +1,5 @@
 import boto3
+from botocore.exceptions import ClientError
 import logging
 from common.query_helper import QueryHelper
 
@@ -40,20 +41,44 @@ class DynamoDBAccessor(object):
 
         return items
 
+    def put_item(self, item_dictionary):
+        self.logger.debug("Dynamodb put_item called")
+        self.logger.debug(str(item_dictionary))
+        try:
+            return self.table.put_item(Item=item_dictionary)
+        except ClientError, e:
+            self.logger.debug("Client Error on delete_item: " + e.message)
+            raise
+
+    # documentation on how to write this:
+    # http://docs.aws.amazon.com/amazondynamodb/latest/gettingstartedguide/GettingStarted.Python.03.html#GettingStarted.Python.03.03
+    # just remember to use "s" for everything because all we have is strings
+    def update_item(self, key, item_dictionary, *additional_keys):
+        self.logger.debug("Dynamodb update_item called")
+        self.logger.debug("key:" + str(key) + "::Items to update: " + str(item_dictionary))
+        all_keys = QueryHelper.create_key_dict('update', key, additional_keys)
+        # TODO: Finish this update_item method by creating the update_item query
+        #self.table.update_item(Key=all_keys, )
+
     # Used to get a single item by ID from the table
     def get_item(self, key, *additional_keys):
-        self.logger.debug("Dynamodb get_item with Keys called")
+        return self.__item(self.table.get_item, 'get', key, additional_keys)
+
+    # this function and get_item are essentially the same except the function name
+    # so I'm performing a little python magic by passing the actual function to another function
+    def delete_item(self, key, *additional_keys):
+        return self.__item(self.table.delete_item, 'delete', key, additional_keys)
+
+    def __item(self, function, function_description, key, *additional_keys):
+        self.logger.debug("Dynamodb " + function_description + "_item with Keys called")
         self.logger.debug(str(key))
-        all_keys = key.copy()
-        if not all(additional_keys):
-            self.logger.debug("Additional Keys used in get: " + str(additional_keys))
-            all_keys.update(additional_keys)
+        all_keys = QueryHelper.create_key_dict(function_description, key, additional_keys)
 
         # TODO: Make it print the actual table name being queried
-        self.logger.debug("Getting Item from table")
-        return self.table.get_item(Key=all_keys)
+        self.logger.debug("Performing item " + function_description + " from table")
 
-    def put_item(self, item_dictionary):
-        self.logger.debug("Dynamodb put_item with called")
-        self.logger.debug(str(item_dictionary))
-        return self.table.put_item(Item=item_dictionary)
+        try:
+            return function(Key=all_keys)
+        except ClientError, e:
+            self.logger.debug("Client Error on delete_item: " + e.message)
+            raise

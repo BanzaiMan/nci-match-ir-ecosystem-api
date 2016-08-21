@@ -49,7 +49,7 @@ class SampleControlTable(Resource):
         self.logger.debug(str(args))
 
         if 'molecular_id' in args:
-            self.logger.debug("Sample Control creation failed, because request molecular_id was passed in")
+            self.logger.debug("Sample Control creation failed, because molecular_id was passed in request")
             abort(400, message="molecular_id is not a valid input when attempting to create a new sample control. "
                                "The post will create the id for you. Simply pass in site and control_type'")
 

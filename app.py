@@ -26,14 +26,14 @@ logger.setLevel(logging.INFO)
 # but we pick plural because it tends to be the favored practice for the user, yet we break OO practice by having
 # plural classes.
 
-# Path for Querying and Creating Sample Controls
+# Path for Querying and Creating sample controls
 api.add_resource(SampleControlTable, '/sample_controls')
 
-# Path for Updating and Deleting (marking as deleted) Sample controls
+# Path for Updating and Deleting sample controls
 api.add_resource(SampleControlRecord, '/sample_controls/<string:molecular_id>')
 
 api.add_resource(IonReporter, '/ion_reporters')
-api.add_resource(MolecularId, '/molecular_id')
+api.add_resource(MolecularId, '/molecular_id/<string:molecular_id')
 
 if __name__ == '__main__':
     http_server = HTTPServer(WSGIContainer(app))
