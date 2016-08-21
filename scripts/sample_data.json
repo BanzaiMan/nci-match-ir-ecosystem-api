@@ -1,0 +1,59 @@
+{
+  "sample_controls": [
+    {
+      "PutRequest": {
+        "Item": {
+          "date_molecular_id_created": {"S": "2016-08-18 19:56:19.766"},
+          "control_type": {"S": "no_template"},
+          "site_ip_address": {"S": "129.43.127.133"},
+          "molecular_id": {"S": "SC_SAWCB"},
+          "site": {"S": "mocha"}
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "date_molecular_id_created": {"S": "2016-08-18 19:56:19.766"},
+          "control_type": {"S": "no_template"},
+          "site_ip_address": {"S": "129.43.127.133"},
+          "molecular_id": {"S": "SC_SA1CB"},
+          "site": {"S": "mocha"}
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "date_molecular_id_created": {"S": "2016-08-18 20:09:45.667"},
+          "control_type": {"S": "positive"},
+          "site_ip_address": {"S": "129.43.127.133"},
+          "molecular_id": {"S": "SC_67VKV"},
+          "site": {"S": "mocha"}
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "date_molecular_id_created": {"S": "2016-08-18 20:13:34.285"},
+          "control_type": {"S": "no_template"},
+          "site_ip_address": {"S": "129.43.127.133"},
+          "molecular_id": {"S": "SC_VNTE5"},
+          "site": {"S": "mda"}
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "date_molecular_id_created": {"S": "2016-08-18 20:16:34.285"},
+          "control_type": {"S": "positive"},
+          "site_ip_address": {"S": "129.43.127.133"},
+          "molecular_id": {"S": "SC_VEME6"},
+          "site": {"S": "mda"}
+        }
+      }
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 import json
+import logging
 from flask_restful import abort, request, reqparse, Resource
 from jsonschema import validate, SchemaError
 from accessors.sample_control_accessor import SampleControlAccessor
@@ -10,33 +11,32 @@ from common.schemas import Schemas
 # Replace later with marshmallow but for now this works
 
 parser = reqparse.RequestParser()
-parser.add_argument('type', type=str, required=False)
+parser.add_argument('control_type', type=str, required=False)
 parser.add_argument('site', type=str, required=False)
-parser.add_argument('control_id', type=str, required=False)
+parser.add_argument('molecular_id', type=str, required=False)
 
 
 class SampleControl(Resource):
+    def __init__(self):
+        self.logger = logging.getLogger(__name__)
 
-    # Good example of sending back 404 "not found"
     def get(self):
-        args = parser.parse_args()
+        self.logger.info("Sample control GET called")
+        args = request.args
+        self.logger.debug(str(args))
         sample_control = SampleControlAccessor().scan(args) if DictionaryHelper(args).has_values() \
-            else SampleControlAccessor().get_sample_controls()
+            else SampleControlAccessor().scan(None)
 
+        self.logger.debug(str(sample_control))
         return sample_control if sample_control is not None else \
             abort(404, message="No sample controls meet the query parameters")
 
-    # curl -X POST -H "Content-Type: application/json" -d '{ "price":"123", "name":"fork"}' "http://localhost:5000/sample_controls"
+    # TODO: DEBUG and finish this POST
     def post(self):
-        args = parser.parse_args()
-        input_json = request.get_json()
-        try:
-            validate(input_json, Schemas.get_sequencer_schema())
-        except SchemaError, e:
-            print e
+        args = request.args
 
-        if args['control_id'] is not None:
-            abort(400, message="Can not create a new sample control if id is passed in")
+        if args['molecular_id'] is not None:
+            abort(400, message="Can not create a new sample control if molecular_id is passed in")
         elif DictionaryHelper(args).keys_have_value(['type', 'site']):
             return "Yeah, you passed in the correct parameters to create a new sample control"
 

@@ -1,0 +1,10 @@
+{
+    "site": {
+        "AttributeValueList": [
+            {
+                "S": "mda"
+            }
+        ],
+        "ComparisonOperator": "EQ"
+    }
+}

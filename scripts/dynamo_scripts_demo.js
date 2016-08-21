@@ -1,4 +1,4 @@
-1. create the database
+//1. create the database
 
 var params = {
     TableName : "sample_controls",
@@ -23,7 +23,7 @@ dynamodb.createTable(params, function(err, data) {
         console.log(JSON.stringify(data, null, 2));
 });
 
-2. check table def
+//2. check table def
 
 var params = {
     TableName: "sampleControl"
@@ -36,7 +36,7 @@ dynamodb.describeTable(params, function(err, data) {
         console.log(JSON.stringify(data, null, 2));
 });
 
-3. list tables
+//3. list tables
 
 var params = {};
 
@@ -47,7 +47,7 @@ dynamodb.listTables(params, function(err, data) {
         console.log(JSON.stringify(data, null, 2));
 });
 
-4. add one item
+//4. add one item
 
 var params = {
     TableName: "sampleControl",
@@ -109,7 +109,7 @@ docClient.put(params, function(err, data) {
         console.log(JSON.stringify(data, null, 2));
 });
 
-5. get an item
+//5. get an item
 
 var params = {
     TableName: "sampleControl",

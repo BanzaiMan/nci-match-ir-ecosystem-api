@@ -1,3 +1,5 @@
+import logging
+from logging.config import fileConfig
 from flask import Flask
 from flask_restful import Api
 from tornado.httpserver import HTTPServer
@@ -10,6 +12,9 @@ from resources.sample_control import SampleControl
 app = Flask(__name__)
 api = Api(app)
 
+fileConfig('config/logging_config.ini')
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 # Notice that the class names are single or plural, but I choose to keep the routes all plural
 # this was following a pattern I found on a blog. Its really just a matter of opinion. The goal
 # is to make an API consistent for the user. So neither plural nor singular is 'grammatically' correct
