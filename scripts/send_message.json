@@ -1,26 +1,14 @@
 {
   "molecular_id": {
     "DataType": "String",
-    "StringValue": "SampleControl_MoCha_3"
+    "StringValue": "sc_WA85O"
   },
-  "analysis_id": {
+  "table_name": {
     "DataType": "String",
-    "StringValue": "SampleControl_MoCha_3_v2_51d7eedc-5cc1-49fc-a0cc-a184ba7a6df2"
+    "StringValue": "sample_controls"
   },
   "site": {
     "DataType": "String",
     "StringValue": "MoCha"
-  },
-   "vcf_file_name": {
-    "DataType": "String",
-    "StringValue": "SampleControl_MoCha_3_v2_51d7eedc-5cc1-49fc-a0cc-a184ba7a6df2.vcf"
-  },
-   "dna_bam_file_name": {
-    "DataType": "String",
-    "StringValue": "SampleControl_MoCha_3_v2_51d7eedc-5cc1-49fc-a0cc-a184ba7a6df2.bam"
-  },
-   "cdna_bam_file_name": {
-    "DataType": "String",
-    "StringValue": "SampleControl_MoCha_3_v2_51d7eedc-5cc1-49fc-a0cc-a184ba7a6df2_RNA.bam"
   }
 }
