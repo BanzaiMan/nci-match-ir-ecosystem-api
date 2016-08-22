@@ -8,7 +8,6 @@ class MolecularId(Resource):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
-    # TODO: Finish the write for the GET molecular_id
     def get(self, molecular_id):
         # 1, Check sample control tables by calling get
         self.logger.info("Checking if molecular id: " + str(molecular_id) + " is in sample control table")
@@ -20,6 +19,7 @@ class MolecularId(Resource):
             item.update({'molecular_id_type': 'sample_control'})
             return item
 
+        # TODO: Finish the write for the GET molecular_id by calling the patient ecosystem
         # 2. Import requests library and then make a rest call to patient ecosystem to check patient table
 
         abort(404, message=str(molecular_id + " was not found"))
