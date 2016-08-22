@@ -33,7 +33,7 @@ api.add_resource(SampleControlTable, '/sample_controls')
 api.add_resource(SampleControlRecord, '/sample_controls/<string:molecular_id>')
 
 api.add_resource(IonReporter, '/ion_reporters')
-api.add_resource(MolecularId, '/molecular_id/<string:molecular_id')
+api.add_resource(MolecularId, '/molecular_id/<string:molecular_id>')
 
 if __name__ == '__main__':
     http_server = HTTPServer(WSGIContainer(app))
