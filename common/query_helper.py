@@ -1,5 +1,4 @@
 from boto3.dynamodb.conditions import Attr
-import json
 import logging
 
 

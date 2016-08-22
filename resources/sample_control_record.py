@@ -1,7 +1,6 @@
 import logging
-import requests
 from accessors.sample_control_accessor import SampleControlAccessor
-from flask_restful import abort, request, reqparse, Resource
+from flask_restful import abort, Resource
 
 
 class SampleControlRecord(Resource):

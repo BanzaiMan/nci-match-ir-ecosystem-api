@@ -1,5 +1,5 @@
 import logging
-from flask_restful import abort, request, reqparse, Resource
+from flask_restful import abort, Resource
 from accessors.sample_control_accessor import SampleControlAccessor
 
 
