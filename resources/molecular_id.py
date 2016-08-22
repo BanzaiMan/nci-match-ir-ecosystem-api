@@ -8,7 +8,7 @@ class MolecularId(Resource):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
-    # TODO: Write the GET molecular_id
+    # TODO: Finish the write for the GET molecular_id
     def get(self, molecular_id):
         # 1, Check sample control tables by calling get
         self.logger.info("Checking if molecular id: " + str(molecular_id) + " is in sample control table")

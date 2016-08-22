@@ -20,6 +20,7 @@ class DynamoDBAccessor(object):
         self.logger.debug("DynamoDBAccessor instantiated")
 
     # Used to get items without regard to keys from table based on some parameters
+    # TODO: Check for errors on scans
     def scan(self, query_parameters, *exclusive_start_key):
         if query_parameters is not None:
             self.logger.debug("Dynamodb SCAN with filter expression(s) called")
@@ -41,6 +42,7 @@ class DynamoDBAccessor(object):
 
         return items
 
+    # TODO: Add support for additional keys
     def put_item(self, item_dictionary):
         self.logger.debug("Dynamodb put_item called")
         self.logger.debug(str(item_dictionary))

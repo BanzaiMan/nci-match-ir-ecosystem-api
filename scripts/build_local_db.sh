@@ -103,3 +103,5 @@ echo -e "${RED}QUERY W/ FILTER EXPRESSION NEWLY CREATED AND LOADED TABLE    ${NC
 echo -e "${CYAN}************************************************************${NC}"
 aws dynamodb query --table-name $TABLE_NAME --key-conditions $TABLE_KEY_FILE --filter-expression "$QUERY_ATTRIBUTE = :value" --expression-attribute-values "{\":value\":{\"S\":\"$QUERY_VALUE\"}}" $END_POINT
 
+# Todo: add put, delete, and update examples
+# TODO: Add code to load data that is >3MB..will require writing a python script to generate JSON data first
