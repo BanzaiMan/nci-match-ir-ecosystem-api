@@ -1,12 +1,6 @@
 import unittest
-import os.path
-import sys
 from mock import patch, MagicMock
 from ddt import ddt, data, unpack
-
-sys.path.append("..")
-from dynamodb import aws
-#from s3_transfer import aws
 
 
 @ddt
@@ -14,6 +8,6 @@ class TestDynamodbService(unittest.TestCase):
 
     def setUp(self):
         pass
-# TODO: write unittests
+# TODO: write unittests. Start with something simple like the dictionaryHelper, QueryHelper, and StringHelper
 if __name__ == '__main__':
     unittest.main()
