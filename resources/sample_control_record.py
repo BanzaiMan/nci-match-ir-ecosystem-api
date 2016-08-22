@@ -14,6 +14,7 @@ class SampleControlRecord(Resource):
     def delete(self, molecular_id):
         self.logger.info("Deleting sample control with id: " + str(molecular_id))
         try:
+            # TODO: Instead of writing directly put on queue and then pop off queue to do delete
             SampleControlAccessor().delete_item({'molecular_id': molecular_id})
             return {"message": "Item deleted", "molecular_id": molecular_id}
         except Exception, e:

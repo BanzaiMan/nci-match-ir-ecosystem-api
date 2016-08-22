@@ -62,6 +62,7 @@ class SampleControlTable(Resource):
 
             self.logger.debug("Attempting to write: " + str(new_item_dictionary))
             try:
+                # TODO: Instead of writing directly put on queue and then pop off queue to do write
                 SampleControlAccessor().put_item(new_item_dictionary)
                 return {"result": "New sample control created", "molecular_id": new_item_dictionary['molecular_id']}
             except Exception, e:
