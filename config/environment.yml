@@ -1,0 +1,24 @@
+# TODO: Use this file to deploy to different tiers
+development:
+  aws_dynamo_endpoint: "http://localhost:8000"
+  aws_region: "us-east-1"
+  table_prefix: ""
+  PORT: "10241"
+
+test:
+  aws_dynamo_endpoint: "https://dynamodb.us-east-1.amazonaws.com"
+  aws_region: "us-east-1"
+  table_prefix: "ta"
+  PORT: "10241"
+
+uat:
+  aws_dynamo_endpoint: "https://dynamodb.us-east-1.amazonaws.com"
+  aws_region: "us-east-1"
+  table_prefix: "ta"
+  PORT: "10241"
+
+production:
+  aws_dynamo_endpoint: "https://dynamodb.us-east-1.amazonaws.com"
+  aws_region: "us-east-1"
+  table_prefix: "ta"
+  PORT: "10241"
