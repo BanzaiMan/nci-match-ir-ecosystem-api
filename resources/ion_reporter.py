@@ -1,7 +1,7 @@
 import json
 import logging
 from flask_restful import abort, request, Resource
-from accessors.sequencer_file_queue import SequencerFileQueue
+from accessors.update_queue_accessor import UpdateQueueAccessor
 from common.schemas import Schemas
 from jsonschema import validate, ValidationError
 
@@ -26,5 +26,5 @@ class IonReporter(Resource):
 
         self.logger.info('JSON validated')
         # TODO: Catch errors and return appropriate error if this fails.
-        SequencerFileQueue().write(json.dumps(input_json))
+        UpdateQueueAccessor().write(json.dumps(input_json))
         self.logger.info('New Ion Reporter file names POSTED to SQS queue')
