@@ -103,5 +103,26 @@ echo -e "${RED}QUERY W/ FILTER EXPRESSION NEWLY CREATED AND LOADED TABLE    ${NC
 echo -e "${CYAN}************************************************************${NC}"
 aws dynamodb query --table-name $TABLE_NAME --key-conditions $TABLE_KEY_FILE --filter-expression "$QUERY_ATTRIBUTE = :value" --expression-attribute-values "{\":value\":{\"S\":\"$QUERY_VALUE\"}}" $END_POINT
 
-# TODO: add put, delete, and update examples
+
 # TODO: Add code to load data that is >3MB..will require writing a python script to generate JSON data first
+
+# PUT: Create an item.json file with the key-value pair and save it to database
+echo -e "${CYAN}************************************************************${NC}"
+echo -e "${RED}PUT AN NEW ITEM INTO TABLE: NEED AN ITEM JSON FILE           ${NC}"
+echo -e "${CYAN}************************************************************${NC}"
+aws dynamodb put-item --table-name $TABLE_NAME --item file://item.json --return-consumed-capacity TOTAL $END_POINT
+
+# DELETE: Delete an item from the database
+echo -e "${CYAN}************************************************************${NC}"
+echo -e "${RED}DELETE A ITEM FROM TABLE: NEED A KEY JSON FILE               ${NC}"
+echo -e "${CYAN}************************************************************${NC}"
+aws dynamodb delete-item --table-name $TABLE_NAME --key file://key.json --return-consumed-capacity TOTAL $END_POINT
+
+# UPDATE: update an item
+echo -e "${CYAN}************************************************************${NC}"
+echo -e "${RED}DELETE A ITEM FROM TABLE: NEED A KEY JSON FILE, UPDATE EXPRESSION, ATTRIBUTE NAMES JSON, ATTRIBUTE VALUE JSON ${NC}"
+echo -e "${CYAN}************************************************************${NC}"
+aws dynamodb update-item --table-name $TABLE_NAME --key file://key.json --update-expression "SET #CT = :c, #SIA = :s" \
+ --expression-attribute-names file://update-expression-attribute-names.json\
+ --expression-attribute-values file://update-expression-attribute-values.json\
+ --return-values ALL_NEW $END_POINT
