@@ -14,6 +14,6 @@ class TestDynamodbService(unittest.TestCase):
 
     def setUp(self):
         pass
-# todo: write unittests
+# TODO: write unittests
 if __name__ == '__main__':
     unittest.main()
