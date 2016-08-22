@@ -11,6 +11,7 @@ from common.string_helper import StringHelper
 # Replace later with marshmallow but for now this works
 
 parser = reqparse.RequestParser()
+# TODO: lower priority, but could expand to consider more of the attributes
 parser.add_argument('control_type', type=str, required=False)
 parser.add_argument('site',         type=str, required=False)
 parser.add_argument('molecular_id', type=str, required=False)
