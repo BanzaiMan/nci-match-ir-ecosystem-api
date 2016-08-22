@@ -7,5 +7,4 @@ class SequencerFileQueue(AwsSqsAccessor):
 
         # TODO: What if it fails to write, like the queue is down? Should catch errors and return errors.
         def write(self, message):
-            print 'Hello'
-            self.queue.send_message(MessageBody=message)
+                self.queue.send_message(MessageBody=message)
