@@ -1,4 +1,4 @@
-from aws_sqs_accessor import AwsSqsAccessor
+from sqs_accessor import AwsSqsAccessor
 
 
 # TODO: Lets talk about these queues...perhaps we just need a single queue with a flag?
