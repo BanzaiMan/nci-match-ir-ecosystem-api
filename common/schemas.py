@@ -5,7 +5,12 @@ class Schemas(object):
         return {
             "type": "object",
             "properties": {
-                "price": {"type": "number"},
-                "name": {"type": "string"}
+                "molecular_id": {"type": "string"},
+                "analysis_id": {"type": "string"},
+                "patient_id": {"type": "string"},
+                "site": {"type": "string"},
+                "vcf_file_name": {"type": "string"},
+                "dna_bam_file_name": {"type": "string"},
+                "cdna_bam_file_name": {"type": "string"}
             }
         }
