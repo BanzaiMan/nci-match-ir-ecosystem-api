@@ -15,4 +15,5 @@ class UpdateQueueAccessor(SqsAccessor):
                 self.logger.info('New message has been POSTED to SQS queue successfully')
             except Exception, e:
                 self.logger.error("Write function failed, problem passing queue properties: " + e.message)
+                # TODO: Waleed this can't go in this class because the queue is not aware of RestFul API should "raise" exception and let calling class respond with 500
                 abort(500, message="Queue properties unable to be inherited by write function: " + e.message)
