@@ -1,4 +1,7 @@
 import logging
+import os
+import yaml
+import __builtin__
 from logging.config import fileConfig
 from flask import Flask
 from flask_restful import Api
@@ -18,7 +21,21 @@ api = Api(app)
 # TODO: fix path issue to work on multiple OSes
 fileConfig('config/logging_config.ini')
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+
+# Use this variable to read the config file
+__builtin__.environment = None
+try:
+    __builtin__.environment = os.environ['ENVIRONMENT']
+except KeyError, e:
+    logger.error("Must configure ENVIRONMENT variable in your environment in order for application to start")
+    logger.error(e.message)
+
+logger.info("Environment set to: " + __builtin__.environment)
+
+# Use the environment variable from above to read yaml config file set global variable
+with open("config/environment.yml", 'r') as yaml_file:
+    __builtin__.environment_config = yaml.load(yaml_file)
+
 
 # Notice that the class names are single, but I choose to keep the routes all plural
 # this was following a pattern I found on a blog. Its really just a matter of opinion. The goal

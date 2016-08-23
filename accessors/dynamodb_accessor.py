@@ -19,6 +19,7 @@ class DynamoDBAccessor(object):
         self.table = self.dynamodb.Table(table)
         self.logger = logging.getLogger(__name__)
         self.logger.debug("DynamoDBAccessor instantiated")
+        # This works ignore red underline!!
 
     # Used to get items without regard to keys from table based on some parameters
     # TODO: Check for errors on scans
