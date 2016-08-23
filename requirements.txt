@@ -1,3 +1,9 @@
 boto3==1.4.0
-mock==2.0.0
+botocore==1.4.39
 ddt==1.1.0
+Flask==0.11.1
+Flask_RESTful==0.3.5
+jsonschema==2.5.1
+mock==2.0.0
+tornado==4.4.1
+PyYAML==3.11
