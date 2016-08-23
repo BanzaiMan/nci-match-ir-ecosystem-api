@@ -50,7 +50,7 @@ class DynamoDBAccessor(object):
         try:
             return self.table.put_item(Item=item_dictionary)
         except ClientError, e:
-            self.logger.debug("Client Error on delete_item: " + e.message)
+            self.logger.debug("Client Error on put_item: " + e.message)
             raise
 
     # documentation on how to write this:
