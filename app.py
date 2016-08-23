@@ -26,6 +26,7 @@ logger = logging.getLogger(__name__)
 __builtin__.environment = None
 try:
     __builtin__.environment = os.environ['ENVIRONMENT']
+
 except KeyError, e:
     logger.error("Must configure ENVIRONMENT variable in your environment in order for application to start")
     logger.error(e.message)
@@ -52,7 +53,7 @@ api.add_resource(IonReporter, '/v1/ion_reporters')
 api.add_resource(MolecularId, '/v1/molecular_id/<string:molecular_id>')
 
 if __name__ == '__main__':
-    logger.info("server starting:")
+    logger.info("server starting with port 5000:")
     http_server = HTTPServer(WSGIContainer(app))
     http_server.listen(port=5000)
     IOLoop.instance().start()
