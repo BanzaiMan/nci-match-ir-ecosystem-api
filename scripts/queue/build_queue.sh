@@ -52,3 +52,9 @@ echo -e "${RED}SENDS MULTIPLE MESSAGES${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 
 aws sqs send-message-batch --queue-url https://sqs.us-east-1.amazonaws.com/127516845550/update_queue --entries file://send_message_batch.json
+
+echo -e "${CYAN}***********************************************${NC}"
+echo -e "${RED}RECEIVE MESSAGES${NC}"
+echo -e "${CYAN}***********************************************${NC}"
+
+aws sqs receive-message --queue-url https://sqs.us-east-1.amazonaws.com/127516845550/update_queue --attribute-names All --message-attribute-names All --max-number-of-messages 10
