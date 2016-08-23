@@ -1,7 +1,7 @@
 [
   {
     "Id": "sc_WA85O",
-      "MessageBody": "{\"molecular_id\": \"sc_WA85O\",\"analysis_id\": \"SampleControl_MoCha_3_v2_51d7eedc-5cc1-49fc-a0cc-a184ba7a6df2\",\"site\": \"MoCha\",\"bucket\": \"ped-match-sample-control\",\"date_molecular_id_created\": \"016-08-11+20:31:21.728\",\"vcf_file_name\": \"SampleControl_MoCha_3_v2_51d7eedc-5cc1-49fc-a0cc-a184ba7a6df2.vcf\",\"dna_bam_file_name\": \"SampleControl_MoCha_3_v2_51d7eedc-5cc1-49fc-a0cc-a184ba7a6df2.bam\",\"cdna_bam_file_name\":\"SampleControl_MoCha_3_v2_51d7eedc-5cc1-49fc-a0cc-a184ba7a6df2_RNA.bam\"}",
+      "MessageBody": "molecular_id:sc_WA85O,analysis_id:SampleControl_MoCha_3_v2_51d7eedc-5cc1-49fc-a0cc-a184ba7a6df2,site:MoCha,bucket:ped-match-sample-control,date_molecular_id_created:016-08-11+20:31:21.728,vcf_file_name:SampleControl_MoCha_3_v2_51d7eedc-5cc1-49fc-a0cc-a184ba7a6df2.vcf,dna_bam_file_name:SampleControl_MoCha_3_v2_51d7eedc-5cc1-49fc-a0cc-a184ba7a6df2.bam,cdna_bam_file_name:SampleControl_MoCha_3_v2_51d7eedc-5cc1-49fc-a0cc-a184ba7a6df2_RNA.bam",
         "MessageAttributes": {
           "molecular_id": {
         "DataType": "String",
@@ -19,7 +19,7 @@
   },
   {
     "Id": "sc_QY62Z",
-      "MessageBody": "{\"molecular_id\": \"sc_QY62Z\",\"analysis_id\": \"SampleControl_MoCha_3_v2_51d7eedc-5cc1-49fc-a0cc-a184ba7a6df2\",\"site\": \"MoCha\",\"bucket\": \"ped-match-sample-control\",\"date_molecular_id_created\": \"016-08-11+20:31:21.728\",\"vcf_file_name\": \"SampleControl_MoCha_3_v2_51d7eedc-5cc1-49fc-a0cc-a184ba7a6df2.vcf\",\"dna_bam_file_name\": \"SampleControl_MoCha_3_v2_51d7eedc-5cc1-49fc-a0cc-a184ba7a6df2.bam\",\"cdna_bam_file_name\":\"SampleControl_MoCha_3_v2_51d7eedc-5cc1-49fc-a0cc-a184ba7a6df2_RNA.bam\"}",
+      "MessageBody": "molecular_id: sc_QY62Z,analysis_id: SampleControl_MoCha_3_v2_51d7eedc-5cc1-49fc-a0cc-a184ba7a6df2,site: MoCha,bucket: ped-match-sample-control,date_molecular_id_created: 016-08-11+20:31:21.728,vcf_file_name: SampleControl_MoCha_3_v2_51d7eedc-5cc1-49fc-a0cc-a184ba7a6df2.vcf,dna_bam_file_name: SampleControl_MoCha_3_v2_51d7eedc-5cc1-49fc-a0cc-a184ba7a6df2.bam,cdna_bam_file_name:SampleControl_MoCha_3_v2_51d7eedc-5cc1-49fc-a0cc-a184ba7a6df2_RNA.bam",
         "MessageAttributes": {
           "molecular_id": {
         "DataType": "String",
@@ -37,7 +37,7 @@
   },
   {
     "Id": "sc_CS73D",
-      "MessageBody": "{\"molecular_id\": \"sc_CS73D\",\"analysis_id\": \"SampleControl_MoCha_3_v2_51d7eedc-5cc1-49fc-a0cc-a184ba7a6df2\",\"site\": \"MoCha\",\"bucket\": \"ped-match-sample-control\",\"date_molecular_id_created\": \"016-08-11+20:31:21.728\",\"vcf_file_name\": \"SampleControl_MoCha_3_v2_51d7eedc-5cc1-49fc-a0cc-a184ba7a6df2.vcf\",\"dna_bam_file_name\": \"SampleControl_MoCha_3_v2_51d7eedc-5cc1-49fc-a0cc-a184ba7a6df2.bam\",\"cdna_bam_file_name\":\"SampleControl_MoCha_3_v2_51d7eedc-5cc1-49fc-a0cc-a184ba7a6df2_RNA.bam\"}",
+      "MessageBody": "molecular_id: sc_CS73D,analysis_id: SampleControl_MoCha_3_v2_51d7eedc-5cc1-49fc-a0cc-a184ba7a6df2,site: MoCha,bucket: ped-match-sample-control,date_molecular_id_created: 016-08-11+20:31:21.728,vcf_file_name: SampleControl_MoCha_3_v2_51d7eedc-5cc1-49fc-a0cc-a184ba7a6df2.vcf,dna_bam_file_name: SampleControl_MoCha_3_v2_51d7eedc-5cc1-49fc-a0cc-a184ba7a6df2.bam,cdna_bam_file_name:SampleControl_MoCha_3_v2_51d7eedc-5cc1-49fc-a0cc-a184ba7a6df2_RNA.bam",
         "MessageAttributes": {
           "molecular_id": {
         "DataType": "String",
