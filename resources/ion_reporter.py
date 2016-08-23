@@ -26,5 +26,9 @@ class IonReporter(Resource):
 
         self.logger.info('JSON validated')
         # TODO: Catch errors and return appropriate error if this fails.
-        UpdateQueueAccessor().write(json.dumps(input_json))
         self.logger.info('New Ion Reporter file names POSTED to SQS queue')
+        try:
+            UpdateQueueAccessor().write(json.dumps(input_json))
+        except Exception, e:
+            self.logger.error("Unable to import message details: " + e.message)
+            abort(500, message="Unable to import message details: " + e.message)
