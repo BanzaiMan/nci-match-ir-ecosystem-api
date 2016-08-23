@@ -11,7 +11,7 @@ class DynamoDBAccessor(object):
     resources. To use this class declare a child class in the resource directory and instantiate instances of that
     class. Only overwrite in child class the methods in here when necessary."""
 
-    # TODO: Figure out how we should send in correct url for the differnt tiers. Do we use config file?
+    # TODO: Figure out how we should send in correct url for the different tiers. Do we use config file?
     def __init__(self, table, url='http://localhost:8000', region='us-east-1'):
         self.url = url
         self.region = region
@@ -19,6 +19,7 @@ class DynamoDBAccessor(object):
         self.table = self.dynamodb.Table(table)
         self.logger = logging.getLogger(__name__)
         self.logger.debug("DynamoDBAccessor instantiated")
+        # This works ignore red underline!!
 
     # Used to get items without regard to keys from table based on some parameters
     # TODO: Check for errors on scans

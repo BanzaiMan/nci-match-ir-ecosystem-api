@@ -1,0 +1,14 @@
+{
+  "molecular_id": {
+    "DataType": "String",
+    "StringValue": "sc_WA85O"
+  },
+  "table_name": {
+    "DataType": "String",
+    "StringValue": "sample_controls"
+  },
+  "site": {
+    "DataType": "String",
+    "StringValue": "MoCha"
+  }
+}
