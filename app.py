@@ -36,6 +36,8 @@ api.add_resource(IonReporter, '/ion_reporters')
 api.add_resource(MolecularId, '/molecular_id/<string:molecular_id>')
 
 if __name__ == '__main__':
+    logger.info("server starting:")
     http_server = HTTPServer(WSGIContainer(app))
     http_server.listen(port=5000)
     IOLoop.instance().start()
+
