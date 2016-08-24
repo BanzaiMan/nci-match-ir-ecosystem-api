@@ -39,10 +39,13 @@ def build_an_item():
                            site=dict(S=site)))
 
 
-def generate_by_number(file_name, number=10):
+def generate_by_number(number=10):
     print 'generating ' + str(number) + ' items...'
     items = (','.join(item_template % (build_an_item()) for _ in range(number)))
+    return items
 
+
+def write_to_file(items, file_name):
     with open(file_name, 'w') as f_out:
         pretty_json = json.loads(HEAD + items + TAIL)
         f_out.write(json.dumps(pretty_json, indent=4, sort_keys=True))
@@ -69,15 +72,14 @@ def main(argv):
     parser.add_argument("-o", type=str, required=True, dest="json_file_output",
                         help="output file. Required.")
     parser.add_argument("-n", type=str, required=True, dest="number", help="sample control items generated. Required.")
-    #parser.add_argument("-s", type=str, required=False, dest="file_size", help="file_size generated in byte. Optional.")
-
+    # parser.add_argument("-s", type=str, required=False, dest="file_size", help="file_size generated in byte. Optional.")
 
     args = parser.parse_args(argv)
-    #print args
+    # print args
 
-    #if not ars.number is None:
-    generate_by_number(args.json_file_output, int(args.number))
-    #else:
+    # if not ars.number is None:
+    write_to_file(generate_by_number(int(args.number)), args.json_file_output)
+    # else:
     #    generate_by_size(args.json_file_output, args.file_size)
 
 
