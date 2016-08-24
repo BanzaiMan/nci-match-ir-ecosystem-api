@@ -50,13 +50,22 @@ def write_to_file(items, file_name):
 
 
 def generate_by_size(file_name, size=1000):
-    print 'generating file that is a little greater than ' + str(size) + ' megabyte(s).'
+    print 'generating file that is a little > ' + str(size) + ' megabyte(s).'
     file_too_small = True
     items = ""
     while file_too_small:
-        items += (','.join(item_template % (build_an_item()) for _ in range(5)))
+        items += (','.join(item_template % (build_an_item()) for _ in range(50)))
         write_to_file(items, file_name)
-        if os.path.getsize(file_name) > size*1000000:
+        # The 2 is not a typo...First, this function isn't meant to be 100% accurate.
+        # Second, this has to do with the way .getsize, python, and the operating system report size.
+        # Python is buffering and will return the last file size not the current so that is going to make this
+        # inaccurate. Second, the operating system and python handle \r\n \n differently...
+        # So, while a little, hacky, the 2 allows us to basically ensure the file is a 'bit' bigger than
+        # the requested size. Recall also that the point is to get DATA that is returned from Dynamodb that is
+        # greater than the given size. So even if the file size is say 1.2 MB, that doesn't mean it is actually
+        # 1.2 MB in dynamodb, maybe larger or smaller. So inaccuracy is ok here as this is just a script to help us
+        # test code and is not some production code.
+        if os.path.getsize(file_name) > size*1200000:
             file_too_small = False
         else:
             print "File size: " + str(os.path.getsize(file_name)) + " continuing to build..."
@@ -71,18 +80,17 @@ def main(argv):
     parser = argparse.ArgumentParser(add_help=True)
     parser.add_argument("-o", type=str, required=True, dest="json_file_output",
                         help="output file. Required.")
-    parser.add_argument("-n", type=str, required=False, dest="number",
+    parser.add_argument("-n", type=int, required=False, dest="number",
                         help="sample control items generated. Optional.")
-    parser.add_argument("-s", type=str, required=False, dest="file_size",
+    parser.add_argument("-s", type=float, required=False, dest="file_size",
                         help="file_size generated in megabytes. Optional.")
 
     args = parser.parse_args(argv)
 
-    print sys.getsizeof('')
     if args.number is not None:
-        write_to_file(generate_by_number(int(args.number)), args.json_file_output)
+        write_to_file(generate_by_number(args.number), args.json_file_output)
     else:
-        generate_by_size(args.json_file_output, int(args.file_size))
+        generate_by_size(args.json_file_output, args.file_size)
 
 if __name__ == '__main__':
     main(sys.argv[1:])
