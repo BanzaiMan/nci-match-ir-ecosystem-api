@@ -9,21 +9,11 @@ from common.datetime_helper import DateTimeHelper
 import random
 import json
 
-sample_controls_out = """
-{
-  "sample_controls": [
 
 
-"""
+HEAD =  '{"sample_controls": ['
+TAIL = ']}'
 
-HEAD =  """{
-  "sample_controls": [
-"""
-
-TAIL = """
-    ]
-}
-"""
 item_template = '''
     {
       "PutRequest": {
@@ -70,7 +60,7 @@ def generate_by_size(file_name, size=1000):
     # return
 
 def print_usage():
-    print "Usage Example:\n\tsample_control_generator.py -o batch_out.json -s 1000\n\n"
+    print "Usage Example:\n\tsample_control_generator.py -o batch_out.json -n 1000\n\n"
 
 def main(argv):
     parser = argparse.ArgumentParser(add_help=False, usage=print_usage())
@@ -79,17 +69,17 @@ def main(argv):
                         help="usage: sample_control_generator.py [-h] -o json_file -n[umber] 100 -s[ize] 1000[byte]\n")
     parser.add_argument("-o", type=str, required=True, dest="json_file_output",
                         help="output file. Required.")
-    parser.add_argument("-n", type=str, required=False, dest="number", help="sample control items generated. Optional.")
-    parser.add_argument("-s", type=str, required=False, dest="file_size", help="file_size generated in byte. Optional.")
+    parser.add_argument("-n", type=str, required=True, dest="number", help="sample control items generated. Optional.")
+    #parser.add_argument("-s", type=str, required=False, dest="file_size", help="file_size generated in byte. Optional.")
 
 
     args = parser.parse_args(argv)
-    print args
+    #print args
 
-    if not args.number is None:
-        generate_by_number(args.json_file_output, int(args.number))
-    else:
-        generate_by_size(args.json_file_output, args.file_size)
+    #if not args.number is None:
+    generate_by_number(args.json_file_output, int(args.number))
+    #else:
+    #    generate_by_size(args.json_file_output, args.file_size)
 
 
 
