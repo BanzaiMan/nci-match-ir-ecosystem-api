@@ -3,5 +3,5 @@
       "control_type": {"S": "no_template"},
       "site_ip_address": {"S": "129.43.127.133"},
       "molecular_id": {"S": "SC_5AMCC"},
-      "site": {"S": "MoCha"}
+      "site": {"S": "mocha"}
 }
