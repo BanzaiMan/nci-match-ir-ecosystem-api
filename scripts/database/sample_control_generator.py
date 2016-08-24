@@ -19,7 +19,7 @@ item_template = '''
     }
 '''
 
-# Dynamodb is case sensitive, so lets keep fields whenever possible in the same case. Id can be all upper,
+# Dynamodb is case sensitive, so lets keep fields whenever possible in the same case. ID can be all upper,
 # everything else all lower unless there is some good reason not to.
 SITES = ['mocha', 'mdacc']
 TYPES = ['positive', 'no_template']
