@@ -40,7 +40,7 @@
           "control_type": {"S": "no_template"},
           "site_ip_address": {"S": "129.43.127.133"},
           "molecular_id": {"S": "SC_VNTE5"},
-          "site": {"S": "mda"}
+          "site": {"S": "mdacc"}
         }
       }
     },
@@ -51,7 +51,7 @@
           "control_type": {"S": "positive"},
           "site_ip_address": {"S": "129.43.127.133"},
           "molecular_id": {"S": "SC_VEME6"},
-          "site": {"S": "mda"}
+          "site": {"S": "mdacc"}
         }
       }
     }
