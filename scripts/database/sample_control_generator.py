@@ -23,7 +23,9 @@ item_template = '''
     }
 '''
 
-SITES = ['MoCha', 'MDACC']
+# Dynamodb is case sensitive, so lets keep fields whenever possible in the same case. Id can be all upper,
+# everything else all lower unless there is some good reason not to.
+SITES = ['mocha', 'mdacc']
 TYPES = ['positive', 'no_template']
 
 
@@ -81,10 +83,6 @@ def main(argv):
     write_to_file(generate_by_number(int(args.number)), args.json_file_output)
     # else:
     #    generate_by_size(args.json_file_output, args.file_size)
-
-
-
-
 
 if __name__ == '__main__':
     main(sys.argv[1:])
