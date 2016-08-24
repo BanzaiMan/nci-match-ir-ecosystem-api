@@ -41,7 +41,7 @@ def build_an_item():
 
 def generate_by_number(file_name, number=10):
     print 'generating ' + str(number) + ' items...'
-    items = (','.join([item_template % (build_an_item()) for _ in range(number)]))
+    items = (','.join(item_template % (build_an_item()) for _ in range(number)))
 
     with open(file_name, 'w') as f_out:
         pretty_json = json.loads(HEAD + items + TAIL)
