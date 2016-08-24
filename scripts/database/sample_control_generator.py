@@ -25,7 +25,7 @@ item_template = '''
 SITES = ['MoCha', 'MDACC']
 TYPES = ['positive', 'no_template']
 
-def compose_an_item():
+def build_an_item():
     date = DateTimeHelper.get_utc_millisecond_timestamp()
     molecular_id = 'SC_' + StringHelper.generate_molecular_id(5)
     site = random.choice(SITES)
@@ -38,11 +38,13 @@ def compose_an_item():
 
 
 def generate_by_number(file_name, number=10):
+    print 'generating ' + str(number) + ' items...'
     items = ''
     for _ in range(number):
-        items += item_template % (compose_an_item()) + ','
+        items += item_template % (build_an_item()) + ','
     with open(file_name, 'w') as f_out:
         f_out.write(HEAD + items + TAIL)
+    print 'generation done.'
     #return HEAD + items + TAIL
     # #msg = compose_a_message()
     # #item = item_template % (msg)
@@ -63,20 +65,20 @@ def print_usage():
     print "Usage Example:\n\tsample_control_generator.py -o batch_out.json -n 1000\n\n"
 
 def main(argv):
-    parser = argparse.ArgumentParser(add_help=False, usage=print_usage())
+    parser = argparse.ArgumentParser(add_help=True)
 
-    parser.add_argument("-h", action="help",
-                        help="usage: sample_control_generator.py [-h] -o json_file -n[umber] 100 -s[ize] 1000[byte]\n")
+    #parser.add_argument("-h", action="help",
+    #                    help="usage: sample_control_generator.py [-h] -o json_file -n[umber] 100 -s[ize] 1000[byte]\n")
     parser.add_argument("-o", type=str, required=True, dest="json_file_output",
                         help="output file. Required.")
-    parser.add_argument("-n", type=str, required=True, dest="number", help="sample control items generated. Optional.")
+    parser.add_argument("-n", type=str, required=True, dest="number", help="sample control items generated. Required.")
     #parser.add_argument("-s", type=str, required=False, dest="file_size", help="file_size generated in byte. Optional.")
 
 
     args = parser.parse_args(argv)
     #print args
 
-    #if not args.number is None:
+    #if not ars.number is None:
     generate_by_number(args.json_file_output, int(args.number))
     #else:
     #    generate_by_size(args.json_file_output, args.file_size)
