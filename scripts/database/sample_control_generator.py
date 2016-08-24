@@ -29,7 +29,7 @@ TYPES = ['positive', 'no_template']
 
 def build_an_item():
     date = DateTimeHelper.get_utc_millisecond_timestamp()
-    molecular_id = 'SC_' + StringHelper.generate_molecular_id(5)
+    molecular_id = StringHelper.generate_molecular_id(5)
     site = random.choice(SITES)
     control_type = random.choice(TYPES)
     return json.dumps(dict(date_molecular_id_created=dict(S=date),
