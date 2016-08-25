@@ -58,12 +58,19 @@ class DynamoDBAccessor(object):
     # documentation on how to write this:
     # http://docs.aws.amazon.com/amazondynamodb/latest/gettingstartedguide/GettingStarted.Python.03.html#GettingStarted.Python.03.03
     # just remember to use "s" for everything because all we have is strings
-    def update_item(self, key, item_dictionary, *additional_keys):
+    #def update_item(self, key, item_dictionary, *additional_keys):
+    def update_item(self, key, update_expression, expression_attribute_values, *additional_keys):
         self.logger.debug("Dynamodb update_item called")
-        self.logger.debug("key:" + str(key) + "::Items to update: " + str(item_dictionary))
+        self.logger.debug("key:" + str(key) + "::Items to update: " + str(expression_attribute_values))
         all_keys = QueryHelper.create_key_dict('update', key, additional_keys)
         # TODO: Finish this update_item method by creating the update_item query
-        #self.table.update_item(Key=all_keys, )
+        # self.table.update_item(Key=all_keys, )
+        try:
+            return self.table.update_item(Key=all_keys, UpdateExpression=update_expression,
+                                          ExpressionAttributeValues=expression_attribute_values)
+        except ClientError, e:
+            self.logger.debug("Client Error on update_item: " + e.message)
+            raise
 
     # Used to get a single item by ID from the table
     def get_item(self, key, *additional_keys):

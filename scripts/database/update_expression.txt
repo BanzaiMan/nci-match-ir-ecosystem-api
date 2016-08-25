@@ -1,0 +1,5 @@
+"set analysis_id =:analysis_id,
+    date_control_data_loaded =:date_control_data_loaded,
+    dna_bam_path =:dna_bam_path,
+    cdna_bam_path =:cdna_bam_path,
+    vcf_path =:vcf_path"

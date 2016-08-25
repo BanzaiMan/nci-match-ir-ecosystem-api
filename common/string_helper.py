@@ -17,6 +17,12 @@ class StringHelper(object):
 
     @staticmethod
     def generate_random_string(length=5):
+        if not isinstance(length, int):
+            raise ValueError("Invalid Input")
+
+        if length < 1:
+            raise ValueError("Invalid Input")
+
         logger = logging.getLogger(__name__)
         logger.debug("Generating random string for molecular id")
         return ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(length))

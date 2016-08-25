@@ -2,6 +2,7 @@ import logging
 import datetime
 from flask_restful import abort, request, reqparse, Resource
 
+from accessors.celery_task_accessor import CeleryTaskAccessor
 from accessors.sample_control_accessor import SampleControlAccessor
 from common.dictionary_helper import DictionaryHelper
 from common.string_helper import StringHelper
@@ -64,7 +65,8 @@ class SampleControlTable(Resource):
             self.logger.debug("Attempting to write: " + str(new_item_dictionary))
             try:
                 # TODO: Instead of writing directly put on queue and then pop off queue to do write
-                SampleControlAccessor().put_item(new_item_dictionary)
+                # SampleControlAccessor().put_item(new_item_dictionary)
+                CeleryTaskAccessor().put_item(new_item_dictionary)
                 return {"result": "New sample control created", "molecular_id": new_item_dictionary['molecular_id']}
             except Exception, e:
                 self.logger.error("Could not put_item because " + e.message)

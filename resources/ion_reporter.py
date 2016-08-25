@@ -26,6 +26,7 @@ class IonReporter(Resource):
 
         self.logger.info('JSON validated')
         try:
+            # TODO:Change to use celery
             UpdateQueueAccessor().write(json.dumps(input_json))
             self.logger.info('New Ion Reporter file names POSTED to SQS queue')
         except Exception, e:

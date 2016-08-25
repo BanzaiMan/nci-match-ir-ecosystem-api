@@ -11,3 +11,6 @@ class SqsAccessor(object):
         self.region_name = region_name
         self.sqs = boto3.resource('sqs', region_name=self.region_name)
         self.queue = self.sqs.get_queue_by_name(QueueName=self.queue_name)
+
+
+

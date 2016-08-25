@@ -1,0 +1,7 @@
+{
+  ":analysis_id": {"S": "SC_5AMCC_mocha_51d7eedc"},
+  ":date_control_data_loaded": {"S": "2016-08-23 16:56:19.346"},
+  ":dna_bam_path": {"S": "SC_5AMCC_mocha_51d7eedc.bam"},
+  ":cdna_bam_path": {"S": "SC_5AMCC_mocha_51d7eedc_RNA.bam"},
+  ":vcf_path": {"S": "SC_5AMCC_mocha_51d7eedc.vcf"}
+}
