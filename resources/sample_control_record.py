@@ -1,23 +1,48 @@
 import logging
 from accessors.sample_control_accessor import SampleControlAccessor
-from flask_restful import abort, Resource
+from flask_restful import abort, request, reqparse, Resource
+from common.dictionary_helper import DictionaryHelper
+from common.query_helper import QueryHelper
 
-# TODO: Qing, in order to take in query parameters you need to put code here to recieve query parameters. Look at the example in the sample_control_table.py
+
+parser = reqparse.RequestParser()
+parser.add_argument('molecular_id',  type=str, required=True)
+parser.add_argument('analysis_id',   type=str, required=False)
+parser.add_argument('dna_bam_path',  type=str, required=False)
+parser.add_argument('cdna_bam_path', type=str, required=False)
+parser.add_argument('vcf_path',      type=str, required=False)
+
 
 class SampleControlRecord(Resource):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
     def put(self, molecular_id):
-        # TODO: Qing, the caller will not know what the update_expresion, or expression_attribute_values will be. Nor should they because they shouldn't know we are using dynamodb.
-        # you need methods that take a dictionary and creates these values. This is what the common.Query Helper class
-        # is for.  Recall that the person calling this particular method is just putting in a
-        # def put(self, molecular_id, update_expression, expression_attribute_values):
         self.logger.info("updating sample control with id: " + str(molecular_id))
+        args = request.args
+        self.logger.debug(str(args))
+
+        if not DictionaryHelper.has_values(args):
+            self.logger.debug("update item failed, because item updating information was not passed in request")
+            abort(400, message="Need passing item updating information in order to update a sample control item. ")
+
+        if 'molecular_id' not in args:
+            self.logger.debug("update item failed, because molecular_id was not passed in request")
+            abort(400, message="Must need molecular_id to update a sample control item. ")
+
+        if args['molecular_id'] != molecular_id:
+            self.logger.debug(
+                "update item failed, because molecular_id in passed item information was not the same molecular_id as requested.")
+            abort(400,
+                  message="Must provide consistent molecular_id in item information to be updated and in requested molecular_id. ")
+
+        update_item_dictionary = args.copy()
+        update_expression, expression_attribute_values = QueryHelper.create_update_expression(update_item_dictionary)
+
         try:
             # TODO: Instead of writing directly put on queue and then pop off queue to do delete
-            # SampleControlAccessor().update_item({'molecular_id': molecular_id}, update_expression,
-            #                                   expression_attribute_values)
+            SampleControlAccessor().update_item({'molecular_id': molecular_id}, update_expression,
+                                              expression_attribute_values)
             return {"message": "Item updated", "molecular_id": molecular_id}
         except Exception, e:
             self.logger.debug("updated_item failed because" + e.message)
