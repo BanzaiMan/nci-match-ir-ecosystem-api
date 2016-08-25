@@ -7,9 +7,16 @@ class SampleControlRecord(Resource):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
-    # TODO: Write PUT (Update)
-    def put(self, molecular_id):
-        pass
+    #def put(self, molecular_id):
+    def put(self, molecular_id, update_expression, expression_attribute_values):
+        self.logger.info("updating sample control with id: " + str(molecular_id))
+        try:
+            # TODO: Instead of writing directly put on queue and then pop off queue to do delete
+            SampleControlAccessor().update_item({'molecular_id': molecular_id}, update_expression,
+                                                expression_attribute_values)
+            return {"message": "Item updated", "molecular_id": molecular_id}
+        except Exception, e:
+            self.logger.debug("updated_item failed because" + e.message)
 
     def delete(self, molecular_id):
         self.logger.info("Deleting sample control with id: " + str(molecular_id))
