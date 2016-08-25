@@ -40,7 +40,8 @@ class DynamoDBAccessor(object):
 
         items = results['Items']
         if results.get('LastEvaluatedKey'):
-            items += self.scan(query_parameters, results['LastEvaluatedKey'])
+            #items += self.scan(query_parameters, results['LastEvaluatedKey'])
+            items += self.scan(query_parameters, results['LastEvaluatedKey'])['Items']
 
         return items
 
