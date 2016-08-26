@@ -40,8 +40,7 @@ class DynamoDBAccessor(object):
 
         items = results['Items']
         if results.get('LastEvaluatedKey'):
-            #items += self.scan(query_parameters, results['LastEvaluatedKey'])
-            items += self.scan(query_parameters, results['LastEvaluatedKey'])['Items']
+            items += self.scan(query_parameters, results['LastEvaluatedKey'])
 
         return items
 
@@ -80,6 +79,20 @@ class DynamoDBAccessor(object):
     # so I'm performing a little python magic by passing the actual function to another function
     def delete_item(self, key, *additional_keys):
         return self.__item(self.table.delete_item, 'delete', key, additional_keys)
+
+    def batch_writer(self, items_list_dictionary):
+        with self.table.batch_writer() as batch:
+            for item in items_list_dictionary:
+                try:
+                    batch.put_item(Item=item)
+                except Exception, e:
+                    self.logger.debug("Client Error on update_item: " + e.message)
+
+    def delete_table(self):
+        self.table.delete()
+
+    def create_table(self):
+        pass
 
     def __item(self, function, function_description, key, *additional_keys):
         self.logger.debug("Dynamodb " + function_description + "_item with Keys called")

@@ -13,3 +13,6 @@ class SampleControlAccessor(DynamoDBAccessor):
         DynamoDBAccessor.__init__(self, 'sample_controls',
                                   __builtin__.environment_config[__builtin__.environment]['dynamo_endpoint'],
                                   __builtin__.environment_config[__builtin__.environment]['region'])
+
+    def create_table(self):
+        pass
