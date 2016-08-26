@@ -44,13 +44,18 @@ class MolecularId(Resource):
         item_dictionary = args.copy()
         distinct_tasks_list = self.__get_distinct_tasks(item_dictionary, molecular_id)
 
-        try:
-            for distinct_task in distinct_tasks_list:
-                CeleryTaskAccessor().process_file(distinct_task)
-                # SampleControlAccessor().update(distinct_task)
-            return {"message": "Item updated", "molecular_id": molecular_id}
-        except Exception, e:
-            self.logger.debug("updated_item failed because" + e.message)
+        if len(distinct_tasks_list) > 0:
+            try:
+                for distinct_task in distinct_tasks_list:
+                    CeleryTaskAccessor().process_file(distinct_task)
+                    # SampleControlAccessor().update(distinct_task)
+                return {"message": "Item updated", "molecular_id": molecular_id}
+            except Exception, e:
+                self.logger.debug("updated_item failed because" + e.message)
+                abort(500, message="Updating_item failed because: " + e.message)
+        else:
+            self.logger.debug("No distinct tasks where found in message")
+            abort(404, message="No distinct tasks where found in message")
 
     @staticmethod
     def __get_distinct_tasks(item_dictionary, molecular_id):
