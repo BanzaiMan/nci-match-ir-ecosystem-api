@@ -11,11 +11,7 @@ parser = reqparse.RequestParser()
 # TODO: lower priority, but could expand to consider more of the attributes
 parser.add_argument('analysis_id', type=str, required=False)
 parser.add_argument('site',         type=str, required=False)
-parser.add_argument('dna_bam_file_name', type=str, required=False)
-parser.add_argument('patient_id', type=str, required=False)
-parser.add_argument('cdna_bam_file_name', type=str, required=False)
-parser.add_argument('vcf_file_name', type=str, required=False)
-parser.add_argument('molecular_id', type=str, required=False)
+
 
 # curl -X POST -H "Content-Type: application/json" -d '{ "molecular_id":"123", "analysis_id":"fork",
 # "patient_id":"fork", "site":"fork", "vcf_file_name":"fork", "dna_bam_file_name":"fork", "cdna_bam_file_name":"fork"}'
@@ -37,9 +33,9 @@ class IonReporter(Resource):
 
         self.logger.info('JSON validated')
         try:
-            # TODO:Change to use celery
-            #UpdateQueueAccessor().write(json.dumps(input_json))
-            CeleryTaskAccessor().message_body_item(json.dumps(input_json))
+            # TODO: Change to celery ir put message to update database only...don't process any files here
+            # UpdateQueueAccessor().write(json.dumps(input_json))
+            # CeleryTaskAccessor().message_body_item(json.dumps(input_json))
             self.logger.info('New Ion Reporter file names POSTED to SQS queue')
         except Exception, e:
             self.logger.error("Unable to import message details: " + e.message)

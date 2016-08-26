@@ -1,6 +1,14 @@
 import logging
-from flask_restful import abort, Resource
+from flask_restful import abort, request, reqparse, Resource
 from accessors.sample_control_accessor import SampleControlAccessor
+from common.dictionary_helper import DictionaryHelper
+from accessors.celery_task_accessor import CeleryTaskAccessor
+
+parser = reqparse.RequestParser()
+parser.add_argument('analysis_id',   type=str, required=False, location='json')
+parser.add_argument('dna_bam_path',  type=str, required=False, location='json')
+parser.add_argument('cdna_bam_path', type=str, required=False, location='json')
+parser.add_argument('vcf_path',      type=str, required=False, location='json')
 
 
 class MolecularId(Resource):
@@ -23,3 +31,43 @@ class MolecularId(Resource):
         # 2. Import requests library and then make a rest call to patient ecosystem to check patient table
 
         abort(404, message=str(molecular_id + " was not found"))
+
+    def put(self, molecular_id):
+        self.logger.info("updating molecular_id: " + str(molecular_id))
+        args = parser.parse_args()
+        self.logger.debug(str(args))
+
+        if not DictionaryHelper.has_values(args):
+            self.logger.debug("update item failed, because item updating information was not passed in request")
+            abort(400, message="Need passing item updating information in order to update a sample control item. ")
+
+        item_dictionary = args.copy()
+        distinct_tasks_list = self.__get_distinct_tasks(item_dictionary, molecular_id)
+
+        try:
+            for distinct_task in distinct_tasks_list:
+                CeleryTaskAccessor().process_file(distinct_task)
+                # SampleControlAccessor().update(distinct_task)
+            return {"message": "Item updated", "molecular_id": molecular_id}
+        except Exception, e:
+            self.logger.debug("updated_item failed because" + e.message)
+
+    @staticmethod
+    def __get_distinct_tasks(item_dictionary, molecular_id):
+        distinct_tasks_list = list()
+        if 'vcf_path' in item_dictionary and 'analysis_id' in item_dictionary:
+            distinct_tasks_list.append({'molecular_id': molecular_id,
+                                        'analysis_id': item_dictionary['analysis_id'],
+                                        'vcf_path': item_dictionary['vcf_path']})
+
+        if 'dna_bam_path' in item_dictionary and 'analysis_id' in item_dictionary:
+            distinct_tasks_list.append({'molecular_id': molecular_id,
+                                        'analysis_id': item_dictionary['analysis_id'],
+                                        'dna_bam_path': item_dictionary['dna_bam_path']})
+
+        if 'cdna_bam_path' in item_dictionary and 'analysis_id' in item_dictionary:
+            distinct_tasks_list.append({'molecular_id': molecular_id,
+                                        'analysis_id': item_dictionary['analysis_id'],
+                                        'cdna_bam_path': item_dictionary['cdna_bam_path']})
+
+        return distinct_tasks_list

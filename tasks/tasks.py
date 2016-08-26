@@ -44,17 +44,11 @@ def update(update_message):
 
 
 @app.task
-def write_vcf(vcf_file_path):
-    logger.info(vcf_file_path)
-    update_data = vcf_file_path
+def ir_file(file_process_message):
+    logger.info(file_process_message)
     # TODO: process vcf and create tsv
     # TODO: add tsv path to update dictionary
 
-    SampleControlAccessor().update(update_data)
+    SampleControlAccessor().update(file_process_message)
     return "VCF written"
 
-
-@app.task
-def write_message_body(message_body):
-    logger.info(message_body)
-    return write_message_body.delay(message_body)

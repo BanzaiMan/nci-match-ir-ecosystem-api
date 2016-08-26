@@ -49,7 +49,12 @@ api.add_resource(SampleControlTable, '/v1/sample_controls')
 # Path for Updating and Deleting sample controls
 api.add_resource(SampleControlRecord, '/v1/sample_controls/<string:molecular_id>')
 
+# Path for updating information about ion reporters themselves
 api.add_resource(IonReporter, '/v1/ion_reporters')
+
+# Path for either sending in files from the ir (bam,vcf) to process them and store them based on their molecular id
+# in either the patient or sample_control table. Also a path to query with GET to see if molecular_id is valid and
+# what type of molecular id it is (i.e., sample_control or patient)
 api.add_resource(MolecularId, '/v1/molecular_id/<string:molecular_id>')
 
 if __name__ == '__main__':

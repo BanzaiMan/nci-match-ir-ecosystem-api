@@ -16,6 +16,7 @@ class SampleControlRecord(Resource):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
+    # this put should just put items on the queue and then update the database, shouldn't process files.
     def put(self, molecular_id):
         self.logger.info("updating sample control with id: " + str(molecular_id))
         args = parser.parse_args()
@@ -29,9 +30,11 @@ class SampleControlRecord(Resource):
         item_dictionary.update({'molecular_id': molecular_id})
 
         try:
-            CeleryTaskAccessor().vcf_item(item_dictionary)
+            # TODO create generic celery task accessor to simply update item (file processing should not be done here I don't think)
+            # CeleryTaskAccessor().vcf_item(item_dictionary)
             # SampleControlAccessor().update(item_dictionary)
-            return {"message": "Item updated", "molecular_id": molecular_id}
+            return {"message": "Function not implemented yet. Use /v1/molecular_id/<MOLECULAR_ID> to process IR Files",
+                    "molecular_id": molecular_id}
         except Exception, e:
             self.logger.debug("updated_item failed because" + e.message)
 
