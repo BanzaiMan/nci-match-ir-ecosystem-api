@@ -1,5 +1,5 @@
 import logging
-from tasks.tasks import put, write_vcf
+from tasks.tasks import put, write_vcf, write_message_body
 
 
 # This code is pointless and can be removed later. Its only here for pedagogical purposes.
@@ -23,6 +23,16 @@ class CeleryTaskAccessor(object):
         try:
             # this is the only line that actually does anything interesting.
             return write_vcf.delay(item_dictionary)
+        except Exception, e:
+            self.logger.debug("Client Error on queue put_item: " + e.message)
+            raise
+
+    def message_body_item(self, message_body):
+        self.logger.debug("Celery QUEUE, TRYING TO WRITE TO THE QUEUE")
+        self.logger.debug(str(message_body))
+        try:
+            # this is the only line that actually does anything interesting.
+            return write_message_body.delay(message_body)
         except Exception, e:
             self.logger.debug("Client Error on queue put_item: " + e.message)
             raise
