@@ -45,6 +45,7 @@ class SampleControlTable(Resource):
 
     # This is the method I noted at top of class as not being perfectly consistent with standards.
     # all things considered this seems best for now unless a non verbose way can be thought up.
+    # Go directly to database...do not change to use queue because we need the molecular_id back and written
     def post(self):
         self.logger.info("POST Request to create a new sample control")
         args = request.args
@@ -55,7 +56,7 @@ class SampleControlTable(Resource):
             abort(400, message="molecular_id is not a valid input when attempting to create a new sample control. "
                                "The post will create the id for you. Simply pass in site and control_type'")
 
-        if DictionaryHelper.keys_have_value(args, ['type', 'site']):
+        if DictionaryHelper.keys_have_value(args, ['control_type', 'site']):
             self.logger.debug("Sample Control creation failed, because request molecular_id was passed in")
 
             new_item_dictionary = args.copy()
@@ -64,17 +65,16 @@ class SampleControlTable(Resource):
 
             self.logger.debug("Attempting to write: " + str(new_item_dictionary))
             try:
-                # TODO: Instead of writing directly put on queue and then pop off queue to do write
-                # SampleControlAccessor().put_item(new_item_dictionary)
-                CeleryTaskAccessor().put_item(new_item_dictionary)
+                # This should go directly to database do not use queue here...every other write...but not this one.
+                SampleControlAccessor().put_item(new_item_dictionary)
                 return {"result": "New sample control created", "molecular_id": new_item_dictionary['molecular_id']}
             except Exception, e:
                 self.logger.error("Could not put_item because " + e.message)
                 abort(500, message="put_item failed because " + e.message)
 
         else:
-            self.logger.debug("Sample Control creation failed, because both site and type were note passed in")
-            abort(400, message="Must send in both a site and a type in order to create a sample control")
+            self.logger.debug("Sample Control creation failed, because both site and control_type were note passed in")
+            abort(400, message="Must send in both a site and a control_type in order to create a sample control")
 
     # Internal method to get new_molecular_id and ensure its unique before trying to use it.
     def __get_unique_key(self):
