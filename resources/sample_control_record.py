@@ -3,7 +3,6 @@ from accessors.celery_task_accessor import CeleryTaskAccessor
 from accessors.sample_control_accessor import SampleControlAccessor
 from flask_restful import abort, request, reqparse, Resource
 from common.dictionary_helper import DictionaryHelper
-from common.query_helper import QueryHelper
 
 
 parser = reqparse.RequestParser()
