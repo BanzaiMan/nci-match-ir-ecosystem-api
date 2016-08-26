@@ -6,11 +6,10 @@ from common.query_helper import QueryHelper
 
 
 parser = reqparse.RequestParser()
-parser.add_argument('molecular_id',  type=str, required=True)
-parser.add_argument('analysis_id',   type=str, required=False)
-parser.add_argument('dna_bam_path',  type=str, required=False)
-parser.add_argument('cdna_bam_path', type=str, required=False)
-parser.add_argument('vcf_path',      type=str, required=False)
+parser.add_argument('analysis_id',   type=str, required=False, location='json')
+parser.add_argument('dna_bam_path',  type=str, required=False, location='json')
+parser.add_argument('cdna_bam_path', type=str, required=False, location='json')
+parser.add_argument('vcf_path',      type=str, required=False, location='json')
 
 
 class SampleControlRecord(Resource):
@@ -19,22 +18,12 @@ class SampleControlRecord(Resource):
 
     def put(self, molecular_id):
         self.logger.info("updating sample control with id: " + str(molecular_id))
-        args = request.args
+        args = parser.parse_args()
         self.logger.debug(str(args))
 
         if not DictionaryHelper.has_values(args):
             self.logger.debug("update item failed, because item updating information was not passed in request")
             abort(400, message="Need passing item updating information in order to update a sample control item. ")
-
-        if 'molecular_id' not in args:
-            self.logger.debug("update item failed, because molecular_id was not passed in request")
-            abort(400, message="Must need molecular_id to update a sample control item. ")
-
-        if args['molecular_id'] != molecular_id:
-            self.logger.debug(
-                "update item failed, because molecular_id in passed item information was not the same molecular_id as requested.")
-            abort(400,
-                  message="Must provide consistent molecular_id in item information to be updated and in requested molecular_id. ")
 
         update_item_dictionary = args.copy()
         update_expression, expression_attribute_values = QueryHelper.create_update_expression(update_item_dictionary)
