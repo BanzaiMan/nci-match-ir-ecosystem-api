@@ -52,3 +52,9 @@ def write_vcf(vcf_file_path):
 
     SampleControlAccessor().update(update_data)
     return "VCF written"
+
+
+@app.task
+def write_message_body(message_body):
+    logger.info(message_body)
+    return write_message_body.delay(message_body)
