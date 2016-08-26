@@ -1,4 +1,5 @@
 import logging
+from accessors.celery_task_accessor import CeleryTaskAccessor
 from accessors.sample_control_accessor import SampleControlAccessor
 from flask_restful import abort, request, reqparse, Resource
 from common.dictionary_helper import DictionaryHelper
@@ -25,13 +26,12 @@ class SampleControlRecord(Resource):
             self.logger.debug("update item failed, because item updating information was not passed in request")
             abort(400, message="Need passing item updating information in order to update a sample control item. ")
 
-        update_item_dictionary = args.copy()
-        update_expression, expression_attribute_values = QueryHelper.create_update_expression(update_item_dictionary)
+        item_dictionary = args.copy()
+        item_dictionary.update({'molecular_id': molecular_id})
 
         try:
-            # TODO: Instead of writing directly put on queue and then pop off queue to do delete
-            SampleControlAccessor().update_item({'molecular_id': molecular_id}, update_expression,
-                                              expression_attribute_values)
+            CeleryTaskAccessor().vcf_item(item_dictionary)
+            # SampleControlAccessor().update(item_dictionary)
             return {"message": "Item updated", "molecular_id": molecular_id}
         except Exception, e:
             self.logger.debug("updated_item failed because" + e.message)

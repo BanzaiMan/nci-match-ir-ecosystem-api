@@ -54,17 +54,20 @@ class DynamoDBAccessor(object):
             self.logger.debug("Client Error on put_item: " + e.message)
             raise
 
-    # documentation on how to write this:
-    # http://docs.aws.amazon.com/amazondynamodb/latest/gettingstartedguide/GettingStarted.Python.03.html#GettingStarted.Python.03.03
-    # just remember to use "s" for everything because all we have is strings
-    #def update_item(self, key, item_dictionary, *additional_keys):
-    def update_item(self, key, update_expression, expression_attribute_values, *additional_keys):
+    def update_item(self, item_dictionary, key, *additional_keys):
         self.logger.debug("Dynamodb update_item called")
+        update_expression, expression_attribute_values = QueryHelper.create_update_expression(item_dictionary)
+
         self.logger.debug("key:" + str(key) + "::Items to update: " + str(expression_attribute_values))
-        all_keys = QueryHelper.create_key_dict('update', key, additional_keys)
-        # TODO: Finish this update_item method by creating the update_item query
-        # self.table.update_item(Key=all_keys, )
+        if not additional_keys:
+            all_keys = QueryHelper.create_key_dict('update', key)
+        else:
+            all_keys = QueryHelper.create_key_dict('update', key, additional_keys)
+
         try:
+            self.logger.debug("Key=" + str(all_keys))
+            self.logger.debug("UpdateExpression=" + str(update_expression))
+            self.logger.debug("ExpressionAttributeValues=" + str(expression_attribute_values))
             return self.table.update_item(Key=all_keys, UpdateExpression=update_expression,
                                           ExpressionAttributeValues=expression_attribute_values)
         except ClientError, e:
@@ -87,6 +90,7 @@ class DynamoDBAccessor(object):
                     batch.put_item(Item=item)
                 except Exception, e:
                     self.logger.debug("Client Error on update_item: " + e.message)
+                    raise
 
     def delete_table(self):
         self.table.delete()

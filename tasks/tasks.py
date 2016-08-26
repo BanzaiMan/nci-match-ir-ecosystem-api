@@ -30,7 +30,25 @@ with open("config/environment.yml", 'r') as yaml_file:
 
 
 @app.task
-def put(update_message):
-    logger.info(update_message)
-    SampleControlAccessor().put_item(update_message)
+def put(put_message):
+    logger.info(put_message)
+    SampleControlAccessor().put_item(put_message)
     return "You are putting an item"
+
+
+@app.task
+def update(update_message):
+    logger.info(update_message)
+    SampleControlAccessor().update(update_message)
+    return "Done updating an item"
+
+
+@app.task
+def write_vcf(vcf_file_path):
+    logger.info(vcf_file_path)
+    update_data = vcf_file_path
+    # TODO: process vcf and create tsv
+    # TODO: add tsv path to update dictionary
+
+    SampleControlAccessor().update(update_data)
+    return "VCF written"

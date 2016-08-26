@@ -1,5 +1,6 @@
 from boto3.dynamodb.conditions import Attr
 import logging
+import json
 from datetime_helper import DateTimeHelper
 
 
@@ -42,17 +43,13 @@ class QueryHelper(object):
         logger.debug("Update expression and attribute values being created")
         logger.debug(str(multidict_query))
 
-        update_expression = "\"set "
-        update_expression_attribute_values = "{ "
-        # for key, value in multidict_query.iteritems(multi=False):
-        for key, value in multidict_query.iteritems():
-            update_expression = update_expression + key + " =:" + key + ", "
-            update_expression_attribute_values = update_expression_attribute_values + "\":" + key + "\": {\"S\": \"" + value + "\"}, "
-
-        update_expression = update_expression + "date_control_data_loaded =:date_control_data_loaded\" "
-        update_expression_attribute_values = update_expression_attribute_values + "\":date_control_data_loaded\": {\"S\": \"" + DateTimeHelper.get_utc_millisecond_timestamp() + "\"} }"
+        update_expression = "set " + (', '.join(str(key) + " =:" + str(key) for key, value in multidict_query.iteritems()))
+        update_expression_attribute_values = (', '.join("\":" + str(key) + "\": \"" + str(value) + "\""
+                                                        for key, value in multidict_query.iteritems()))
 
         logger.debug("Update expression created: " + str(update_expression))
         logger.debug("Update expression attribute values created: " + str(update_expression_attribute_values))
-        return update_expression, update_expression_attribute_values
+        exp = '{'+update_expression_attribute_values+'}'
+        logger.debug(exp)
+        return update_expression, json.loads(exp)
 

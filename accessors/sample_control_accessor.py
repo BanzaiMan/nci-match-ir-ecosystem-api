@@ -2,6 +2,8 @@ import logging
 import __builtin__
 from dynamodb_accessor import DynamoDBAccessor
 
+KEY = 'molecular_id'
+
 
 class SampleControlAccessor(DynamoDBAccessor):
 
@@ -16,3 +18,13 @@ class SampleControlAccessor(DynamoDBAccessor):
 
     def create_table(self):
         pass
+
+    def update(self, item_dictionary):
+        sample_control_table_key = str(item_dictionary.pop(KEY))
+        self.logger.debug(sample_control_table_key)
+        try:
+            return self.update_item(item_dictionary, dict(molecular_id=sample_control_table_key))
+        except Exception, e:
+            self.logger.debug("update_item exception in dynamodb: " + e.message)
+            raise
+
