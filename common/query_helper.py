@@ -49,7 +49,6 @@ class QueryHelper(object):
 
         logger.debug("Update expression created: " + str(update_expression))
         logger.debug("Update expression attribute values created: " + str(update_expression_attribute_values))
-        exp = '{'+update_expression_attribute_values+'}'
-        logger.debug(exp)
-        return update_expression, json.loads(exp)
+        logger.debug(str(update_expression_attribute_values))
+        return update_expression, json.loads('{'+update_expression_attribute_values+'}')
 
