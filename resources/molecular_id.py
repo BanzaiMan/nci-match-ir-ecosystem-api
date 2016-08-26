@@ -1,5 +1,5 @@
 import logging
-from flask_restful import abort, request, reqparse, Resource
+from flask_restful import abort, reqparse, Resource
 from accessors.sample_control_accessor import SampleControlAccessor
 from common.dictionary_helper import DictionaryHelper
 from accessors.celery_task_accessor import CeleryTaskAccessor

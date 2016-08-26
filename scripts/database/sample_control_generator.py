@@ -7,7 +7,6 @@ import json
 import yaml
 import __builtin__
 from logging.config import fileConfig
-from collections import Counter
 
 # A little safer
 path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..'))

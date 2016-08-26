@@ -1,13 +1,10 @@
 import json
 import logging
 from flask_restful import abort, request, reqparse, Resource
-from accessors.update_queue_accessor import UpdateQueueAccessor
 from common.schemas import Schemas
 from jsonschema import validate, ValidationError
-from accessors.celery_task_accessor import CeleryTaskAccessor
 
 parser = reqparse.RequestParser()
-
 # TODO: lower priority, but could expand to consider more of the attributes
 parser.add_argument('analysis_id', type=str, required=False)
 parser.add_argument('site',         type=str, required=False)

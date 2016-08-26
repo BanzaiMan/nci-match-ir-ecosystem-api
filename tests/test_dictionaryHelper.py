@@ -1,9 +1,6 @@
 import unittest
-
-
-
-from ddt import ddt, data, unpack
 import sys
+from ddt import ddt, data, unpack
 
 sys.path.append('..')
 from common.dictionary_helper import DictionaryHelper
