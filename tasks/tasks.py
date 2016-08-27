@@ -4,12 +4,9 @@ import __builtin__
 import yaml
 
 from accessors.sample_control_accessor import SampleControlAccessor
-from logging.config import fileConfig
 from celery import Celery
 
 # Logging functionality
-# TODO: fix path issue to work on multiple OSes
-fileConfig('config/logging_config.ini')
 logger = logging.getLogger(__name__)
 
 BROKER__URL = "sqs://" + os.environ['AWS_ACCESS_KEY_ID'] + ":" + os.environ['AWS_SECRET_ACCESS_KEY'] + "@"
