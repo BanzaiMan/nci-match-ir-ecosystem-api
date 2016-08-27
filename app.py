@@ -8,12 +8,14 @@ from flask_restful import Api
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 from tornado.wsgi import WSGIContainer
+from accessors.sample_control_accessor import SampleControlAccessor
 
 from resources.ion_reporter import IonReporter
 from resources.sample_control_table import SampleControlTable
 from resources.sample_control_record import SampleControlRecord
 from resources.molecular_id import MolecularId
 
+# Boilerplate code to start flask
 app = Flask(__name__)
 api = Api(app)
 
@@ -22,18 +24,19 @@ api = Api(app)
 fileConfig('config/logging_config.ini')
 logger = logging.getLogger(__name__)
 
-# Use this variable to read the config file
+# Use this variable to read the config file which contains the database connection and
+# tier (i.e., development, tests, uat, production) specific configuration information.
 __builtin__.environment = None
 try:
     __builtin__.environment = os.environ['ENVIRONMENT']
-
 except KeyError, e:
     logger.error("Must configure ENVIRONMENT variable in your environment in order for application to start")
     logger.error(e.message)
 
 logger.info("Environment set to: " + __builtin__.environment)
 
-# Use the environment variable from above to read yaml config file set global variable
+# Use the environment variable from above to read yaml config file and set global variable to the loaded file
+# so tier specific information may be retrieved by the various modules as needed.
 with open("config/environment.yml", 'r') as yaml_file:
     __builtin__.environment_config = yaml.load(yaml_file)
 
@@ -57,8 +60,10 @@ api.add_resource(IonReporter, '/v1/ion_reporters')
 # what type of molecular id it is (i.e., sample_control or patient)
 api.add_resource(MolecularId, '/v1/molecular_id/<string:molecular_id>')
 
+# For the most part, this is boilerplate code to start tornado server
 if __name__ == '__main__':
-    logger.info("server starting with port 5000:")
+    logger.info("server starting on port 5000:")
+    sca = SampleControlAccessor()
     http_server = HTTPServer(WSGIContainer(app))
     http_server.listen(port=5000)
     IOLoop.instance().start()

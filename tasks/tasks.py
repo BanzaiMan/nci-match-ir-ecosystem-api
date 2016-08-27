@@ -14,7 +14,6 @@ app = Celery('tasks', broker=BROKER__URL)
 
 try:
     __builtin__.environment = os.environ['ENVIRONMENT']
-
 except KeyError, e:
     logger.error("Must configure ENVIRONMENT variable in your environment in order for application to start")
     logger.error(e.message)

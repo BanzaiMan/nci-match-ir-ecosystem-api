@@ -1,25 +1,28 @@
 import boto3
+from abc import ABCMeta, abstractmethod
 from botocore.exceptions import ClientError
 import logging
 from common.query_helper import QueryHelper
 
 
 class DynamoDBAccessor(object):
+    __metaclass__ = ABCMeta
 
     """Generic class for working with Dynamodb tables. Nothing in this class should refer to a specific table
     or hardcode any attribute. Further, this class should never be directly called from the main application, only
     resources. To use this class declare a child class in the resource directory and instantiate instances of that
     class. Only overwrite in child class the methods in here when necessary."""
 
-    # TODO: Figure out how we should send in correct url for the different tiers. Do we use config file?
+    @abstractmethod
     def __init__(self, table, url='http://localhost:8000', region='us-east-1'):
         self.url = url
         self.region = region
         self.dynamodb = boto3.resource('dynamodb', region_name=region, endpoint_url=url)
-        self.table = self.dynamodb.Table(table)
+        self.client = boto3.client('dynamodb', region_name=region, endpoint_url=url)
+        self.logger.info("Checking database for sample_control table existence.")
+        self.table = self.handle_table_creation(table)
         self.logger = logging.getLogger(__name__)
         self.logger.debug("DynamoDBAccessor instantiated")
-        # This works ignore red underline!!
 
     # Used to get items without regard to keys from table based on some parameters
     # TODO: Check for errors on scans
@@ -71,32 +74,47 @@ class DynamoDBAccessor(object):
             return self.table.update_item(Key=all_keys, UpdateExpression=update_expression,
                                           ExpressionAttributeValues=expression_attribute_values)
         except ClientError, e:
-            self.logger.debug("Client Error on update_item: " + e.message)
+            self.logger.error("Client Error on update_item: " + e.message)
             raise
 
     # Used to get a single item by ID from the table
     def get_item(self, key, *additional_keys):
-        return self.__item(self.table.get_item, 'get', key, additional_keys)
+        try:
+            return self.__item(self.table.get_item, 'get', key, additional_keys)
+        except ClientError, e:
+            self.logger.error("Client Error on delete_item: " + e.message)
+            raise
 
     # this function and get_item are essentially the same except the function name
     # so I'm performing a little python magic by passing the actual function to another function
     def delete_item(self, key, *additional_keys):
-        return self.__item(self.table.delete_item, 'delete', key, additional_keys)
+        try:
+            return self.__item(self.table.delete_item, 'delete', key, additional_keys)
+        except ClientError, e:
+            self.logger.error("Client Error on delete_item: " + e.message)
+            raise
 
     def batch_writer(self, items_list_dictionary):
         with self.table.batch_writer() as batch:
             for item in items_list_dictionary:
                 try:
                     batch.put_item(Item=item)
-                except Exception, e:
-                    self.logger.debug("Client Error on update_item: " + e.message)
+                except ClientError, e:
+                    self.logger.error("Client Error on put_item: " + e.message)
                     raise
 
     def delete_table(self):
-        self.table.delete()
+        try:
+            self.table.delete()
+        except ClientError, e:
+            self.logger.error("Client Error on deleting table: " + e.message)
+            raise
 
-    def create_table(self):
-        pass
+    @abstractmethod
+    def create_table(self, table_name):
+        """Each concrete class must know the specifics on how to create themselves."""
+        self.logger.debug("create_table called on dynamodb...this shouldn't be possible")
+        return NotImplementedError
 
     def __item(self, function, function_description, key, *additional_keys):
         self.logger.debug("Dynamodb " + function_description + "_item with Keys called")
@@ -109,5 +127,15 @@ class DynamoDBAccessor(object):
         try:
             return function(Key=all_keys)
         except ClientError, e:
-            self.logger.debug("Client Error on delete_item: " + e.message)
+            self.logger.error("Client Error on " + function_description + ": " + e.message)
             raise
+
+    def handle_table_creation(self, table_name):
+        try:
+            table_description = self.client.describe_table(TableName=table_name)
+            self.logger.info("Table found on system: " + table_name + " :Description: " + str(table_description))
+        except Exception, e:
+            self.logger.debug(e.message)
+            return self.create_table(table_name)
+
+        return self.dynamodb.Table(table_name)
