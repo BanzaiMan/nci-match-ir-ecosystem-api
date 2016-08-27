@@ -49,5 +49,7 @@ class QueryHelper(object):
         logger.debug("Update expression created: " + str(update_expression))
         logger.debug("Update expression attribute values created: " + str(update_expression_attribute_values))
         logger.debug(str(update_expression_attribute_values))
+        # JSON Loads takes a string that is in proper json format and 'loads' it to a dictionary. That is why
+        # the {} have to be added, as this makes the string into proper looking JSON.
         return update_expression, json.loads('{'+update_expression_attribute_values+'}')
 
