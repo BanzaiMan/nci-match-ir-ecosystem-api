@@ -25,29 +25,49 @@ class DynamoDBAccessor(object):
         self.logger.debug("DynamoDBAccessor instantiated")
 
     # Used to get items without regard to keys from table based on some parameters
-    # TODO: Check for errors on scans and clean this code up
+    # TODO: Clean this code up...its very long and redudant
     def scan(self, query_parameters, *exclusive_start_key):
         if query_parameters is not None:
             self.logger.debug("Dynamodb SCAN with filter expression(s) called")
             self.logger.debug(str(query_parameters))
             if any(exclusive_start_key):
                 self.logger.debug("Exclusive start key is " + str(exclusive_start_key[0]))
-                results = self.table.scan(FilterExpression=QueryHelper.create_filter_expression(query_parameters),
-                                          ExclusiveStartKey=exclusive_start_key[0])
+                try:
+                    results = self.table.scan(FilterExpression=QueryHelper.create_filter_expression(query_parameters),
+                                              ExclusiveStartKey=exclusive_start_key[0])
+                except Exception, e:
+                    self.logger.error("Scan of database failed because " + e.message)
+                    raise
             else:
                 self.logger.debug("Scan with no start key")
-                results = self.table.scan(FilterExpression=QueryHelper.create_filter_expression(query_parameters))
+                try:
+                    results = self.table.scan(FilterExpression=QueryHelper.create_filter_expression(query_parameters))
+                except Exception, e:
+                    self.logger.error("Scan of database failed because " + e.message)
+                    raise
         else:
             self.logger.debug("IR Ecosystem scan without query_parameters, returning all records")
             if any(exclusive_start_key):
                 self.logger.debug("Exclusive start key is " + str(exclusive_start_key[0]))
-                results = self.table.scan(ExclusiveStartKey=exclusive_start_key[0])
+                try:
+                    results = self.table.scan(ExclusiveStartKey=exclusive_start_key[0])
+                except Exception, e:
+                    self.logger.error("Scan of database failed because " + e.message)
+                    raise
             else:
-                results = self.table.scan()
+                try:
+                    results = self.table.scan()
+                except Exception, e:
+                    self.logger.error("Scan of database failed because " + e.message)
+                    raise
 
         items = results['Items']
         if results.get('LastEvaluatedKey'):
-            items += self.scan(query_parameters, results['LastEvaluatedKey'])
+            try:
+                items += self.scan(query_parameters, results['LastEvaluatedKey'])
+            except Exception, e:
+                self.logger.error("Scan of database failed because " + e.message)
+                raise
 
         return items
 
