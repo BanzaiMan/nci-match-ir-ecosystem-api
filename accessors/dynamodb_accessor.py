@@ -145,12 +145,22 @@ class DynamoDBAccessor(object):
             raise
 
     # This is a little piece of OO magic. Essentially it creates a table by ensuring/enforcing the concept
+    # that subclasses/children must implement the batch_delete method. The code shown below should never
+    # be able to be called.
+    @abstractmethod
+    def batch_delete(self, query_parameters):
+        """Each concrete class must know the specifics on how to delete items in batch because this
+        requires knowledge of the tables key, which would be consulted to discover generically."""
+        self.logger.error("Batch delete called on dynamodb...this shouldn't be possible")
+        return NotImplementedError
+
+    # This is a little piece of OO magic. Essentially it creates a table by ensuring/enforcing the concept
     # that subclasses/children must implement the create_table method. The code shown below should never
     # be able to be called.
     @abstractmethod
     def create_table(self, table_name):
         """Each concrete class must know the specifics on how to create themselves."""
-        self.logger.debug("create_table called on dynamodb...this shouldn't be possible")
+        self.logger.error("create_table called on dynamodb...this shouldn't be possible")
         return NotImplementedError
 
     # Goes with the table creation and calls the subclasses create_table method. Each subclass should know how
