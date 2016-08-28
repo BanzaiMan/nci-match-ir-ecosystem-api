@@ -98,7 +98,7 @@ class SampleControlTable(Resource):
                 abort(500, message="put_item failed because " + e.message)
 
         else:
-            self.logger.debug("Sample Control creation failed, because both site and control_type were note passed in")
+            self.logger.debug("Sample Control creation failed, because both site and control_type were not passed in")
             abort(400, message="Must send in both a site and a control_type in order to create a sample control")
 
     # Internal method to get new_molecular_id and ensure its unique before trying to use it.
