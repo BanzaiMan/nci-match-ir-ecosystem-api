@@ -27,8 +27,8 @@ class SampleControlRecord(Resource):
         self.logger.debug(str(args))
 
         if not DictionaryHelper.has_values(args):
-            self.logger.debug("update item failed, because data to update item with was not passed in request")
-            abort(400, message="Need passing item updating information in order to update a sample control item. ")
+            self.logger.debug("Update item failed, because data to update item with was not passed in request")
+            abort(400, message="Update item failed, because data to update item with was not passed in request")
 
         item_dictionary = args.copy()
         item_dictionary.update({'molecular_id': molecular_id})
