@@ -1,28 +1,25 @@
 import logging
-from tasks.tasks import put, ir_file
+from tasks.tasks import put, process_ir_file, update
 
-
-# This code is pointless and can be removed later. Its only here for pedagogical purposes.
 
 class CeleryTaskAccessor(object):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
-    def put_item(self, item_dictionary):
-        self.logger.debug("Celery QUEUE put_item called")
-        self.logger.debug(str(item_dictionary))
-        try:
-            return put.delay(item_dictionary)
-        except Exception, e:
-            self.logger.debug("Client Error on queue put_item: " + e.message)
-            raise
-
     def process_file(self, item_dictionary):
-        self.logger.debug("Celery QUEUE put_item called")
+        return self.__process_item(item_dictionary, process_ir_file, "process_ir_file")
+
+    def put_item(self, item_dictionary):
+        return self.__process_item(item_dictionary, put, "put")
+
+    def update_item(self, item_dictionary):
+        return self.__process_item(item_dictionary, update, "update")
+
+    def __process_item(self, item_dictionary, task, task_description):
+        self.logger.debug("Celery " + task_description + " called")
         self.logger.debug(str(item_dictionary))
         try:
-            # this is the only line that actually does anything interesting.
-            return ir_file.delay(item_dictionary)
+            return task.delay(item_dictionary)
         except Exception, e:
-            self.logger.debug("Client Error on queue put_item: " + e.message)
+            self.logger.debug("Client Error on celery " + task_description + ": " + e.message)
             raise

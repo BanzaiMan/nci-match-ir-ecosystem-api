@@ -48,7 +48,6 @@ class MolecularId(Resource):
             try:
                 for distinct_task in distinct_tasks_list:
                     CeleryTaskAccessor().process_file(distinct_task)
-                    # SampleControlAccessor().update(distinct_task)
                 return {"message": "Item updated", "molecular_id": molecular_id}
             except Exception, e:
                 self.logger.debug("updated_item failed because" + e.message)
