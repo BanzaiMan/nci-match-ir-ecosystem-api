@@ -188,6 +188,3 @@ class DynamoDBAccessor(object):
         except ClientError, e:
             self.logger.error("Client Error on " + function_description + ": " + e.message)
             raise
-
-
-
