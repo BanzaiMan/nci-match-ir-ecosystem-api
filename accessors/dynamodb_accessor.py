@@ -25,7 +25,7 @@ class DynamoDBAccessor(object):
         self.logger.debug("DynamoDBAccessor instantiated")
 
     # Used to get items without regard to keys from table based on some parameters
-    # TODO: Clean this code up...its very long and redudant
+    # TODO: Clean this code up...its very long and redundant
     def scan(self, query_parameters, *exclusive_start_key):
         if query_parameters is not None:
             self.logger.debug("Dynamodb SCAN with filter expression(s) called")
@@ -61,6 +61,7 @@ class DynamoDBAccessor(object):
                     self.logger.error("Scan of database failed because " + e.message)
                     raise
 
+        # NOTE that this method is recursive and will call itself in the event that their is over 1 MB of data returned
         items = results['Items']
         if results.get('LastEvaluatedKey'):
             try:
@@ -71,6 +72,9 @@ class DynamoDBAccessor(object):
 
         return items
 
+    # To be confusing, "putting an item" in dynamodb terms is creating a record. Yet in Rest terms this is
+    # usually a POST whereas, in rest terms, a PUT is usually updating an item. So they mean different things in
+    # in different context.
     # TODO: Add support for additional keys
     def put_item(self, item_dictionary):
         self.logger.debug("Dynamodb put_item called")
@@ -81,6 +85,8 @@ class DynamoDBAccessor(object):
             self.logger.debug("Client Error on put_item: " + e.message)
             raise
 
+    # Updating an item does exactly that...in REST terms this is more often a "PUT" but in dynamodb put means create as
+    # noted above. Confusing yes. Just have to keep context straight.
     def update_item(self, item_dictionary, key, *additional_keys):
         self.logger.debug("Dynamodb update_item called")
         update_expression, expression_attribute_values = QueryHelper.create_update_expression(item_dictionary)
@@ -91,16 +97,17 @@ class DynamoDBAccessor(object):
         else:
             all_keys = QueryHelper.create_key_dict('update', key, additional_keys)
 
+        self.logger.debug("Key=" + str(all_keys))
+        self.logger.debug("UpdateExpression=" + str(update_expression))
+        self.logger.debug("ExpressionAttributeValues=" + str(expression_attribute_values))
         try:
-            self.logger.debug("Key=" + str(all_keys))
-            self.logger.debug("UpdateExpression=" + str(update_expression))
-            self.logger.debug("ExpressionAttributeValues=" + str(expression_attribute_values))
             return self.table.update_item(Key=all_keys, UpdateExpression=update_expression,
                                           ExpressionAttributeValues=expression_attribute_values)
         except ClientError, e:
             self.logger.error("Client Error on update_item: " + e.message)
             raise
 
+    # this function and delete_item are essentially the same except the function name
     # Used to get a single item by ID from the table
     def get_item(self, key, *additional_keys):
         try:
@@ -118,6 +125,8 @@ class DynamoDBAccessor(object):
             self.logger.error("Client Error on delete_item: " + e.message)
             raise
 
+    # This is used to write a lot of data to the database at one time. Good for loading the database from a backup
+    # or loading with test data.
     def batch_writer(self, items_list_dictionary):
         with self.table.batch_writer() as batch:
             for item in items_list_dictionary:
@@ -127,6 +136,7 @@ class DynamoDBAccessor(object):
                     self.logger.error("Client Error on put_item: " + e.message)
                     raise
 
+    # Does what it says..kaboom
     def delete_table(self):
         try:
             self.table.delete()
@@ -134,12 +144,28 @@ class DynamoDBAccessor(object):
             self.logger.error("Client Error on deleting table: " + e.message)
             raise
 
+    # This is a little piece of OO magic. Essentially it creates a table by ensuring/enforcing the concept
+    # that subclasses/children must implement the create_table method. The code shown below should never
+    # be able to be called.
     @abstractmethod
     def create_table(self, table_name):
         """Each concrete class must know the specifics on how to create themselves."""
         self.logger.debug("create_table called on dynamodb...this shouldn't be possible")
         return NotImplementedError
 
+    # Goes with the table creation and calls the subclasses create_table method. Each subclass should know how
+    # to create themselves.
+    def handle_table_creation(self, table_name):
+        try:
+            table_description = self.client.describe_table(TableName=table_name)
+            self.logger.info("Table found on system: " + table_name + " :Description: " + str(table_description))
+        except Exception, e:
+            self.logger.debug(e.message)
+            return self.create_table(table_name)
+
+        return self.dynamodb.Table(table_name)
+
+    # This function supports the DRY principle and allows me to consolidate the delete and get code into one.
     def __item(self, function, function_description, key, *additional_keys):
         self.logger.debug("Dynamodb " + function_description + "_item with Keys called")
         self.logger.debug(str(key))
@@ -154,12 +180,5 @@ class DynamoDBAccessor(object):
             self.logger.error("Client Error on " + function_description + ": " + e.message)
             raise
 
-    def handle_table_creation(self, table_name):
-        try:
-            table_description = self.client.describe_table(TableName=table_name)
-            self.logger.info("Table found on system: " + table_name + " :Description: " + str(table_description))
-        except Exception, e:
-            self.logger.debug(e.message)
-            return self.create_table(table_name)
 
-        return self.dynamodb.Table(table_name)
+

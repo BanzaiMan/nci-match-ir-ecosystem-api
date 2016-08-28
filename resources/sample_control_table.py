@@ -45,6 +45,8 @@ class SampleControlTable(Resource):
     # This is the method I noted at top of class as not being perfectly consistent with standards.
     # all things considered this seems best for now unless a non verbose way can be thought up.
     # Go directly to database...do not change to use queue because we need the molecular_id back and written
+    # Also note that while the rest call is "POST" the database call is "put_item" Dynamodb just uses the word "put"
+    # to indicate creation whereas REST uses "put" more often for "update" and POST for creation.
     def post(self):
         self.logger.info("POST Request to create a new sample control")
         args = request.args
@@ -65,6 +67,9 @@ class SampleControlTable(Resource):
             self.logger.debug("Attempting to write: " + str(new_item_dictionary))
             try:
                 # This should go directly to database do not use queue here...every other write...but not this one.
+                # "Put" is correct in this case as dynamodb uses put to mean create. Even though rest uses PUT for
+                # updates and POST for creation, typically. Granted in rest a put could be a creation also...but not in
+                # our case.
                 SampleControlAccessor().put_item(new_item_dictionary)
                 return {"result": "New sample control created", "molecular_id": new_item_dictionary['molecular_id']}
             except Exception, e:

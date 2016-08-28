@@ -25,6 +25,8 @@ with open("config/environment.yml", 'r') as yaml_file:
     __builtin__.environment_config = yaml.load(yaml_file)
 
 
+# I don't think we will use this for sample control as our sample control creation of records are not done through
+# the queueing system but directly on the database. However, I'll leave this for now.
 @app.task
 def put(put_message):
     logger.info(put_message)
@@ -32,13 +34,15 @@ def put(put_message):
     return "You are putting an item"
 
 
+# Use for just updating the data in a record in the table
 @app.task
 def update(update_message):
     logger.info(update_message)
     SampleControlAccessor().update(update_message)
     return "Done updating an item"
 
-
+# this is a special update in that it updates the database, process files, and stores them in s3. So think of this
+# as updating both S3 and dynamodb.
 @app.task
 def ir_file(file_process_message):
     logger.info(file_process_message)
