@@ -14,7 +14,7 @@ from common.string_helper import StringHelper
 parser = reqparse.RequestParser()
 # Essential for POST, all other parameters are ignored on post except molecular_id, which, if passed in will cause a
 # failure. The proper order is to first POST to get a molecular_id then to PUT the files using the molecular_id in the
-# URI. From there other fields can be updated if neeeded.
+# URI. From there other fields can be updated if needed.
 parser.add_argument('control_type', type=str, required=False)
 parser.add_argument('site',         type=str, required=False)
 
