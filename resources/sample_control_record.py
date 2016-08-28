@@ -33,6 +33,11 @@ class SampleControlRecord(Resource):
         item_dictionary = args.copy()
         item_dictionary.update({'molecular_id': molecular_id})
 
+        # Very important line of code this takes all of the 'None' values out of the dictionary.
+        # Without this, the record would update all attributes in the params above with 'None' unless they
+        # were explicitly passed in. In reality, we only want to update the attributes that have been explicitly
+        # passed in from the params. If they haven't been passed in then they shouldn't be updated.
+        item_dictionary = dict((k, v) for k, v in item_dictionary.iteritems() if v)
         try:
             CeleryTaskAccessor().update_item(item_dictionary)
             return {"message": "Sample control with molecular id: " + molecular_id + " updated"}

@@ -113,7 +113,7 @@ class DynamoDBAccessor(object):
         try:
             return self.__item(self.table.get_item, 'get', key, additional_keys)
         except ClientError, e:
-            self.logger.error("Client Error on delete_item: " + e.message)
+            self.logger.error("Client Error on get_item: " + e.message)
             raise
 
     # this function and get_item are essentially the same except the function name
@@ -171,8 +171,7 @@ class DynamoDBAccessor(object):
         self.logger.debug(str(key))
         all_keys = QueryHelper.create_key_dict(function_description, key, additional_keys)
 
-        # TODO: Make it print the actual table name being queried
-        self.logger.debug("Performing item " + function_description + " from table")
+        self.logger.debug("Performing item " + function_description + " from table: " + self.table.name)
 
         try:
             return function(Key=all_keys)
