@@ -56,32 +56,24 @@ def build_an_item():
                            site=site))
 
 
-def write_to_file(items, file_name):
-    with open(file_name, 'w') as f_out:
-        f_out.write(items)
-
-
 def generate_by_size(size=1):
     print 'generating data that is a little > ' + str(size) + ' megabyte(s).'
     # 7200 = 1MB of data, roughly
-    items = (','.join(build_an_item() for _ in range(int(size*7200))))
+    items = (','.join(build_an_item() for _ in range(int(size*6000))))
     return json.loads("[" + items + "]")
 
 
 def print_usage():
-    print "Usage Example:\n\tsample_control_generator.py -o batch_out.json -n 1000\n\n"
+    print "Usage Example:\n\tsample_control_generator.py -s 1\n\n"
 
 
 def main(argv):
     parser = argparse.ArgumentParser(add_help=True)
-    parser.add_argument("-o", type=str, required=True, dest="json_file_output",
-                        help="output file. Required.")
     parser.add_argument("-s", type=float, required=True, dest="file_size",
                         help="file_size generated in megabytes. Optional.")
 
     args = parser.parse_args(argv)
 
-    # SampleControlAccessor().delete_table()
     items = generate_by_size(args.file_size)
     SampleControlAccessor().batch_writer(items)
 

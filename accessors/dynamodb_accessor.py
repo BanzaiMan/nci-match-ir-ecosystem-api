@@ -25,21 +25,25 @@ class DynamoDBAccessor(object):
         self.logger.debug("DynamoDBAccessor instantiated")
 
     # Used to get items without regard to keys from table based on some parameters
-    # TODO: Check for errors on scans
+    # TODO: Check for errors on scans and clean this code up
     def scan(self, query_parameters, *exclusive_start_key):
         if query_parameters is not None:
             self.logger.debug("Dynamodb SCAN with filter expression(s) called")
             self.logger.debug(str(query_parameters))
-            if not all(exclusive_start_key):
-                self.logger.debug("Exclusive start key is " + str(exclusive_start_key))
+            if any(exclusive_start_key):
+                self.logger.debug("Exclusive start key is " + str(exclusive_start_key[0]))
                 results = self.table.scan(FilterExpression=QueryHelper.create_filter_expression(query_parameters),
-                                          ExclusiveStartKey=exclusive_start_key)
+                                          ExclusiveStartKey=exclusive_start_key[0])
             else:
                 self.logger.debug("Scan with no start key")
                 results = self.table.scan(FilterExpression=QueryHelper.create_filter_expression(query_parameters))
         else:
             self.logger.debug("IR Ecosystem scan without query_parameters, returning all records")
-            results = self.table.scan()
+            if any(exclusive_start_key):
+                self.logger.debug("Exclusive start key is " + str(exclusive_start_key[0]))
+                results = self.table.scan(ExclusiveStartKey=exclusive_start_key[0])
+            else:
+                results = self.table.scan()
 
         items = results['Items']
         if results.get('LastEvaluatedKey'):
