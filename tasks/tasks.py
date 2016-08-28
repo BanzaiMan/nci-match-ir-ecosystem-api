@@ -55,3 +55,10 @@ def process_ir_file(file_process_message):
 def delete(molecular_id):
     logger.info("Deleting sample control record with molecular id:" + str(molecular_id))
     SampleControlAccessor().delete_item(molecular_id)
+
+
+@app.task
+def batch_delete(query_parameters):
+    logger.info("Deleting sample control records matching query:" + str(query_parameters))
+    SampleControlAccessor().batch_delete(query_parameters)
+

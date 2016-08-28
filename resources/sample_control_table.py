@@ -2,6 +2,7 @@ import logging
 import datetime
 from flask_restful import abort, request, reqparse, Resource
 
+from accessors.celery_task_accessor import CeleryTaskAccessor
 from accessors.sample_control_accessor import SampleControlAccessor
 from common.dictionary_helper import DictionaryHelper
 from common.string_helper import StringHelper
@@ -11,10 +12,19 @@ from common.string_helper import StringHelper
 # Replace later with marshmallow but for now this works
 
 parser = reqparse.RequestParser()
-# TODO: lower priority, but could expand to consider more of the attributes
+# Essential for POST, all other parameters are ignored on post except molecular_id, which, if passed in will cause a
+# failure. The proper order is to first POST to get a molecular_id then to PUT the files using the molecular_id in the
+# URI. From there other fields can be updated if neeeded.
 parser.add_argument('control_type', type=str, required=False)
 parser.add_argument('site',         type=str, required=False)
-parser.add_argument('molecular_id', type=str, required=False)
+
+# Additional parameters that can be used for queries
+parser.add_argument('molecular_id',                 type=str, required=False)
+parser.add_argument('analysis_id',                  type=str, required=False)
+parser.add_argument('dna_bam_path',                 type=str, required=False)
+parser.add_argument('cdna_bam_path',                type=str, required=False)
+parser.add_argument('vcf_path',                     type=str, required=False)
+parser.add_argument('date_molecular_id_created',    type=str, required=False)
 
 MOLECULAR_ID_LENGTH = 5
 
@@ -35,12 +45,31 @@ class SampleControlTable(Resource):
         self.logger.info("Sample control GET called")
         args = request.args
         self.logger.debug(str(args))
-        sample_control = SampleControlAccessor().scan(args) if DictionaryHelper.has_values(args) \
-            else SampleControlAccessor().scan(None)
+        try:
+            sample_control = SampleControlAccessor().scan(args) if DictionaryHelper.has_values(args) \
+                else SampleControlAccessor().scan(None)
+            self.logger.debug(str(sample_control))
+            return sample_control if sample_control is not None else \
+                abort(404, message="No sample controls meet the query parameters")
+        except Exception, e:
+            self.logger.error("Get failed because: " + e.message)
+            abort(500, message="Get failed because: " + e.message)
 
-        self.logger.debug(str(sample_control))
-        return sample_control if sample_control is not None else \
-            abort(404, message="No sample controls meet the query parameters")
+    def delete(self):
+        self.logger.info("Sample control Batch Delete called")
+        args = request.args
+        self.logger.debug(str(args))
+        if not DictionaryHelper.has_values(args):
+            abort(400, message="Cannot use batch delete to delete all records. "
+                               "This is just to make things a little safer.")
+        try:
+            self.logger.info("Deleting items based on query: " + str(args))
+            CeleryTaskAccessor().delete_items(args)
+        except Exception, e:
+            self.logger.error("Batch delete failed because: " + e.message)
+            abort(500, message="Batch delete failed because: " + e.message)
+
+        return {"result": "Batch deletion request placed on queue to be processed"}
 
     # This is the method I noted at top of class as not being perfectly consistent with standards.
     # all things considered this seems best for now unless a non verbose way can be thought up.

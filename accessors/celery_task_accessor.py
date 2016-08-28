@@ -1,5 +1,5 @@
 import logging
-from tasks.tasks import put, process_ir_file, update, delete
+from tasks.tasks import put, process_ir_file, update, delete, batch_delete
 
 
 class CeleryTaskAccessor(object):
@@ -17,6 +17,9 @@ class CeleryTaskAccessor(object):
 
     def delete_item(self, item_dictionary):
         return self.__process_item(item_dictionary, delete, "delete")
+
+    def delete_items(self, query_parameters):
+        return self.__process_item(query_parameters, batch_delete, " batch delete")
 
     def __process_item(self, item_dictionary, task, task_description):
         self.logger.debug("Celery " + task_description + " called")

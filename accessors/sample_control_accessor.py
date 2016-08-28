@@ -42,3 +42,16 @@ class SampleControlAccessor(DynamoDBAccessor):
             self.logger.error("update_item exception in dynamodb: " + e.message)
             raise
 
+    # In order to delete in Dynamodb, first call scan with the query parameters then loop over the returned values
+    # and call delete_item on each of them. You can't do deletes directly based on queries like you can in a RDBMS.
+    # So this is how you would do it here. The reason this is in the sample_control_accessor instead of in the
+    # dynamodb is because this function requires knowledge of the tables KEY so a generic means of doing this isn't
+    # as straight forward and is probably overly complicated for our purposes.
+    def batch_delete(self, query_parameters):
+        items_to_delete = self.scan(query_parameters)
+        for item in items_to_delete:
+            try:
+                self.delete_item({'molecular_id': item[KEY]})
+            except Exception, e:
+                self.logger.error("Batch delete item exception in dynamodb: " + e.message)
+                raise
