@@ -63,7 +63,6 @@ api.add_resource(MolecularId, '/v1/molecular_id/<string:molecular_id>')
 # For the most part, this is boilerplate code to start tornado server
 if __name__ == '__main__':
     logger.info("server starting on port 5000:")
-    sca = SampleControlAccessor()
     http_server = HTTPServer(WSGIContainer(app))
     http_server.listen(port=5000)
     IOLoop.instance().start()
