@@ -29,14 +29,14 @@ with open("config/environment.yml", 'r') as yaml_file:
 # the queueing system but directly on the database. However, I'll leave this for now.
 @app.task
 def put(put_message):
-    logger.info(put_message)
+    logger.info("Creating item: " + str(put_message))
     SampleControlAccessor().put_item(put_message)
 
 
 # Use for just updating the data in a record in the table
 @app.task
 def update(update_message):
-    logger.info(update_message)
+    logger.info("Updating item: " + str(update_message))
     SampleControlAccessor().update(update_message)
 
 
@@ -44,8 +44,14 @@ def update(update_message):
 # as updating both S3 and dynamodb.
 @app.task
 def process_ir_file(file_process_message):
-    logger.info(file_process_message)
+    logger.info("Processing file: " + str(file_process_message))
     # TODO: process vcf and create tsv
     # TODO: add tsv path to update dictionary
 
     SampleControlAccessor().update(file_process_message)
+
+
+@app.task
+def delete(molecular_id):
+    logger.info("Deleting sample control record with molecular id:" + str(molecular_id))
+    SampleControlAccessor().delete_item(molecular_id)
