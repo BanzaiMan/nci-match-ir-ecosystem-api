@@ -1,0 +1,12 @@
+v1.4.1, 2015-06-19
+  - Added switch to command line to support the optional inclusion of VCF metadata in the output
+  - Updated tool to support IonReporterExportVersion 0.1.5
+
+v1.3.1, 2015-02-06
+  - Updated output format to doublequote all fields to preserve field values when opening file with Excel
+
+v.1.2.1,  2014-10-31
+  - Added check of supported IonReporterExportVersions
+  - Updated tool to support IonReporterExportVersion 0.1.4
+
+v1.0.1, 2014-08-15 -- Initial release.
