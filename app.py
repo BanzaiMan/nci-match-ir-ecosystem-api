@@ -8,9 +8,9 @@ from flask_restful import Api
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 from tornado.wsgi import WSGIContainer
-from accessors.sample_control_accessor import SampleControlAccessor
 
-from resources.ion_reporter import IonReporter
+from resources.ion_reporter_table import IonReporterTable
+from resources.ion_reporter_record import IonReporterRecord
 from resources.sample_control_table import SampleControlTable
 from resources.sample_control_record import SampleControlRecord
 from resources.molecular_id import MolecularId
@@ -53,7 +53,8 @@ api.add_resource(SampleControlTable, '/v1/sample_controls')
 api.add_resource(SampleControlRecord, '/v1/sample_controls/<string:molecular_id>')
 
 # Path for updating information about ion reporters themselves
-api.add_resource(IonReporter, '/v1/ion_reporters')
+api.add_resource(IonReporterTable, '/v1/ion_reporters')
+api.add_resource(IonReporterRecord, '/v1/ion_reporters/<string:ion_reporter_id>')
 
 # Path for either sending in files from the ir (bam,vcf) to process them and store them based on their molecular id
 # in either the patient or sample_control table. Also a path to query with GET to see if molecular_id is valid and

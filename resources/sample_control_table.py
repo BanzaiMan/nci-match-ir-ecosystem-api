@@ -18,14 +18,6 @@ parser = reqparse.RequestParser()
 parser.add_argument('control_type', type=str, required=False)
 parser.add_argument('site',         type=str, required=False)
 
-# Additional parameters that can be used for queries
-parser.add_argument('molecular_id',                 type=str, required=False)
-parser.add_argument('analysis_id',                  type=str, required=False)
-parser.add_argument('dna_bam_path',                 type=str, required=False)
-parser.add_argument('cdna_bam_path',                type=str, required=False)
-parser.add_argument('vcf_path',                     type=str, required=False)
-parser.add_argument('date_molecular_id_created',    type=str, required=False)
-
 MOLECULAR_ID_LENGTH = 5
 
 

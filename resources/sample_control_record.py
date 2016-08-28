@@ -20,7 +20,8 @@ class SampleControlRecord(Resource):
         self.logger = logging.getLogger(__name__)
 
     # this put should just put items on the queue through celery and then let celery update
-    # the database, shouldn't process files. This is just straight updates of attributes.
+    # the database, shouldn't process files (molecular_id resource does that).
+    # This is just straight updates of attributes.
     def put(self, molecular_id):
         self.logger.info("updating sample control with id: " + str(molecular_id))
         args = parser.parse_args()
