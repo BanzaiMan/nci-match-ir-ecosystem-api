@@ -16,6 +16,16 @@ class StringHelper(object):
         return new_molecular_id
 
     @staticmethod
+    def generate_ion_reporter_id(length=5):
+        logger = logging.getLogger(__name__)
+        logger.debug("Generating ion reporter id")
+
+        new_ion_reporter_id = 'IR_' + StringHelper.generate_random_string(length)
+
+        logger.debug("New Ion Reporter Id: " + new_ion_reporter_id)
+        return new_ion_reporter_id
+
+    @staticmethod
     def generate_random_string(length=5):
         if not isinstance(length, int):
             raise ValueError("Invalid Input")
