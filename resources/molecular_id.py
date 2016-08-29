@@ -59,18 +59,25 @@ class MolecularId(Resource):
     @staticmethod
     def __get_distinct_tasks(item_dictionary, molecular_id):
         distinct_tasks_list = list()
+        # get site of this molecular_id
+        sample_control_record = SampleControlAccessor().scan({'molecular_id': molecular_id})
+        site = site = sample_control_record[0]['site']
+
         if 'vcf_path' in item_dictionary and 'analysis_id' in item_dictionary:
-            distinct_tasks_list.append({'molecular_id': molecular_id,
+            distinct_tasks_list.append({'site': site,
+                                        'molecular_id': molecular_id,
                                         'analysis_id': item_dictionary['analysis_id'],
                                         'vcf_path': item_dictionary['vcf_path']})
 
         if 'dna_bam_path' in item_dictionary and 'analysis_id' in item_dictionary:
-            distinct_tasks_list.append({'molecular_id': molecular_id,
+            distinct_tasks_list.append({'site': site,
+                                        'molecular_id': molecular_id,
                                         'analysis_id': item_dictionary['analysis_id'],
                                         'dna_bam_path': item_dictionary['dna_bam_path']})
 
         if 'cdna_bam_path' in item_dictionary and 'analysis_id' in item_dictionary:
-            distinct_tasks_list.append({'molecular_id': molecular_id,
+            distinct_tasks_list.append({'site': site,
+                                        'molecular_id': molecular_id,
                                         'analysis_id': item_dictionary['analysis_id'],
                                         'cdna_bam_path': item_dictionary['cdna_bam_path']})
 
