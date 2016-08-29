@@ -48,7 +48,8 @@ class IonReporterRecord(Resource):
         # passed in from the params. If they haven't been passed in then they shouldn't be updated.
         item_dictionary = dict((k, v) for k, v in item_dictionary.iteritems() if v)
         try:
-            CeleryTaskAccessor().update_item(item_dictionary)
+            # CeleryTaskAccessor().update_item(item_dictionary)
+            IonReporterAccessor().update(item_dictionary)
             return {"message": "Ion reporter with ion reporter id: " + ion_reporter_id + " updated"}
         except Exception, e:
             self.logger.debug("updated_item failed because" + e.message)

@@ -8,6 +8,15 @@ from common.dictionary_helper import DictionaryHelper
 from common.string_helper import StringHelper
 
 parser = reqparse.RequestParser()
+parser.add_argument('ion_reporter_id',                  type=str, required=False, location='json')
+parser.add_argument('ip_address',                 type=str, required=False, location='json')
+parser.add_argument('internal_ip_address',                type=str, required=False, location='json')
+parser.add_argument('host_name',                     type=str, required=False, location='json')
+parser.add_argument('site',                         type=str, required=False, location='json')
+parser.add_argument('status',                 type=str, required=False, location='json')
+parser.add_argument('last_contact',    type=str, required=False, location='json')
+parser.add_argument('data_files',    type=str, required=False, location='json')
+
 # TODO: Create a means to store, retrieve, delete, and update information about the ion reporters themselves
 
 
@@ -25,7 +34,8 @@ class IonReporterTable(Resource):
         args = request.args
         self.logger.debug(str(args))
         try:
-            ion_reporter = IonReporterAccessor().scan(args)
+            ion_reporter = IonReporterAccessor().scan(args) if DictionaryHelper.has_values(args) \
+                else IonReporterAccessor().scan(None)
             self.logger.debug(str(ion_reporter))
             return ion_reporter if ion_reporter is not None else \
                 abort(404, message="No ion reporters meet the query parameters")
@@ -34,7 +44,7 @@ class IonReporterTable(Resource):
             abort(500, message="Get failed because: " + e.message)
 
     def post(self):
-        self.logger.info("POST Request to create a new ion reporter record")
+        self.logger.info("POST Request to create a new ion reporter")
         args = request.args
         self.logger.debug(str(args))
 
@@ -44,7 +54,7 @@ class IonReporterTable(Resource):
                                "The post will create the id for you. Simply pass in site'")
 
         if DictionaryHelper.keys_have_value(args, ['site']):
-            self.logger.debug("Ion reporter record creation failed, because request ion_reporter_id was passed in")
+            self.logger.debug("Ion reporter creation failed, because request ion_reporter_id was passed in")
 
             new_item_dictionary = args.copy()
             new_item_dictionary.update({'ion_reporter_id': self.__get_unique_key(),
@@ -57,13 +67,13 @@ class IonReporterTable(Resource):
                 # updates and POST for creation, typically. Granted in rest a put could be a creation also...but not in
                 # our case.
                 IonReporterAccessor().put_item(new_item_dictionary)
-                return {"result": "New ion reporter record created", "ion_reporter_id": new_item_dictionary['ion_reporter_id']}
+                return {"result": "New ion reporter created", "ion_reporter_id": new_item_dictionary['ion_reporter_id']}
             except Exception, e:
                 self.logger.error("Could not put_item because " + e.message)
                 abort(500, message="put_item failed because " + e.message)
 
         else:
-            self.logger.debug("Ion reporter record creation failed, because site was not passed in")
+            self.logger.debug("Ion reporter creation failed, because site was not passed in")
             abort(400, message="Must send in a site in order to create an ion reporter record")
 
     # def put(self):
@@ -84,6 +94,7 @@ class IonReporterTable(Resource):
             abort(500, message="Batch delete failed because: " + e.message)
 
         return {"result": "Batch deletion request placed on queue to be processed"}
+
     def __get_unique_key(self):
         new_ion_reporter_id = ""
         unique_key = False

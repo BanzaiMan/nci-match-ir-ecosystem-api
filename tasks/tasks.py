@@ -3,6 +3,7 @@ import logging
 import __builtin__
 import yaml
 
+from accessors.ion_reporter_accessor import IonReporterAccessor
 from accessors.sample_control_accessor import SampleControlAccessor
 from celery import Celery
 
@@ -39,6 +40,10 @@ def update(update_message):
     logger.info("Updating item: " + str(update_message))
     SampleControlAccessor().update(update_message)
 
+@app.task
+def update_ir(update_message):
+    logger.info("Updating item: " + str(update_message))
+    IonReporterAccessor().update(update_message)
 
 # this is a special update in that it updates the database, process files, and stores them in s3. So think of this
 # as updating both S3 and dynamodb.
