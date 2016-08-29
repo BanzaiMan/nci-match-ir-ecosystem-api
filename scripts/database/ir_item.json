@@ -1,9 +1,9 @@
 {
-      "ir_id": {"S": "BC12G"},
+      "ir_id": {"S": "IR_WO3IA"},
       "ip_address": {"S": "129.43.39.182"},
       "internal_ip_address": {"S": "129.43.39.182"},
       "host_name": {"S": "NCI-MATCH-IR"},
-      "site": {"S": "MoCha"},
+      "site": {"S": "mocha"},
       "status": {"S": "Contacted 4 minutes ago"},
       "last_contact": {"S": "August 29, 2016 2:01 PM GMT"},
       "data_files": {"S": "DB Report"}

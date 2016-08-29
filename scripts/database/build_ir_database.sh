@@ -39,7 +39,7 @@ LOCAL_URL="http://localhost:8000"
 END_POINT="--endpoint-url $LOCAL_URL"
 
 ATTRIBUTE='site'
-VALUE='MoCha'
+VALUE='mocha'
 
 QUERY_ATTRIBUTE='host_name'
 QUERY_VALUE='NCI-MATCH-IR'
@@ -119,7 +119,7 @@ aws dynamodb delete-item --table-name $TABLE_NAME --key file://ir_key.json --ret
 echo -e "${CYAN}************************************************************${NC}"
 echo -e "${RED}DELETE A ITEM FROM TABLE: NEED A KEY JSON FILE, UPDATE EXPRESSION, ATTRIBUTE NAMES JSON, ATTRIBUTE VALUE JSON ${NC}"
 echo -e "${CYAN}************************************************************${NC}"
-#aws dynamodb update-item --table-name $TABLE_NAME --key file://key.json --update-expression "SET #CT = :c, #SIA = :s" \
-# --expression-attribute-names file://update-expression-attribute-names.json\
-# --expression-attribute-values file://update-expression-attribute-values.json\
-# --return-values ALL_NEW $END_POINT
+aws dynamodb update-item --table-name $TABLE_NAME --key file://ir_key.json --update-expression "SET #CT = :c, #SIA = :s" \
+ --expression-attribute-names file://ir_update-expression-attribute-names.json\
+ --expression-attribute-values file://ir_update-expression-attribute-values.json\
+ --return-values ALL_NEW $END_POINT
