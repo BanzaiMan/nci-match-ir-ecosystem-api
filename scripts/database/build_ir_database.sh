@@ -57,7 +57,7 @@ echo -e "${CYAN}***********************************************${NC}"
 # the molecular_id that must be unique not the molecular_id. This affects the code and so I really think at the moment
 # the molecular_id should be the only key.
 # aws dynamodb create-table --table-name $TABLE_NAME --attribute-definitions AttributeName=site,AttributeType=S AttributeName=molecular_id,AttributeType=S --key-schema AttributeName=site,KeyType=HASH AttributeName=molecular_id,KeyType=RANGE --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 $END_POINT
-aws dynamodb create-table --table-name $TABLE_NAME --attribute-definitions AttributeName=ir_id,AttributeType=S --key-schema AttributeName=ir_id,KeyType=HASH --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 $END_POINT
+aws dynamodb create-table --table-name $TABLE_NAME --attribute-definitions AttributeName=ion_reporter_id,AttributeType=S --key-schema AttributeName=ion_reporter_id,KeyType=HASH --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 $END_POINT
 
 echo -e "${CYAN}***********************************************${NC}"
 echo -e "${RED}WRITING SAMPLE DATA TO TABLE${NC}"

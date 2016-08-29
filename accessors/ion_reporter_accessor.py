@@ -2,7 +2,7 @@ import logging
 import __builtin__
 from dynamodb_accessor import DynamoDBAccessor
 
-KEY = 'ir_id'
+KEY = 'ion_reporter_id'
 
 
 class IonReporterAccessor(DynamoDBAccessor):
@@ -21,8 +21,8 @@ class IonReporterAccessor(DynamoDBAccessor):
         try:
             table = self.dynamodb.create_table(
                 TableName=table_name,
-                KeySchema=[{'AttributeName': 'ir_id', 'KeyType': 'HASH'}],
-                AttributeDefinitions=[{'AttributeName': 'ir_id', 'AttributeType': 'S'}],
+                KeySchema=[{'AttributeName': 'ion_reporter_id', 'KeyType': 'HASH'}],
+                AttributeDefinitions=[{'AttributeName': 'ion_reporter_id', 'AttributeType': 'S'}],
                 ProvisionedThroughput={'ReadCapacityUnits': 5, 'WriteCapacityUnits': 5})
             self.logger.info("Table " + table_name + " created!")
         except Exception, e:
@@ -37,7 +37,7 @@ class IonReporterAccessor(DynamoDBAccessor):
         ir_table_key = str(item_dictionary.pop(KEY))
         self.logger.debug(ir_table_key)
         try:
-            return self.update_item(item_dictionary, dict(ir_id=ir_table_key))
+            return self.update_item(item_dictionary, dict(ion_reporter_id=ir_table_key))
         except Exception, e:
             self.logger.error("update_item exception in dynamodb: " + e.message)
             raise
@@ -51,7 +51,7 @@ class IonReporterAccessor(DynamoDBAccessor):
         items_to_delete = self.scan(query_parameters)
         for item in items_to_delete:
             try:
-                self.delete_item({'ir_id': item[KEY]})
+                self.delete_item({'ion_reporter_id': item[KEY]})
             except Exception, e:
                 self.logger.error("Batch delete item exception in dynamodb: " + e.message)
                 raise

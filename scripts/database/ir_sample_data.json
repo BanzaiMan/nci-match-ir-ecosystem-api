@@ -3,7 +3,7 @@
     {
       "PutRequest": {
         "Item": {
-          "ir_id": {"S": "IR_WO3IA"},
+          "ion_reporter_id": {"S": "IR_WO3IA"},
           "ip_address": {"S": "10.133.226.13"},
           "internal_ip_address": {"S": "10.133.226.13"},
           "host_name": {"S": "NCIAS-D1356"},
@@ -17,7 +17,7 @@
     {
       "PutRequest": {
         "Item": {
-          "ir_id": {"S": "IR_LB123"},
+          "ion_reporter_id": {"S": "IR_LB123"},
           "ip_address": {"S": "10.133.226.13"},
           "internal_ip_address": {"S": "10.133.226.13"},
           "host_name": {"S": "NCIAS-D1356"},
@@ -31,7 +31,7 @@
     {
       "PutRequest": {
         "Item": {
-          "ir_id": {"S": "IR_WAO85"},
+          "ion_reporter_id": {"S": "IR_WAO85"},
           "ip_address": {"S": "129.43.127.133"},
           "internal_ip_address": {"S": "129.43.127.133"},
           "host_name": {"S": "NCI-MATCH-IR"},
@@ -45,7 +45,7 @@
     {
       "PutRequest": {
         "Item": {
-          "ir_id": {"S": "IR_AIO78"},
+          "ion_reporter_id": {"S": "IR_AIO78"},
           "ip_address": {"S": "132.183.13.75"},
           "internal_ip_address": {"S": "172.20.174.24"},
           "host_name": {"S": "MGH-MATCH-IR"},
@@ -59,7 +59,7 @@
     {
       "PutRequest": {
         "Item": {
-          "ir_id": {"S": "IR_SAO13"},
+          "ion_reporter_id": {"S": "IR_SAO13"},
           "ip_address": {"S": "204.60.187.1"},
           "internal_ip_address": {"S": "10.84.20.162"},
           "host_name": {"S": "YSM-MATCH-IR"},
