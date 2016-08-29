@@ -46,7 +46,7 @@ def update(update_message):
 def process_ir_file(file_process_message):
     logger.info("Processing file: " + str(file_process_message))
     # TODO: process vcf and create tsv
-    # TODO: add tsv path to update dictionary
+    # TODO: add tsv and bai paths, as appropriate, to update dictionary
 
     SampleControlAccessor().update(file_process_message)
 

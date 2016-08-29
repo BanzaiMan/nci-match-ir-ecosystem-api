@@ -53,6 +53,9 @@ class SampleControlRecord(Resource):
         except Exception, e:
             self.logger.debug("delete_item failed because" + e.message)
 
+    # TODO: Expand GET functionality to include the retrevial of files from S3.
+    # see https://wiki.nci.nih.gov/display/UM/Ecosystems+Services+and+Tables for more information on the functionality
+    # that is needed to be added
     def get(self, molecular_id):
         self.logger.info("Getting sample control with id: " + str(molecular_id))
         try:
