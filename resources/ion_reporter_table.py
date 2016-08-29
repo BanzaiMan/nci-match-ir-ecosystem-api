@@ -13,6 +13,7 @@ parser = reqparse.RequestParser()
 
 ION_REPORTER_ID_LENGTH = 5
 
+
 class IonReporterTable(Resource):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
@@ -65,8 +66,8 @@ class IonReporterTable(Resource):
             self.logger.debug("Ion reporter record creation failed, because site was not passed in")
             abort(400, message="Must send in a site in order to create an ion reporter record")
 
-    def put(self):
-        abort(500, message="Not yet implemented")
+    # def put(self):
+    #     abort(500, message="Not yet implemented")
 
     def delete(self):
         self.logger.info("Ion Reporter Batch Delete called")
