@@ -11,7 +11,7 @@ parser.add_argument('cdna_bam_path', type=str, required=False, location='json')
 parser.add_argument('vcf_path',      type=str, required=False, location='json')
 
 
-class MolecularId(Resource):
+class Aliquot(Resource):
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)

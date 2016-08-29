@@ -13,7 +13,7 @@ from resources.ion_reporter_table import IonReporterTable
 from resources.ion_reporter_record import IonReporterRecord
 from resources.sample_control_table import SampleControlTable
 from resources.sample_control_record import SampleControlRecord
-from resources.molecular_id import MolecularId
+from resources.aliquot import Aliquot
 
 # Boilerplate code to start flask
 app = Flask(__name__)
@@ -59,7 +59,7 @@ api.add_resource(IonReporterRecord, '/v1/ion_reporters/<string:ion_reporter_id>'
 # Path for either sending in files from the ir (bam,vcf) to process them and store them based on their molecular id
 # in either the patient or sample_control table. Also a path to query with GET to see if molecular_id is valid and
 # what type of molecular id it is (i.e., sample_control or patient)
-api.add_resource(MolecularId, '/v1/molecular_id/<string:molecular_id>')
+api.add_resource(Aliquot, '/v1/aliquot/<string:molecular_id>')
 
 # For the most part, this is boilerplate code to start tornado server
 if __name__ == '__main__':
