@@ -47,19 +47,19 @@ with open("config/environment.yml", 'r') as yaml_file:
 # plural classes.
 
 # Path for Querying and Creating sample controls
-api.add_resource(SampleControlTable, '/v1/sample_controls')
+api.add_resource(SampleControlTable, '/api/v1/sample_controls')
 
 # Path for Updating and Deleting sample controls
-api.add_resource(SampleControlRecord, '/v1/sample_controls/<string:molecular_id>')
+api.add_resource(SampleControlRecord, '/api/v1/sample_controls/<string:molecular_id>')
 
 # Path for updating information about ion reporters themselves
-api.add_resource(IonReporterTable, '/v1/ion_reporters')
-api.add_resource(IonReporterRecord, '/v1/ion_reporters/<string:ion_reporter_id>')
+api.add_resource(IonReporterTable, '/api/v1/ion_reporters')
+api.add_resource(IonReporterRecord, '/api/v1/ion_reporters/<string:ion_reporter_id>')
 
 # Path for either sending in files from the ir (bam,vcf) to process them and store them based on their molecular id
 # in either the patient or sample_control table. Also a path to query with GET to see if molecular_id is valid and
 # what type of molecular id it is (i.e., sample_control or patient)
-api.add_resource(Aliquot, '/v1/aliquot/<string:molecular_id>')
+api.add_resource(Aliquot, '/api/v1/aliquot/<string:molecular_id>')
 
 # For the most part, this is boilerplate code to start tornado server
 if __name__ == '__main__':
