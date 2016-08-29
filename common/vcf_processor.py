@@ -1,6 +1,5 @@
 import os.path
 import logging
-#import sys
 import re
 
 
@@ -20,11 +19,10 @@ class VcfFileProcessor(object):
         tsv_full_path = p.sub('.tsv', vcf_full_path)
         logger.debug("destination tsv file: " + str(tsv_full_path))
 
-        conversion_script = 'oncomine-vcf-converter-1.4.1/scripts/convert_vcf.py'
+        conversion_script = '../oncomine-vcf-converter-1.4.1/scripts/convert_vcf.py'
         curr_dir = os.path.dirname(__file__)
-        print 'current directory:', curr_dir
         conv_full_path = os.path.join(curr_dir, conversion_script)
-        print 'script full path:', conv_full_path
+
         try:
             conversion_cmd = '%s --force -i %s -o %s' % (conv_full_path, vcf_full_path, tsv_full_path)
             logger.debug("Convert vcf to tsv command: " + str(conversion_cmd))
@@ -35,7 +33,8 @@ class VcfFileProcessor(object):
             else:
                 logger.debug("Failed to generate tsv file from : " + str(vcf_full_path))
                 return None
-        except:
+        except Exception, e:
             logger.debug("Failed to generate tsv file from : " + str(vcf_full_path))
+            logger.debug("Failure reason: " + e.message)
             return None
 
