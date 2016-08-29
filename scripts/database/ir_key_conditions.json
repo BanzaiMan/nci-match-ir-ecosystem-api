@@ -1,0 +1,10 @@
+{
+    "ir_id": {
+        "AttributeValueList": [
+            {
+                "S": "IR_WO3IA"
+            }
+        ],
+        "ComparisonOperator": "EQ"
+    }
+}
