@@ -19,7 +19,7 @@ class DynamoDBAccessor(object):
         self.region = region
         self.dynamodb = boto3.resource('dynamodb', region_name=self.region, endpoint_url=self.url)
         self.client = boto3.client('dynamodb', region_name=self.region, endpoint_url=self.url)
-        self.logger.info("Checking database for sample_control table existence.")
+        self.logger.info("Checking database for table existence.")
         self.table = self.handle_table_creation(table)
         self.logger = logging.getLogger(__name__)
         self.logger.debug("DynamoDBAccessor instantiated")
