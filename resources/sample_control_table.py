@@ -15,7 +15,8 @@ parser = reqparse.RequestParser()
 # Essential for POST, all other parameters are ignored on post except molecular_id, which, if passed in will cause a
 # failure. The proper order is to first POST to get a molecular_id then to PUT the files using the molecular_id in the
 # URI. From there other fields can be updated if needed.
-
+parser.add_argument('control_type', type=str, required=False)
+parser.add_argument('site',         type=str, required=False)
 
 MOLECULAR_ID_LENGTH = 5
 
@@ -37,7 +38,8 @@ class SampleControlTable(Resource):
         args = request.args
         self.logger.debug(str(args))
         try:
-            sample_control = SampleControlAccessor().scan(args)
+            sample_control = SampleControlAccessor().scan(args) if DictionaryHelper.has_values(args) \
+                else SampleControlAccessor().scan(None)
             self.logger.debug(str(sample_control))
             return sample_control if sample_control is not None else \
                 abort(404, message="No sample controls meet the query parameters")
