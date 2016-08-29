@@ -1,7 +1,7 @@
 {
       "ir_id": {"S": "BC12G"},
       "ip_address": {"S": "129.43.39.182"},
-      "internal_ip_address": {"S": "129.43.39.182	"},
+      "internal_ip_address": {"S": "129.43.39.182"},
       "host_name": {"S": "NCI-MATCH-IR"},
       "site": {"S": "MoCha"},
       "status": {"S": "Contacted 4 minutes ago"},
