@@ -5,12 +5,12 @@ from common.dictionary_helper import DictionaryHelper
 from accessors.celery_task_accessor import CeleryTaskAccessor
 
 parser = reqparse.RequestParser()
-parser.add_argument('analysis_id',   type=str, required=False, location='json')
+parser.add_argument('analysis_id',   type=str, required=True,  location='json', help="'analysis_id' is required")
+parser.add_argument('site',          type=str, required=True,  location='json', help="'site' is required")
 parser.add_argument('dna_bam_name',  type=str, required=False, location='json')
 parser.add_argument('cdna_bam_name', type=str, required=False, location='json')
 parser.add_argument('vcf_name',      type=str, required=False, location='json')
 parser.add_argument('qc_name',       type=str, required=False, location='json')
-parser.add_argument('site',          type=str, required=True,  location='json')
 
 
 class Aliquot(Resource):
