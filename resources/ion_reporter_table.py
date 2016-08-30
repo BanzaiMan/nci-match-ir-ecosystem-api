@@ -17,7 +17,6 @@ class IonReporterTable(Resource):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
-
     def get(self):
         self.logger.info("Ion reporter GET called")
         args = request.args
