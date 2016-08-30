@@ -31,7 +31,6 @@ class IonReporterAccessor(DynamoDBAccessor):
 
         # wait for confirmation that the table exists
         table.meta.client.get_waiter('table_exists').wait(TableName=table_name)
-        self.handle_table_creation(table_name)
         return self.handle_table_creation(table_name)
 
     def update(self, item_dictionary):
