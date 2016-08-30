@@ -50,13 +50,14 @@ class Aliquot(Resource):
             try:
                 for distinct_task in distinct_tasks_list:
                     CeleryTaskAccessor().process_file(distinct_task)
-                return {"message": "Item updated", "molecular_id": molecular_id}
             except Exception, e:
                 self.logger.debug("updated_item failed because" + e.message)
                 abort(500, message="Updating_item failed because: " + e.message)
         else:
             self.logger.debug("No distinct tasks where found in message")
             abort(404, message="No distinct tasks where found in message")
+
+        return {"message": "Item updated", "molecular_id": molecular_id}
 
     @staticmethod
     def __get_distinct_tasks(item_dictionary, molecular_id):
