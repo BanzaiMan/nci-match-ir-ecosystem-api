@@ -2,17 +2,8 @@ import logging
 from accessors.celery_task_accessor import CeleryTaskAccessor
 from accessors.sample_control_accessor import SampleControlAccessor
 from flask_restful import abort, reqparse, Resource
+from flask import request
 from common.dictionary_helper import DictionaryHelper
-
-
-parser = reqparse.RequestParser()
-parser.add_argument('analysis_id',                  type=str, required=False, location='json')
-parser.add_argument('dna_bam_path',                 type=str, required=False, location='json')
-parser.add_argument('cdna_bam_path',                type=str, required=False, location='json')
-parser.add_argument('vcf_path',                     type=str, required=False, location='json')
-parser.add_argument('site',                         type=str, required=False, location='json')
-parser.add_argument('control_type',                 type=str, required=False, location='json')
-parser.add_argument('date_molecular_id_created',    type=str, required=False, location='json')
 
 
 class SampleControlRecord(Resource):
@@ -24,7 +15,7 @@ class SampleControlRecord(Resource):
     # This is just straight updates of attributes.
     def put(self, molecular_id):
         self.logger.info("updating sample control with id: " + str(molecular_id))
-        args = parser.parse_args()
+        args = request.json
         self.logger.debug(str(args))
 
         if not DictionaryHelper.has_values(args):
