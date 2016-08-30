@@ -8,17 +8,7 @@ from common.dictionary_helper import DictionaryHelper
 from common.string_helper import StringHelper
 
 parser = reqparse.RequestParser()
-parser.add_argument('ion_reporter_id',                  type=str, required=False, location='json')
-parser.add_argument('ip_address',                 type=str, required=False, location='json')
-parser.add_argument('internal_ip_address',                type=str, required=False, location='json')
-parser.add_argument('host_name',                     type=str, required=False, location='json')
-parser.add_argument('site',                         type=str, required=False, location='json')
-parser.add_argument('status',                 type=str, required=False, location='json')
-parser.add_argument('last_contact',    type=str, required=False, location='json')
-parser.add_argument('data_files',    type=str, required=False, location='json')
-
-# TODO: Create a means to store, retrieve, delete, and update information about the ion reporters themselves
-
+parser.add_argument('ion_reporter_id', type=str, required=False, location='json', help="'ion_reporter_id' is required")
 
 ION_REPORTER_ID_LENGTH = 5
 
@@ -27,7 +17,6 @@ class IonReporterTable(Resource):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
-# TODO begin here WAiO
 
     def get(self):
         self.logger.info("Ion reporter GET called")
@@ -75,9 +64,6 @@ class IonReporterTable(Resource):
         else:
             self.logger.debug("Ion reporter creation failed, because site was not passed in")
             abort(400, message="Must send in a site in order to create an ion reporter record")
-
-    # def put(self):
-    #     abort(500, message="Not yet implemented")
 
     def delete(self):
         self.logger.info("Ion Reporter Batch Delete called")
