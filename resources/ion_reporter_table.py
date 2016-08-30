@@ -74,7 +74,7 @@ class IonReporterTable(Resource):
                                "This is just to make things a little safer.")
         try:
             self.logger.info("Deleting items based on query: " + str(args))
-            CeleryTaskAccessor().delete_items(args)
+            CeleryTaskAccessor().delete_ir_items(args)
         except Exception, e:
             self.logger.error("Batch delete failed because: " + e.message)
             abort(500, message="Batch delete failed because: " + e.message)
@@ -86,7 +86,7 @@ class IonReporterTable(Resource):
         unique_key = False
         while not unique_key:
             new_ion_reporter_id = StringHelper.generate_ion_reporter_id(ION_REPORTER_ID_LENGTH)
-            results = IonReporterAccessor().get_item({'ion_reporter_id': new_ion_reporter_id})
+            results = IonReporterAccessor().get_ir_item({'ion_reporter_id': new_ion_reporter_id})
             self.logger.debug(results)
 
             if 'Items' in results:

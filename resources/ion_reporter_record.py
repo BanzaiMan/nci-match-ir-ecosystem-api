@@ -40,8 +40,8 @@ class IonReporterRecord(Resource):
         # passed in from the params. If they haven't been passed in then they shouldn't be updated.
         item_dictionary = dict((k, v) for k, v in item_dictionary.iteritems() if v)
         try:
-            CeleryTaskAccessor().update_item(item_dictionary)
-            IonReporterAccessor().update(item_dictionary)
+            CeleryTaskAccessor().update_ir_item(item_dictionary)
+            # IonReporterAccessor().update(item_dictionary)
         except Exception, e:
             self.logger.debug("updated_item failed because" + e.message)
             abort(500, message="Update item failed, because " + e.message)
@@ -51,7 +51,7 @@ class IonReporterRecord(Resource):
     def delete(self, ion_reporter_id):
         self.logger.info("Deleting ion reporter with id: " + str(ion_reporter_id))
         try:
-            CeleryTaskAccessor().delete_item({'ion_reporter_id': ion_reporter_id})
+            CeleryTaskAccessor().delete_ir_item({'ion_reporter_id': ion_reporter_id})
             return {"message": "Item deleted", "ion_reporter_id": ion_reporter_id}
         except Exception, e:
             self.logger.debug("delete_item failed because" + e.message)
