@@ -16,9 +16,10 @@ class TestStringHelper(unittest.TestCase):
         random_string = StringHelper.generate_molecular_id(5)
         assert random_string.startswith("SC_")
 
+    @patch('common.string_helper.StringHelper.generate_random_string')
     def test_generate_ion_reporter_id(self, random_string_function):
         random_string_function.return_value = "WO85G"
-        random_string = StringHelper.generate_molecular_id(5)
+        random_string = StringHelper.generate_ion_reporter_id(5)
         assert random_string.startswith("IR_")
 
     @data((5, 5, ""), (0, "", "Invalid Input"), (8, 8, ""), (-1, "", "Invalid Input"), ("dog", "", "Invalid Input"), (5.032, "", "Invalid Input"))
