@@ -10,10 +10,7 @@ sys.path.append('..')
 @ddt
 class TestIonReporterRecord(TestCase):
 
-    @patch()
     def test_get(self):
-
-
         self.fail()
 
     def test_put(self):
