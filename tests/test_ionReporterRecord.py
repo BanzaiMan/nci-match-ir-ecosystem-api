@@ -1,5 +1,5 @@
-from unittest import TestCase
-import boto
+# from unittest import TestCase
+# import boto
 # from resources.ion_reporter_record import IonReporterRecord
 #
 # TABLE_NAME = 'ion_reporters'
