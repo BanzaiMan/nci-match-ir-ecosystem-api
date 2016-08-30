@@ -53,18 +53,18 @@ def update_ir(update_message):
 @app.task
 def process_ir_file(file_process_message):
     logger.info("Processing file: " + str(file_process_message))
-    # TODO: add tsv and bai paths, as appropriate, to update dictionary
+    # TODO: add bai paths, as appropriate, to update dictionary
     if 'vcf_name' in file_process_message:
-        # TODO: DOWNLOAD FILE FIRST
-        tsv_full_path = VcfFileProcessor().vcf_to_tsv(file_process_message['vcf_name'])
+        vcf_local_path = S3Accessor().download(file_process_message['vcf_name'])
+        tsv_full_path = VcfFileProcessor().vcf_to_tsv(vcf_local_path)
         tsv_file_name = secure_filename(os.path.basename(tsv_full_path))
         tsv_s3_path = file_process_message['site'] + "/" + file_process_message['molecular_id'] + \
                       "/" + file_process_message['analysis_id'] + "/" + tsv_file_name
 
         S3Accessor().upload(tsv_full_path, tsv_s3_path)
-
         file_process_message.update({'tsv_name': tsv_s3_path})
-        SampleControlAccessor().update(file_process_message)
+
+    SampleControlAccessor().update(file_process_message)
 
 
 @app.task

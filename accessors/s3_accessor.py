@@ -24,4 +24,15 @@ class S3Accessor(object):
         self.logger.info("Upload to S3 success!")
 
     def download(self, s3_path):
-        pass
+        file_base_name = s3_path.split("/")[3]
+        full_path_local_file = __builtin__.environment_config[__builtin__.environment][
+                                   'tmp_file_dir'] + "/" + file_base_name
+        self.logger.info("Attempting to download: " + s3_path + " to " + full_path_local_file)
+        try:
+            self.resource.meta.client.download_file(self.bucket, s3_path, full_path_local_file)
+        except Exception, e:
+            self.logger.error("Download from S3 failed because: " + e.message)
+            raise
+
+        self.logger.info("Download from S3 success!")
+        return full_path_local_file
