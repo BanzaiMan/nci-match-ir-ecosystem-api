@@ -8,8 +8,9 @@ parser = reqparse.RequestParser()
 parser.add_argument('analysis_id',   type=str, required=False, location='json')
 parser.add_argument('dna_bam_name',  type=str, required=False, location='json')
 parser.add_argument('cdna_bam_name', type=str, required=False, location='json')
-parser.add_argument('vcf_path',      type=str, required=False, location='json')
-parser.add_argument('site',          type=str, required=True, location='json')
+parser.add_argument('vcf_name',      type=str, required=False, location='json')
+parser.add_argument('qc_name',       type=str, required=False, location='json')
+parser.add_argument('site',          type=str, required=True,  location='json')
 
 
 class Aliquot(Resource):
@@ -61,22 +62,28 @@ class Aliquot(Resource):
     def __get_distinct_tasks(item_dictionary, molecular_id):
         distinct_tasks_list = list()
 
-        if 'vcf_path' in item_dictionary and 'analysis_id' in item_dictionary:
+        if 'vcf_name' in item_dictionary and 'analysis_id' in item_dictionary:
             distinct_tasks_list.append({'site': item_dictionary['site'],
                                         'molecular_id': molecular_id,
                                         'analysis_id': item_dictionary['analysis_id'],
                                         'vcf_name': item_dictionary['vcf_name']})
 
-        if 'dna_bam_path' in item_dictionary and 'analysis_id' in item_dictionary:
+        if 'dna_bam_name' in item_dictionary and 'analysis_id' in item_dictionary:
             distinct_tasks_list.append({'site': item_dictionary['site'],
                                         'molecular_id': molecular_id,
                                         'analysis_id': item_dictionary['analysis_id'],
-                                        'dna_bam_path': item_dictionary['dna_bam_name']})
+                                        'dna_bam_name': item_dictionary['dna_bam_name']})
 
-        if 'cdna_bam_path' in item_dictionary and 'analysis_id' in item_dictionary:
+        if 'cdna_bam_name' in item_dictionary and 'analysis_id' in item_dictionary:
             distinct_tasks_list.append({'site': item_dictionary['site'],
                                         'molecular_id': molecular_id,
                                         'analysis_id': item_dictionary['analysis_id'],
                                         'cdna_bam_name': item_dictionary['cdna_bam_name']})
+
+        if 'qc_name' in item_dictionary and 'analysis_id' in item_dictionary:
+            distinct_tasks_list.append({'site': item_dictionary['site'],
+                                        'molecular_id': molecular_id,
+                                        'analysis_id': item_dictionary['analysis_id'],
+                                        'qc_name': item_dictionary['qc_name']})
 
         return distinct_tasks_list

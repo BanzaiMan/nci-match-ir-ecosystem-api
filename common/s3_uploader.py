@@ -16,12 +16,12 @@ class S3Uploader(object):
         self.site = upload_item_dictionary['site']
         self.molecular_id = upload_item_dictionary['molecular_id']
         self.analysis_id = upload_item_dictionary['analysis_id']
-        if 'vcf_path' in upload_item_dictionary:
-            self.file_full_path = upload_item_dictionary['vcf_path']
-        elif 'dna_bam_path' in upload_item_dictionary:
-            self.file_full_path = upload_item_dictionary['dna_bam_path']
-        elif 'cdna_bam_path' in upload_item_dictionary:
-            self.file_full_path = upload_item_dictionary['cdna_bam_path']
+        if 'vcf_name' in upload_item_dictionary:
+            self.file_full_path = upload_item_dictionary['vcf_name']
+        elif 'dna_bam_name' in upload_item_dictionary:
+            self.file_full_path = upload_item_dictionary['dna_bam_name']
+        elif 'cdna_bam_name' in upload_item_dictionary:
+            self.file_full_path = upload_item_dictionary['cdna_bam_name']
 
     def create_s3_path(self):
         file_full_path = self.file_full_path

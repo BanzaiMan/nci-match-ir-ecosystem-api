@@ -9,18 +9,6 @@ S3_ALLOWED_EXTENSIONS = {'bam', 'vcf', 'pdf'}
 S3_IGNORED_EXTENSIONS = {'bai', 'tsv'}
 S3_DOWNLOADABLES = {'bam', 'bai', 'vcf', 'tsv', 'pdf'}
 
-def aws_credentials():
-    s3_conf = '../resources/.s3_config.json'
-    curr_dir = os.path.dirname(__file__)
-    file_name = os.path.join(curr_dir, s3_conf)
-    if not os.path.isfile(file_name):
-        print 'aws config file missing.'
-    with open(file_name) as config_file:
-        config = json.load(config_file)
-        if 'aws_access_key_id' not in config or 'aws_secret_access_key' not in config:
-            print 'aws credentials not found.'
-        return config['aws_access_key_id'], config['aws_secret_access_key']
-
 
 def s3_allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in S3_ALLOWED_EXTENSIONS
