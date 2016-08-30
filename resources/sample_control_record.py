@@ -41,9 +41,11 @@ class SampleControlRecord(Resource):
         item_dictionary = dict((k, v) for k, v in item_dictionary.iteritems() if v)
         try:
             CeleryTaskAccessor().update_item(item_dictionary)
-            return {"message": "Sample control with molecular id: " + molecular_id + " updated"}
         except Exception, e:
-            self.logger.debug("updated_item failed because" + e.message)
+            self.logger.debug("updated_item failed because " + e.message)
+            abort(500, message="Update item failed, because " + e.message)
+
+        return {"message": "Sample control with molecular id: " + molecular_id + " updated"}
 
     def delete(self, molecular_id):
         self.logger.info("Deleting sample control with id: " + str(molecular_id))
@@ -52,8 +54,9 @@ class SampleControlRecord(Resource):
             return {"message": "Item deleted", "molecular_id": molecular_id}
         except Exception, e:
             self.logger.debug("delete_item failed because" + e.message)
+            abort(500, message="delete_item item failed, because " + e.message)
 
-    # TODO: Expand GET functionality to include the retrevial of files from S3.
+    # TODO: Expand GET functionality to include the retrieval of files from S3.
     # see https://wiki.nci.nih.gov/display/UM/Ecosystems+Services+and+Tables for more information on the functionality
     # that is needed to be added
     def get(self, molecular_id):
