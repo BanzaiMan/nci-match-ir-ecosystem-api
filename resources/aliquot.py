@@ -6,9 +6,10 @@ from accessors.celery_task_accessor import CeleryTaskAccessor
 
 parser = reqparse.RequestParser()
 parser.add_argument('analysis_id',   type=str, required=False, location='json')
-parser.add_argument('dna_bam_path',  type=str, required=False, location='json')
-parser.add_argument('cdna_bam_path', type=str, required=False, location='json')
+parser.add_argument('dna_bam_name',  type=str, required=False, location='json')
+parser.add_argument('cdna_bam_name', type=str, required=False, location='json')
 parser.add_argument('vcf_path',      type=str, required=False, location='json')
+parser.add_argument('site',          type=str, required=True, location='json')
 
 
 class Aliquot(Resource):
@@ -59,26 +60,23 @@ class Aliquot(Resource):
     @staticmethod
     def __get_distinct_tasks(item_dictionary, molecular_id):
         distinct_tasks_list = list()
-        # get site of this molecular_id
-        sample_control_record = SampleControlAccessor().scan({'molecular_id': molecular_id})
-        site = site = sample_control_record[0]['site']
 
         if 'vcf_path' in item_dictionary and 'analysis_id' in item_dictionary:
-            distinct_tasks_list.append({'site': site,
+            distinct_tasks_list.append({'site': item_dictionary['site'],
                                         'molecular_id': molecular_id,
                                         'analysis_id': item_dictionary['analysis_id'],
-                                        'vcf_path': item_dictionary['vcf_path']})
+                                        'vcf_name': item_dictionary['vcf_name']})
 
         if 'dna_bam_path' in item_dictionary and 'analysis_id' in item_dictionary:
-            distinct_tasks_list.append({'site': site,
+            distinct_tasks_list.append({'site': item_dictionary['site'],
                                         'molecular_id': molecular_id,
                                         'analysis_id': item_dictionary['analysis_id'],
-                                        'dna_bam_path': item_dictionary['dna_bam_path']})
+                                        'dna_bam_path': item_dictionary['dna_bam_name']})
 
         if 'cdna_bam_path' in item_dictionary and 'analysis_id' in item_dictionary:
-            distinct_tasks_list.append({'site': site,
+            distinct_tasks_list.append({'site': item_dictionary['site'],
                                         'molecular_id': molecular_id,
                                         'analysis_id': item_dictionary['analysis_id'],
-                                        'cdna_bam_path': item_dictionary['cdna_bam_path']})
+                                        'cdna_bam_name': item_dictionary['cdna_bam_name']})
 
         return distinct_tasks_list
