@@ -1,5 +1,5 @@
 import unittest
-from mock import patch, MagicMock
+from mock import patch
 import string
 import sys
 sys.path.append("..")
