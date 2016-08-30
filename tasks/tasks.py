@@ -53,9 +53,6 @@ def update_ir(update_message):
 @app.task
 def process_ir_file(file_process_message):
     logger.info("Processing file: " + str(file_process_message))
-    # TODO: find out if bucket should come from update request message?
-    bucket = 'ped-match'
-
     # TODO: add tsv and bai paths, as appropriate, to update dictionary
     if 'vcf_name' in file_process_message:
         # upload vcf to S3

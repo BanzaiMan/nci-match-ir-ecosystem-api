@@ -1,7 +1,6 @@
 import logging
 import os.path
-import sys
-import re
+import __builtin__
 
 from werkzeug.utils import secure_filename
 from accessors.s3_accessor import S3Accessor
@@ -9,10 +8,10 @@ from accessors.s3_accessor import S3Accessor
 class S3Uploader(object):
 
     ## this item_dictionary is updated dictionary, need have molecular_id, site, analysis_id, file_full_path
-    def __init__(self, bucket, upload_item_dictionary):
+    def __init__(self, upload_item_dictionary):
         self.logger = logging.getLogger(__name__)
         self.s3_accessor = S3Accessor()
-        self.bucket = bucket
+        self.bucket = __builtin__.environment_config[__builtin__.environment]['bucket'],
         self.site = upload_item_dictionary['site']
         self.molecular_id = upload_item_dictionary['molecular_id']
         self.analysis_id = upload_item_dictionary['analysis_id']
