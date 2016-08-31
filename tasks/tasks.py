@@ -7,6 +7,7 @@ from accessors.ion_reporter_accessor import IonReporterAccessor
 from accessors.sample_control_accessor import SampleControlAccessor
 from celery import Celery
 from common.vcf_processor import VcfFileProcessor
+from common.bam_processor import BamFileProcessor
 from accessors.s3_accessor import S3Accessor
 from werkzeug.utils import secure_filename
 
@@ -53,16 +54,30 @@ def update_ir(update_message):
 @app.task
 def process_ir_file(file_process_message):
     logger.info("Processing file: " + str(file_process_message))
-    # TODO: add bai paths, as appropriate, to update dictionary
     if 'vcf_name' in file_process_message:
         vcf_local_path = S3Accessor().download(file_process_message['vcf_name'])
         tsv_full_path = VcfFileProcessor().vcf_to_tsv(vcf_local_path)
         tsv_file_name = secure_filename(os.path.basename(tsv_full_path))
         tsv_s3_path = file_process_message['site'] + "/" + file_process_message['molecular_id'] + \
                       "/" + file_process_message['analysis_id'] + "/" + tsv_file_name
-
         S3Accessor().upload(tsv_full_path, tsv_s3_path)
         file_process_message.update({'tsv_name': tsv_s3_path})
+    elif 'dna_bam_name' in file_process_message:
+        dna_bam_local_path = S3Accessor().download(file_process_message['dna_bam_name'])
+        dna_bai_full_path = BamFileProcessor().bam_to_bai(dna_bam_local_path)
+        dna_bai_full_name = secure_filename(os.path.basename(dna_bai_full_path))
+        dna_bai_s3_path = file_process_message['site'] + "/" + file_process_message['molecular_id'] + \
+                          "/" + file_process_message['analysis_id'] + "/" + dna_bai_full_name
+        S3Accessor().upload(dna_bai_full_path, dna_bai_s3_path)
+        file_process_message.update({'dna_bai_name': dna_bai_s3_path})
+    elif 'cdna_bam_name' in file_process_message:
+        cdna_bam_local_path = S3Accessor().download(file_process_message['cdna_bam_name'])
+        cdna_bai_full_path = BamFileProcessor().bam_to_bai(cdna_bam_local_path)
+        cdna_bai_full_name = secure_filename(os.path.basename(cdna_bai_full_path))
+        cdna_bai_s3_path = file_process_message['site'] + "/" + file_process_message['molecular_id'] + \
+                           "/" + file_process_message['analysis_id'] + "/" + cdna_bai_full_name
+        S3Accessor().upload(cdna_bai_full_path, cdna_bai_s3_path)
+        file_process_message.update({'cdna_bai_name': cdna_bai_s3_path})
 
     SampleControlAccessor().update(file_process_message)
 
