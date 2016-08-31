@@ -2,26 +2,26 @@ development:
   dynamo_endpoint: "http://localhost:8000"
   region: "us-east-1"
   port: "10241"
-  bucket: "ped-match"
+  bucket: "pedmatch-dev"
   tmp_file_dir: "/tmp"
 
 test:
   dynamo_endpoint: "https://dynamodb.us-east-1.amazonaws.com"
   region: "us-east-1"
   port: "10241"
-  bucket: "ped-match"
+  bucket: "pedmatch-int"
   tmp_file_dir: "/tmp"
 
 uat:
   dynamo_endpoint: "https://dynamodb.us-east-1.amazonaws.com"
   region: "us-east-1"
   port: "10241"
-  bucket: "ped-match"
+  bucket: "pedmatch-uat"
   tmp_file_dir: "/tmp"
-
+@
 production:
   dynamo_endpoint: "https://dynamodb.us-east-1.amazonaws.com"
   region: "us-east-1"
   port: "10241"
-  bucket: "ped-match"
+  bucket: "pedmatch"
   tmp_file_dir: "/tmp"
