@@ -23,7 +23,7 @@ class BamFileProcessor(object):
         try:
             pysam.index(bam_full_path, bai_full_path)
         except Exception, e:
-            logger.error("Failed to generate bai file, because : " + str(bam_full_path))
+            logger.error("Failed to generate bai file, because : " + e.message)
             raise
 
         logger.info("Generated bai file success!")
