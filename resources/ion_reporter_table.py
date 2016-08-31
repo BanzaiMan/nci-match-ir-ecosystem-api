@@ -41,8 +41,9 @@ class IonReporterTable(Resource):
             abort(400, message="ion_reporter_id is not a valid input when attempting to create a new ion reporter record."
                                "The post will create the id for you. Simply pass in site'")
 
+        ##### I dont think we need this here?
         if DictionaryHelper.keys_have_value(args, ['site']):
-            self.logger.debug("Ion reporter creation failed, because request ion_reporter_id was passed in")
+            self.logger.debug("creating ion reporter id for site: " + str(args))
 
             new_item_dictionary = args.copy()
             new_item_dictionary.update({'ion_reporter_id': self.__get_unique_key(),
@@ -85,7 +86,7 @@ class IonReporterTable(Resource):
         unique_key = False
         while not unique_key:
             new_ion_reporter_id = StringHelper.generate_ion_reporter_id(ION_REPORTER_ID_LENGTH)
-            results = IonReporterAccessor().get_ir_item({'ion_reporter_id': new_ion_reporter_id})
+            results = IonReporterAccessor().get_item({'ion_reporter_id': new_ion_reporter_id})
             self.logger.debug(results)
 
             if 'Items' in results:
