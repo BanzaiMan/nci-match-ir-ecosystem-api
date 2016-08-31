@@ -49,6 +49,7 @@ class Aliquot(Resource):
         if len(distinct_tasks_list) > 0:
             try:
                 for distinct_task in distinct_tasks_list:
+                    self.logger.debug("Adding task to queue: " + str(distinct_task))
                     CeleryTaskAccessor().process_file(distinct_task)
             except Exception, e:
                 self.logger.debug("updated_item failed because" + e.message)
@@ -63,28 +64,24 @@ class Aliquot(Resource):
     def __get_distinct_tasks(item_dictionary, molecular_id):
         distinct_tasks_list = list()
 
-        if 'vcf_name' in item_dictionary and 'analysis_id' in item_dictionary:
-            distinct_tasks_list.append({'site': item_dictionary['site'],
-                                        'molecular_id': molecular_id,
-                                        'analysis_id': item_dictionary['analysis_id'],
-                                        'vcf_name': item_dictionary['vcf_name']})
+        if 'vcf_name' in item_dictionary and 'analysis_id' and 'site' in item_dictionary:
+            distinct_tasks_list.append(Aliquot.__get_tasks_dictionary(item_dictionary, molecular_id, 'vcf_name'))
 
-        if 'dna_bam_name' in item_dictionary and 'analysis_id' in item_dictionary:
-            distinct_tasks_list.append({'site': item_dictionary['site'],
-                                        'molecular_id': molecular_id,
-                                        'analysis_id': item_dictionary['analysis_id'],
-                                        'dna_bam_name': item_dictionary['dna_bam_name']})
+        if 'dna_bam_name' in item_dictionary and 'analysis_id' and 'site' in item_dictionary:
+            distinct_tasks_list.append(Aliquot.__get_tasks_dictionary(item_dictionary, molecular_id, 'dna_bam_name'))
 
-        if 'cdna_bam_name' in item_dictionary and 'analysis_id' in item_dictionary:
-            distinct_tasks_list.append({'site': item_dictionary['site'],
-                                        'molecular_id': molecular_id,
-                                        'analysis_id': item_dictionary['analysis_id'],
-                                        'cdna_bam_name': item_dictionary['cdna_bam_name']})
+        if 'cdna_bam_name' in item_dictionary and 'analysis_id' and 'site' in item_dictionary:
+            distinct_tasks_list.append(Aliquot.__get_tasks_dictionary(item_dictionary, molecular_id, 'cdna_bam_name'))
 
-        if 'qc_name' in item_dictionary and 'analysis_id' in item_dictionary:
-            distinct_tasks_list.append({'site': item_dictionary['site'],
-                                        'molecular_id': molecular_id,
-                                        'analysis_id': item_dictionary['analysis_id'],
-                                        'qc_name': item_dictionary['qc_name']})
+        if 'qc_name' in item_dictionary and 'analysis_id' and 'site' in item_dictionary:
+            distinct_tasks_list.append(Aliquot.__get_tasks_dictionary(item_dictionary, molecular_id, 'qc_name'))
 
         return distinct_tasks_list
+
+    @staticmethod
+    def __get_tasks_dictionary(item_dictionary, molecular_id, file_dict_key):
+        return {'site': item_dictionary['site'],
+                'molecular_id': molecular_id,
+                'analysis_id': item_dictionary['analysis_id'],
+                file_dict_key: item_dictionary[file_dict_key]}
+
