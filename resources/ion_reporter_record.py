@@ -1,22 +1,28 @@
 import logging
-from flask_restful import abort, request, Resource
+from flask_restful import abort, request, Resource, reqparse
 from accessors.celery_task_accessor import CeleryTaskAccessor
 from accessors.ion_reporter_accessor import IonReporterAccessor
+from accessors.sample_control_accessor import SampleControlAccessor
 from common.dictionary_helper import DictionaryHelper
 
+parser = reqparse.RequestParser()
+parser.add_argument('sample_controls',       type=str, required=False, location='json')
 
 class IonReporterRecord(Resource):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
     def get(self, ion_reporter_id):
-        self.logger.info("Getting ion reporter with id: " + str(ion_reporter_id))
-        try:
-            results = IonReporterAccessor().get_item({'ion_reporter_id': ion_reporter_id})
 
+        args = request.args
+        try:
+            self.logger.info("Getting ion reporter with id: " + str(ion_reporter_id))
+            results = IonReporterAccessor().get_item({'ion_reporter_id': ion_reporter_id})
             if 'Item' in results:
                 self.logger.debug("Found: " + str(results['Item']))
-                return results['Item']
+            if args['sample_controls'] == 'TRUE':
+                sites = SampleControlAccessor().scan(({'site': results['Item']['site']}))
+            return sites
 
         except Exception, e:
             self.logger.debug("get_item failed because" + e.message)
