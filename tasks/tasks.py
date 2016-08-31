@@ -54,7 +54,10 @@ def update_ir(update_message):
 @app.task
 def process_ir_file(file_process_message):
     logger.info("Processing file: " + str(file_process_message))
+
+    # TODO: Now that this is done, we can refactor to be DRY (Don't Repeat Yourself)
     if 'vcf_name' in file_process_message:
+        logger.info("Processing VCF ")
         vcf_local_path = S3Accessor().download(file_process_message['vcf_name'])
         tsv_full_path = VcfFileProcessor().vcf_to_tsv(vcf_local_path)
         tsv_file_name = secure_filename(os.path.basename(tsv_full_path))
@@ -63,6 +66,7 @@ def process_ir_file(file_process_message):
         S3Accessor().upload(tsv_full_path, tsv_s3_path)
         file_process_message.update({'tsv_name': tsv_s3_path})
     elif 'dna_bam_name' in file_process_message:
+        logger.info("Processing DNA BAM ")
         dna_bam_local_path = S3Accessor().download(file_process_message['dna_bam_name'])
         dna_bai_full_path = BamFileProcessor().bam_to_bai(dna_bam_local_path)
         dna_bai_full_name = secure_filename(os.path.basename(dna_bai_full_path))
@@ -71,6 +75,7 @@ def process_ir_file(file_process_message):
         S3Accessor().upload(dna_bai_full_path, dna_bai_s3_path)
         file_process_message.update({'dna_bai_name': dna_bai_s3_path})
     elif 'cdna_bam_name' in file_process_message:
+        logger.info("Processing RNA BAM ")
         cdna_bam_local_path = S3Accessor().download(file_process_message['cdna_bam_name'])
         cdna_bai_full_path = BamFileProcessor().bam_to_bai(cdna_bam_local_path)
         cdna_bai_full_name = secure_filename(os.path.basename(cdna_bai_full_path))
@@ -79,6 +84,7 @@ def process_ir_file(file_process_message):
         S3Accessor().upload(cdna_bai_full_path, cdna_bai_s3_path)
         file_process_message.update({'cdna_bai_name': cdna_bai_s3_path})
 
+    # TODO: This works, but isn't really safe. We should save the data before processing then save the new information after the files are processed.
     SampleControlAccessor().update(file_process_message)
 
 

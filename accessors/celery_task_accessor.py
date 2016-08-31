@@ -24,7 +24,6 @@ class CeleryTaskAccessor(object):
     def delete_ir_item(self, item_dictionary):
         return self.__process_item(item_dictionary, delete_ir, "delete ir")
 
-
     def delete_items(self, query_parameters):
         return self.__process_item(query_parameters, batch_delete, " batch delete")
 

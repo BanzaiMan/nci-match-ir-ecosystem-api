@@ -37,6 +37,7 @@ except KeyError, e:
 
 logger.info("Environment set to: " + __builtin__.environment)
 
+
 # Use the environment variable from above to read yaml config file and set global variable to the loaded file
 # so tier specific information may be retrieved by the various modules as needed.
 with open("config/environment.yml", 'r') as yaml_file:
@@ -62,6 +63,7 @@ api.add_resource(IonReporterRecord, '/api/v1/ion_reporters/<string:ion_reporter_
 # in either the patient or sample_control table. Also a path to query with GET to see if molecular_id is valid and
 # what type of molecular id it is (i.e., sample_control or patient)
 api.add_resource(Aliquot, '/api/v1/aliquot/<string:molecular_id>')
+
 
 # For the most part, this is boilerplate code to start tornado server
 if __name__ == '__main__':
