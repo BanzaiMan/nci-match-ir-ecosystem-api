@@ -32,5 +32,5 @@ class StringHelper(object):
             raise ValueError("Invalid Input")
 
         logger = logging.getLogger(__name__)
-        logger.debug("Generating random string for molecular id")
+        logger.debug("Generating random string for id")
         return ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(length))
