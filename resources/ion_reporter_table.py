@@ -41,7 +41,6 @@ class IonReporterTable(Resource):
             abort(400, message="ion_reporter_id is not a valid input when attempting to create a new ion reporter record."
                                "The post will create the id for you. Simply pass in site'")
 
-        ##### I dont think we need this here?
         if DictionaryHelper.keys_have_value(args, ['site']):
             self.logger.debug("creating ion reporter id for site: " + str(args))
 
