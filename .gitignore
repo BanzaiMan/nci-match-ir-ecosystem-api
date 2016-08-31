@@ -1,3 +1,7 @@
+*.vcf
+*.tsv
+*.bam
+*.bai
 # PyCharm IDE files
 .idea/
 test.json
