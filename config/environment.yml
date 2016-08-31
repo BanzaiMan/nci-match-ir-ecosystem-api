@@ -18,7 +18,7 @@ uat:
   port: "10241"
   bucket: "pedmatch-uat"
   tmp_file_dir: "/tmp"
-@
+
 production:
   dynamo_endpoint: "https://dynamodb.us-east-1.amazonaws.com"
   region: "us-east-1"
