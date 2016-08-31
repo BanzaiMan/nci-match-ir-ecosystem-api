@@ -12,7 +12,7 @@ class VcfFileProcessor(object):
         logger.debug("vcf file: " + str(vcf_full_path))
 
         if not os.path.isfile(vcf_full_path):
-            logger.debug("vcf file does not exist: "+ str(vcf_full_path))
+            logger.debug("vcf file does not exist: " + str(vcf_full_path))
             logger.debug("Failed to convert vcf file to tsv file.")
 
         p = re.compile('.vcf')
@@ -34,7 +34,6 @@ class VcfFileProcessor(object):
                 logger.debug("Failed to generate tsv file from : " + str(vcf_full_path))
                 return None
         except Exception, e:
-            logger.debug("Failed to generate tsv file from : " + str(vcf_full_path))
-            logger.debug("Failure reason: " + e.message)
-            return None
+            logger.error("Failure reason: " + e.message)
+            raise
 
