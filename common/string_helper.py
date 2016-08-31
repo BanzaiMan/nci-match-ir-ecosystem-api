@@ -7,23 +7,21 @@ class StringHelper(object):
 
     @staticmethod
     def generate_molecular_id(length=5):
-        logger = logging.getLogger(__name__)
-        logger.debug("Generating molecular id")
-
-        new_molecular_id = 'SC_' + StringHelper.generate_random_string(length)
-
-        logger.debug("New Molecular Id: " + new_molecular_id)
-        return new_molecular_id
+        return StringHelper.__generate_id(length, "SC_", "sample_control")
 
     @staticmethod
     def generate_ion_reporter_id(length=5):
+        return StringHelper.__generate_id(length, "IR_", "ion_reporter")
+
+    @staticmethod
+    def __generate_id(length, prefix, description):
         logger = logging.getLogger(__name__)
-        logger.debug("Generating ion reporter id")
+        logger.debug("Generating " + description + " id")
 
-        new_ion_reporter_id = 'IR_' + StringHelper.generate_random_string(length)
+        new_id = prefix + StringHelper.generate_random_string(length)
 
-        logger.debug("New Ion Reporter Id: " + new_ion_reporter_id)
-        return new_ion_reporter_id
+        logger.debug("New " + description + ": " + new_id)
+        return new_id
 
     @staticmethod
     def generate_random_string(length=5):
