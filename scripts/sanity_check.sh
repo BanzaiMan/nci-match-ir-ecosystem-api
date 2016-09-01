@@ -55,4 +55,6 @@ echo -e "${RED}(person: waleed) GET /v1/ion_reporters/{ion_reporter_id}?patients
 echo -e "${RED}returns all patients and/or sample controls sequenced on the ion reporter${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 
+curl -X GET "http://localhost:5000/api/v1/ion_reporters/IR_WAO85?sample_controls=TRUE"
 
+curl -X GET "http://localhost:5000/api/v1/ion_reporters/IR_WAO85?sample_controls=FALSE"
