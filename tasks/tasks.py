@@ -49,43 +49,53 @@ def update_ir(update_message):
     logger.info("Updating item: " + str(update_message))
     IonReporterAccessor().update(update_message)
 
+
 # this is a special update in that it updates the database, process files, and stores them in s3. So think of this
 # as updating both S3 and dynamodb.
 @app.task
 def process_ir_file(file_process_message):
-    logger.info("Processing file: " + str(file_process_message))
-
-    # TODO: Now that this is done, we can refactor to be DRY (Don't Repeat Yourself)
-    if 'vcf_name' in file_process_message:
-        logger.info("Processing VCF ")
-        vcf_local_path = S3Accessor().download(file_process_message['vcf_name'])
-        tsv_full_path = VcfFileProcessor().vcf_to_tsv(vcf_local_path)
-        tsv_file_name = secure_filename(os.path.basename(tsv_full_path))
-        tsv_s3_path = file_process_message['site'] + "/" + file_process_message['molecular_id'] + \
-                      "/" + file_process_message['analysis_id'] + "/" + tsv_file_name
-        S3Accessor().upload(tsv_full_path, tsv_s3_path)
-        file_process_message.update({'tsv_name': tsv_s3_path})
-    elif 'dna_bam_name' in file_process_message:
-        logger.info("Processing DNA BAM ")
-        dna_bam_local_path = S3Accessor().download(file_process_message['dna_bam_name'])
-        dna_bai_full_path = BamFileProcessor().bam_to_bai(dna_bam_local_path)
-        dna_bai_full_name = secure_filename(os.path.basename(dna_bai_full_path))
-        dna_bai_s3_path = file_process_message['site'] + "/" + file_process_message['molecular_id'] + \
-                          "/" + file_process_message['analysis_id'] + "/" + dna_bai_full_name
-        S3Accessor().upload(dna_bai_full_path, dna_bai_s3_path)
-        file_process_message.update({'dna_bai_name': dna_bai_s3_path})
-    elif 'cdna_bam_name' in file_process_message:
-        logger.info("Processing RNA BAM ")
-        cdna_bam_local_path = S3Accessor().download(file_process_message['cdna_bam_name'])
-        cdna_bai_full_path = BamFileProcessor().bam_to_bai(cdna_bam_local_path)
-        cdna_bai_full_name = secure_filename(os.path.basename(cdna_bai_full_path))
-        cdna_bai_s3_path = file_process_message['site'] + "/" + file_process_message['molecular_id'] + \
-                           "/" + file_process_message['analysis_id'] + "/" + cdna_bai_full_name
-        S3Accessor().upload(cdna_bai_full_path, cdna_bai_s3_path)
-        file_process_message.update({'cdna_bai_name': cdna_bai_s3_path})
-
-    # TODO: This works, but isn't really safe. We should save the data before processing then save the new information after the files are processed.
+    logger.info("Updating sample_controls table before processing file" + str(file_process_message))
+    new_file_process_message = file_process_message.copy()
+    # after running SampleControlAccessor().update(file_process_message), key 'molecular_id' will be removed from file_process_message
+    # see sample_control_access.py line37
     SampleControlAccessor().update(file_process_message)
+
+    # process vcf, dna_bam, or cdna_bam file
+    updated_file_process_message = process_file_message(new_file_process_message)
+    if updated_file_process_message is not None:
+        logger.info("Updating sample_controls table after processing file")
+        SampleControlAccessor().update(updated_file_process_message)
+
+
+# process vcf, bam files based on message dictionary key: vcf_name, dna_bam_name, or cdna_bam_name
+def process_file_message(file_process_message):
+    logger.info("Processing file message in function process_file_message()" + str(file_process_message))
+
+    if 'vcf_name' in file_process_message and file_process_message['vcf_name'] is not None:
+        logger.info("Processing VCF ")
+        downloaded_file_path = S3Accessor().download(file_process_message['vcf_name'])
+        new_file_path = VcfFileProcessor().vcf_to_tsv(downloaded_file_path)
+        key = 'tsv_name'
+    elif 'dna_bam_name' in file_process_message and file_process_message['dna_bam_name'] is not None:
+        logger.info("Processing DNA BAM ")
+        downloaded_file_path = S3Accessor().download(file_process_message['dna_bam_name'])
+        new_file_path = BamFileProcessor().bam_to_bai(downloaded_file_path)
+        key = 'dna_bai_name'
+    elif 'cdna_bam_name' in file_process_message and file_process_message['cdna_bam_name'] is not None:
+        logger.info("Processing RNA BAM ")
+        downloaded_file_path = S3Accessor().download(file_process_message['cdna_bam_name'])
+        new_file_path = BamFileProcessor().bam_to_bai(downloaded_file_path)
+        key = 'cdna_bai_name'
+    else:
+        logger.error("No file needs process for " + str(file_process_message))
+        return None
+
+    new_file_name = secure_filename(os.path.basename(new_file_path))
+    new_file_s3_path = file_process_message['site'] + "/" + file_process_message['molecular_id'] + \
+                       "/" + file_process_message['analysis_id'] + "/" + new_file_name
+    S3Accessor().upload(downloaded_file_path, new_file_s3_path)
+    file_process_message.update({key: new_file_s3_path})
+    return file_process_message
 
 
 @app.task

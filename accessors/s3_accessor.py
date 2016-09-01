@@ -24,9 +24,7 @@ class S3Accessor(object):
         self.logger.info("Upload to S3 success!")
 
     def download(self, s3_path):
-        # TODO: Qing what if we change the path to have another directory? Or fewer directories?
-        # Hint google rsplit
-        file_base_name = s3_path.split("/")[3]
+        file_base_name = s3_path.rsplit('/', 1)[1]
         full_path_local_file = __builtin__.environment_config[__builtin__.environment]['tmp_file_dir'] +\
                                "/" + file_base_name
         self.logger.info("Attempting to download: " + s3_path + " to " + full_path_local_file)
