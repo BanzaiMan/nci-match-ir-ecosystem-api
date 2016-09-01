@@ -18,10 +18,12 @@ class IonReporterRecord(Resource):
         try:
             self.logger.info("Getting ion reporter with id: " + str(ion_reporter_id))
             results = IonReporterAccessor().get_item({'ion_reporter_id': ion_reporter_id})
+            # TODO: Waleed, walk through this logic there is a bug here.
             if 'Item' in results:
                 self.logger.debug("Found: " + str(results['Item']))
             if args['sample_controls'] == 'TRUE':
                 sites = SampleControlAccessor().scan(({'site': results['Item']['site']}))
+            # TODO: Waleed, also a bug here...
             return sites
 
         except Exception, e:

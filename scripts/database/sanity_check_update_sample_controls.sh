@@ -46,7 +46,7 @@ QUERY_VALUE='no_template'
 
 MOLECULAR_ID='SC_YQ111'
 
-
+# TODO: Qing and Waleed, this script should just be curl statements. We already have a script to build the tables and delete them etc. using AWS CLI. So these aws lines should all be removed.
 ## DELETE: Delete an item from the database
 echo -e "${CYAN}************************************************************${NC}"
 echo -e "${RED}DELETE A ITEM FROM TABLE: NEED A KEY JSON FILE               ${NC}"
