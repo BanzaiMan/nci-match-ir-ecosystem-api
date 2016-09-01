@@ -6,7 +6,7 @@ from accessors.sample_control_accessor import SampleControlAccessor
 from common.dictionary_helper import DictionaryHelper
 
 parser = reqparse.RequestParser()
-parser.add_argument('sample_controls',       type=str, required=False, location='json')
+parser.add_argument('sample_controls',       type=str, required=False)
 
 class IonReporterRecord(Resource):
     def __init__(self):
@@ -14,25 +14,27 @@ class IonReporterRecord(Resource):
 
     def get(self, ion_reporter_id):
         self.logger.info("Getting ion reporter with id: " + str(ion_reporter_id))
-        args = request.args
+        args = parser.parse_args()
         try:
-
             results = IonReporterAccessor().get_item({'ion_reporter_id': ion_reporter_id})
             # TODO: Please double check logic
             if 'Item' in results:
                 self.logger.debug("Found: " + str(results['Item']))
-                # return results['Item']
-            if args['sample_controls'] == 'TRUE':
-                site = results['Item']['site']
-                sites = SampleControlAccessor().scan(({'site': site}))
-                self.logger.debug("Attempting to return: all sample controls' molecular ids")
-                return [d['molecular_id'] for d in sites]
-            else:
-                return results['Item']
-
         except Exception, e:
             self.logger.debug("get_item failed because" + e.message)
             abort(500, message="get_item failed because " + e.message)
+
+        if args['sample_controls'] == 'TRUE':
+            site = results['Item']['site']
+            sample_controls = SampleControlAccessor().scan({'site': site})
+            if 'Item' in sample_controls:
+                self.logger.debug("Found: " + str(sample_controls['Item']))
+
+            self.logger.debug("Attempting to return: all sample controls")
+            return sample_controls
+        else:
+            return results['Item']
+
 
     def put(self, ion_reporter_id):
         self.logger.info("updating ion reporter with id: " + str(ion_reporter_id))
