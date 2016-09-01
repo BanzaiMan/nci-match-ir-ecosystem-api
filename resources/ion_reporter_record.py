@@ -13,31 +13,36 @@ class IonReporterRecord(Resource):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
+    # TODO: I would suggest using omnigraffle to flow char logic before trying to correct these todo's
     def get(self, ion_reporter_id):
         self.logger.info("Getting ion reporter with id: " + str(ion_reporter_id))
         args = parser.parse_args()
         try:
             results = IonReporterAccessor().get_item({'ion_reporter_id': ion_reporter_id})
-            # TODO: Please double check logic
+            # TODO: Please double check logic...
             if 'Item' in results:
                 self.logger.debug("Found: " + str(results['Item']))
         except Exception, e:
             self.logger.debug("get_item failed because" + e.message)
             abort(500, message="get_item failed because " + e.message)
 
+        # TODO: What if they type in true or True?
         if args['sample_controls'] == 'TRUE':
+            # TODO: what if Item was not in results? What if site was not in results?
             site = results['Item']['site']
+            # TODO: What if the scan throws an exception?
             sample_controls = SampleControlAccessor().scan({'site': site})
             if 'Item' in sample_controls:
                 self.logger.debug("Found: " + str(sample_controls['Item']))
 
             if args['PROJECTION'] == 'molecular_id':
                 self.logger.debug("Returning molecular ids only")
+                # TODO: I'm surprised this would work... can you show this to me?
                 return [d['molecular_id'] for d in sample_controls]
 
-
-
+            # TODO: Not quite......look at actual return results you aren't returning just what you think
             self.logger.debug("Attempting to return: all sample controls")
+            # TODO: Not quite...what are you returning. compare line 43 to 46.
             return sample_controls
         else:
             return results['Item']
