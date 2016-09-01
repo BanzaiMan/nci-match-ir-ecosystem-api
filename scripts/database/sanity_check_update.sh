@@ -25,25 +25,8 @@ CYAN='\033[0;36m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-TABLE_NAME="sample_controls"
-
-# Change to whatever ip address you want, http://localhost:8000 is
-# the default and will cause tables to be setup on your local dynamodb
-LOCAL_URL="http://localhost:8000"
-CURL_URL="http://localhost:5000/api/v1/aliquot/"
-
-# Uncomment to make script setup table on your amazon account
-# END_POINT=""
-
-# Comment out if you want to use script to setup table on amazon
-END_POINT="--endpoint-url $LOCAL_URL"
-
-ATTRIBUTE='site'
-VALUE='mocha'
-
-QUERY_ATTRIBUTE='control_type'
-QUERY_VALUE='no_template'
-
+# for testing
+ALIQUOT_URL="http://localhost:5000/api/v1/aliquot/"
 MOLECULAR_ID='SC_YQ111'
 
 
@@ -54,4 +37,9 @@ echo -e "${CYAN}****************************************************************
 echo -e "${RED}READ UPDATE MESSAGE, PROCESS, AND UPDATE TABLE: NEED AN UPDATE DATA JSON FILE           ${NC}"
 echo -e "${CYAN}***************************************************************************************${NC}"
 curl -H 'Content-Type: application/json' -X PUT -d @./sc_update_data.json $CURL_URL$MOLECULAR_ID
+
+echo -e "${CYAN}***************************************************************************************${NC}"
+echo -e "${RED}RETURN DATA FOR MOLECUALR_ID IF VALID, ELSE 404                                         ${NC}"
+echo -e "${CYAN}***************************************************************************************${NC}"
+curl -X GET ALIQUOT_URL$MOLECULAR_ID
 
