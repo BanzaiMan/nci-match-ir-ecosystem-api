@@ -77,7 +77,6 @@ def process_file_message(file_process_message):
         logger.info("Processing VCF ")
         downloaded_file_path = S3Accessor().download(file_process_message['vcf_name'])
         new_file_path = VcfFileProcessor().vcf_to_tsv(downloaded_file_path)
-        # TODO: Qing, not be overly critical, but naming this variable "key" doesn't make sense to me. Is there a reason why? I ask because the file names are not keys.
         key = 'tsv_name'
     elif 'dna_bam_name' in file_process_message and file_process_message['dna_bam_name'] is not None:
         logger.info("Processing DNA BAM ")
