@@ -59,6 +59,8 @@ curl -X GET "http://localhost:5000/api/v1/ion_reporters/IR_WAO85?sample_controls
 
 curl -X GET "http://localhost:5000/api/v1/ion_reporters/IR_WAO85?sample_controls=FALSE"
 
+curl -X GET "http://localhost:5000/api/v1/ion_reporters/IR_WAO85"
+
 echo -e "${CYAN}***********************************************${NC}"
 echo -e "${RED}(person: waleed) GET /v1/ion_reporters/{ion_reporter_id}?patients=true&sample_controls=true${NC}"
 echo -e "${RED}returns all molecular ids for sample controls sequenced on the ion reporter${NC}"
