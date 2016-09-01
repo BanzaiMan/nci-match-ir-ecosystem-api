@@ -3,15 +3,13 @@ FROM python:2.7.12
 
 MAINTAINER jeremy.pumphrey@nih.gov
 
-#ENV RAILS_VERSION 4.2.6
-#ENV RAILS_ENV test
-ENV HOME /nci-match-ir-ecoystem-api
-WORKDIR $HOME 
+# Install requirements
+RUN mkdir -p /nci-match-ir-ecoystem-api && chmod 777 /nci-match-ir-ecoystem-api
+COPY requirements.txt /nci-match-ir-ecoystem-api/
+RUN pip install -r /nci-match-ir-ecoystem-api/requirements.txt
 
 # Add the app code 
-ADD . $HOME 
-
-RUN pip install -r ./requirements.txt
+COPY . /nci-match-ir-ecoystem-api/
 
 # Default command 
-CMD ["python", "$HOME/app.py" ]
+CMD ["python", "/nci-match-ir-ecoystem-api/app.py" ]
