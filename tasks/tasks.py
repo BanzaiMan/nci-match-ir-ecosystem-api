@@ -61,10 +61,13 @@ def process_ir_file(file_process_message):
     # see sample_control_access.py line37
     SampleControlAccessor().update(file_process_message)
 
-    # process vcf, dna_bam, or cdna_bam file
-    updated_file_process_message = process_file_message(new_file_process_message)
-    # TODO: I think a try except is more appropriate as the above failing is an error not a valid conditional path.
-    if updated_file_process_message is not None:
+    try:
+        # process vcf, dna_bam, or cdna_bam file
+        updated_file_process_message = process_file_message(new_file_process_message)
+    except Exception, e:
+        logger.error("Cannot process file because: " + e.message)
+        raise
+    else:
         logger.info("Updating sample_controls table after processing file")
         SampleControlAccessor().update(updated_file_process_message)
 
@@ -90,8 +93,7 @@ def process_file_message(file_process_message):
         key = 'cdna_bai_name'
     else:
         logger.error("No file needs process for " + str(file_process_message))
-        # TODO: Qing, should raise an error here not simply return none as this is a true error
-        return None
+        raise Exception("No file needs process")
 
     new_file_name = secure_filename(os.path.basename(new_file_path))
     new_file_s3_path = file_process_message['site'] + "/" + file_process_message['molecular_id'] + \
