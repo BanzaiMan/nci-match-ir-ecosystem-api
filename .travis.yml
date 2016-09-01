@@ -6,7 +6,7 @@ sudo: required
 services: 
   - docker
 language: python
-python: "2.7"
+python: "2.7.12"
 install: "pip install -r requirements.txt"
 # before_install:
 # before_script:
@@ -15,10 +15,10 @@ script:
 after_success:
   # - ls -alth
   - docker build -t matchbox/nci-match-ir-ecoystem-api .
-  # - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-  # - docker tag -f matchbox/nci-match-patient-api matchbox/nci-match-patient-api:latest
-  # - docker images
-  # - docker push matchbox/nci-match-patient-api:latest
+  - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+  - docker tag -f matchbox/nci-match-ir-ecoystem-api matchbox/nci-match-ir-ecoystem-api:latest
+  - docker images
+  - docker push matchbox/nci-match-ir-ecoystem-api:latest
   #Deploy to AWS IntTest
   # - docker run -it --rm -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION=us-east-1 silintl/ecs-deploy --cluster PedMatch-IntTest-Backend --service-name uMatch-nci-match-patient-api-INTTEST -i matchbox/nci-match-patient-api:latest
 #Trigger Travis bdd tests

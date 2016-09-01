@@ -1,5 +1,5 @@
 # Base image 
-FROM python:2.7
+FROM python:2.7.12
 
 MAINTAINER jeremy.pumphrey@nih.gov
 
