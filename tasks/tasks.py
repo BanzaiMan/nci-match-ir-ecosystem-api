@@ -44,6 +44,7 @@ def update(update_message):
     logger.info("Updating item: " + str(update_message))
     SampleControlAccessor().update(update_message)
 
+
 @app.task
 def update_ir(update_message):
     logger.info("Updating item: " + str(update_message))
@@ -62,6 +63,7 @@ def process_ir_file(file_process_message):
 
     # process vcf, dna_bam, or cdna_bam file
     updated_file_process_message = process_file_message(new_file_process_message)
+    # TODO: I think a try except is more appropriate as the above failing is an error not a valid conditional path.
     if updated_file_process_message is not None:
         logger.info("Updating sample_controls table after processing file")
         SampleControlAccessor().update(updated_file_process_message)
@@ -75,6 +77,7 @@ def process_file_message(file_process_message):
         logger.info("Processing VCF ")
         downloaded_file_path = S3Accessor().download(file_process_message['vcf_name'])
         new_file_path = VcfFileProcessor().vcf_to_tsv(downloaded_file_path)
+        # TODO: Qing, not be overly critical, but naming this variable "key" doesn't make sense to me. Is there a reason why? I ask because the file names are not keys.
         key = 'tsv_name'
     elif 'dna_bam_name' in file_process_message and file_process_message['dna_bam_name'] is not None:
         logger.info("Processing DNA BAM ")
@@ -88,6 +91,7 @@ def process_file_message(file_process_message):
         key = 'cdna_bai_name'
     else:
         logger.error("No file needs process for " + str(file_process_message))
+        # TODO: Qing, should raise an error here not simply return none as this is a true error
         return None
 
     new_file_name = secure_filename(os.path.basename(new_file_path))

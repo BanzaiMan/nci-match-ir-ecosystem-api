@@ -100,3 +100,5 @@ ENV/
 .idea
 scripts/database/test.json
 
+/11796.json
+11796.json
