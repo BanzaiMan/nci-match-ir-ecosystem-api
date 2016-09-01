@@ -52,9 +52,16 @@ curl -X DELETE "http://localhost:5000/api/v1/ion_reporters/IR_WO3IA"
 
 echo -e "${CYAN}***********************************************${NC}"
 echo -e "${RED}(person: waleed) GET /v1/ion_reporters/{ion_reporter_id}?patients=true&sample_controls=true${NC}"
-echo -e "${RED}returns all patients and/or sample controls sequenced on the ion reporter${NC}"
+echo -e "${RED}returns all sample controls sequenced on the ion reporter${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 
 curl -X GET "http://localhost:5000/api/v1/ion_reporters/IR_WAO85?sample_controls=TRUE"
 
 curl -X GET "http://localhost:5000/api/v1/ion_reporters/IR_WAO85?sample_controls=FALSE"
+
+echo -e "${CYAN}***********************************************${NC}"
+echo -e "${RED}(person: waleed) GET /v1/ion_reporters/{ion_reporter_id}?patients=true&sample_controls=true${NC}"
+echo -e "${RED}returns all molecular ids for sample controls sequenced on the ion reporter${NC}"
+echo -e "${CYAN}***********************************************${NC}"
+
+curl -X GET "http://localhost:5000/api/v1/ion_reporters/IR_WAO85?sample_controls=TRUE&PROJECTION=molecular_id"

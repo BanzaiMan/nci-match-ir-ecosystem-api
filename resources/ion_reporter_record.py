@@ -7,6 +7,7 @@ from common.dictionary_helper import DictionaryHelper
 
 parser = reqparse.RequestParser()
 parser.add_argument('sample_controls',       type=str, required=False)
+parser.add_argument('PROJECTION',            type=str, required=False)
 
 class IonReporterRecord(Resource):
     def __init__(self):
@@ -29,6 +30,12 @@ class IonReporterRecord(Resource):
             sample_controls = SampleControlAccessor().scan({'site': site})
             if 'Item' in sample_controls:
                 self.logger.debug("Found: " + str(sample_controls['Item']))
+
+            if args['PROJECTION'] == 'molecular_id':
+                self.logger.debug("Returning molecular ids only")
+                return [d['molecular_id'] for d in sample_controls]
+
+
 
             self.logger.debug("Attempting to return: all sample controls")
             return sample_controls
