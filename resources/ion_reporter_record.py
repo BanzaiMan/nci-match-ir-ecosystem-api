@@ -40,9 +40,7 @@ class IonReporterRecord(Resource):
                 # TODO: I'm surprised this would work... can you show this to me?
                 return [d['molecular_id'] for d in sample_controls]
 
-            # TODO: Not quite......look at actual return results you aren't returning just what you think
             self.logger.debug("Attempting to return: all sample controls")
-            # TODO: Not quite...what are you returning. compare line 43 to 46.
             return sample_controls
         else:
             return results['Item']
