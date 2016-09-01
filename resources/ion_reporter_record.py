@@ -23,10 +23,10 @@ class IonReporterRecord(Resource):
                 self.logger.debug("Found: " + str(results['Item']))
                 # return results['Item']
             if args['sample_controls'] == 'TRUE':
-                sites = SampleControlAccessor().scan(({'site': results['Item']['site']}))
-                self.logger.debug("Attempting to return: " + str(results['Item']))
-                self.logger.debug("Also attempting to return: " + str(sites))
-                return (str(results['Item']) + str(sites))
+                site = results['Item']['site']
+                sites = SampleControlAccessor().scan(({'site': site}))
+                self.logger.debug("Attempting to return: all sample controls' molecular ids")
+                return [d['molecular_id'] for d in sites]
             else:
                 return results['Item']
 
