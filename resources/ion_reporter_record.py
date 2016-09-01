@@ -13,18 +13,22 @@ class IonReporterRecord(Resource):
         self.logger = logging.getLogger(__name__)
 
     def get(self, ion_reporter_id):
-
+        self.logger.info("Getting ion reporter with id: " + str(ion_reporter_id))
         args = request.args
         try:
-            self.logger.info("Getting ion reporter with id: " + str(ion_reporter_id))
+
             results = IonReporterAccessor().get_item({'ion_reporter_id': ion_reporter_id})
-            # TODO: Waleed, walk through this logic there is a bug here.
+            # TODO: Please double check logic
             if 'Item' in results:
                 self.logger.debug("Found: " + str(results['Item']))
+                # return results['Item']
             if args['sample_controls'] == 'TRUE':
                 sites = SampleControlAccessor().scan(({'site': results['Item']['site']}))
-            # TODO: Waleed, also a bug here...
-            return sites
+                self.logger.debug("Attempting to return: " + str(results['Item']))
+                self.logger.debug("Also attempting to return: " + str(sites))
+                return (str(results['Item']) + str(sites))
+            else:
+                return results['Item']
 
         except Exception, e:
             self.logger.debug("get_item failed because" + e.message)
