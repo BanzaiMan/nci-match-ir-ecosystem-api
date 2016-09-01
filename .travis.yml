@@ -1,8 +1,33 @@
+# whitelist
+branches:
+  only:
+    - master
+sudo: required
+services: 
+  - docker
 language: python
-python:
-- 2.7.11
+python: "2.7"
+install: "pip install -r requirements.txt"
+# before_install:
+# before_script:
 script:
-- python -m unittest discover tests
+  - python -m unittest discover tests
+after_success:
+  # - ls -alth
+  - docker build -t matchbox/nci-match-ir-ecoystem-api .
+  # - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+  # - docker tag -f matchbox/nci-match-patient-api matchbox/nci-match-patient-api:latest
+  # - docker images
+  # - docker push matchbox/nci-match-patient-api:latest
+  #Deploy to AWS IntTest
+  # - docker run -it --rm -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION=us-east-1 silintl/ecs-deploy --cluster PedMatch-IntTest-Backend --service-name uMatch-nci-match-patient-api-INTTEST -i matchbox/nci-match-patient-api:latest
+#Trigger Travis bdd tests
+  # - curl -s -X POST -H "Content-Type:application/json" -H "Accept:application/json" -H "Travis-API-Version:3" -H "Authorization:token $TRAVIS_TOKEN" -d "{\"request\":{\"message\":\"Triggered by nci-match-patient-api $TRAVIS_COMMIT\", \"branch\":\"master\", \"config\":{\"env\":{\"matrix\":[\"TRIGGER_REPO=nci-match-patient-api;CUC_TAG=@patients\"]}}}}" https://api.travis-ci.org/repo/CBIIT%2Fnci-uMatch-bddtests/requests
+#after_script:
 notifications:
   slack:
     secure: NrupJJcM7wXe4fZVKJjLt9iOtC7h8M78rhbjjR5SId7984QPpgYKqoi/bNXEjrJIWsS57DXymzLH1Rq+0IQHNTvGk0VIbO0J+pf1HELR4AM9eDCyMkaru0Le6ZM++7EZOGnYJ3ulvzJb2+9nXfm0B8va2kHTR3UVauaLgdcYSqI6PdMbGlYDNEmfQKCG52RLEzG6EXm8a3/nMNTVVvOsw2eFUc97cSvdW+WYzhr3NXj83+MFRxvO86s++vomSU8CVljRxE3QxFTPp08qIz+7taYtiiltnD61vOXoVJCO0W77CG8uAwxUFUTFxNqnlxyG5chzqp7coCdvYUuAS6Xjz1W2gg5j9SQOpzIvKM2ieUbFxo4Mdc1HO/UwC8vony0xc/mc6BytETqS417qZgoTF36ihfysUAk1dfcjTPKoFgQumUs6jBRQgBnt1AO66fWZeIWi1bMdvtLJ06/9VkvPdSdLzoQM15YdTexsaSLa+SnclxclchzifeW+ngygTg10fO6hXL5Y/LJx3LQlIupOd0SVOGZiOTEJdgop5gfuPMiDQqFVFjPbuBhbyYosT5bQb8PTXgyx9CVvPW5r3xE2Z33iqXcn+no9qGiET4lM0jMFKHZ8qONqz4B/Pelc1rtikiiXU4pyecufRL20aPWN8c2w2ThxUEgWtdjUhqUEHtk=
+addons:
+  code_climate:
+    repo_token:
+      # secure: FKlJti2G15VBf3UDdo4G6ul00vEQXCpga5bjvtNOvPgEqe1z024fwLYV4N9APBsGAersieWUCrW2hvOdTsFVgAVs1tEfPkseC+UFLOZvzF/PlhLn3zymsPkr5resgZPMLZhE6zX2PzlicloEqz2OSPhrcL+GfwnBHoHp7pFk61uH7QzEjTBUkbUeYag0IIItvWFPeIMNM7jG4VANhdHpevmJufn4mZz60QVRR32amzQQgWo0Jxtlpryxll8LPKi9ioQN1hn6G7VCNwudR1QzV19Gp48kLwsoEkESiS/lgLecXcw6yKpi2rVN/rgfyn+mKJ+Zou8TKBs1Sffk5S+7ucCj4t6QHjJYcNyxU0gVj8Xo2bq23eUZn490hK5RwxnCd+c5MYU9k8NVfwiZIuhhD9a6E9GGgoxXvrpmWSIug37LpIeyzcVGH5lTtVKwFR0jx1RBbbvnmPC/BHSx+HbdMTlcYrhcYbY2CC1tmIYoy0/O3z+sv+pKRUWTeG2GR+FF4CqzXPyDtboIxIpttqKU0c3jkO007NMD/8gnMqj+oGfGmePpMKooS6iahEtQdE7fvQV8un2/Ka0BzXNQgoCeIsPuLrXai3AtGIYRsJgSxLvJuJ/ilNkB5IE5eLTuwbonabmHdjghE/Y1zzgaIYIn8zkrkK8zUVlkRSXP+FkEm3k=
