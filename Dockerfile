@@ -12,4 +12,5 @@ RUN pip install -r /nci-match-ir-ecoystem-api/requirements.txt
 COPY . /nci-match-ir-ecoystem-api/
 
 # Default command 
-CMD ["python", "/nci-match-ir-ecoystem-api/app.py" ]
+#CMD ["python", "/nci-match-ir-ecoystem-api/app.py" ]
+CMD cd /nci-match-ir-ecoystem-api && python ./app.py
