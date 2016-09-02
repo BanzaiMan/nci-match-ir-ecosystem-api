@@ -17,8 +17,11 @@ class IonReporterRecord(Resource):
     def get(self, ion_reporter_id):
         self.logger.info("Getting ion reporter with id: " + str(ion_reporter_id))
         args = parser.parse_args()
-        lower_case_args= dict((k.lower(), v.lower()) for k, v in args.iteritems())
-        self.logger.debug("LOWERCASE" + str(lower_case_args))
+        lower_case_args = args
+        if args['sample_controls'] is not None:
+            lower_case_args= dict((k.lower(), v.lower()) for k, v in args.iteritems())
+            self.logger.debug("LOWERCASE" + str(lower_case_args))
+
         try:
             results = IonReporterAccessor().get_item({'ion_reporter_id': ion_reporter_id})
 
@@ -28,8 +31,8 @@ class IonReporterRecord(Resource):
         except Exception, e:
             self.logger.debug("Ion Reporter ID" + str(ion_reporter_id) + "was not found in ion reporter table")
             abort(404, message="Ion Reporter ID not found because " + e.message)
-        lower_case_args = dict((k.lower(), v.lower()) for k, v in args.iteritems())
-        self.logger.debug("LOWERCASE" + str(lower_case_args))
+        # lower_case_args = dict((k.lower(), v.lower()) for k, v in args.iteritems())
+        # self.logger.debug("LOWERCASE" + str(lower_case_args))
         if lower_case_args['sample_controls'] == 'true':
             # What if site was not in results?
             try:
