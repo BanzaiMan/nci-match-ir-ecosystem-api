@@ -15,6 +15,7 @@ from resources.ion_reporter_table import IonReporterTable
 from resources.ion_reporter_record import IonReporterRecord
 from resources.sample_control_table import SampleControlTable
 from resources.sample_control_record import SampleControlRecord
+from resources.version import Version
 from resources.aliquot import Aliquot
 
 # Boilerplate code to start flask
@@ -64,6 +65,9 @@ api.add_resource(IonReporterRecord, '/api/v1/ion_reporters/<string:ion_reporter_
 # what type of molecular id it is (i.e., sample_control or patient)
 api.add_resource(Aliquot, '/api/v1/aliquot/<string:molecular_id>')
 
+
+# Path for version call, returning 200 as test response
+api.add_resource(Version, '/api/v1/version')
 
 # For the most part, this is boilerplate code to start tornado server
 if __name__ == '__main__':
