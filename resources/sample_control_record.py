@@ -76,8 +76,13 @@ class SampleControlRecord(Resource):
                     downloaded_filelist = []
                     for file_type in request_download_filelist:
                         file_s3_path = results['Item'][file_type]
-                        downloaded_file_path = S3Accessor().download(file_s3_path)
-                        downloaded_filelist.append(downloaded_file_path)
+                        try:
+                            downloaded_file_path = S3Accessor().download(file_s3_path)
+                        except Exception, e:
+                            self.logger.error("Failed to download s3 file because: " + e.message)
+                            raise
+                        else:
+                            downloaded_filelist.append(downloaded_file_path)
                     return {'item': results['Item'], 'downloaded_files': downloaded_filelist}
                 else:
                     return results['Item']
