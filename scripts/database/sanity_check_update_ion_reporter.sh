@@ -9,6 +9,12 @@ RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 echo -e "${CYAN}***********************************************${NC}"
+echo -e "${RED}VERSION CHECK${NC}"
+echo -e "${CYAN}***********************************************${NC}"
+
+curl -i http://localhost:5000/api/v1/version
+
+echo -e "${CYAN}***********************************************${NC}"
 echo -e "${RED}(person: waleed) GET /v1/ion_reporters?site=mocha etc...${NC}"
 echo -e "${RED}Scan ion reporters and return data${NC}"
 echo -e "${CYAN}***********************************************${NC}"
