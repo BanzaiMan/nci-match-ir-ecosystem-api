@@ -56,8 +56,11 @@ class SampleControlRecord(Resource):
             self.logger.debug("delete_item failed because" + e.message)
             abort(500, message="delete_item item failed, because " + e.message)
 
-    # TODO: Expand GET functionality to zip downloaded s3 files and test.
-    # TODO: Confirm if new return dictionary is ok.
+
+    # TODO: handle zip file if in request 'format=zip'
+    # if user only specify molecular_id in request, return sample_controls item of the molecular_id
+    # if in request, user specify molecular_id, file (bam, bai, vcf, tsv, or all) and file type (dna, or cdna),
+    #    return singed s3 download link of each file
     def get(self, molecular_id):
         self.logger.info("Getting sample control with id: " + str(molecular_id))
         args = parser.parse_args()
@@ -68,22 +71,24 @@ class SampleControlRecord(Resource):
 
             if 'Item' in results:
                 self.logger.debug("Found: " + str(results['Item']))
-
                 # download files from S3, if requested
                 request_download_filelist = self.__get_download_file_list(args)
-                self.logger.debug("Download s3 file list=" + str(request_download_filelist))
+                self.logger.info("****** download_file_list=" + str(request_download_filelist))
                 if len(request_download_filelist) > 0:
-                    downloaded_filelist = []
+                    s3 = S3Accessor()
+                    s3_url_list = []
                     for file_type in request_download_filelist:
                         file_s3_path = results['Item'][file_type]
                         try:
-                            downloaded_file_path = S3Accessor().download(file_s3_path)
+                            s3_url = s3.client.generate_presigned_url('get_object',
+                                                                      Params={'Bucket': s3.bucket, 'Key': file_s3_path},
+                                                                      ExpiresIn=600)
                         except Exception, e:
-                            self.logger.error("Failed to download s3 file because: " + e.message)
+                            self.logger.error("Failed to create s3 download url because: " + e.message)
                             raise
                         else:
-                            downloaded_filelist.append(downloaded_file_path)
-                    return {'item': results['Item'], 'downloaded_files': downloaded_filelist}
+                            s3_url_list.append(s3_url)
+                    return {'s3_download_file_url': s3_url_list}
                 else:
                     return results['Item']
 
@@ -98,25 +103,25 @@ class SampleControlRecord(Resource):
         download_file_list = []
 
         if DictionaryHelper.has_values(args):
-            if args['file'] == 'bam' and args['type'] == 'dna':
+            if args['type'] is not None and 'bam' in args['file'].lower() and 'dna' in args['type'].lower():
                 download_file_list.append('dna_bam_name')
-            elif args['file'] == 'bam' and args['type'] == 'cdna':
+            elif args['type'] is not None and 'bam' in args['file'].lower() and 'cdna' in args['type'].lower():
                 download_file_list.append('cdna_bam_name')
-            elif args['file'] == 'bai' and args['type'] == 'dna':
+            elif args['type'] is not None and 'bai' in args['file'].lower() and 'dna' in args['type'].lower():
                 download_file_list.append('dna_bai_name')
-            elif args['file'] == 'bai' and args['type'] == 'cdna':
+            elif args['type'] is not None and 'bai' in args['file'].lower() and 'cdna' in args['type'].lower():
                 download_file_list.append('cdna_bai_name')
-            elif args['file'] == 'bam':
+            elif 'bam' in args['file'].lower():
                 download_file_list.append('dna_bam_name')
                 download_file_list.append('cdna_bam_name')
-            elif args['file'] == 'bai':
+            elif 'bai' in args['file'].lower():
                 download_file_list.append('dna_bai_name')
                 download_file_list.append('cdna_bai_name')
-            elif args['file'] == 'vcf':
+            elif 'vcf' in args['file'].lower():
                 download_file_list.append('vcf_name')
-            elif args['file'] == 'tsv':
+            elif 'tsv' in args['file'].lower():
                 download_file_list.append('tsv_name')
-            elif args['file'] == 'all':
+            elif 'all' in args['file'].lower():
                 download_file_list.append('dna_bam_name')
                 download_file_list.append('dna_bai_name')
                 download_file_list.append('cdna_bam_name')
@@ -127,3 +132,4 @@ class SampleControlRecord(Resource):
                 self.logger.debug("No file requested to be downloaded from S3.")
 
         return download_file_list
+
