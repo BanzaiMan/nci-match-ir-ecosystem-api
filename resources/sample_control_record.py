@@ -85,6 +85,7 @@ class SampleControlRecord(Resource):
                                                                       ExpiresIn=600)
                         except Exception, e:
                             self.logger.error("Failed to create s3 download url because: " + e.message)
+                            # TODO: Qing, there is no where to raise this too. Should be an abort.
                             raise
                         else:
                             s3_url_list.append(s3_url)

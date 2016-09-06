@@ -1,9 +1,9 @@
 import logging
-from flask_restful import abort, request, Resource
+from flask_restful import Resource
+
 
 class Version(Resource):
-    def __init__(self):
-        self.logger = logging.getLogger(__name__)
 
-    def get(self):
-        return {'version':'1.0'}
+    @staticmethod
+    def get():
+        return {'version': '1.0'}
