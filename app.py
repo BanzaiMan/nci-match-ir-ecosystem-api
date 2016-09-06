@@ -68,7 +68,7 @@ api.add_resource(SequenceData, '/api/v1/ion_reporters/<string:ion_reporter_id>/<
 api.add_resource(Aliquot, '/api/v1/aliquot/<string:molecular_id>')
 
 # Path for version call, returning 200 as test response
-api.add_resource(Version, '/api/v1/version')
+api.add_resource(Version, '/api/v1/ion_reporters/version')
 
 # For the most part, this is boilerplate code to start tornado server
 if __name__ == '__main__':
