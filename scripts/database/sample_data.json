@@ -7,6 +7,7 @@
           "control_type": {"S": "no_template"},
           "site_ip_address": {"S": "129.43.127.133"},
           "molecular_id": {"S": "SC_SAWCB"},
+          "ion_reporter_id": {"S": "IR_WAO85"},
           "site": {"S": "mocha"}
         }
       }
@@ -18,6 +19,7 @@
           "control_type": {"S": "no_template"},
           "site_ip_address": {"S": "129.43.127.133"},
           "molecular_id": {"S": "SC_SA1CB"},
+          "ion_reporter_id": {"S": "IR_WAO85"},
           "site": {"S": "mocha"}
         }
       }
@@ -29,6 +31,7 @@
           "control_type": {"S": "positive"},
           "site_ip_address": {"S": "129.43.127.133"},
           "molecular_id": {"S": "SC_67VKV"},
+          "ion_reporter_id": {"S": "IR_WAO85"},
           "site": {"S": "mocha"}
         }
       }
