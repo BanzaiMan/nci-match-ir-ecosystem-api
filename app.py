@@ -13,6 +13,7 @@ from tornado.wsgi import WSGIContainer
 
 from resources.ion_reporter_table import IonReporterTable
 from resources.ion_reporter_record import IonReporterRecord
+from resources.sequence_data import SequenceData
 from resources.sample_control_table import SampleControlTable
 from resources.sample_control_record import SampleControlRecord
 from resources.version import Version
@@ -59,6 +60,7 @@ api.add_resource(SampleControlRecord, '/api/v1/sample_controls/<string:molecular
 # Paths for updating information about ion reporters themselves
 api.add_resource(IonReporterTable, '/api/v1/ion_reporters')
 api.add_resource(IonReporterRecord, '/api/v1/ion_reporters/<string:ion_reporter_id>')
+api.add_resource(SequenceData, '/api/v1/ion_reporters/<string:ion_reporter_id>/<string:sequence_data>')
 
 # Path for either sending in files from the ir (bam,vcf) to process them and store them based on their molecular id
 # in either the patient or sample_control table. Also a path to query with GET to see if molecular_id is valid and
