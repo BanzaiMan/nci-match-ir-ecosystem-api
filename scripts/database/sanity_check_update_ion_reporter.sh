@@ -62,3 +62,4 @@ echo -e "${CYAN}***********************************************${NC}"
 
 curl -X GET "http://localhost:5000/api/v1/ion_reporters/IR_WAO85/sample_controls?projection=molecular_id"
 
+curl -X GET "http://localhost:5000/api/v1/ion_reporters/IR_WAO85/sample_controls"
