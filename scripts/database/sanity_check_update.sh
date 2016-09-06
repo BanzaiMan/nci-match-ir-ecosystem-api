@@ -25,21 +25,25 @@ CYAN='\033[0;36m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-# for testing
-ALIQUOT_URL="http://localhost:5000/api/v1/aliquot/"
-MOLECULAR_ID='SC_YQ111'
-
-
 # Need start app.py before running curl command
 # Need start and celery after running curl command
 # Curl command: parse update message, process vcf, bam files, and update sample_controls table in dynamodb database
-echo -e "${CYAN}***************************************************************************************${NC}"
-echo -e "${RED}READ UPDATE MESSAGE, PROCESS, AND UPDATE TABLE: NEED AN UPDATE DATA JSON FILE           ${NC}"
-echo -e "${CYAN}***************************************************************************************${NC}"
-curl -H 'Content-Type: application/json' -X PUT -d @./sc_update_data.json $CURL_URL$MOLECULAR_ID
+echo -e "${CYAN}******************************************************************************************************${NC}"
+echo -e "${RED}READ UPDATE MESSAGE, PROCESS, AND UPDATE TABLE: NEED AN UPDATE DATA JSON FILE                          ${NC}"
+echo -e "${CYAN}******************************************************************************************************${NC}"
+curl -H 'Content-Type: application/json' -X PUT -d @./sc_update_data.json "http://localhost:5000/api/v1/aliquot/SC_YQ111"
 
 echo -e "${CYAN}***************************************************************************************${NC}"
 echo -e "${RED}RETURN DATA FOR MOLECUALR_ID IF VALID, ELSE 404                                         ${NC}"
 echo -e "${CYAN}***************************************************************************************${NC}"
-curl -X GET ALIQUOT_URL$MOLECULAR_ID
+curl -X GET "http://localhost:5000/api/v1/aliquot/SC_YQ111"
 
+echo -e "${CYAN}***************************************************************************************${NC}"
+echo -e "${RED}RETURN DATA FOR MOLECUALR_ID IN SAMPLE_CONTROLS IF VALID, ELSE 404                      ${NC}"
+echo -e "${CYAN}***************************************************************************************${NC}"
+curl -X GET "http://localhost:5000/api/v1/sample_controls/SC_YQ111"
+
+echo -e "${CYAN}******************************************************************************************************${NC}"
+echo -e "${RED}RETURN FILE DOWNLOAD URL FOR MOLECUALR_ID AND FILE FORMAT(VCF|TSV) IN SAMPLE IF VALID, ELSE 404 OR 500 ${NC}"
+echo -e "${CYAN}******************************************************************************************************${NC}"
+curl -X GET "http://localhost:5000/api/v1/sample_controls_download/SC_YQ111/vcf"

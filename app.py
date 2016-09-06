@@ -16,6 +16,7 @@ from resources.ion_reporter_record import IonReporterRecord
 from resources.sequence_data import SequenceData
 from resources.sample_control_table import SampleControlTable
 from resources.sample_control_record import SampleControlRecord
+from resources.sample_control_record_download import SampleControlRecordDownload
 from resources.version import Version
 from resources.aliquot import Aliquot
 
@@ -56,6 +57,9 @@ api.add_resource(SampleControlTable, '/api/v1/sample_controls')
 
 # Path for Updating and deleting a specific sample control
 api.add_resource(SampleControlRecord, '/api/v1/sample_controls/<string:molecular_id>')
+
+# Paths for downloading vcf or tsv file, format = vcf|tsv
+api.add_resource(SampleControlRecordDownload, '/api/v1/sample_controls_download/<string:molecular_id>/<string:format>', endpoint = 'molecular_id_by_format')
 
 # Paths for updating information about ion reporters themselves
 api.add_resource(IonReporterTable, '/api/v1/ion_reporters')

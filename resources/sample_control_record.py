@@ -57,80 +57,20 @@ class SampleControlRecord(Resource):
             abort(500, message="delete_item item failed, because " + e.message)
 
 
-    # TODO: handle zip file if in request 'format=zip'
-    # if user only specify molecular_id in request, return sample_controls item of the molecular_id
-    # if in request, user specify molecular_id, file (bam, bai, vcf, tsv, or all) and file type (dna, or cdna),
-    #    return singed s3 download link of each file
+            # if user only specify molecular_id in request, return sample_controls item of the molecular_id
+
     def get(self, molecular_id):
         self.logger.info("Getting sample control with id: " + str(molecular_id))
-        args = parser.parse_args()
-        self.logger.debug("URL passed requested arguments: " + str(args))
 
         try:
             results = SampleControlAccessor().get_item({'molecular_id': molecular_id})
 
             if 'Item' in results:
                 self.logger.debug("Found: " + str(results['Item']))
-                # download files from S3, if requested
-                request_download_filelist = self.__get_download_file_list(args)
-                self.logger.info("****** download_file_list=" + str(request_download_filelist))
-                if len(request_download_filelist) > 0:
-                    s3 = S3Accessor()
-                    s3_url_list = []
-                    for file_type in request_download_filelist:
-                        file_s3_path = results['Item'][file_type]
-                        try:
-                            s3_url = s3.client.generate_presigned_url('get_object',
-                                                                      Params={'Bucket': s3.bucket, 'Key': file_s3_path},
-                                                                      ExpiresIn=600)
-                        except Exception, e:
-                            self.logger.error("Failed to create s3 download url because: " + e.message)
-                            # TODO: Qing, there is no where to raise this too. Should be an abort.
-                            raise
-                        else:
-                            s3_url_list.append(s3_url)
-                    return {'s3_download_file_url': s3_url_list}
-                else:
-                    return results['Item']
-
+                return results['Item']
         except Exception, e:
             self.logger.debug("get_item failed because" + e.message)
             abort(500, message="get_item failed because " + e.message)
 
         self.logger.info(molecular_id + " was not found")
         abort(404, message=str(molecular_id + " was not found"))
-
-    def __get_download_file_list(self, args):
-        download_file_list = []
-
-        if DictionaryHelper.has_values(args):
-            if args['type'] is not None and 'bam' in args['file'].lower() and 'dna' in args['type'].lower():
-                download_file_list.append('dna_bam_name')
-            elif args['type'] is not None and 'bam' in args['file'].lower() and 'cdna' in args['type'].lower():
-                download_file_list.append('cdna_bam_name')
-            elif args['type'] is not None and 'bai' in args['file'].lower() and 'dna' in args['type'].lower():
-                download_file_list.append('dna_bai_name')
-            elif args['type'] is not None and 'bai' in args['file'].lower() and 'cdna' in args['type'].lower():
-                download_file_list.append('cdna_bai_name')
-            elif 'bam' in args['file'].lower():
-                download_file_list.append('dna_bam_name')
-                download_file_list.append('cdna_bam_name')
-            elif 'bai' in args['file'].lower():
-                download_file_list.append('dna_bai_name')
-                download_file_list.append('cdna_bai_name')
-            elif 'vcf' in args['file'].lower():
-                download_file_list.append('vcf_name')
-            elif 'tsv' in args['file'].lower():
-                download_file_list.append('tsv_name')
-            elif 'all' in args['file'].lower():
-                download_file_list.append('dna_bam_name')
-                download_file_list.append('dna_bai_name')
-                download_file_list.append('cdna_bam_name')
-                download_file_list.append('cdna_bai_name')
-                download_file_list.append('vcf_name')
-                download_file_list.append('tsv_name')
-            else:
-                self.logger.debug("No file requested to be downloaded from S3.")
-
-        return download_file_list
-
