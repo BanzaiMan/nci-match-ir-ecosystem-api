@@ -60,6 +60,8 @@ echo -e "${CYAN}***********************************************${NC}"
 echo -e "${RED}(person: waleed) GET /api/v1/ion_reporters/{ion_repoter_id}/{patients|sample_controls}?projection=....${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 
+curl -X GET "http://localhost:5000/api/v1/ion_reporters/IR_WAO85/sample_controls?projection=site_ip_address&projection=control_type&projection=molecular_id"
+
 curl -X GET "http://localhost:5000/api/v1/ion_reporters/IR_WAO85/sample_controls?projection=molecular_id"
 
 curl -X GET "http://localhost:5000/api/v1/ion_reporters/IR_WAO85/sample_controls"
