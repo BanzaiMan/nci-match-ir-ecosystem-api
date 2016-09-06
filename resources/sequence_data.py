@@ -6,6 +6,8 @@ from accessors.sample_control_accessor import SampleControlAccessor
 
 parser = reqparse.RequestParser()
 
+
+# action = append, variable will be in list format
 parser.add_argument('projection',       type=str, required=False)
 
 
@@ -37,7 +39,15 @@ class SequenceData(Resource):
                     self.logger.debug("Found: " + str(sample_controls['Item']))
 
                 if args['projection'] is not None:
-                    return [d[str(args['projection'])] for d in sample_controls]
+                    # return list of dictionaries instead of list of strings
+                    # extract key value pairs of projection and its values from list of dictionaries
+                    list_1 = []
+
+                    for sc in sample_controls:
+                        if args['projection'] in sc:
+                            dictionary_1 = {args['projection']: sc[args['projection']]}
+                            list_1.append(dictionary_1)
+                    return list_1
                 else:
                     return sample_controls
 
