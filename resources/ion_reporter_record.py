@@ -2,13 +2,12 @@ import logging
 from flask_restful import abort, request, Resource, reqparse
 from accessors.celery_task_accessor import CeleryTaskAccessor
 from accessors.ion_reporter_accessor import IonReporterAccessor
-from accessors.sample_control_accessor import SampleControlAccessor
 from common.dictionary_helper import DictionaryHelper
 
 parser = reqparse.RequestParser()
 
-parser.add_argument('sample_controls',       type=str, required=False)
-parser.add_argument('projection',            type=str, required=False)
+parser.add_argument('projection',       type=str, required=False)
+
 
 class IonReporterRecord(Resource):
     def __init__(self):
@@ -17,50 +16,18 @@ class IonReporterRecord(Resource):
     def get(self, ion_reporter_id):
         self.logger.info("Getting ion reporter with id: " + str(ion_reporter_id))
         args = parser.parse_args()
-        lower_case_args = args
-        if args['sample_controls'] is not None:
-            lower_case_args= dict((k.lower(), v.lower()) for k, v in args.iteritems())
-            self.logger.debug("LOWERCASE" + str(lower_case_args))
 
         try:
             results = IonReporterAccessor().get_item({'ion_reporter_id': ion_reporter_id})
 
             if 'Item' in results:
                 self.logger.debug("Found: " + str(results['Item']))
-
+            if args['projection'] is not None:
+                return results['Item'][str(args['projection'])]
+            return results['Item']
         except Exception, e:
             self.logger.debug("Ion Reporter ID" + str(ion_reporter_id) + "was not found in ion reporter table")
             abort(404, message="Ion Reporter ID not found because " + e.message)
-        # lower_case_args = dict((k.lower(), v.lower()) for k, v in args.iteritems())
-        # self.logger.debug("LOWERCASE" + str(lower_case_args))
-        if lower_case_args['sample_controls'] == 'true':
-            # What if site was not in results?
-            try:
-                site = results['Item']['site']
-            except Exception, e:
-                self.logger.debug("Site was not found in ion reporter table record")
-                abort(404, message="Site was not found in Ion Reporter Record found because " + e.message)
-
-
-            try:
-                sample_controls = SampleControlAccessor().scan({'site': site})
-                if 'Item' in sample_controls:
-                    self.logger.debug("Found: " + str(sample_controls['Item']))
-                else:
-                    self.logger.debug("Site was not found in ion reporter table record")
-                    abort(404, message="Site was not found in Ion Reporter Record found because " + e.message)
-                if lower_case_args['projection'] == 'molecular_id':
-                    self.logger.debug("Returning molecular ids only")
-                    # TODO: I'm surprised this would work... can you show this to me?
-                    return [d['molecular_id'] for d in sample_controls]
-            except Exception, e:
-                self.logger.debug("Site" + str(site) + "was not found in sample controls table" + e.message)
-                abort(404, message=str(str(site) + " was not found"))
-
-            self.logger.debug("Attempting to return: all sample controls")
-            return sample_controls
-        else:
-            return results['Item']
 
 
     def put(self, ion_reporter_id):
