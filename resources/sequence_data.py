@@ -8,7 +8,7 @@ parser = reqparse.RequestParser()
 
 
 # action = append, variable will be in list format
-parser.add_argument('projection',       type=str, required=False)
+parser.add_argument('projection',       type=str, required=False, action='append')
 
 
 class SequenceData(Resource):
@@ -44,8 +44,9 @@ class SequenceData(Resource):
                     list_1 = []
 
                     for sc in sample_controls:
-                        if args['projection'] in sc:
-                            dictionary_1 = {args['projection']: sc[args['projection']]}
+                        for project in args['projection']:
+                          if project in sc:
+                            dictionary_1 = {str(project): sc[str(project)]}
                             list_1.append(dictionary_1)
                     return list_1
                 else:
