@@ -1,9 +1,8 @@
 import logging
-from flask_restful import abort, request, Resource, reqparse
-from accessors.celery_task_accessor import CeleryTaskAccessor
+from flask_restful import abort, Resource, reqparse
 from accessors.ion_reporter_accessor import IonReporterAccessor
 from accessors.sample_control_accessor import SampleControlAccessor
-from common.dictionary_helper import DictionaryHelper
+
 
 parser = reqparse.RequestParser()
 
@@ -45,17 +44,5 @@ class SequenceData(Resource):
             except Exception, e:
                 self.logger.debug("Ion Reporter ID: " + str(ion_reporter_id) + " was not found in sample control table")
                 abort(404, message="Ion Reporter ID not found because " + e.message)
-
-                    # sample_controls = SampleControlAccessor().scan({str(args['projection']): args['projection']})
-            #
-            #         if sample_controls is not None:
-            #             self.logger.debug("Found: sample_controls")
-            #             return sample_controls
-            #         else:
-            #             self.logger.debug(str(args['projection']) +"sample controls was not found in ion reporter table record")
-            #             abort(404, message=str(args['projection'] + "sample controls was not found in Ion Reporter Record found because " + e.message)
-            #
-            # return results['Item']
-
 
 
