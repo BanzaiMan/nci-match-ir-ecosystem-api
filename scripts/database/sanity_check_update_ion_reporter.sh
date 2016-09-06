@@ -40,14 +40,14 @@ echo -e "${RED}(person: waleed) GET /v1/ion_reporters/{ion_reporter_id}${NC}"
 echo -e "${RED}Get information about that IR (will not return sample controls or patients)${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 
-curl -X GET -H "Content-Type: application/json" -d '{ip_address:"143.333.85.66"}' "http://localhost:5000/api/v1/ion_reporters?ion_reporter_id=IR_WO3IA"
+curl -X GET "http://localhost:5000/api/v1/ion_reporters/IR_WAO85"
 
 echo -e "${CYAN}***********************************************${NC}"
 echo -e "${RED}(person: waleed) PUT /v1/ion_reporters/{ion_reporter_id}${NC}"
 echo -e "${RED}The body of this service contains the json message that will notify the PED-MATCH system that the IR Uploader is communicating properly.${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 
-curl -X PUT -H 'Content-Type: application/json' -d '{"ip_address":"143.333.85.66"}' "http://localhost:5000/api/v1/ion_reporters/IR_WO3IA"
+curl -X PUT -H 'Content-Type: application/json' -d '{"status":"Lost contact! Last heartbeat was sent 11355 minutes ago"}' "http://localhost:5000/api/v1/ion_reporters/IR_WO3IA"
 
 echo -e "${CYAN}***********************************************${NC}"
 echo -e "${RED}(person: waleed) DELETE /v1/ion_reporters/{ion_reporter_id}${NC}"
@@ -57,19 +57,8 @@ curl -X DELETE "http://localhost:5000/api/v1/ion_reporters"
 curl -X DELETE "http://localhost:5000/api/v1/ion_reporters/IR_WO3IA"
 
 echo -e "${CYAN}***********************************************${NC}"
-echo -e "${RED}(person: waleed) GET /v1/ion_reporters/{ion_reporter_id}?patients=true&sample_controls=true${NC}"
-echo -e "${RED}returns all sample controls sequenced on the ion reporter${NC}"
+echo -e "${RED}(person: waleed) GET /api/v1/ion_reporters/{ion_repoter_id}/{patients|sample_controls}?projection=....${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 
-curl -X GET "http://localhost:5000/api/v1/ion_reporters/IR_WAO85?sample_controls=TRUE"
+curl -X GET "http://localhost:5000/api/v1/ion_reporters/IR_WAO85/sample_controls?projection=molecular_id"
 
-curl -X GET "http://localhost:5000/api/v1/ion_reporters/IR_WAO85?sample_controls=FALSE"
-
-curl -X GET "http://localhost:5000/api/v1/ion_reporters/IR_WAO85"
-
-echo -e "${CYAN}***********************************************${NC}"
-echo -e "${RED}(person: waleed) GET /v1/ion_reporters/{ion_reporter_id}?patients=true&sample_controls=true${NC}"
-echo -e "${RED}returns all molecular ids for sample controls sequenced on the ion reporter${NC}"
-echo -e "${CYAN}***********************************************${NC}"
-
-curl -X GET "http://localhost:5000/api/v1/ion_reporters/IR_WAO85?sample_controls=TRUE&PROJECTION=molecular_id"
