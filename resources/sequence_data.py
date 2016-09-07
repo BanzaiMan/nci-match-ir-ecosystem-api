@@ -1,6 +1,6 @@
 import logging
 from string import Template
-from flask_restful import abort, Resource, reqparse
+from flask_restful import Resource, reqparse
 from accessors.sample_control_accessor import SampleControlAccessor
 from resource_helpers.abort_logger import AbortLogger
 
