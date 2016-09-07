@@ -65,9 +65,9 @@ class SampleControlRecord(Resource):
         try:
             results = SampleControlAccessor().get_item({'molecular_id': molecular_id})
 
-            if 'Item' in results:
-                self.logger.debug("Found: " + str(results['Item']))
-                return results['Item']
+            if len(results) > 0:
+                self.logger.debug("Found: " + str(results))
+                return results
         except Exception, e:
             self.logger.debug("get_item failed because" + e.message)
             abort(500, message="get_item failed because " + e.message)

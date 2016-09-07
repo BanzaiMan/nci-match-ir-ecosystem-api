@@ -19,14 +19,14 @@ class SampleControlRecordDownload(Resource):
         try:
             results = SampleControlAccessor().get_item({'molecular_id': molecular_id})
 
-            if 'Item' in results:
-                self.logger.debug("Found: " + str(results['Item']))
+            if len(results) > 0:
+                self.logger.debug("Found: " + str(results))
                 # download files from S3 for requested file format
                 request_download_file = self.__get_download_file_type(format)
                 self.logger.info("Requested download file=" + str(request_download_file))
                 if request_download_file is not None:
                     s3 = S3Accessor()
-                    file_s3_path = results['Item'][request_download_file]
+                    file_s3_path = results[request_download_file]
                     try:
                         s3_url = s3.client.generate_presigned_url('get_object',
                                                                   Params={'Bucket': s3.bucket, 'Key': file_s3_path},

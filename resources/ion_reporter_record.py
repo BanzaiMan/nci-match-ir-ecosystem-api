@@ -19,15 +19,17 @@ class IonReporterRecord(Resource):
 
         try:
             results = IonReporterAccessor().get_item({'ion_reporter_id': ion_reporter_id})
-
         except Exception, e:
             self.logger.debug("Major server error!!!")
             abort(500, message="Server error " + e.message)
+        else:
+            if len(results) < 1:
+                self.logger.debug("Ion Reporter with id: " + str(ion_reporter_id) +
+                                  " was not found in ion reporter table")
+                abort(404, message="Ion Reporter with id: " + str(ion_reporter_id) +
+                                   " was not found in ion reporter table")
 
-        if 'Item' not in results:
-            self.logger.debug("Ion Reporter ID" + str(ion_reporter_id) + "was not found in ion reporter table")
-            abort(404, message="Ion Reporter ID not found because " + e.message)
-        return results['Item']
+            return results
 
     def put(self, ion_reporter_id):
         self.logger.info("updating ion reporter with id: " + str(ion_reporter_id))

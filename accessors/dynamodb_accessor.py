@@ -62,7 +62,7 @@ class DynamoDBAccessor(object):
                     raise
 
         # NOTE that this method is recursive and will call itself in the event that their is over 1 MB of data returned
-        items = results['Items']
+        items = results['Items'] if 'Items' in results else []
         if results.get('LastEvaluatedKey'):
             try:
                 items += self.scan(query_parameters, results['LastEvaluatedKey'])
@@ -111,7 +111,8 @@ class DynamoDBAccessor(object):
     # Used to get a single item by ID from the table
     def get_item(self, key, *additional_keys):
         try:
-            return self.__item(self.table.get_item, 'get', key, additional_keys)
+            results = self.__item(self.table.get_item, 'get', key, additional_keys)
+            return results['Item'] if 'Item' in results else []
         except ClientError, e:
             self.logger.error("Client Error on get_item: " + e.message)
             raise
