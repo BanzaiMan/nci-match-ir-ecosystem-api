@@ -4,6 +4,7 @@ development:
   port: "10241"
   bucket: "pedmatch-dev"
   tmp_file_dir: "/tmp"
+  aws_download_time_limit: 600
 
 test:
   dynamo_endpoint: "https://dynamodb.us-east-1.amazonaws.com"
@@ -11,6 +12,7 @@ test:
   port: "10241"
   bucket: "pedmatch-int"
   tmp_file_dir: "/tmp"
+  aws_download_time_limit: 600
 
 uat:
   dynamo_endpoint: "https://dynamodb.us-east-1.amazonaws.com"
@@ -18,6 +20,7 @@ uat:
   port: "10241"
   bucket: "pedmatch-uat"
   tmp_file_dir: "/tmp"
+  aws_download_time_limit: 600
 
 production:
   dynamo_endpoint: "https://dynamodb.us-east-1.amazonaws.com"
@@ -25,3 +28,4 @@ production:
   port: "10241"
   bucket: "pedmatch"
   tmp_file_dir: "/tmp"
+  aws_download_time_limit: 600
