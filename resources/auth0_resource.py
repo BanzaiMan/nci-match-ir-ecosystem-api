@@ -16,6 +16,7 @@ def authenticate(error):
     return response
 
 
+# Decoration wrapping function
 def requires_auth(function):
     @wraps(function)
     def decorated(*args, **kwargs):
