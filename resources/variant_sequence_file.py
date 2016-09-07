@@ -26,7 +26,7 @@ class VariantSequenceFile(Resource):
                 self.logger.info("Requested download file=" + str(request_download_file))
                 if request_download_file is not None:
                     # TODO: I think this should likely be encapsulated and completely hidden from this module
-                    # TODO: Put the expires in time in enironment.yml
+                    # TODO: Put the expires in time in environment.yml
                     s3 = S3Accessor()
                     file_s3_path = results[request_download_file]
                     try:
