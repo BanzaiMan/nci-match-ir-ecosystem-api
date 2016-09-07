@@ -27,3 +27,5 @@ exclude_paths:
 - oncomine-vcf-converter-1.4.1/
 exclude_fingerprints:
 - f3df0c8781347f1c2b4711814370dba5
+- 87a986c9e0de543a45f0280b29b50321
+- 33ccdd645f4b4686c92d3c940773c5cf
