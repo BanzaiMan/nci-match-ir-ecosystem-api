@@ -1,7 +1,6 @@
 import boto3
 import logging
 import __builtin__
-from resource_helpers.abort_logger import AbortLogger
 
 
 class S3Accessor(object):
@@ -45,10 +44,10 @@ class S3Accessor(object):
         try:
             s3_url = self.client.generate_presigned_url('get_object',
                                                       Params={'Bucket': self.bucket, 'Key': file_s3_path},
-                                                      ExpiresIn=__builtin__.environment_config[__builtin__.environment]['aws_download_time_limit'])
+                                                      ExpiresIn=__builtin__.environment_config[__builtin__.environment]
+                                                      ['aws_download_time_limit'])
         except Exception as e:
             self.logger.error("Failed to create s3 download url because: " + e.message)
-            AbortLogger.log_and_abort(500, self.logger.error,
-                                      "Failed to create s3 download url because: " + e.message)
+            raise
         else:
             return s3_url
