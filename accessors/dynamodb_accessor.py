@@ -122,7 +122,7 @@ class DynamoDBAccessor(object):
     def delete_item(self, key, *additional_keys):
         try:
             return self.__item(self.table.delete_item, 'delete', key, additional_keys)
-        except ClientError, e:
+        except ClientError as e:
             self.logger.error("Client Error on delete_item: " + e.message)
             raise
 
