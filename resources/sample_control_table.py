@@ -43,7 +43,7 @@ class SampleControlTable(Resource):
             self.logger.debug(str(sample_control))
             return sample_control if sample_control is not None else \
                 abort(404, message="No sample controls meet the query parameters")
-        except Exception, e:
+        except Exception as e:
             self.logger.error("Get failed because: " + e.message)
             abort(500, message="Get failed because: " + e.message)
 
@@ -57,7 +57,7 @@ class SampleControlTable(Resource):
         try:
             self.logger.info("Deleting items based on query: " + str(args))
             CeleryTaskAccessor().delete_items(args)
-        except Exception, e:
+        except Exception as e:
             self.logger.error("Batch delete failed because: " + e.message)
             abort(500, message="Batch delete failed because: " + e.message)
 
@@ -93,7 +93,7 @@ class SampleControlTable(Resource):
                 # our case.
                 SampleControlAccessor().put_item(new_item_dictionary)
                 return {"result": "New sample control created", "molecular_id": new_item_dictionary['molecular_id']}
-            except Exception, e:
+            except Exception as e:
                 self.logger.error("Could not put_item because " + e.message)
                 abort(500, message="put_item failed because " + e.message)
 

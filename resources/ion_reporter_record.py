@@ -23,7 +23,7 @@ class IonReporterRecord(Resource):
 
         try:
             results = IonReporterAccessor().get_item({'ion_reporter_id': ion_reporter_id})
-        except Exception, e:
+        except Exception as e:
             AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
         else:
             if len(results) < 1:
@@ -51,7 +51,7 @@ class IonReporterRecord(Resource):
         try:
             CeleryTaskAccessor().update_ir_item(item_dictionary)
             # IonReporterAccessor().update(item_dictionary)
-        except Exception, e:
+        except Exception as e:
             AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
 
         return {"message": "Ion reporter with ion reporter id: " + ion_reporter_id + " updated"}
@@ -61,5 +61,5 @@ class IonReporterRecord(Resource):
         try:
             CeleryTaskAccessor().delete_ir_item({'ion_reporter_id': ion_reporter_id})
             return {"message": "Item deleted", "ion_reporter_id": ion_reporter_id}
-        except Exception, e:
+        except Exception as e:
             AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))

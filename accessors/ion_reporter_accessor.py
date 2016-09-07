@@ -25,7 +25,7 @@ class IonReporterAccessor(DynamoDBAccessor):
                 AttributeDefinitions=[{'AttributeName': 'ion_reporter_id', 'AttributeType': 'S'}],
                 ProvisionedThroughput={'ReadCapacityUnits': 5, 'WriteCapacityUnits': 5})
             self.logger.info("Table " + table_name + " created!")
-        except Exception, e:
+        except Exception as e:
             self.logger.error("create table exception in dynamodb: " + e.message)
             raise
 
@@ -38,7 +38,7 @@ class IonReporterAccessor(DynamoDBAccessor):
         self.logger.debug(ir_table_key)
         try:
             return self.update_item(item_dictionary, dict(ion_reporter_id=ir_table_key))
-        except Exception, e:
+        except Exception as e:
             self.logger.error("update_item exception in dynamodb: " + e.message)
             raise
 
@@ -52,6 +52,6 @@ class IonReporterAccessor(DynamoDBAccessor):
         for item in items_to_delete:
             try:
                 self.delete_item({'ion_reporter_id': item[KEY]})
-            except Exception, e:
+            except Exception as e:
                 self.logger.error("Batch delete item exception in dynamodb: " + e.message)
                 raise

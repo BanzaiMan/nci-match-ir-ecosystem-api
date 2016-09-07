@@ -41,7 +41,7 @@ class SampleControlRecord(Resource):
         item_dictionary = dict((k, v) for k, v in item_dictionary.iteritems() if v)
         try:
             CeleryTaskAccessor().update_item(item_dictionary)
-        except Exception, e:
+        except Exception as e:
             AbortLogger.log_and_abort(500, self.logger.error, "update_item failed because " + e.message)
 
         return {"message": "Sample control with molecular id: " + molecular_id + " updated"}
@@ -51,7 +51,7 @@ class SampleControlRecord(Resource):
         try:
             CeleryTaskAccessor().delete_item({'molecular_id': molecular_id})
             return {"message": "Item deleted", "molecular_id": molecular_id}
-        except Exception, e:
+        except Exception as e:
             AbortLogger.log_and_abort(500, self.logger.error, "delete_item failed because " + e.message)
 
     def get(self, molecular_id):
@@ -60,7 +60,7 @@ class SampleControlRecord(Resource):
 
         try:
             results = SampleControlAccessor().get_item({'molecular_id': molecular_id})
-        except Exception, e:
+        except Exception as e:
             AbortLogger.log_and_abort(500, self.logger.error, "get_item failed because " + e.message)
         else:
             if len(results) > 0:

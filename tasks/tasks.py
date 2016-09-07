@@ -19,7 +19,7 @@ app = Celery('tasks', broker=BROKER__URL)
 
 try:
     __builtin__.environment = os.environ['ENVIRONMENT']
-except KeyError, e:
+except KeyError as e:
     logger.error("Must configure ENVIRONMENT variable in your environment in order for application to start")
     logger.error(e.message)
 
@@ -64,8 +64,8 @@ def process_ir_file(file_process_message):
     try:
         # process vcf, dna_bam, or cdna_bam file
         updated_file_process_message = process_file_message(new_file_process_message)
-    except Exception, e:
-        logger.error("Cannot process file because: " + e.message)
+    except Exception as ex:
+        logger.error("Cannot process file because: " + ex.message)
         raise
     else:
         logger.info("Updating sample_controls table after processing file")

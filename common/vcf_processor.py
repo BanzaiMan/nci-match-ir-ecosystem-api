@@ -33,7 +33,7 @@ class VcfFileProcessor(object):
             else:
                 logger.debug("Failed to generate tsv file from : " + str(vcf_full_path))
                 return None
-        except Exception, e:
+        except Exception as e:
             logger.error("Failure reason: " + e.message)
             raise
 

@@ -51,7 +51,7 @@ class Aliquot(Resource):
                 for distinct_task in distinct_tasks_list:
                     self.logger.debug("Adding task to queue: " + str(distinct_task))
                     CeleryTaskAccessor().process_file(distinct_task)
-            except Exception, e:
+            except Exception as e:
                 self.logger.error("updated_item failed because" + e.message)
                 abort(500, message="Updating_item failed because: " + e.message)
         else:

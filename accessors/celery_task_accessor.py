@@ -35,6 +35,6 @@ class CeleryTaskAccessor(object):
         self.logger.debug(str(item_dictionary))
         try:
             return task.delay(item_dictionary)
-        except Exception, e:
+        except Exception as e:
             self.logger.debug("Client Error on celery " + task_description + ": " + e.message)
             raise

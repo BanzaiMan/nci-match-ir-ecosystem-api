@@ -17,7 +17,7 @@ class S3Accessor(object):
         self.logger.info("Attempting to upload: " + full_path_local_file + " to " + upload_file_location)
         try:
             self.resource.meta.client.upload_file(full_path_local_file, self.bucket, upload_file_location)
-        except Exception, e:
+        except Exception as e:
             self.logger.error("Upload to S3 failed because: " + e.message)
             raise
 
@@ -30,7 +30,7 @@ class S3Accessor(object):
         self.logger.info("Attempting to download: " + s3_path + " to " + full_path_local_file)
         try:
             self.resource.meta.client.download_file(self.bucket, s3_path, full_path_local_file)
-        except Exception, e:
+        except Exception as e:
             self.logger.error("Download from S3 failed because: " + e.message)
             raise
 

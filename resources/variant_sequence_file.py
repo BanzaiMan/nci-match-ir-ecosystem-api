@@ -33,7 +33,7 @@ class VariantSequenceFile(Resource):
                         s3_url = s3.client.generate_presigned_url('get_object',
                                                                   Params={'Bucket': s3.bucket, 'Key': file_s3_path},
                                                                   ExpiresIn=600)
-                    except Exception, e:
+                    except Exception as e:
                         self.logger.error("Failed to create s3 download url because: " + e.message)
                         abort(500, message="Failed to create s3 download url because: " + e.message)
                     else:
@@ -42,7 +42,7 @@ class VariantSequenceFile(Resource):
                     self.logger.debug("No specified file format (vcf|tsv) for downloading")
                     abort(404, message="No specified file format (vcf|tsv) for downloading")
 
-        except Exception, e:
+        except Exception as e:
             self.logger.error("get_item failed because" + e.message)
             abort(500, message="get_item failed because " + e.message)
 

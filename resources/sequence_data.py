@@ -27,7 +27,7 @@ class SequenceData(Resource):
         elif sequence_data == 'sample_controls':
             try:
                 sample_controls = SampleControlAccessor().scan({'ion_reporter_id': ion_reporter_id})
-            except Exception, e:
+            except Exception as e:
                 AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
             else:
                 if len(sample_controls) > 0:

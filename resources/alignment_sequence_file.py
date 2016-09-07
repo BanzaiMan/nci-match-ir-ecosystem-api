@@ -15,7 +15,7 @@ class AlignmentSequenceFile(Resource):
 
         try:
             results = SampleControlAccessor().get_item({'molecular_id': molecular_id})
-        except Exception, e:
+        except Exception as e:
             self.logger.debug("get_item failed because" + e.message)
             abort(500, message="get_item failed because " + e.message)
         else:
@@ -36,7 +36,7 @@ class AlignmentSequenceFile(Resource):
                             s3_url = s3.client.generate_presigned_url('get_object',
                                                                       Params={'Bucket': s3.bucket, 'Key': file_s3_path},
                                                                       ExpiresIn=600)
-                        except Exception, e:
+                        except Exception as e:
                             self.logger.error("Failed to create s3 download url because: " + e.message)
                             abort(500, message="Failed to create s3 download url because: " + e.message)
                         else:

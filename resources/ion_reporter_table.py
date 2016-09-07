@@ -27,7 +27,7 @@ class IonReporterTable(Resource):
             self.logger.debug(str(ion_reporter))
             return ion_reporter if ion_reporter is not None else \
                 abort(404, message="No ion reporters meet the query parameters")
-        except Exception, e:
+        except Exception as e:
             self.logger.error("Get failed because: " + e.message)
             abort(500, message="Get failed because: " + e.message)
 
@@ -56,7 +56,7 @@ class IonReporterTable(Resource):
                 # our case.
                 IonReporterAccessor().put_item(new_item_dictionary)
                 return {"result": "New ion reporter created", "ion_reporter_id": new_item_dictionary['ion_reporter_id']}
-            except Exception, e:
+            except Exception as e:
                 self.logger.error("Could not put_item because " + e.message)
                 abort(500, message="put_item failed because " + e.message)
 
@@ -74,7 +74,7 @@ class IonReporterTable(Resource):
         try:
             self.logger.info("Deleting items based on query: " + str(args))
             CeleryTaskAccessor().delete_ir_items(args)
-        except Exception, e:
+        except Exception as e:
             self.logger.error("Batch delete failed because: " + e.message)
             abort(500, message="Batch delete failed because: " + e.message)
 

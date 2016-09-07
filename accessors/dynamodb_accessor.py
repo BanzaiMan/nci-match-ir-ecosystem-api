@@ -35,14 +35,14 @@ class DynamoDBAccessor(object):
                 try:
                     results = self.table.scan(FilterExpression=QueryHelper.create_filter_expression(query_parameters),
                                               ExclusiveStartKey=exclusive_start_key[0])
-                except Exception, e:
+                except Exception as e:
                     self.logger.error("Scan of database failed because " + e.message)
                     raise
             else:
                 self.logger.debug("Scan with no start key")
                 try:
                     results = self.table.scan(FilterExpression=QueryHelper.create_filter_expression(query_parameters))
-                except Exception, e:
+                except Exception as e:
                     self.logger.error("Scan of database failed because " + e.message)
                     raise
         else:
@@ -51,13 +51,13 @@ class DynamoDBAccessor(object):
                 self.logger.debug("Exclusive start key is " + str(exclusive_start_key[0]))
                 try:
                     results = self.table.scan(ExclusiveStartKey=exclusive_start_key[0])
-                except Exception, e:
+                except Exception as e:
                     self.logger.error("Scan of database failed because " + e.message)
                     raise
             else:
                 try:
                     results = self.table.scan()
-                except Exception, e:
+                except Exception as e:
                     self.logger.error("Scan of database failed because " + e.message)
                     raise
 
@@ -66,7 +66,7 @@ class DynamoDBAccessor(object):
         if results.get('LastEvaluatedKey'):
             try:
                 items += self.scan(query_parameters, results['LastEvaluatedKey'])
-            except Exception, e:
+            except Exception as e:
                 self.logger.error("Scan of database failed because " + e.message)
                 raise
 
@@ -81,7 +81,7 @@ class DynamoDBAccessor(object):
         self.logger.debug(str(item_dictionary))
         try:
             return self.table.put_item(Item=item_dictionary)
-        except ClientError, e:
+        except ClientError as e:
             self.logger.debug("Client Error on put_item: " + e.message)
             raise
 
@@ -103,7 +103,7 @@ class DynamoDBAccessor(object):
         try:
             return self.table.update_item(Key=all_keys, UpdateExpression=update_expression,
                                           ExpressionAttributeValues=expression_attribute_values)
-        except ClientError, e:
+        except ClientError as e:
             self.logger.error("Client Error on update_item: " + e.message)
             raise
 
@@ -113,7 +113,7 @@ class DynamoDBAccessor(object):
         try:
             results = self.__item(self.table.get_item, 'get', key, additional_keys)
             return results['Item'] if 'Item' in results else []
-        except ClientError, e:
+        except ClientError as e:
             self.logger.error("Client Error on get_item: " + e.message)
             raise
 
@@ -133,7 +133,7 @@ class DynamoDBAccessor(object):
             for item in items_list_dictionary:
                 try:
                     batch.put_item(Item=item)
-                except ClientError, e:
+                except ClientError as e:
                     self.logger.error("Client Error on put_item: " + e.message)
                     raise
 
@@ -141,7 +141,7 @@ class DynamoDBAccessor(object):
     def delete_table(self):
         try:
             self.table.delete()
-        except ClientError, e:
+        except ClientError as e:
             self.logger.error("Client Error on deleting table: " + e.message)
             raise
 
@@ -170,7 +170,7 @@ class DynamoDBAccessor(object):
         try:
             table_description = self.client.describe_table(TableName=table_name)
             self.logger.info("Table found on system: " + table_name + " :Description: " + str(table_description))
-        except Exception, e:
+        except Exception as e:
             self.logger.debug(e.message)
             return self.create_table(table_name)
 
@@ -186,6 +186,6 @@ class DynamoDBAccessor(object):
 
         try:
             return function(Key=all_keys)
-        except ClientError, e:
+        except ClientError as e:
             self.logger.error("Client Error on " + function_description + ": " + e.message)
             raise
