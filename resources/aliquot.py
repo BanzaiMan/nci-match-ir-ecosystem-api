@@ -52,7 +52,7 @@ class Aliquot(Resource):
                     self.logger.debug("Adding task to queue: " + str(distinct_task))
                     CeleryTaskAccessor().process_file(distinct_task)
             except Exception, e:
-                self.logger.debug("updated_item failed because" + e.message)
+                self.logger.error("updated_item failed because" + e.message)
                 abort(500, message="Updating_item failed because: " + e.message)
         else:
             self.logger.debug("No distinct tasks where found in message")

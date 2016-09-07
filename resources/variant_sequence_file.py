@@ -40,10 +40,10 @@ class VariantSequenceFile(Resource):
                         return {'s3_download_file_url': s3_url}
                 else:
                     self.logger.debug("No specified file format (vcf|tsv) for downloading")
-                    abort(500, message="No specified file format (vcf|tsv) for downloading")
+                    abort(404, message="No specified file format (vcf|tsv) for downloading")
 
         except Exception, e:
-            self.logger.debug("get_item failed because" + e.message)
+            self.logger.error("get_item failed because" + e.message)
             abort(500, message="get_item failed because " + e.message)
 
         self.logger.info(molecular_id + " was not found")
