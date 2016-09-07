@@ -2,6 +2,7 @@ import logging
 from string import Template
 from flask_restful import abort, Resource, reqparse
 from accessors.sample_control_accessor import SampleControlAccessor
+from resource_helpers.abort_logger import AbortLogger
 
 MESSAGE_501 = Template("Finding patients sequenced with IR: $ion_reporter_id not yet implemented.")
 MESSAGE_500 = Template("Server Error contact help: $error")
@@ -21,15 +22,13 @@ class SequenceData(Resource):
         args = parser.parse_args()
 
         if sequence_data == 'patients':
-            self.logger.debug(MESSAGE_501.substitute(ion_reporter_id=ion_reporter_id))
-            abort(501, message=MESSAGE_501.substitute(ion_reporter_id=ion_reporter_id))
+            AbortLogger.log_and_abort(501, self.logger.debug, MESSAGE_501.substitute(ion_reporter_id=ion_reporter_id))
 
         elif sequence_data == 'sample_controls':
             try:
                 sample_controls = SampleControlAccessor().scan({'ion_reporter_id': ion_reporter_id})
             except Exception, e:
-                self.logger.error(MESSAGE_500.substitute(error=e.message))
-                abort(500, message=MESSAGE_500.substitute(error=e.message))
+                AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
             else:
                 if len(sample_controls) > 0:
                     if args['projection'] is not None:
@@ -38,9 +37,7 @@ class SequenceData(Resource):
                     else:
                         return sample_controls
 
-                self.logger.debug(MESSAGE_404.substitute(ion_reporter_id=ion_reporter_id))
-                abort(404, message=MESSAGE_404.substitute(ion_reporter_id=ion_reporter_id))
+                AbortLogger.log_and_abort(404, self.logger.error, MESSAGE_404.substitute(ion_reporter_id=ion_reporter_id))
 
         else:
-            self.logger.debug(MESSAGE_400.substitute(sequence_data=sequence_data))
-            abort(400, message=MESSAGE_400.substitute(sequence_data=sequence_data))
+            AbortLogger.log_and_abort(404, self.logger.debug, MESSAGE_400.substitute(sequence_data=sequence_data))

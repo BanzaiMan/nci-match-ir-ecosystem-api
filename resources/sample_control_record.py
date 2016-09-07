@@ -1,10 +1,10 @@
 import logging
 from accessors.celery_task_accessor import CeleryTaskAccessor
 from accessors.sample_control_accessor import SampleControlAccessor
-from flask_restful import abort, Resource, reqparse
+from flask_restful import Resource, reqparse
 from flask import request
 from common.dictionary_helper import DictionaryHelper
-from accessors.s3_accessor import S3Accessor
+from resource_helpers.abort_logger import AbortLogger
 
 parser = reqparse.RequestParser()
 # Essential for POST, all other parameters are ignored on post except molecular_id, which, if passed in will cause a
@@ -28,8 +28,8 @@ class SampleControlRecord(Resource):
         self.logger.debug(str(args))
 
         if not DictionaryHelper.has_values(args):
-            self.logger.debug("Update item failed, because data to update item with was not passed in request")
-            abort(400, message="Update item failed, because data to update item with was not passed in request")
+            AbortLogger.log_and_abort(400, self.logger.debug,
+                                      "Update item failed, because data to update item with was not passed in request")
 
         item_dictionary = args.copy()
         item_dictionary.update({'molecular_id': molecular_id})
@@ -42,8 +42,7 @@ class SampleControlRecord(Resource):
         try:
             CeleryTaskAccessor().update_item(item_dictionary)
         except Exception, e:
-            self.logger.debug("updated_item failed because " + e.message)
-            abort(500, message="Update item failed, because " + e.message)
+            AbortLogger.log_and_abort(500, self.logger.error, "update_item failed because " + e.message)
 
         return {"message": "Sample control with molecular id: " + molecular_id + " updated"}
 
@@ -53,21 +52,19 @@ class SampleControlRecord(Resource):
             CeleryTaskAccessor().delete_item({'molecular_id': molecular_id})
             return {"message": "Item deleted", "molecular_id": molecular_id}
         except Exception, e:
-            self.logger.debug("delete_item failed because" + e.message)
-            abort(500, message="delete_item item failed, because " + e.message)
+            AbortLogger.log_and_abort(500, self.logger.error, "delete_item failed because " + e.message)
 
     def get(self, molecular_id):
+
         self.logger.info("Getting sample control with id: " + str(molecular_id))
 
         try:
             results = SampleControlAccessor().get_item({'molecular_id': molecular_id})
-
+        except Exception, e:
+            AbortLogger.log_and_abort(500, self.logger.error, "get_item failed because " + e.message)
+        else:
             if len(results) > 0:
                 self.logger.debug("Found: " + str(results))
                 return results
-        except Exception, e:
-            self.logger.debug("get_item failed because" + e.message)
-            abort(500, message="get_item failed because " + e.message)
 
-        self.logger.info(molecular_id + " was not found")
-        abort(404, message=str(molecular_id + " was not found"))
+        AbortLogger.log_and_abort(404, self.logger.debug, molecular_id + " was not found")
