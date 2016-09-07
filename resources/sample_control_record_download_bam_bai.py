@@ -4,17 +4,16 @@ from flask_restful import abort, Resource, reqparse
 from accessors.s3_accessor import S3Accessor
 
 
-class SampleControlRecordDownload(Resource):
+class SampleControlRecordDownloadBamBai(Resource):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
-    # if in request, user specify molecular_id, file format(bam, bai, vcf, tsv) and file type (dna, or cdna),
-    #    return singed s3 download link of each file
-    def get(self, molecular_id, format=None):
+
+    def get(self, molecular_id, format=None, type=None):
         self.logger.info("Downloading sample control with id: " + str(molecular_id) + ", format: " +
-                         str(format) )
+                         str(format) + ", type: " + str(type))
         self.logger.debug("URL passed requested parameters, molecular ids: " + str(molecular_id) + ", format: " +
-                         str(format) )
+                          str(format) + ", type: " + str(type))
 
         try:
             results = SampleControlAccessor().get_item({'molecular_id': molecular_id})
@@ -22,8 +21,9 @@ class SampleControlRecordDownload(Resource):
             if 'Item' in results:
                 self.logger.debug("Found: " + str(results['Item']))
                 # download files from S3 for requested file format
-                request_download_file = self.__get_download_file_type(format)
+                request_download_file = self.__get_download_file_type(format, type)
                 self.logger.info("Requested download file=" + str(request_download_file))
+
                 if request_download_file is not None:
                     s3 = S3Accessor()
                     file_s3_path = results['Item'][request_download_file]
@@ -48,14 +48,18 @@ class SampleControlRecordDownload(Resource):
         abort(404, message=str(molecular_id + " was not found"))
 
 
-    def __get_download_file_type(self, format):
+    def __get_download_file_type(self, format, type):
 
         download_file_type = None
-        if 'vcf' == format.lower():
-            download_file_type = 'vcf_name'
-        elif 'tsv' == format.lower():
-            download_file_type = 'tsv_name'
+        if 'bam' == format.lower() and 'dna' == type.lower():
+            download_file_type = 'dna_bam_name'
+        elif 'bam' == format.lower() and 'cdna' == type.lower():
+            download_file_type = 'cdna_bam_name'
+        elif 'bai' == format.lower() and 'dna' == type.lower():
+            download_file_type = 'dna_bai_name'
+        elif 'bai' == format.lower() and 'cdna' == type.lower():
+            download_file_type = 'cdna_bai_name'
         else:
-            self.logger.debug("No file requested to be downloaded from S3.")
+            self.logger.debug("No valid format(bam|bai) and type(cdna|dna) for downloading.")
 
         return download_file_type
