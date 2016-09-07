@@ -65,3 +65,9 @@ curl -X GET "http://localhost:5000/api/v1/ion_reporters/IR_WAO85/sample_controls
 curl -X GET "http://localhost:5000/api/v1/ion_reporters/IR_WAO85/sample_controls?projection=molecular_id"
 
 curl -X GET "http://localhost:5000/api/v1/ion_reporters/IR_WAO85/sample_controls"
+
+# should return nice error
+curl -X GET "http://localhost:5000/api/v1/ion_reporters/IR_WAO85/sample_control"
+
+# should return not implemented
+curl -X GET "http://localhost:5000/api/v1/ion_reporters/IR_WAO85/patients"
