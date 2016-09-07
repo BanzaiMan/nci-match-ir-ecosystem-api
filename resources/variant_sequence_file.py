@@ -34,8 +34,7 @@ class VariantSequenceFile(Resource):
             AbortLogger.log_and_abort(500, self.logger.error, "get_item failed because " + e.message)
 
         self.logger.info(molecular_id + " was not found")
-        AbortLogger.log_and_abort(404, self.logger.error, str(molecular_id + " was not found"))
-
+        AbortLogger.log_and_abort(404, self.logger.debug, str(molecular_id + " was not found"))
 
     def __get_download_file_type(self, format):
         with open("config/s3_download_file_format.json", 'r') as format_file:

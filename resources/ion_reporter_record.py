@@ -19,6 +19,7 @@ class IonReporterRecord(Resource):
 
     def get(self, ion_reporter_id):
         self.logger.info("Getting ion reporter with id: " + str(ion_reporter_id))
+        # TODO: Add projection capability to this get.
         args = parser.parse_args()
 
         try:
@@ -27,7 +28,7 @@ class IonReporterRecord(Resource):
             AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
         else:
             if len(results) < 1:
-                AbortLogger.log_and_abort(404, self.logger.error, MESSAGE_404.substitute(ion_reporter_id=ion_reporter_id))
+                AbortLogger.log_and_abort(404, self.logger.debug, MESSAGE_404.substitute(ion_reporter_id=ion_reporter_id))
 
             return results
 

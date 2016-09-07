@@ -31,7 +31,7 @@ class IonReporterTable(Resource):
             self.logger.debug(str(ion_reporter))
             return ion_reporter if ion_reporter is not None else \
                 AbortLogger.log_and_abort(404, self.logger.error, MESSAGE_404.substitute(ion_reporter_id=ion_reporter))
-        except Exception, e:
+        except Exception as e:
             AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
 
     def post(self):
@@ -58,7 +58,7 @@ class IonReporterTable(Resource):
                 # our case.
                 IonReporterAccessor().put_item(new_item_dictionary)
                 return {"result": "New ion reporter created", "ion_reporter_id": new_item_dictionary['ion_reporter_id']}
-            except Exception, e:
+            except Exception as e:
                 AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
 
         else:
@@ -76,7 +76,7 @@ class IonReporterTable(Resource):
         try:
             self.logger.info("Deleting items based on query: " + str(args))
             CeleryTaskAccessor().delete_ir_items(args)
-        except Exception, e:
+        except Exception as e:
             AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
 
         return {"result": "Batch deletion request placed on queue to be processed"}
