@@ -1,20 +1,20 @@
 import logging
 from accessors.sample_control_accessor import SampleControlAccessor
-from flask_restful import abort, Resource, reqparse
+from flask_restful import abort, Resource
 from accessors.s3_accessor import S3Accessor
 
 
-class SampleControlRecordDownload(Resource):
+class VariantSequenceFile(Resource):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
     # if in request, user specify molecular_id, file format(bam, bai, vcf, tsv) and file type (dna, or cdna),
     #    return singed s3 download link of each file
-    def get(self, molecular_id, format=None):
+    def get(self, molecular_id, file_format):
         self.logger.info("Downloading sample control with id: " + str(molecular_id) + ", format: " +
-                         str(format) )
+                         str(file_format))
         self.logger.debug("URL passed requested parameters, molecular ids: " + str(molecular_id) + ", format: " +
-                         str(format) )
+                          str(file_format))
 
         try:
             results = SampleControlAccessor().get_item({'molecular_id': molecular_id})
@@ -22,9 +22,11 @@ class SampleControlRecordDownload(Resource):
             if len(results) > 0:
                 self.logger.debug("Found: " + str(results))
                 # download files from S3 for requested file format
-                request_download_file = self.__get_download_file_type(format)
+                request_download_file = self.__get_download_file_type(file_format)
                 self.logger.info("Requested download file=" + str(request_download_file))
                 if request_download_file is not None:
+                    # TODO: I think this should likely be encapsulated and completely hidden from this module
+                    # TODO: Put the expires in time in enironment.yml
                     s3 = S3Accessor()
                     file_s3_path = results[request_download_file]
                     try:
@@ -47,7 +49,7 @@ class SampleControlRecordDownload(Resource):
         self.logger.info(molecular_id + " was not found")
         abort(404, message=str(molecular_id + " was not found"))
 
-
+    # TODO: Could simplify into 2 lines of code with a dictionary I think
     def __get_download_file_type(self, format):
 
         download_file_type = None
