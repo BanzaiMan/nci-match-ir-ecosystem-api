@@ -26,4 +26,4 @@ exclude_paths:
 - tests/
 - oncomine-vcf-converter-1.4.1/
 exclude_fingerprints:
-- 4c31b9a84bce90131532f0f257221112
+- f3df0c8781347f1c2b4711814370dba5
