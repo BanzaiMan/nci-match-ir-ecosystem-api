@@ -56,9 +56,6 @@ class SampleControlRecord(Resource):
             self.logger.debug("delete_item failed because" + e.message)
             abort(500, message="delete_item item failed, because " + e.message)
 
-
-            # if user only specify molecular_id in request, return sample_controls item of the molecular_id
-
     def get(self, molecular_id):
         self.logger.info("Getting sample control with id: " + str(molecular_id))
 
