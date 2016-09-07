@@ -1,11 +1,15 @@
 import logging
 import datetime
-from flask_restful import abort, request, reqparse, Resource
-
+from string import Template
+from flask_restful import request, reqparse, Resource
 from accessors.celery_task_accessor import CeleryTaskAccessor
 from accessors.ion_reporter_accessor import IonReporterAccessor
 from common.dictionary_helper import DictionaryHelper
 from common.string_helper import StringHelper
+from resource_helpers.abort_logger import AbortLogger
+
+MESSAGE_500 = Template("Server Error contact help: $error")
+MESSAGE_404 = Template("No ion reporters with id: $ion_reporter_id found")
 
 parser = reqparse.RequestParser()
 parser.add_argument('ion_reporter_id', type=str, required=False, location='json', help="'ion_reporter_id' is required")
@@ -26,10 +30,9 @@ class IonReporterTable(Resource):
                 else IonReporterAccessor().scan(None)
             self.logger.debug(str(ion_reporter))
             return ion_reporter if ion_reporter is not None else \
-                abort(404, message="No ion reporters meet the query parameters")
-        except Exception as e:
-            self.logger.error("Get failed because: " + e.message)
-            abort(500, message="Get failed because: " + e.message)
+                AbortLogger.log_and_abort(404, self.logger.error, MESSAGE_404.substitute(ion_reporter_id=ion_reporter))
+        except Exception, e:
+            AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
 
     def post(self):
         self.logger.info("POST Request to create a new ion reporter")
@@ -37,9 +40,8 @@ class IonReporterTable(Resource):
         self.logger.debug(str(args))
 
         if 'ion_reporter_id' in args:
-            self.logger.debug("Ion reporter creation failed, because ion_reporter_id was passed in request")
-            abort(400, message="ion_reporter_id is not a valid input when attempting to create a new ion reporter record."
-                               "The post will create the id for you. Simply pass in site'")
+            AbortLogger.log_and_abort(400, self.logger.debug,
+                                      "Ion reporter creation failed, because ion_reporter_id was passed in request")
 
         if DictionaryHelper.keys_have_value(args, ['site']):
             self.logger.debug("creating ion reporter id for site: " + str(args))
@@ -56,27 +58,26 @@ class IonReporterTable(Resource):
                 # our case.
                 IonReporterAccessor().put_item(new_item_dictionary)
                 return {"result": "New ion reporter created", "ion_reporter_id": new_item_dictionary['ion_reporter_id']}
-            except Exception as e:
-                self.logger.error("Could not put_item because " + e.message)
-                abort(500, message="put_item failed because " + e.message)
+            except Exception, e:
+                AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
 
         else:
-            self.logger.debug("Ion reporter creation failed, because site was not passed in")
-            abort(400, message="Must send in a site in order to create an ion reporter record")
+            AbortLogger.log_and_abort(400, self.logger.debug,
+                                      "Must send in a site in order to create an ion reporter record")
 
     def delete(self):
         self.logger.info("Ion Reporter Batch Delete called")
         args = request.args
         self.logger.debug(str(args))
         if not DictionaryHelper.has_values(args):
-            abort(400, message="Cannot use batch delete to delete all records. "
-                               "This is just to make things a little safer.")
+            AbortLogger.log_and_abort(400, self.logger.debug,
+                                      "Cannot use batch delete to delete all records. "
+                                      "This is just to make things a little safer.")
         try:
             self.logger.info("Deleting items based on query: " + str(args))
             CeleryTaskAccessor().delete_ir_items(args)
-        except Exception as e:
-            self.logger.error("Batch delete failed because: " + e.message)
-            abort(500, message="Batch delete failed because: " + e.message)
+        except Exception, e:
+            AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
 
         return {"result": "Batch deletion request placed on queue to be processed"}
 
