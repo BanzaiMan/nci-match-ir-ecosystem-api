@@ -44,6 +44,15 @@ echo -e "${CYAN}****************************************************************
 curl -X GET "http://localhost:5000/api/v1/sample_controls/SC_YQ111"
 
 echo -e "${CYAN}******************************************************************************************************${NC}"
-echo -e "${RED}RETURN FILE DOWNLOAD URL FOR MOLECUALR_ID AND FILE FORMAT(VCF|TSV) IN SAMPLE IF VALID, ELSE 404 OR 500 ${NC}"
+echo -e "${RED}RETURN FILE DOWNLOAD URL FOR MOLECUALR_ID AND FORMAT(VCF|TSV) IN SAMPLE IF VALID, ELSE 404 OR 500      ${NC}"
 echo -e "${CYAN}******************************************************************************************************${NC}"
 curl -X GET "http://localhost:5000/api/v1/sample_controls_download/SC_YQ111/vcf"
+curl -X GET "http://localhost:5000/api/v1/sample_controls_download/SC_YQ111/tsv"
+
+echo -e "${CYAN}******************************************************************************************************************${NC}"
+echo -e "${RED}RETURN FILE DOWNLOAD URL FOR MOLECUALR_ID, FORMAT(BAM|BAI) AND TYPE (DNA|CDNA) IN SAMPLE IF VALID, ELSE 404 OR 500 ${NC}"
+echo -e "${CYAN}******************************************************************************************************************${NC}"
+curl -X GET "http://localhost:5000/api/v1/sample_controls_download/SC_YQ111/bam/dna"
+curl -X GET "http://localhost:5000/api/v1/sample_controls_download/SC_YQ111/bam/cdna"
+curl -X GET "http://localhost:5000/api/v1/sample_controls_download/SC_YQ111/bai/cdna"
+curl -X GET "http://localhost:5000/api/v1/sample_controls_download/SC_YQ111/bai/dna"
