@@ -1,7 +1,9 @@
 import logging
+import json
 from accessors.sample_control_accessor import SampleControlAccessor
 from flask_restful import abort, Resource
 from accessors.s3_accessor import S3Accessor
+from resource_helpers.abort_logger import AbortLogger
 
 
 class VariantSequenceFile(Resource):
@@ -17,46 +19,31 @@ class VariantSequenceFile(Resource):
                           str(file_format))
 
         try:
-            results = SampleControlAccessor().get_item({'molecular_id': molecular_id})
+            item = SampleControlAccessor().get_item({'molecular_id': molecular_id})
 
-            if len(results) > 0:
-                self.logger.debug("Found: " + str(results))
+            if len(item) > 0:
+                self.logger.debug("Found: " + str(item))
                 # download files from S3 for requested file format
                 request_download_file = self.__get_download_file_type(file_format)
-                self.logger.info("Requested download file=" + str(request_download_file))
-                if request_download_file is not None:
-                    # TODO: I think this should likely be encapsulated and completely hidden from this module
-                    # TODO: Put the expires in time in environment.yml
-                    s3 = S3Accessor()
-                    file_s3_path = results[request_download_file]
-                    try:
-                        s3_url = s3.client.generate_presigned_url('get_object',
-                                                                  Params={'Bucket': s3.bucket, 'Key': file_s3_path},
-                                                                  ExpiresIn=600)
-                    except Exception as e:
-                        self.logger.error("Failed to create s3 download url because: " + e.message)
-                        abort(500, message="Failed to create s3 download url because: " + e.message)
-                    else:
-                        return {'s3_download_file_url': s3_url}
-                else:
-                    self.logger.debug("No specified file format (vcf|tsv) for downloading")
-                    abort(404, message="No specified file format (vcf|tsv) for downloading")
-
+                self.logger.info("Requested download file format=" + str(request_download_file))
+                s3 = S3Accessor()
+                s3_url = s3.get_download_url(item[request_download_file])
+                return {'s3_download_file_url': s3_url}
         except Exception as e:
-            self.logger.error("get_item failed because" + e.message)
-            abort(500, message="get_item failed because " + e.message)
+            self.logger.error("get_item failed because " + e.message)
+            AbortLogger.log_and_abort(500, self.logger.error, "get_item failed because " + e.message)
 
         self.logger.info(molecular_id + " was not found")
-        abort(404, message=str(molecular_id + " was not found"))
+        AbortLogger.log_and_abort(404, self.logger.error, str(molecular_id + " was not found"))
 
-    # TODO: Could simplify into 2 lines of code with a dictionary I think
+
     def __get_download_file_type(self, format):
+        with open("config/s3_download_file_format.json", 'r') as format_file:
+            file_format_dict = json.load(format_file)
 
         download_file_type = None
-        if 'vcf' == format.lower():
-            download_file_type = 'vcf_name'
-        elif 'tsv' == format.lower():
-            download_file_type = 'tsv_name'
+        if format in file_format_dict:
+            download_file_type = file_format_dict[format]
         else:
             self.logger.debug("No file requested to be downloaded from S3.")
 
