@@ -25,7 +25,7 @@ class VariantSequenceFile(Resource):
         else:
             if len(item) > 0:
                 self.logger.debug("Found: " + str(item))
-                # download files from S3 for requested file format
+                # TODO: Qing, I think there is a bug here as the else is not dealt with
                 request_download_file = self.__get_download_file_type(file_format)
                 self.logger.info("Requested download file format=" + str(request_download_file))
                 try:
