@@ -9,7 +9,7 @@ class DynamoDBAccessor(object):
     __metaclass__ = ABCMeta
 
     """Generic class for working with Dynamodb tables. Nothing in this class should refer to a specific table
-    or hardcode any attribute. Further, this class should never be directly called from the main application, only
+    or hard code any attribute. Further, this class should never be directly called from the main application, only
     resources. To use this class declare a child class in the resource directory and instantiate instances of that
     class. Only overwrite in child class the methods in here when necessary."""
 
