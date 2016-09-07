@@ -20,29 +20,30 @@ class VariantSequenceFile(Resource):
 
         try:
             item = SampleControlAccessor().get_item({'molecular_id': molecular_id})
-
+        except Exception as e:
+            AbortLogger.log_and_abort(500, self.logger.error, "get_item failed because " + e.message)
+        else:
             if len(item) > 0:
                 self.logger.debug("Found: " + str(item))
                 # download files from S3 for requested file format
                 request_download_file = self.__get_download_file_type(file_format)
                 self.logger.info("Requested download file format=" + str(request_download_file))
-                s3 = S3Accessor()
-                s3_url = s3.get_download_url(item[request_download_file])
-                return {'s3_download_file_url': s3_url}
-        except Exception as e:
-            self.logger.error("get_item failed because " + e.message)
-            AbortLogger.log_and_abort(500, self.logger.error, "get_item failed because " + e.message)
+                try:
+                    s3_url = S3Accessor().get_download_url(item[request_download_file])
+                except Exception as e:
+                    AbortLogger.log_and_abort(500, self.logger.error, "get_item failed because " + e.message)
+                else:
+                    return {'s3_download_file_url': s3_url}
 
-        self.logger.info(molecular_id + " was not found")
-        AbortLogger.log_and_abort(404, self.logger.debug, str(molecular_id + " was not found"))
+            AbortLogger.log_and_abort(404, self.logger.debug, str(molecular_id + " was not found"))
 
-    def __get_download_file_type(self, format):
+    def __get_download_file_type(self, file_format):
         with open("config/s3_download_file_format.json", 'r') as format_file:
             file_format_dict = json.load(format_file)
 
         download_file_type = None
-        if format in file_format_dict:
-            download_file_type = file_format_dict[format]
+        if file_format in file_format_dict:
+            download_file_type = file_format_dict[file_format]
         else:
             self.logger.debug("No file requested to be downloaded from S3.")
 
