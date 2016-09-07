@@ -1,12 +1,16 @@
 import logging
-from flask_restful import abort, request, Resource, reqparse
+from string import Template
+from flask_restful import request, Resource, reqparse
 from accessors.celery_task_accessor import CeleryTaskAccessor
 from accessors.ion_reporter_accessor import IonReporterAccessor
 from common.dictionary_helper import DictionaryHelper
+from resource_helpers.abort_logger import AbortLogger
+
+MESSAGE_500 = Template("Server Error contact help: $error")
+MESSAGE_404 = Template("No ion reporters with id: $ion_reporter_id found")
 
 parser = reqparse.RequestParser()
-
-parser.add_argument('projection',       type=str, required=False)
+parser.add_argument('projection', type=str, required=False)
 
 
 class IonReporterRecord(Resource):
@@ -20,14 +24,10 @@ class IonReporterRecord(Resource):
         try:
             results = IonReporterAccessor().get_item({'ion_reporter_id': ion_reporter_id})
         except Exception, e:
-            self.logger.debug("Major server error!!!")
-            abort(500, message="Server error " + e.message)
+            AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
         else:
             if len(results) < 1:
-                self.logger.debug("Ion Reporter with id: " + str(ion_reporter_id) +
-                                  " was not found in ion reporter table")
-                abort(404, message="Ion Reporter with id: " + str(ion_reporter_id) +
-                                   " was not found in ion reporter table")
+                AbortLogger.log_and_abort(404, self.logger.error, MESSAGE_404.substitute(ion_reporter_id=ion_reporter_id))
 
             return results
 
@@ -37,8 +37,8 @@ class IonReporterRecord(Resource):
         self.logger.debug(str(args))
 
         if not DictionaryHelper.has_values(args):
-            self.logger.debug("Update item failed, because data to update item with was not passed in request")
-            abort(400, message="Update item failed, because data to update item with was not passed in request")
+            AbortLogger.log_and_abort(400, self.logger.debug,
+                                      "Update item failed, because data to update item with was not passed in request")
 
         item_dictionary = args.copy()
         item_dictionary.update({'ion_reporter_id': ion_reporter_id})
@@ -52,8 +52,7 @@ class IonReporterRecord(Resource):
             CeleryTaskAccessor().update_ir_item(item_dictionary)
             # IonReporterAccessor().update(item_dictionary)
         except Exception, e:
-            self.logger.debug("updated_item failed because" + e.message)
-            abort(500, message="Update item failed, because " + e.message)
+            AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
 
         return {"message": "Ion reporter with ion reporter id: " + ion_reporter_id + " updated"}
 
@@ -63,5 +62,4 @@ class IonReporterRecord(Resource):
             CeleryTaskAccessor().delete_ir_item({'ion_reporter_id': ion_reporter_id})
             return {"message": "Item deleted", "ion_reporter_id": ion_reporter_id}
         except Exception, e:
-            self.logger.debug("delete_item failed because" + e.message)
-            abort(500, message="delete_item item failed, because " + e.message)
+            AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
