@@ -48,8 +48,8 @@
           "ion_reporter_id": {"S": "IR_AIO78"},
           "ip_address": {"S": "132.183.13.75"},
           "internal_ip_address": {"S": "172.20.174.24"},
-          "host_name": {"S": "MGH-MATCH-IR"},
-          "site": {"S": "mgh"},
+          "host_name": {"S": "MDACC-MATCH-IR"},
+          "site": {"S": "mdacc"},
           "status": {"S": "Contacted 4 minutes ago"},
           "last_contact": {"S": "August 29, 2016 2:01 PM GMT"},
           "data_files": {"S": "Log File"}

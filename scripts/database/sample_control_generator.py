@@ -51,7 +51,6 @@ def build_an_item():
     control_type = random.choice(TYPES)
     return json.dumps(dict(date_molecular_id_created=date,
                            control_type=control_type,
-                           site_ip_address="129.43.127.133",
                            molecular_id=molecular_id,
                            site=site))
 

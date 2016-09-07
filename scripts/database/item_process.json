@@ -1,7 +1,6 @@
 {
       "date_molecular_id_created": {"S": "2016-08-28 16:56:29.333"},
       "control_type": {"S": "no_template"},
-      "site_ip_address": {"S": "129.43.127.133"},
       "molecular_id": {"S": "SC_YQ111"},
       "site": {"S": "mocha"}
 }

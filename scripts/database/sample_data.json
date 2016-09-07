@@ -5,7 +5,6 @@
         "Item": {
           "date_molecular_id_created": {"S": "2016-08-18 19:56:19.766"},
           "control_type": {"S": "no_template"},
-          "site_ip_address": {"S": "129.43.127.133"},
           "molecular_id": {"S": "SC_SAWCB"},
           "ion_reporter_id": {"S": "IR_WAO85"},
           "site": {"S": "mocha"}
@@ -17,7 +16,6 @@
         "Item": {
           "date_molecular_id_created": {"S": "2016-08-18 19:56:19.766"},
           "control_type": {"S": "no_template"},
-          "site_ip_address": {"S": "129.43.127.133"},
           "molecular_id": {"S": "SC_SA1CB"},
           "ion_reporter_id": {"S": "IR_WAO85"},
           "site": {"S": "mocha"}
@@ -29,7 +27,6 @@
         "Item": {
           "date_molecular_id_created": {"S": "2016-08-18 20:09:45.667"},
           "control_type": {"S": "positive"},
-          "site_ip_address": {"S": "129.43.127.133"},
           "molecular_id": {"S": "SC_67VKV"},
           "ion_reporter_id": {"S": "IR_WAO85"},
           "site": {"S": "mocha"}
@@ -41,8 +38,8 @@
         "Item": {
           "date_molecular_id_created": {"S": "2016-08-18 20:13:34.285"},
           "control_type": {"S": "no_template"},
-          "site_ip_address": {"S": "129.43.127.133"},
           "molecular_id": {"S": "SC_VNTE5"},
+          "ion_reporter_id": {"S": "IR_AIO78"},
           "site": {"S": "mdacc"}
         }
       }
@@ -54,6 +51,7 @@
           "control_type": {"S": "positive"},
           "site_ip_address": {"S": "129.43.127.133"},
           "molecular_id": {"S": "SC_VEME6"},
+          "ion_reporter_id": {"S": "IR_AIO78"},
           "site": {"S": "mdacc"}
         }
       }
