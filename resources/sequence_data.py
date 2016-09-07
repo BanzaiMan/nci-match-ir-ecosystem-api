@@ -1,14 +1,15 @@
 import logging
+from string import Template
 from flask_restful import abort, Resource, reqparse
-from accessors.ion_reporter_accessor import IonReporterAccessor
 from accessors.sample_control_accessor import SampleControlAccessor
 
+MESSAGE_501 = Template("Finding patients sequenced with IR: $ion_reporter_id not yet implemented.")
+MESSAGE_500 = Template("Server Error contact help: $error")
+MESSAGE_404 = Template("No sample controls sequenced with id: $ion_reporter_id found")
+MESSAGE_400 = Template("Can only request patients or sample_controls. You requested: $sequence_data")
 
 parser = reqparse.RequestParser()
-
-
-# action = append, variable will be in list format
-parser.add_argument('projection',       type=str, required=False, action='append')
+parser.add_argument('projection', type=str, required=False, action='append')
 
 
 class SequenceData(Resource):
@@ -19,41 +20,27 @@ class SequenceData(Resource):
         self.logger.info("Getting sequence data for ion reporter with id: " + str(ion_reporter_id))
         args = parser.parse_args()
 
-        try:
-            results = IonReporterAccessor().get_item({'ion_reporter_id': ion_reporter_id})
-
-            if 'Item' in results:
-                self.logger.debug("Found: " + str(results['Item']))
-
-        except Exception, e:
-            self.logger.debug("Ion Reporter ID" + str(ion_reporter_id) + "was not found in ion reporter table")
-            abort(404, message="Ion Reporter ID not found because " + e.message)
-
         if sequence_data == 'patients':
-            return 'Not yet implemented'
+            self.logger.debug(MESSAGE_501.substitute(ion_reporter_id=ion_reporter_id))
+            abort(501, message=MESSAGE_501.substitute(ion_reporter_id=ion_reporter_id))
 
-        if sequence_data == 'sample_controls':
+        elif sequence_data == 'sample_controls':
             try:
                 sample_controls = SampleControlAccessor().scan({'ion_reporter_id': ion_reporter_id})
-                if 'Item' in sample_controls:
-                    self.logger.debug("Found: " + str(sample_controls['Item']))
-
-                if args['projection'] is not None:
-                    # return list of dictionaries instead of list of strings
-                    # extract key value pairs of projection and its values from list of dictionaries
-                    list_1 = []
-
-                    for sc in sample_controls:
-                        for project in args['projection']:
-                          if project in sc:
-                            dictionary_1 = {str(project): sc[str(project)]}
-                            list_1.append(dictionary_1)
-                    return list_1
-                else:
-                    return sample_controls
-
             except Exception, e:
-                self.logger.debug("Ion Reporter ID: " + str(ion_reporter_id) + " was not found in sample control table")
-                abort(404, message="Ion Reporter ID not found because " + e.message)
+                self.logger.debug(MESSAGE_500.substitute(error=e.message))
+                abort(500, message=MESSAGE_500.substitute(error=e.message))
+            else:
+                if len(sample_controls) > 0:
+                    if args['projection'] is not None:
+                        return [{str(project): sc[str(project)] for project in args['projection'] if project in sc}
+                                for sc in sample_controls]
+                    else:
+                        return sample_controls
 
+                self.logger.debug(MESSAGE_404.substitute(ion_reporter_id=ion_reporter_id))
+                abort(404, message=MESSAGE_404.substitute(ion_reporter_id=ion_reporter_id))
 
+        else:
+            self.logger.debug(MESSAGE_400.substitute(sequence_data=sequence_data))
+            abort(400, message=MESSAGE_400.substitute(sequence_data=sequence_data))
