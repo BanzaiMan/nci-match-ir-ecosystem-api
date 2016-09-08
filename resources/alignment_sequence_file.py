@@ -20,10 +20,9 @@ class AlignmentSequenceFile(Resource):
         else:
             if len(item) > 0:
                 self.logger.debug("Found: " + str(item))
-                file_name_key = str(nucleic_acid_type) + "_" + str(file_format) + "_name"
                 try:
                     s3_url = S3Accessor(__builtin__.environment_config[__builtin__.environment]['region'])\
-                        .get_download_url(item[file_name_key])
+                        .get_download_url(item[str(nucleic_acid_type) + "_" + str(file_format) + "_name"])
                 except KeyError as k:
                     AbortLogger.log_and_abort(404, self.logger.debug, "Failed to get download url because " +
                                               k.message + " does not exist")
