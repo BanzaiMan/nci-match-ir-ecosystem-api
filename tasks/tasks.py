@@ -10,6 +10,7 @@ from common.vcf_processor import VcfFileProcessor
 from common.bam_processor import BamFileProcessor
 from accessors.s3_accessor import S3Accessor
 from werkzeug.utils import secure_filename
+from common.environment_helper import EnvironmentHelper
 
 # Logging functionality
 logger = logging.getLogger(__name__)
@@ -17,13 +18,7 @@ logger = logging.getLogger(__name__)
 BROKER__URL = "sqs://" + os.environ['AWS_ACCESS_KEY_ID'] + ":" + os.environ['AWS_SECRET_ACCESS_KEY'] + "@"
 app = Celery('tasks', broker=BROKER__URL)
 
-try:
-    __builtin__.environment = os.environ['ENVIRONMENT']
-except KeyError as e:
-    logger.error("Must configure ENVIRONMENT variable in your environment in order for application to start")
-    logger.error(e.message)
-
-logger.info("Environment set to: " + __builtin__.environment)
+EnvironmentHelper.set_environment(logger.info)
 
 # Use the environment variable from above to read yaml config file set global variable
 with open("config/environment.yml", 'r') as yaml_file:
