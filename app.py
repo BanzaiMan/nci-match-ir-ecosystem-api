@@ -20,6 +20,7 @@ from resources.variant_sequence_file import VariantSequenceFile
 from resources.alignment_sequence_file import AlignmentSequenceFile
 from resources.version import Version
 from resources.aliquot import Aliquot
+from common.environment_helper import EnvironmentHelper
 
 
 # Boilerplate code to start flask
@@ -33,14 +34,8 @@ logger = logging.getLogger(__name__)
 
 # Use this variable to read the config file which contains the database connection and
 # tier (i.e., development, tests, uat, production) specific configuration information.
-__builtin__.environment = None
-try:
-    __builtin__.environment = os.environ['ENVIRONMENT']
-except KeyError, e:
-    logger.error("Must configure ENVIRONMENT variable in your environment in order for application to start")
-    logger.error(e.message)
 
-logger.info("Environment set to: " + __builtin__.environment)
+EnvironmentHelper.set_environment(logger.info)
 
 
 # Use the environment variable from above to read yaml config file and set global variable to the loaded file

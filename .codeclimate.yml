@@ -7,10 +7,19 @@ engines:
     - 87a986c9e0de543a45f0280b29b50321
     - 33ccdd645f4b4686c92d3c940773c5cf
     - 82d4ae92a2b90373b632db2f129947c2
+    - 860016e71eeb41885cd1d0eb914477b8
+    - 7c887d4ba775692ec7d0ab9d04a279f7
+    - 8f5e2a878bbb6c38b9ee1d4d673f7445
+    - dec3c61b4590ec5f28feb736d94dd8dc
+    - 20e434b573b200f29f0efb19a4a6df4a
+    - 5381db09bb5114d7225235685e84cf76
   duplication:
     enabled: true
     exclude_fingerprints:
     - 159393f376fc5213d2b4de74dd742b84
+    - 901e91c373b4c02c927fdb9ef9545600
+    - 07ea10b01642f0ef75c129229bd546e3
+    - 8400b393db6a5fd7f1e75af2f7af218c
     config:
       languages:
       - ruby
@@ -34,3 +43,4 @@ exclude_paths:
 - config/
 - tests/
 - oncomine-vcf-converter-1.4.1/
+- scripts/
