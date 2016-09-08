@@ -7,13 +7,24 @@ import sys
 sys.path.append('..')
 from common.datetime_helper import DateTimeHelper
 
+import app
+import json
+
 #from datetime import datetime
 
 @ddt
 class TestApp(unittest.TestCase):
 
     def setUp(self):
+        self.app=app.app.test_client()
         pass
+
+    @data((1, '{"version": "1.0"}'))
+    @unpack
+    def test_version(self, inp, expected_return_data):
+        return_value = self.app.get('/api/v1/ion_reporters/version')
+        assert json.loads(return_value.data) == json.loads(expected_return_data)
+
 
     #@patch('common.datetime_helper.datetime.datetime.strftime')
     #@patch('datetime.datetime.utcnow')
