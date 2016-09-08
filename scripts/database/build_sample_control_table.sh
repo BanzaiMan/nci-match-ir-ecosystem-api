@@ -45,12 +45,12 @@ QUERY_ATTRIBUTE='control_type'
 QUERY_VALUE='no_template'
 
 echo -e "${CYAN}***********************************************${NC}"
-echo -e "${RED}DELETING TABLE IF IT EXIST${NC}"
+echo -e "${RED}DELETING TABLE IF IT EXIST                      ${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 aws dynamodb delete-table --table-name $TABLE_NAME $END_POINT
 
 echo -e "${CYAN}***********************************************${NC}"
-echo -e "${RED}BUILDING TABLE${NC}"
+echo -e "${RED}BUILDING TABLE                                  ${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 # Note: Something to consider is do we really need or want the range key? Maybe just make the molecular_id the hash
 # key is good enough as we want the molecular_id to be completly unique and in this case its actually the site plus
@@ -60,17 +60,17 @@ echo -e "${CYAN}***********************************************${NC}"
 aws dynamodb create-table --table-name $TABLE_NAME --attribute-definitions AttributeName=molecular_id,AttributeType=S --key-schema AttributeName=molecular_id,KeyType=HASH --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 $END_POINT
 
 echo -e "${CYAN}***********************************************${NC}"
-echo -e "${RED}WRITING SAMPLE DATA TO TABLE${NC}"
+echo -e "${RED}WRITING SAMPLE DATA TO TABLE                    ${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 aws dynamodb batch-write-item --request-items $DATA_FILE $END_POINT
 
 echo -e "${CYAN}***********************************************${NC}"
-echo -e "${RED}SHOWING THE TABLES ON SYSTEM${NC}"
+echo -e "${RED}SHOWING THE TABLES ON SYSTEM                    ${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 aws dynamodb list-tables $END_POINT
 
 echo -e "${CYAN}***********************************************${NC}"
-echo -e "${RED}DESCRIBING NEWLY CREATED AND LOADED TABLE${NC}"
+echo -e "${RED}DESCRIBING NEWLY CREATED AND LOADED TABLE       ${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 aws dynamodb describe-table --table-name $TABLE_NAME $END_POINT
 
@@ -116,9 +116,9 @@ echo -e "${CYAN}************************************************************${NC
 aws dynamodb delete-item --table-name $TABLE_NAME --key file://key.json --return-consumed-capacity TOTAL $END_POINT
 
 # UPDATE: update an item
-echo -e "${CYAN}************************************************************${NC}"
+echo -e "${CYAN}*************************************************************************************************************${NC}"
 echo -e "${RED}DELETE A ITEM FROM TABLE: NEED A KEY JSON FILE, UPDATE EXPRESSION, ATTRIBUTE NAMES JSON, ATTRIBUTE VALUE JSON ${NC}"
-echo -e "${CYAN}************************************************************${NC}"
+echo -e "${CYAN}*************************************************************************************************************${NC}"
 aws dynamodb update-item --table-name $TABLE_NAME --key file://key.json --update-expression "SET #CT = :c, #SIA = :s" \
  --expression-attribute-names file://update-expression-attribute-names.json\
  --expression-attribute-values file://update-expression-attribute-values.json\
