@@ -31,4 +31,4 @@ class AlignmentSequenceFile(Resource):
                 else:
                     return {'s3_download_file_url': s3_url}
 
-        AbortLogger.log_and_abort(404, self.logger.debug, str(molecular_id + " was not found"))
+            AbortLogger.log_and_abort(404, self.logger.debug, str(molecular_id + " was not found"))
