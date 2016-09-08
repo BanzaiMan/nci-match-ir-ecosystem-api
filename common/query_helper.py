@@ -52,4 +52,3 @@ class QueryHelper(object):
         # JSON Loads takes a string that is in proper json format and 'loads' it to a dictionary. That is why
         # the {} have to be added, as this makes the string into proper looking JSON.
         return update_expression, json.loads('{'+update_expression_attribute_values+'}')
-
