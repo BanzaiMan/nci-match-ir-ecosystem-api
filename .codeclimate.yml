@@ -7,10 +7,14 @@ engines:
     - 87a986c9e0de543a45f0280b29b50321
     - 33ccdd645f4b4686c92d3c940773c5cf
     - 82d4ae92a2b90373b632db2f129947c2
+    - 860016e71eeb41885cd1d0eb914477b8
+    - 7c887d4ba775692ec7d0ab9d04a279f7
+    - 8f5e2a878bbb6c38b9ee1d4d673f7445
   duplication:
     enabled: true
     exclude_fingerprints:
     - 159393f376fc5213d2b4de74dd742b84
+    - 901e91c373b4c02c927fdb9ef9545600
     config:
       languages:
       - ruby
