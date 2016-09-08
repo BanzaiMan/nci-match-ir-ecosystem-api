@@ -1,5 +1,4 @@
 import logging
-import json
 from accessors.sample_control_accessor import SampleControlAccessor
 from flask_restful import abort, Resource
 from accessors.s3_accessor import S3Accessor
@@ -25,28 +24,19 @@ class VariantSequenceFile(Resource):
         else:
             if len(item) > 0:
                 self.logger.debug("Found: " + str(item))
-                request_download_file = self.__get_download_file_type(file_format)
+                s3 = S3Accessor()
+                request_download_file = s3.get_download_file_type(file_format)
                 if request_download_file is None:
                     AbortLogger.log_and_abort(500, self.logger.error, "Requested file format is invalid. Cannot download from S3.")
 
                 self.logger.info("Requested download file format=" + str(request_download_file))
                 try:
-                    s3_url = S3Accessor().get_download_url(item[request_download_file])
+                    s3_url = s3.get_download_url(item[request_download_file])
                 except Exception as e:
-                    AbortLogger.log_and_abort(500, self.logger.error, "get_item failed because " + e.message)
+                    AbortLogger.log_and_abort(500, self.logger.error, "Failed to get download url because " + e.message)
                 else:
                     return {'s3_download_file_url': s3_url}
 
             AbortLogger.log_and_abort(404, self.logger.debug, str(molecular_id + " was not found"))
 
-    def __get_download_file_type(self, file_format):
-        with open("config/s3_download_file_format.json", 'r') as format_file:
-            file_format_dict = json.load(format_file)
 
-        download_file_type = None
-        if file_format in file_format_dict:
-            download_file_type = file_format_dict[file_format]
-        else:
-            self.logger.debug("Requested file format is invalid for downloading from S3.")
-
-        return download_file_type

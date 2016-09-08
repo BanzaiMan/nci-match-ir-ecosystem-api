@@ -1,6 +1,7 @@
 import boto3
 import logging
 import __builtin__
+import json
 
 
 class S3Accessor(object):
@@ -51,3 +52,16 @@ class S3Accessor(object):
             raise
         else:
             return s3_url
+
+    #def __get_download_file_type(self, file_format):
+    def get_download_file_type(self, file_format):
+        with open("config/s3_download_file_format.json", 'r') as format_file:
+            file_format_dict = json.load(format_file)
+
+        download_file_type = None
+        if file_format in file_format_dict:
+            download_file_type = file_format_dict[file_format]
+        else:
+            self.logger.debug("Requested file format is invalid for downloading from S3.")
+
+        return download_file_type
