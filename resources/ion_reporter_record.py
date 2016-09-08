@@ -37,7 +37,6 @@ class IonReporterRecord(Resource):
 
             AbortLogger.log_and_abort(404, self.logger.error, MESSAGE_404.substitute(ion_reporter_id=ion_reporter_id))
 
-
     def put(self, ion_reporter_id):
         self.logger.info("updating ion reporter with id: " + str(ion_reporter_id))
         args = request.json

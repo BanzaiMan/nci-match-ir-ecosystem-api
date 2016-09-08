@@ -3,6 +3,7 @@ from flask_restful import abort, reqparse, Resource
 from accessors.sample_control_accessor import SampleControlAccessor
 from common.dictionary_helper import DictionaryHelper
 from accessors.celery_task_accessor import CeleryTaskAccessor
+from resource_helpers.abort_logger import AbortLogger
 
 parser = reqparse.RequestParser()
 parser.add_argument('analysis_id',   type=str, required=True,  location='json', help="'analysis_id' is required")
@@ -31,8 +32,7 @@ class Aliquot(Resource):
 
         # TODO: Finish the write for the GET molecular_id by calling the patient ecosystem
         # 2. Import requests library and then make a rest call to patient ecosystem to check patient table
-
-        abort(404, message=str(molecular_id + " was not found"))
+        AbortLogger.log_and_abort(404, self.logger.debug, str(molecular_id + " was not found"))
 
     def put(self, molecular_id):
         self.logger.info("updating molecular_id: " + str(molecular_id))
@@ -40,8 +40,8 @@ class Aliquot(Resource):
         self.logger.debug(str(args))
 
         if not DictionaryHelper.has_values(args):
-            self.logger.debug("update item failed, because item updating information was not passed in request")
-            abort(400, message="Need passing item updating information in order to update a sample control item. ")
+            AbortLogger.log_and_abort(400, self.logger.debug, "Need to pass in item updating information in "
+                                                              "order to update a sample control item. ")
 
         item_dictionary = args.copy()
         distinct_tasks_list = self.__get_distinct_tasks(item_dictionary, molecular_id)
@@ -52,11 +52,9 @@ class Aliquot(Resource):
                     self.logger.debug("Adding task to queue: " + str(distinct_task))
                     CeleryTaskAccessor().process_file(distinct_task)
             except Exception as e:
-                self.logger.error("updated_item failed because" + e.message)
-                abort(500, message="Updating_item failed because: " + e.message)
+                AbortLogger.log_and_abort(500, self.logger.error, "updated_item failed because" + e.message)
         else:
-            self.logger.debug("No distinct tasks where found in message")
-            abort(404, message="No distinct tasks where found in message")
+            AbortLogger.log_and_abort(404, self.logger.debug, "No distinct tasks where found in message")
 
         return {"message": "Item updated", "molecular_id": molecular_id}
 

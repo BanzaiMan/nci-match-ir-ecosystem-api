@@ -1,15 +1,12 @@
 import logging
 import datetime
-from flask_restful import abort, request, reqparse, Resource
+from flask_restful import request, reqparse, Resource
 
 from accessors.celery_task_accessor import CeleryTaskAccessor
 from accessors.sample_control_accessor import SampleControlAccessor
 from common.dictionary_helper import DictionaryHelper
 from common.string_helper import StringHelper
-
-# Notice there are 2 classes in this file. This is a little different than other languages because of the way
-# python works with overriding method signatures.
-# Replace later with marshmallow but for now this works
+from resource_helpers.abort_logger import AbortLogger
 
 parser = reqparse.RequestParser()
 # Essential for POST, all other parameters are ignored on post except molecular_id, which, if passed in will cause a
@@ -42,24 +39,23 @@ class SampleControlTable(Resource):
                 else SampleControlAccessor().scan(None)
             self.logger.debug(str(sample_control))
             return sample_control if sample_control is not None else \
-                abort(404, message="No sample controls meet the query parameters")
+                AbortLogger.log_and_abort(404, self.logger.error, "No sample controls meet the query parameters")
         except Exception as e:
-            self.logger.error("Get failed because: " + e.message)
-            abort(500, message="Get failed because: " + e.message)
+            AbortLogger.log_and_abort(500, self.logger.error, "Get failed because: " + e.message)
 
     def delete(self):
         self.logger.info("Sample control Batch Delete called")
         args = request.args
         self.logger.debug(str(args))
         if not DictionaryHelper.has_values(args):
-            abort(400, message="Cannot use batch delete to delete all records. "
-                               "This is just to make things a little safer.")
+            AbortLogger.log_and_abort(400, self.logger.debug,
+                                      "Cannot use batch delete to delete all records. "
+                                      "This is just to make things a little safer.")
         try:
             self.logger.info("Deleting items based on query: " + str(args))
             CeleryTaskAccessor().delete_items(args)
         except Exception as e:
-            self.logger.error("Batch delete failed because: " + e.message)
-            abort(500, message="Batch delete failed because: " + e.message)
+            AbortLogger.log_and_abort(500, self.logger.error, "Batch delete failed because: " + e.message)
 
         return {"result": "Batch deletion request placed on queue to be processed"}
 
@@ -74,9 +70,8 @@ class SampleControlTable(Resource):
         self.logger.debug(str(args))
 
         if 'molecular_id' in args:
-            self.logger.debug("Sample Control creation failed, because molecular_id was passed in request")
-            abort(400, message="molecular_id is not a valid input when attempting to create a new sample control. "
-                               "The post will create the id for you. Simply pass in site and control_type'")
+            AbortLogger.log_and_abort(400, self.logger.debug,
+                                      "Sample Control creation failed, because molecular_id was passed in request")
 
         if DictionaryHelper.keys_have_value(args, ['control_type', 'site']):
             self.logger.debug("Sample Control creation failed, because request molecular_id was passed in")
@@ -94,12 +89,12 @@ class SampleControlTable(Resource):
                 SampleControlAccessor().put_item(new_item_dictionary)
                 return {"result": "New sample control created", "molecular_id": new_item_dictionary['molecular_id']}
             except Exception as e:
-                self.logger.error("Could not put_item because " + e.message)
-                abort(500, message="put_item failed because " + e.message)
+                AbortLogger.log_and_abort(500, self.logger.error, "Could not put_item because " + e.message)
 
         else:
-            self.logger.debug("Sample Control creation failed, because both site and control_type were not passed in")
-            abort(400, message="Must send in both a site and a control_type in order to create a sample control")
+            AbortLogger.log_and_abort(400, self.logger.debug,
+                                      "Sample Control creation failed, "
+                                      "because both site and control_type were not passed in")
 
     # Internal method to get new_molecular_id and ensure its unique before trying to use it.
     def __get_unique_key(self):
