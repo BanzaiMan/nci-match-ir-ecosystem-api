@@ -9,8 +9,10 @@ from resource_helpers.abort_logger import AbortLogger
 MESSAGE_500 = Template("Server Error contact help: $error")
 MESSAGE_404 = Template("No ion reporters with id: $ion_reporter_id found")
 
+
+
 parser = reqparse.RequestParser()
-parser.add_argument('projection', type=str, required=False)
+parser.add_argument('projection', type=str, required=False, action='append')
 
 
 class IonReporterRecord(Resource):
@@ -19,18 +21,22 @@ class IonReporterRecord(Resource):
 
     def get(self, ion_reporter_id):
         self.logger.info("Getting ion reporter with id: " + str(ion_reporter_id))
-        # TODO: Add projection capability to this get.
         args = parser.parse_args()
 
         try:
-            results = IonReporterAccessor().get_item({'ion_reporter_id': ion_reporter_id})
+            results = IonReporterAccessor().scan({'ion_reporter_id': ion_reporter_id})
         except Exception as e:
             AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
         else:
-            if len(results) < 1:
-                AbortLogger.log_and_abort(404, self.logger.debug, MESSAGE_404.substitute(ion_reporter_id=ion_reporter_id))
+            if len(results) > 0:
+                if args['projection'] is not None:
+                    return [{str(project): sc[str(project)] for project in args['projection'] if project in sc}
+                            for sc in results]
+                else:
+                    return results
 
-            return results
+            AbortLogger.log_and_abort(404, self.logger.error, MESSAGE_404.substitute(ion_reporter_id=ion_reporter_id))
+
 
     def put(self, ion_reporter_id):
         self.logger.info("updating ion reporter with id: " + str(ion_reporter_id))
