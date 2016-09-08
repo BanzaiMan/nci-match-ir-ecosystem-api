@@ -10,6 +10,7 @@ install: pip install -r requirements.txt
 script:
 - python -m unittest discover tests
 after_success:
+- coverage run tests/*.py
 - docker build -t matchbox/nci-match-ir-ecoystem-api .
 - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
 - docker tag -f matchbox/nci-match-ir-ecoystem-api matchbox/nci-match-ir-ecoystem-api:latest
@@ -24,4 +25,4 @@ notifications:
     secure: r045LoZka/VTe2uUCvOLR4xh/3qT/RgX2PKa7Oe7SBM3RYs80DymmyYTUXJEn2U2ZzErR6z/vwdo6qtCTBxkpMpRXkkTyi8CIOF6vkEAAyJjsJPDUy2S2FFhN3bayRXN974oOxi9y/0svTabfZm6u1L03yIPbsKxxNnZz7cE7PW84zxn09xg1gatuzZpx6yK4ZW5UoWZFIKM8z0ota46BqaL5bqA+HgkmfmrsZ5gYd+8SCHrtCEz0uPcSbMVN1Ab71yl0Pgw/820/RQDqiLrIxJGtKkjeKvxe1KtYVR+8jUpJCAZPsH+TMb68HJBUML9AWlxnTwtIejsKktCqK/ZvJc9t+5IMNXnrBebVqdpVbEG4AxMbIAvU+Tl07NQ9sMs87JFTbbfl9dEPPj4s3yCHglT4GEF83sRksO8yYMwcqX5mjVbBqVqbWar7nZW/x52IVWPkvWFGzN0Yjgv+eXyHUuUVAT5zUvVbAceuHTWfmpF08XZZUnvqd0ZGHnNoFEiQZ4quCfnosVGk0tuow2SA+zqf+zSyGw6rqMA8OYPai/jZmquUQcrSsGiGkVf7q6TNhFzvwjYgQwI0leX9u2R5zDVMYwxk2EwabSDHLBObBgODgFSK+JMRMhsOzc+hnTqjHr32ZeWNX/0dQIOb6DnZ0alNZwCeyCoPiRIpVktWFg=
 addons:
   code_climate:
-    repo_token: 
+    repo_token: CODECLIMATE_REPO_TOKEN=90c2988c218a1b2fd04d88932a31d6b0549d0703ff32accf81dc5c93f3458649 codeclimate-test-reporter
