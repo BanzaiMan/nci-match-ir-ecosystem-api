@@ -31,13 +31,16 @@ class SequenceData(Resource):
                 AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
             else:
                 if len(sample_controls) > 0:
-                    if args['projection'] is not None:
-                        return [{str(project): sc[str(project)] for project in args['projection'] if project in sc}
-                                for sc in sample_controls]
-                    else:
-                        return sample_controls
+                    return self.__create_projection(sample_controls, args)
 
                 AbortLogger.log_and_abort(404, self.logger.error, MESSAGE_404.substitute(ion_reporter_id=ion_reporter_id))
-
         else:
             AbortLogger.log_and_abort(404, self.logger.debug, MESSAGE_400.substitute(sequence_data=sequence_data))
+
+    @staticmethod
+    def __create_projection(sample_controls, args):
+        if len(sample_controls) > 0 and args['projection'] is not None:
+            return [{str(project): sc[str(project)] for project in args['projection'] if project in sc}
+                    for sc in sample_controls]
+        else:
+            return sample_controls
