@@ -21,13 +21,15 @@ from resources.alignment_sequence_file import AlignmentSequenceFile
 from resources.version import Version
 from resources.aliquot import Aliquot
 
+
+
 # Boilerplate code to start flask
 app = Flask(__name__)
 api = Api(app)
 
 # Logging functionality
 # TODO: fix path issue to work on multiple OSes
-fileConfig('config/logging_config.ini')
+fileConfig(os.path.abspath("config/logging_config.ini"))
 logger = logging.getLogger(__name__)
 
 # Use this variable to read the config file which contains the database connection and
