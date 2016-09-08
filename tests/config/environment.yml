@@ -14,18 +14,3 @@ test:
   tmp_file_dir: "/tmp"
   aws_download_time_limit: 600
 
-uat:
-  dynamo_endpoint: "https://dynamodb.us-east-1.amazonaws.com"
-  region: "us-east-1"
-  port: "10241"
-  bucket: "pedmatch-uat"
-  tmp_file_dir: "/tmp"
-  aws_download_time_limit: 600
-
-production:
-  dynamo_endpoint: "https://dynamodb.us-east-1.amazonaws.com"
-  region: "us-east-1"
-  port: "10241"
-  bucket: "pedmatch"
-  tmp_file_dir: "/tmp"
-  aws_download_time_limit: 600
