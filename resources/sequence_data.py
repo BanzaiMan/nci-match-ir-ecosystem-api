@@ -33,7 +33,8 @@ class SequenceData(Resource):
                 if len(sample_controls) > 0:
                     return self.__create_projection(sample_controls, args)
 
-                AbortLogger.log_and_abort(404, self.logger.error, MESSAGE_404.substitute(ion_reporter_id=ion_reporter_id))
+                AbortLogger.log_and_abort(404, self.logger.error,
+                                          MESSAGE_404.substitute(ion_reporter_id=ion_reporter_id))
         else:
             AbortLogger.log_and_abort(404, self.logger.debug, MESSAGE_400.substitute(sequence_data=sequence_data))
 
