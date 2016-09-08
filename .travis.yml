@@ -8,9 +8,9 @@ language: python
 python: 2.7.12
 install: pip install -r requirements.txt
 script:
-- python -m unittest discover tests
+#- python -m unittest discover tests
+- coverage run -m unittest discover tests/
 after_success:
-- coverage run tests/*.py
 - docker build -t matchbox/nci-match-ir-ecoystem-api .
 - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
 - docker tag -f matchbox/nci-match-ir-ecoystem-api matchbox/nci-match-ir-ecoystem-api:latest
