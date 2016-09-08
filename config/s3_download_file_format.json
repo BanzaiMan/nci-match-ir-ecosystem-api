@@ -1,9 +1,0 @@
-{
-  "vcf":      "vcf_name",
-  "tsv":      "tsv_name",
-  "pdf":      "pdf_name",
-  "bam+dna":  "dna_bam_name",
-  "bam+cdna": "cdna_bam_name",
-  "bai+dna":  "dna_bai_name",
-  "bai+cdna": "cdna_bai_name"
-}
