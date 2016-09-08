@@ -7,6 +7,7 @@ from resource_helpers.abort_logger import AbortLogger
 
 
 class SequenceFile(Resource):
+
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
