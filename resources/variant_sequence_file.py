@@ -25,8 +25,10 @@ class VariantSequenceFile(Resource):
         else:
             if len(item) > 0:
                 self.logger.debug("Found: " + str(item))
-                # TODO: Qing, I think there is a bug here as the else is not dealt with
                 request_download_file = self.__get_download_file_type(file_format)
+                if request_download_file is None:
+                    AbortLogger.log_and_abort(500, self.logger.error, "Requested file format is invalid. Cannot download from S3.")
+
                 self.logger.info("Requested download file format=" + str(request_download_file))
                 try:
                     s3_url = S3Accessor().get_download_url(item[request_download_file])
@@ -45,6 +47,6 @@ class VariantSequenceFile(Resource):
         if file_format in file_format_dict:
             download_file_type = file_format_dict[file_format]
         else:
-            self.logger.debug("No file requested to be downloaded from S3.")
+            self.logger.debug("Requested file format is invalid for downloading from S3.")
 
         return download_file_type
