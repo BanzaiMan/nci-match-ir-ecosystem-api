@@ -43,16 +43,18 @@ class SampleControlRecord(Resource):
             CeleryTaskAccessor().update_item(item_dictionary)
         except Exception as e:
             AbortLogger.log_and_abort(500, self.logger.error, "update_item failed because " + e.message)
-
-        return {"message": "Sample control with molecular id: " + molecular_id + " updated"}
+        else:
+            return {"message": "Sample control with molecular id: " + molecular_id + " updated"}
 
     def delete(self, molecular_id):
         self.logger.info("Deleting sample control with id: " + str(molecular_id))
         try:
             CeleryTaskAccessor().delete_item({'molecular_id': molecular_id})
-            return {"message": "Item deleted", "molecular_id": molecular_id}
         except Exception as e:
             AbortLogger.log_and_abort(500, self.logger.error, "delete_item failed because " + e.message)
+        else:
+            return {"message": "Item deleted", "molecular_id": molecular_id}
+
 
     def get(self, molecular_id):
 
@@ -67,4 +69,4 @@ class SampleControlRecord(Resource):
                 self.logger.debug("Found: " + str(results))
                 return results
 
-        AbortLogger.log_and_abort(404, self.logger.debug, molecular_id + " was not found")
+            AbortLogger.log_and_abort(404, self.logger.debug, molecular_id + " was not found")
