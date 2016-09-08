@@ -37,11 +37,15 @@ class SampleControlTable(Resource):
         try:
             sample_control = SampleControlAccessor().scan(args) if DictionaryHelper.has_values(args) \
                 else SampleControlAccessor().scan(None)
-            self.logger.debug(str(sample_control))
-            return sample_control if sample_control is not None else \
-                AbortLogger.log_and_abort(404, self.logger.error, "No sample controls meet the query parameters")
         except Exception as e:
             AbortLogger.log_and_abort(500, self.logger.error, "Get failed because: " + e.message)
+        else:
+            self.logger.debug("Sample_control: " + str(sample_control))
+
+            if sample_control is None:
+                AbortLogger.log_and_abort(404, self.logger.debug, "No sample controls meet the query parameters")
+            else:
+                return sample_control
 
     def delete(self):
         self.logger.info("Sample control Batch Delete called")
