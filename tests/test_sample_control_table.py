@@ -29,14 +29,14 @@ class TestSampleControlTable(unittest.TestCase):
             print "Return value: " + return_value.data
             assert return_value.data.startswith('{"message": "No sample controls meet the query parameters.')
 
-    @data(('/SC_SA1CB', 200))
-    @unpack
-    @patch('accessors.celery_task_accessor.CeleryTaskAccessor.delete_items')
-    def test_delete(self, parameters, expected_results, mock_delete_items_method):
-        mock_delete_items_method.return_value = ('{"message": "Sample control with molecular id:' + parameters)
-        return_value = self.app.delete('/api/v1/sample_controls' + parameters)
-        print return_value.status_code
-        assert return_value.status_code == expected_results
+    # @data(('/SC_SA1CB', 200))
+    # @unpack
+    # @patch('accessors.celery_task_accessor.CeleryTaskAccessor.delete_items')
+    # def test_delete(self, parameters, expected_results, mock_delete_items_method):
+    #     mock_delete_items_method.return_value = ('{"message": "Sample control with molecular id:' + parameters)
+    #     return_value = self.app.delete('/api/v1/sample_controls' + parameters)
+    #     print return_value.status_code
+    #     assert return_value.status_code == expected_results
 
 if __name__ == '__main__':
     unittest.main()
