@@ -1,5 +1,6 @@
 import unittest
 import app
+import json
 from ddt import ddt, data, unpack
 from mock import patch, MagicMock
 
@@ -23,6 +24,7 @@ class TestSampleControlTable(unittest.TestCase):
         assert return_value.status_code == expected_results
         if expected_results == 200:
             assert len(return_value.data) > 0
+            assert (json.loads(return_value.data))[0]['site'] == "mocha"
         else:
             print "Return value: " + return_value.data
             assert return_value.data.startswith('{"message": "No sample controls meet the query parameters.')
