@@ -22,7 +22,6 @@ from resources.version import Version
 from resources.aliquot import Aliquot
 
 
-
 # Boilerplate code to start flask
 app = Flask(__name__)
 api = Api(app)
