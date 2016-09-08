@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 __builtin__.environment = None
 try:
     __builtin__.environment = os.environ['ENVIRONMENT']
-except KeyError, e:
+except KeyError as e:
     logger.error("Must configure ENVIRONMENT variable in your environment in order for application to start")
     logger.error(e.message)
 
