@@ -55,8 +55,8 @@ class SampleControlTable(Resource):
             AbortLogger.log_and_abort(400, self.logger.debug,
                                       "Cannot use batch delete to delete all records. "
                                       "This is just to make things a little safer.")
+        self.logger.info("Deleting items based on query: " + str(args))
         try:
-            self.logger.info("Deleting items based on query: " + str(args))
             CeleryTaskAccessor().delete_items(args)
         except Exception as e:
             AbortLogger.log_and_abort(500, self.logger.error, "Batch delete failed because: " + e.message)
