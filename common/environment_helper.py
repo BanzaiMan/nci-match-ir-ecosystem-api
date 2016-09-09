@@ -16,8 +16,9 @@ class EnvironmentHelper(object):
         else:
             logger_function("Environment set to: " + __builtin__.environment)
 
-            # Use the environment variable from above to read yaml config file and set global variable to the loaded file
-            # so tier specific information may be retrieved by the various modules as needed.
+            # Use the environment variable from above to read yaml config file and set
+            # global variable to the loaded file so tier specific information may be retrieved
+            # by the various modules as needed.
             with open("config/environment.yml", 'r') as yaml_file:
                 __builtin__.environment_config = yaml.load(yaml_file)
 
