@@ -20,9 +20,7 @@ after_success:
 - docker run -it --rm -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION=us-east-1 silintl/ecs-deploy --cluster PedMatch-IntTest-Backend  --service-name uMatch-nci-match-ir-ecoystem-api-INTTEST -i matchbox/nci-match-ir-ecoystem-api:latest
 #Trigger Travis bdd tests
 # - curl -s -X POST -H "Content-Type:application/json" -H "Accept:application/json" -H "Travis-API-Version:3" -H "Authorization:token $TRAVIS_TOKEN" -d "{\"request\":{\"message\":\"Triggered by nci-match-patient-api $TRAVIS_COMMIT\", \"branch\":\"master\", \"config\":{\"env\":{\"matrix\":[\"TRIGGER_REPO=nci-match-patient-api;CUC_TAG=@patients\"]}}}}" https://api.travis-ci.org/repo/CBIIT%2Fnci-uMatch-bddtests/requests
+- codeclimate-test-reporter
 notifications:
   slack:
     secure: r045LoZka/VTe2uUCvOLR4xh/3qT/RgX2PKa7Oe7SBM3RYs80DymmyYTUXJEn2U2ZzErR6z/vwdo6qtCTBxkpMpRXkkTyi8CIOF6vkEAAyJjsJPDUy2S2FFhN3bayRXN974oOxi9y/0svTabfZm6u1L03yIPbsKxxNnZz7cE7PW84zxn09xg1gatuzZpx6yK4ZW5UoWZFIKM8z0ota46BqaL5bqA+HgkmfmrsZ5gYd+8SCHrtCEz0uPcSbMVN1Ab71yl0Pgw/820/RQDqiLrIxJGtKkjeKvxe1KtYVR+8jUpJCAZPsH+TMb68HJBUML9AWlxnTwtIejsKktCqK/ZvJc9t+5IMNXnrBebVqdpVbEG4AxMbIAvU+Tl07NQ9sMs87JFTbbfl9dEPPj4s3yCHglT4GEF83sRksO8yYMwcqX5mjVbBqVqbWar7nZW/x52IVWPkvWFGzN0Yjgv+eXyHUuUVAT5zUvVbAceuHTWfmpF08XZZUnvqd0ZGHnNoFEiQZ4quCfnosVGk0tuow2SA+zqf+zSyGw6rqMA8OYPai/jZmquUQcrSsGiGkVf7q6TNhFzvwjYgQwI0leX9u2R5zDVMYwxk2EwabSDHLBObBgODgFSK+JMRMhsOzc+hnTqjHr32ZeWNX/0dQIOb6DnZ0alNZwCeyCoPiRIpVktWFg=
-addons:
-  code_climate:
-    repo_token: CODECLIMATE_REPO_TOKEN=90c2988c218a1b2fd04d88932a31d6b0549d0703ff32accf81dc5c93f3458649 codeclimate-test-reporter
