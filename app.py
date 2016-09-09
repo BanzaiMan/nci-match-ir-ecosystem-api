@@ -26,7 +26,6 @@ app = Flask(__name__)
 api = Api(app)
 
 # Logging functionality
-# TODO: fix path issue to work on multiple OSes
 fileConfig(os.path.abspath("config/logging_config.ini"))
 logger = logging.getLogger(__name__)
 
