@@ -27,6 +27,13 @@ class TestSampleControlTable(unittest.TestCase):
         else:
             assert return_value.data.startswith('{"message": "No sample controls meet the query parameters.')
 
+    @patch('accessors.sample_control_accessor.SampleControlAccessor.scan')
+    def test_get_exception(self, mock_scan_method):
+        mock_scan_method.side_effect = Exception('testing throwing exception')
+        return_value = self.app.get('/api/v1/sample_controls')
+        assert return_value.status_code == 500
+        assert "testing throwing exception" in return_value.data
+
     @data(('?site=mocha', '{"result": "Batch deletion request placed on queue to be processed"}'),
           ('', '{"message": "Cannot use batch delete to delete all records.'))
     @unpack
@@ -41,6 +48,7 @@ class TestSampleControlTable(unittest.TestCase):
         mock_delete_items_method.side_effect = Exception('testing throwing exception')
         return_value = self.app.delete('/api/v1/sample_controls?site=mocha')
         assert "testing throwing exception" in return_value.data
+        assert return_value.status_code == 500
 
 if __name__ == '__main__':
     unittest.main()
