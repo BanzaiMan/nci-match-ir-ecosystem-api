@@ -81,7 +81,7 @@ class SampleControlTable(Resource):
             self.logger.debug("Sample Control creation failed, because request molecular_id was passed in")
 
             new_item_dictionary = args.copy()
-            new_item_dictionary.update({'molecular_id': self.__get_unique_key(),
+            new_item_dictionary.update({'molecular_id': self.get_unique_key(),
                                         'date_molecular_id_created': str(datetime.datetime.utcnow())})
 
             self.logger.debug("Attempting to write: " + str(new_item_dictionary))
@@ -101,7 +101,7 @@ class SampleControlTable(Resource):
                                       "because both site and control_type were not passed in")
 
     # Internal method to get new_molecular_id and ensure its unique before trying to use it.
-    def __get_unique_key(self):
+    def get_unique_key(self):
         new_molecular_id = ""
         unique_key = False
         while not unique_key:
