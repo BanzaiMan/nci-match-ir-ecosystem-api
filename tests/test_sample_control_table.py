@@ -50,5 +50,17 @@ class TestSampleControlTable(unittest.TestCase):
         assert "testing throwing exception" in return_value.data
         assert return_value.status_code == 500
 
+    @data(([{"molecular_id": "SC_SA1CB"}],'?site=mocha&control_type=no_template',
+           '{"result": "New sample control created", "molecular_id":'),
+          (None, '', '{"message": "Sample Control creation failed, because both '
+                     'site and control_type were not passed in"}'))
+    @unpack
+    @patch('accessors.sample_control_accessor.SampleControlAccessor.put_item')
+    def test_post(self, database_data, parameters, expected_results, mock_put_item_method):
+        mock_put_item_method.return_value = database_data
+        return_value = self.app.post('/api/v1/sample_controls' + parameters, content_type='application/json')
+        assert return_value.data.startswith(expected_results)
+
+
 if __name__ == '__main__':
     unittest.main()
