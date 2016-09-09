@@ -1,7 +1,5 @@
 import os
 import logging
-import __builtin__
-import yaml
 
 from accessors.ion_reporter_accessor import IonReporterAccessor
 from accessors.sample_control_accessor import SampleControlAccessor
@@ -19,11 +17,6 @@ BROKER__URL = "sqs://" + os.environ['AWS_ACCESS_KEY_ID'] + ":" + os.environ['AWS
 app = Celery('tasks', broker=BROKER__URL)
 
 EnvironmentHelper.set_environment(logger.info)
-
-# Use the environment variable from above to read yaml config file set global variable
-with open("config/environment.yml", 'r') as yaml_file:
-    __builtin__.environment_config = yaml.load(yaml_file)
-
 
 # I don't think we will use this for sample control as our sample control creation of records are not done through
 # the queueing system but directly on the database. However, I'll leave this for now.

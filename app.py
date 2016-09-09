@@ -1,8 +1,6 @@
 import logging
 import os
-import yaml
 
-import __builtin__
 from logging.config import fileConfig
 
 from flask import Flask
@@ -36,12 +34,6 @@ logger = logging.getLogger(__name__)
 # tier (i.e., development, tests, uat, production) specific configuration information.
 
 EnvironmentHelper.set_environment(logger.info)
-
-
-# Use the environment variable from above to read yaml config file and set global variable to the loaded file
-# so tier specific information may be retrieved by the various modules as needed.
-with open("config/environment.yml", 'r') as yaml_file:
-    __builtin__.environment_config = yaml.load(yaml_file)
 
 # Notice that the class names are singular, but I choose to keep the routes all plural
 # this was following a pattern I found on a blog. Its really just a matter of opinion. The goal

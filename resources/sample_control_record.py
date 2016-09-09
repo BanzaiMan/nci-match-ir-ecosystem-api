@@ -55,7 +55,6 @@ class SampleControlRecord(Resource):
         else:
             return {"message": "Item deleted", "molecular_id": molecular_id}
 
-
     def get(self, molecular_id):
 
         self.logger.info("Getting sample control with id: " + str(molecular_id))
