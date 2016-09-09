@@ -129,6 +129,12 @@ echo -e "${CYAN}***********************************************${NC}"
 
 curl -X POST -H "Content-Type: application/json" -d '{ip_address:"143.333.85.66"}' "http://localhost:5000/api/v1/sample_controls?site=mocha&control_type=no_template"
 
+curl -X POST -H "Content-Type: application/json" -d '{ip_address:"143.333.85.66"}' "http://localhost:5000/api/v1/sample_controls"
+
+curl -X POST -H "Content-Type: application/json" -d '{ip_address:"143.333.85.66"}' "http://localhost:5000/api/v1/sample_controls?site=mocha"
+
+curl -X POST -H "Content-Type: application/json" -d '{ip_address:"143.333.85.66"}' "http://localhost:5000/api/v1/sample_controls?control_type=no_template"
+
 echo -e "${CYAN}***********************************************${NC}"
 echo -e "${BLUE}DELETE /api/v1/sample_controls?site={site}${NC}"
 echo -e "${RED}Delete all sample controls matching the given parameters. Deleting with query parameters is not supported.${NC}"
