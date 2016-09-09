@@ -27,11 +27,8 @@ engines:
     - 8400b393db6a5fd7f1e75af2f7af218c
     config:
       languages:
-      - ruby
-      - javascript
-      - python
-        mass_threshold: 36
-      - php
+        python:
+          mass_threshold: 36
   fixme:
     enabled: true
   radon:
