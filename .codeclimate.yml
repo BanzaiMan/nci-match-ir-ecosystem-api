@@ -30,6 +30,7 @@ engines:
       - ruby
       - javascript
       - python
+        mass_threshold: 36
       - php
   fixme:
     enabled: true
