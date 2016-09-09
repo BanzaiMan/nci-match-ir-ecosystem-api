@@ -28,6 +28,17 @@ class TestSampleControlRecord(unittest.TestCase):
             assert return_value.data.find("message")
 
 
+    @data(
+        ('SC_5AMCC', '"message": "Item deleted"')
+    )
+    @unpack
+    @patch('accessors.celery_task_accessor.CeleryTaskAccessor.delete_item')
+    def test_delete(self, molecular_id, expected_results, mock_delete_item_method):
+        mock_delete_item_method.return_value = True
+        return_value = self.app.delete('/api/v1/sample_controls/' + molecular_id)
+        print "return data=" + str(return_value.data)
+        assert return_value.data.find(expected_results)
+
 
 if __name__ == '__main__':
     unittest.main()
