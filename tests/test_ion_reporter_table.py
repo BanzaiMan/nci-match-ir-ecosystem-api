@@ -42,7 +42,7 @@ class TestIonReporterTable(unittest.TestCase):
     def test_delete(self, parameters, expected_results, mock_delete_items_method):
         mock_delete_items_method.return_value = True
         return_value = self.app.delete('/api/v1/ion_reporters' + parameters)
-        assert return_value.data.startswith(expected_results)
+        assert expected_results in return_value.data
 
     @patch('accessors.celery_task_accessor.CeleryTaskAccessor.delete_ir_items')
     def test_delete_exception(self, mock_delete_items_method):
