@@ -28,11 +28,16 @@ class IonReporterTable(Resource):
         try:
             ion_reporter = IonReporterAccessor().scan(args) if DictionaryHelper.has_values(args) \
                 else IonReporterAccessor().scan(None)
-            self.logger.debug(str(ion_reporter))
-            return ion_reporter if ion_reporter is not None else \
-                AbortLogger.log_and_abort(404, self.logger.error, MESSAGE_404.substitute(ion_reporter_id=ion_reporter))
         except Exception as e:
-            AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
+            AbortLogger.log_and_abort(500, self.logger.error, "Get failed because: " + e.message)
+        else:
+            self.logger.debug("Ion Reporter: " + str(ion_reporter))
+
+            if ion_reporter is None:
+                AbortLogger.log_and_abort(404, self.logger.debug, "No ion reporters meet the query parameters")
+            else:
+                return ion_reporter
+
 
     def post(self):
         self.logger.info("POST Request to create a new ion reporter")
