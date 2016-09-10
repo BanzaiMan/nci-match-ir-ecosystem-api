@@ -34,5 +34,23 @@ class TestIonReporterTable(unittest.TestCase):
         assert return_value.status_code == 500
         assert "testing throwing exception" in return_value.data
 
+
+    @data(('?site=mocha', '{"result": "Batch deletion request placed on queue to be processed"}'),
+          ('', '{"message": "Cannot use batch delete to delete all records.'))
+    @unpack
+    @patch('accessors.celery_task_accessor.CeleryTaskAccessor.delete_items')
+    def test_delete(self, parameters, expected_results, mock_delete_items_method):
+        mock_delete_items_method.return_value = True
+        return_value = self.app.delete('/api/v1/ion_reporters' + parameters)
+        assert return_value.data.startswith(expected_results)
+
+    @patch('accessors.celery_task_accessor.CeleryTaskAccessor.delete_ir_items')
+    def test_delete_exception(self, mock_delete_items_method):
+        mock_delete_items_method.side_effect = Exception('testing throwing exception')
+        return_value = self.app.delete('/api/v1/ion_reporters?site=mocha')
+        assert "testing throwing exception" in return_value.data
+        assert return_value.status_code == 500
+
+
 if __name__ == '__main__':
     unittest.main()

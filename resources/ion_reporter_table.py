@@ -52,7 +52,7 @@ class IonReporterTable(Resource):
             self.logger.debug("creating ion reporter id for site: " + str(args))
 
             new_item_dictionary = args.copy()
-            new_item_dictionary.update({'ion_reporter_id': self.__get_unique_key(),
+            new_item_dictionary.update({'ion_reporter_id': self.get_unique_key(),
                                         'date_ion_reporter_id_created': str(datetime.datetime.utcnow())})
 
             self.logger.debug("Attempting to write: " + str(new_item_dictionary))
@@ -86,7 +86,7 @@ class IonReporterTable(Resource):
 
         return {"result": "Batch deletion request placed on queue to be processed"}
 
-    def __get_unique_key(self):
+    def get_unique_key(self):
         new_ion_reporter_id = ""
         unique_key = False
         while not unique_key:
