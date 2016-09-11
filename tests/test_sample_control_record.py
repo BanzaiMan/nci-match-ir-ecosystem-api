@@ -39,6 +39,19 @@ class TestSampleControlRecord(unittest.TestCase):
         print "return data=" + str(return_value.data)
         assert return_value.data.find(expected_results)
 
+    @data(
+        ('SC_5AMCC',
+         {'vcf_name': 'mocha/SC_5AMCC/SC_5AMCC_SC_5AMCC_k123_v1/SC_5AMCC_SC_5AMCC_analysis667_v1.vcf', 'site': 'mocha',
+          'molecular_id': 'SC_5AMCC', 'analysis_id': 'SC_5AMCC_SC_5AMCC_k123_v1'}, '"message"')
+    )
+    @unpack
+    @patch('accessors.celery_task_accessor.CeleryTaskAccessor.update_item')
+    def test_put(self, molecular_id, update_dictionary, expected_results, mock_update_item_method):
+        mock_update_item_method.return_value = True
+        return_value = self.app.put('/api/v1/aliquot/' + molecular_id,
+                                    data=update_dictionary,
+                                    headers={'Content-Type': 'application/json'})
+        assert return_value.data.find(expected_results)
 
 if __name__ == '__main__':
     unittest.main()
