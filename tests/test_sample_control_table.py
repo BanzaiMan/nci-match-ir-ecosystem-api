@@ -16,9 +16,10 @@ class TestSampleControlTable(unittest.TestCase):
              "molecular_id": "SC_SA1CB", "ion_reporter_id": "IR_WAO85"}], '', 200),
           (None, '?site=brent', 404))
     @unpack
-    @patch('accessors.sample_control_accessor.SampleControlAccessor.scan')
-    def test_get(self, database_data, parameters, expected_results, mock_scan_method):
-        mock_scan_method.return_value = database_data
+    @patch('resources.sample_control_table.SampleControlAccessor')
+    def test_get(self, database_data, parameters, expected_results, mock_class):
+        instance = mock_class.return_value
+        instance.scan.return_value = database_data
         return_value = self.app.get('/api/v1/sample_controls' + parameters)
         assert return_value.status_code == expected_results
         if expected_results == 200:
