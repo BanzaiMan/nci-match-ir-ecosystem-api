@@ -89,12 +89,13 @@ class TestSequenceFile(unittest.TestCase):
              )
         )
     @unpack
-    @patch('accessors.sample_control_accessor.SampleControlAccessor.get_item')
+    @patch('accessors.sample_control_accessor.SampleControlAccessor')
     @patch('accessors.s3_accessor.S3Accessor.get_download_url')
-    def test_get_file_url(self, molecular_id, file_name, item, get_download_url_return, expect_return, get_download_url_function, get_item_function):
-
+    def test_get_file_url(self, molecular_id, file_name, item, get_download_url_return, expect_return,
+                          get_download_url_function, mock_scAccessor_class):
         get_download_url_function.return_value = get_download_url_return
-        get_item_function.return_value = item
+        instance = mock_scAccessor_class.return_value
+        instance.get_item.return_value = item
 
         try:
             s3_url = SequenceFile().get_file_url(molecular_id, file_name)
@@ -102,8 +103,7 @@ class TestSequenceFile(unittest.TestCase):
             print e.message
             assert e.message.find('message')
         else:
-            assert (s3_url['s3_download_file_url'] == expect_return)
-
+            assert(s3_url['s3_download_file_url'] == expect_return)
 
 if __name__ == '__main__':
     unittest.main()
