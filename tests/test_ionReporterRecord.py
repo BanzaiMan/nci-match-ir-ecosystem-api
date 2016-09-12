@@ -1,77 +1,86 @@
-# from unittest import TestCase
-#
-# TABLE_NAME = 'ion_reporters'
-# TABLE_RT = 5
-# TABLE_WT = 5
-# TABLE_HK_NAME = u'hash_key'
-# TABLE_HK_TYPE = u'S'
-# TABLE_RK_NAME = u'range_key'
-# TABLE_RK_TYPE = u'S'
-#
-# HK_VALUE = u'ion_reporter_id'
-# RK_VALUE = u'Decode this data if you are a coder'
-#
-# ITEM = {
-#     TABLE_HK_NAME: {TABLE_HK_TYPE: HK_VALUE},
-#     TABLE_RK_NAME: {TABLE_RK_TYPE: RK_VALUE},
-#     u'ion_reporter_id': {u'S': u'IR_WO3IA'},
-# }
-#
-# import sys
-# sys.path.append('..')
-#
-#
-# class TestIonReporterRecord(TestCase):
-#
-#     def setUp(self):
-#
-#         from ddbmock import connect_boto_patch
-#         from ddbmock.database.db import dynamodb
-#         from ddbmock.database.table import Table
-#         from ddbmock.database.key import PrimaryKey
-#
-#         # Do a full database wipe
-#         dynamodb.hard_reset()
-#
-#         # Instanciate the keys
-#         hash_key = PrimaryKey(TABLE_HK_NAME, TABLE_HK_TYPE)
-#         range_key = PrimaryKey(TABLE_RK_NAME, TABLE_RK_TYPE)
-#
-#         # Create a test table and register it in ``self`` so that you can use it directly
-#         self.t1 = Table(TABLE_NAME, TABLE_RT, TABLE_WT, hash_key, range_key)
-#
-#         # Very important: register the table in the DB
-#         dynamodb.data[TABLE_NAME]  = self.t1
-#
-#         # Unconditionally add some data, for example.
-#         self.t1.put(ITEM, {"ion_reporter_id": {"S": "IR_WO3IA"}, "ip_address": {"S": "129.43.39.182"}, "internal_ip_address": {"S": "129.43.39.182"}, "host_name": {"S": "NCI-MATCH-IR"}, "site": {"S": "mocha"}, "status": {"S": "Contacted 4 minutes ago"}, "last_contact": {"S": "August 29, 2016 2:01 PM GMT"}, "data_files": {"S": "DB Report"}})
-#
-#         # Create the database connection ie: patch boto
-#         self.db = connect_boto_patch()
-#
-#     def tearDown(self):
-#         from ddbmock.database.db import dynamodb
-#         from ddbmock import clean_boto_patch
-#
-#         # Do a full database wipe
-#         dynamodb.hard_reset()
-#
-#         # Remove the patch from Boto code (if any)
-#         clean_boto_patch()
-#
-#     def test_get_hr(self):
-#         from ddbmock.database.db import dynamodb
-#
-#         # Example test
-#         expected = {
-#             u'ConsumedCapacityUnits': 0.5,
-#             u'Item': ITEM,
-#         }
-#
-#         key = {
-#             u"HashKeyElement":  {TABLE_HK_TYPE: HK_VALUE},
-#             u"RangeKeyElement": {TABLE_RK_TYPE: RK_VALUE},
-#         }
-#
-#         # Example chech
-#         self.assertEquals(expected, self.db.layer1.get_item(TABLE_NAME, key))
+import unittest
+import app
+import json
+from ddt import ddt, data, unpack
+from mock import patch, MagicMock, Mock
+
+
+@ddt
+class TestIonReporterTable(unittest.TestCase):
+    def setUp(self):
+        # Starting flask server
+        self.app = app.app.test_client()
+
+
+    @data(
+            ({"status": "Contacted 5 minutes ago", "last_contact": "August 29, 2016 2:00 PM GMT"}, 'IR_WO3IA', 200),
+            ({}, 'IR_WO4IA', 404)
+    )
+    @unpack
+    @patch('resources.ion_reporter_record.IonReporterAccessor')
+    def test_get(self, database_data, ion_reporter_id, expected_results, mock_class):
+        instance = mock_class.return_value
+        instance.scan.return_value = database_data
+        return_value = self.app.get('/api/v1/ion_reporters/' + ion_reporter_id)
+        assert return_value.status_code == expected_results
+        if expected_results == 200:
+            assert len(return_value.data) > 0
+            assert (json.loads(return_value.data))['status'] == "Contacted 5 minutes ago"
+        else:
+            assert return_value.data.find("message")
+
+    @patch('resources.ion_reporter_record.IonReporterAccessor')
+    def test_get_exception(self, mock_class):
+        instance = mock_class.return_value
+        instance.scan.side_effect = Exception('testing throwing exception')
+        return_value = self.app.get('/api/v1/ion_reporters/IR_WO3IA')
+        assert return_value.status_code == 500
+        assert "testing throwing exception" in return_value.data
+
+    @data(
+        ('IR_WO3IA', '"message": "Item deleted"')
+    )
+    @unpack
+    @patch('resources.ion_reporter_record.CeleryTaskAccessor')
+    def test_delete(self, ion_reporter_id, expected_results, mock_class):
+        instance = mock_class.return_value
+        instance.delete_ir_item.return_value = True
+        return_value = self.app.delete('/api/v1/ion_reporters/' + ion_reporter_id)
+        print "return data=" + str(return_value.data)
+        assert expected_results in return_value.data
+
+    @patch('resources.ion_reporter_record.CeleryTaskAccessor')
+    def test_delete_exception(self, mock_class):
+        instance = mock_class.return_value
+        instance.delete_ir_item.side_effect = Exception('testing throwing exception')
+        return_value = self.app.delete('/api/v1/ion_reporters/IR_WO3IA')
+        assert return_value.status_code == 500
+        assert "testing throwing exception" in return_value.data
+
+    @data(
+        ('IR_WO3IA',
+         {"status": "Contacted 6 minutes ago"}, '"message"')
+    )
+    @unpack
+    @patch('resources.ion_reporter_record.CeleryTaskAccessor')
+    def test_put(self, ion_reporter_id, item, expected_results, mock_class):
+        instance = mock_class.return_value
+        instance.update_ir_item.return_value = True
+        return_value = self.app.put('/api/v1/ion_reporters/' + ion_reporter_id,
+                                    data=item,
+                                    headers={'Content-Type': 'application/json'})
+        assert expected_results in return_value.data
+
+    @patch('resources.ion_reporter_record.CeleryTaskAccessor')
+    def test_put_exception(self, mock_class):
+        instance = mock_class.return_value
+        instance.update_ir_item.side_effect = Exception('Ion reporter creation failed')
+        return_value = self.app.put('/api/v1/ion_reporters/IR_WO3IA',
+                                    data='{"status":"Lost contact! Last heartbeat was sent 11355 minutes ago"}',
+                                    headers={'Content-Type': 'application/json'})
+        assert return_value.status_code == 500
+        assert "Ion reporter creation failed" in return_value.data
+
+
+if __name__ == '__main__':
+    unittest.main()
