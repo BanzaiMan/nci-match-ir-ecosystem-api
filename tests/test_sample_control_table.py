@@ -1,4 +1,6 @@
 import unittest
+import sys
+sys.path.append("..")
 import app
 import json
 from ddt import ddt, data, unpack
