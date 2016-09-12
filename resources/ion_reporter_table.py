@@ -38,7 +38,6 @@ class IonReporterTable(Resource):
             else:
                 return ion_reporter
 
-
     def post(self):
         self.logger.info("POST Request to create a new ion reporter")
         args = request.args
@@ -94,7 +93,7 @@ class IonReporterTable(Resource):
             results = IonReporterAccessor().get_item({'ion_reporter_id': new_ion_reporter_id})
             self.logger.debug(results)
 
-            if 'Items' in results:
+            if len(results) > 0:
                 self.logger.info("Generated Key was not unique, so we need to try again")
             else:
                 unique_key = True
