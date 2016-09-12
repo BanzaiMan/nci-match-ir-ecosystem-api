@@ -1,8 +1,10 @@
+from werkzeug.datastructures import ImmutableMultiDict
+
 class DictionaryHelper(object):
 
     @staticmethod
     def has_values(dictionary):
-        if type(dictionary) is dict:
+        if type(dictionary) is ImmutableMultiDict:
             for key, value in dictionary.iteritems():
                 if value is not None:
                     return True
