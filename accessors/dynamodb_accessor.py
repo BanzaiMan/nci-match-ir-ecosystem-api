@@ -62,7 +62,7 @@ class DynamoDBAccessor(object):
                     raise
 
         # NOTE that this method is recursive and will call itself in the event that their is over 1 MB of data returned
-        items = results['Items'] if 'Items' in results else []
+        items = results['Items'] if len(results) > 0 else []
         if results.get('LastEvaluatedKey'):
             try:
                 items += self.scan(query_parameters, results['LastEvaluatedKey'])

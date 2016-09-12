@@ -109,7 +109,7 @@ class SampleControlTable(Resource):
             results = SampleControlAccessor().get_item({'molecular_id': new_molecular_id})
             self.logger.debug(results)
 
-            if 'Items' in results:
+            if len(results) > 0:
                 self.logger.info("Generated Key was not unique, so we need to try again")
             else:
                 unique_key = True
