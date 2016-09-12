@@ -59,7 +59,8 @@ class TestIonReporterTable(unittest.TestCase):
 
     @data(
         ('IR_WO3IA',
-         {"status": "Contacted 6 minutes ago"}, '"message"')
+         {"status": "Contacted 6 minutes ago"}, 'Ion reporter with ion reporter id'),
+        ('IR_WO3IA', None, 'Update item failed')
     )
     @unpack
     @patch('resources.ion_reporter_record.CeleryTaskAccessor')
@@ -67,8 +68,8 @@ class TestIonReporterTable(unittest.TestCase):
         instance = mock_class.return_value
         instance.update_ir_item.return_value = True
         return_value = self.app.put('/api/v1/ion_reporters/' + ion_reporter_id,
-                                    data=item,
-                                    headers={'Content-Type': 'application/json'})
+                                    data=json.dumps(item),
+                                    content_type='application/json')
         assert expected_results in return_value.data
 
     @patch('resources.ion_reporter_record.CeleryTaskAccessor')
