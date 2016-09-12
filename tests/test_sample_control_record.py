@@ -12,8 +12,17 @@ class TestSampleControlRecord(unittest.TestCase):
         self.app = app.app.test_client()
 
     @data(
-            ({"site_ip_address": "129.43.127.133", "control_type": "no_template", "dna_bam_name": "mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_DNA_v2.bam", "site": "mocha", "qc_name": "None", "dna_bai_name": "mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_DNA_v2.bai", "tsv_name": "mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_v2.tsv", "cdna_bam_name": "mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_RNA_v2.bam", "vcf_name": "mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_v2.vcf", "cdna_bai_name": "mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_RNA_v2.bai", "date_molecular_id_created": "2016-08-28 16:56:29.333", "molecular_id": "SC_YQ111", "analysis_id": "SC_YQ111_SC_YQ111_k123_v1"}, 'SC_YQ111', 200),
-            ({}, 'SC_YQ999', 404)
+        ({"site_ip_address": "129.43.127.133", "control_type": "no_template",
+          "dna_bam_name": "mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_DNA_v2.bam",
+          "site": "mocha", "qc_name": "None",
+          "dna_bai_name": "mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_DNA_v2.bai",
+          "tsv_name": "mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_v2.tsv",
+          "cdna_bam_name": "mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_RNA_v2.bam",
+          "vcf_name": "mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_v2.vcf",
+          "cdna_bai_name": "mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_RNA_v2.bai",
+          "date_molecular_id_created": "2016-08-28 16:56:29.333", "molecular_id": "SC_YQ111",
+          "analysis_id": "SC_YQ111_SC_YQ111_k123_v1"}, 'SC_YQ111', 200),
+        ({}, 'SC_YQ999', 404)
     )
     @unpack
     @patch('accessors.sample_control_accessor.SampleControlAccessor')
@@ -33,9 +42,10 @@ class TestSampleControlRecord(unittest.TestCase):
         ('SC_5AMCC', '"message": "Item deleted"')
     )
     @unpack
-    @patch('accessors.celery_task_accessor.CeleryTaskAccessor.delete_item')
-    def test_delete(self, molecular_id, expected_results, mock_delete_item_method):
-        mock_delete_item_method.return_value = True
+    @patch('accessors.celery_task_accessor.CeleryTaskAccessor')
+    def test_delete(self, molecular_id, expected_results, mock_celeryTaskAccessor_class):
+        instance = mock_celeryTaskAccessor_class.return_value
+        instance.update_item.return_value = True
         return_value = self.app.delete('/api/v1/sample_controls/' + molecular_id)
         print "return data=" + str(return_value.data)
         assert return_value.data.find(expected_results)
@@ -43,15 +53,16 @@ class TestSampleControlRecord(unittest.TestCase):
     @data(
         ('SC_5AMCC',
          {'vcf_name': 'mocha/SC_5AMCC/SC_5AMCC_SC_5AMCC_k123_v1/SC_5AMCC_SC_5AMCC_analysis667_v1.vcf', 'site': 'mocha',
-          'molecular_id': 'SC_5AMCC', 'analysis_id': 'SC_5AMCC_SC_5AMCC_k123_v1'}, '"message"')
+          'molecular_id': 'SC_5AMCC', 'analysis_id': 'SC_5AMCC_SC_5AMCC_k123_v1'}, '"message": "Item updated"')
     )
     @unpack
-    @patch('accessors.celery_task_accessor.CeleryTaskAccessor.update_item')
-    def test_put(self, molecular_id, update_dictionary, expected_results, mock_update_item_method):
-        mock_update_item_method.return_value = True
+    @patch('accessors.celery_task_accessor.CeleryTaskAccessor')
+    def test_put(self, molecular_id, update_dictionary, expected_results, mock_celeryTaskAccessor_class):
+        instance = mock_celeryTaskAccessor_class.return_value
+        instance.update_item.return_value = True
         return_value = self.app.put('/api/v1/aliquot/' + molecular_id,
-                                    data=update_dictionary,
-                                    headers={'Content-Type': 'application/json'})
+                                    data=json.dumps(update_dictionary),
+                                    content_type='application/json')
         assert return_value.data.find(expected_results)
 
 if __name__ == '__main__':
