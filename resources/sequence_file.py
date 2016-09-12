@@ -25,8 +25,7 @@ class SequenceFile(Resource):
             if len(item) > 0:
                 self.logger.debug("Found: " + str(item))
                 try:
-                    s3_url = S3Accessor(__builtin__.environment_config[__builtin__.environment]['region'])\
-                        .get_download_url(item[file_name])
+                    s3_url = S3Accessor().get_download_url(item[file_name])
                 except KeyError as k:
                     AbortLogger.log_and_abort(404, self.logger.debug, "Failed to get download url because " +
                                               k.message + " does not exist")
