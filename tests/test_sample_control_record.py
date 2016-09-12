@@ -16,17 +16,18 @@ class TestSampleControlRecord(unittest.TestCase):
             ({}, 'SC_YQ999', 404)
     )
     @unpack
-    @patch('accessors.sample_control_accessor.SampleControlAccessor.get_item')
-    def test_get(self, item, molecular_id, expected_results, mock_get_item_method):
-        mock_get_item_method.return_value = item
+    @patch('accessors.sample_control_accessor.SampleControlAccessor')
+    def test_get(self, item, molecular_id, expected_results, mock_scAccessor_class):
+        instance = mock_scAccessor_class.return_value
+        instance.get_item.return_value = item
         return_value = self.app.get('/api/v1/sample_controls/' + molecular_id)
         assert return_value.status_code == expected_results
         if expected_results == 200:
             assert len(return_value.data) > 0
             assert (json.loads(return_value.data))['site'] == "mocha"
         else:
+            print return_value.data
             assert return_value.data.find("message")
-
 
     @data(
         ('SC_5AMCC', '"message": "Item deleted"')
