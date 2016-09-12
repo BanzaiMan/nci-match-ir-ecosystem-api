@@ -16,9 +16,10 @@ class TestIonReporterTable(unittest.TestCase):
              "last_contact": "August 29, 2016 2:01 PM GMT", "ion_reporter_id": "IR_WAO85"}], '', 200),
           (None, '?site=brent', 404))
     @unpack
-    @patch('accessors.ion_reporter_accessor.IonReporterAccessor.scan')
-    def test_get(self, database_data, parameters, expected_results, mock_scan_method):
-        mock_scan_method.return_value = database_data
+    @patch('resources.ion_reporter_table.IonReporterAccessor')
+    def test_get(self, database_data, parameters, expected_results, mock_class):
+        instance = mock_class.return_value
+        instance.scan.return_value = database_data
         return_value = self.app.get('/api/v1/ion_reporters' + parameters)
         assert return_value.status_code == expected_results
         if expected_results == 200:
@@ -27,9 +28,10 @@ class TestIonReporterTable(unittest.TestCase):
         else:
             assert return_value.data.startswith('{"message": "No ion reporters meet the query parameters.')
 
-    @patch('accessors.ion_reporter_accessor.IonReporterAccessor.scan')
-    def test_get_exception(self, mock_scan_method):
-        mock_scan_method.side_effect = Exception('testing throwing exception')
+    @patch('resources.ion_reporter_table.IonReporterAccessor')
+    def test_get_exception(self, mock_class):
+        instance = mock_class.return_value
+        instance.scan.side_effect = Exception('testing throwing exception')
         return_value = self.app.get('/api/v1/ion_reporters')
         assert return_value.status_code == 500
         assert "testing throwing exception" in return_value.data
@@ -37,15 +39,17 @@ class TestIonReporterTable(unittest.TestCase):
     @data(('?site=mocha', '{"result": "Batch deletion request placed on queue to be processed"}'),
           ('', '{"message": "Cannot use batch delete to delete all records.'))
     @unpack
-    @patch('accessors.celery_task_accessor.CeleryTaskAccessor.delete_ir_items')
-    def test_delete(self, parameters, expected_results, mock_delete_ir_items_method):
-        mock_delete_ir_items_method.return_value = True
+    @patch('resources.ion_reporter_table.CeleryTaskAccessor')
+    def test_delete(self, parameters, expected_results, mock_class):
+        instance = mock_class.return_value
+        instance.delete_ir_items.return_value = True
         return_value = self.app.delete('/api/v1/ion_reporters' + parameters)
         assert expected_results in return_value.data
 
-    @patch('accessors.celery_task_accessor.CeleryTaskAccessor.delete_ir_items')
-    def test_delete_exception(self, mock_delete_ir_items_method):
-        mock_delete_ir_items_method.side_effect = Exception('testing throwing exception')
+    @patch('resources.ion_reporter_table.CeleryTaskAccessor')
+    def test_delete_exception(self, mock_class):
+        instance = mock_class.return_value
+        instance.delete_ir_items.side_effect = Exception('testing throwing exception')
         return_value = self.app.delete('/api/v1/ion_reporters?site=mocha')
         assert "testing throwing exception" in return_value.data
         assert return_value.status_code == 500
@@ -55,20 +59,23 @@ class TestIonReporterTable(unittest.TestCase):
           ('', '{"message": "Must send in a site in order to create an ion reporter record"}'),
           ('?ion_reporter_id=IR_WAO85', 'failed, because ion_reporter_id'))
     @unpack
-    @patch('resources.ion_reporter_table.IonReporterTable.get_unique_key')
-    @patch('accessors.ion_reporter_accessor.IonReporterAccessor.put_item')
-    def test_post(self, parameters, expected_results, mock_put_item_method, mock_get_unique_key):
-        mock_put_item_method.return_value = True
-        mock_get_unique_key.return_value = 'IR_WAO85'
+    @patch('resources.ion_reporter_table.IonReporterTable')
+    @patch('resources.ion_reporter_table.IonReporterAccessor')
+    def test_post(self, parameters, expected_results, mock_class, mock_class2):
+        instance = mock_class.return_value
+        instance.put_item.return_value = True
+        instance2 = mock_class2.return_value
+        instance2.get_unique_key.return_value = 'IR_WAO85'
         return_value = self.app.post('/api/v1/ion_reporters' + parameters)
         assert expected_results in return_value.data
 
-    @patch('accessors.ion_reporter_accessor.IonReporterAccessor.put_item')
-    def test_post_exception(self, mock_put_item_method):
-        mock_put_item_method.side_effect = Exception('Server error')
+    @patch('resources.ion_reporter_table.IonReporterAccessor')
+    def test_post_exception(self, mock_class):
+        instance = mock_class.return_value
+        instance.put_item.side_effect = Exception('Ion reporter creation failed')
         return_value = self.app.post('/api/v1/ion_reporters?site=mocha')
         assert return_value.status_code == 500
-        assert "Server error" in return_value.data
+        assert "Ion reporter creation failed" in return_value.data
 
 
 if __name__ == '__main__':
