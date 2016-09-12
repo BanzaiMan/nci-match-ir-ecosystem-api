@@ -59,7 +59,7 @@ class TestIonReporterTable(unittest.TestCase):
 
     @data(
         ('IR_WO3IA',
-         {"status": "Contacted 6 minutes ago"}, 'Ion reporter with ion reporter id'),
+         {"status": "Contacted 5 minutes ago"}, 'Ion reporter with ion reporter id'),
         ('IR_WO3IA', None, 'Update item failed')
     )
     @unpack
@@ -70,6 +70,7 @@ class TestIonReporterTable(unittest.TestCase):
         return_value = self.app.put('/api/v1/ion_reporters/' + ion_reporter_id,
                                     data=json.dumps(item),
                                     content_type='application/json')
+        print return_value.data
         assert expected_results in return_value.data
 
     @patch('resources.ion_reporter_record.CeleryTaskAccessor')
