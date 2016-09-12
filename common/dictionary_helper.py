@@ -2,9 +2,10 @@ class DictionaryHelper(object):
 
     @staticmethod
     def has_values(dictionary):
-        for key, value in dictionary.iteritems():
-            if value is not None:
-                return True
+        if type(dictionary) is dict:
+            for key, value in dictionary.iteritems():
+                if value is not None:
+                    return True
 
         return False
 

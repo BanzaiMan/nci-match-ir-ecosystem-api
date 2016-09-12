@@ -8,11 +8,13 @@ from common.dictionary_helper import DictionaryHelper
 
 @ddt
 class TestDictionaryHelper(unittest.TestCase):
-    @data({'dic1': {'a': 'b'}, 'dic2': {}})
+    @data(({'dic1': 'a'}, True), ('', False), ({}, False), (None, False))
     @unpack
-    def test_has_values(self, dic1, dic2):
-        assert DictionaryHelper.has_values(dic1)
-        assert not DictionaryHelper.has_values(dic2)
+    def test_has_values(self, dic1, expected_results):
+
+        assert DictionaryHelper.has_values(dic1) == expected_results
+
+# TODO: Fix, it is not passing in multiple sets of data, correct formatting
 
     @data(({'a': None, 'b': 1, 'c': 2}, ['a', 'b'], False, ['b', 'd'], False, ['b', 'c'], True))
     @unpack
