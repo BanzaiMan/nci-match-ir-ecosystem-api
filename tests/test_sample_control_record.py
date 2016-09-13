@@ -18,7 +18,7 @@ class TestSampleControlRecord(unittest.TestCase):
             "site_ip_address": {"S": "129.43.127.133"},
             "molecular_id": {"S": "SC_YQ111"},
             "site": {"S": "mocha"}
-         }, 'SC_5AMCC', 200
+         }, 'SC_YQ111', 200
         ),
         ({
              "control_type": {"S": "no_template"},
@@ -37,7 +37,7 @@ class TestSampleControlRecord(unittest.TestCase):
         instance.get_item.return_value = item
         return_value = self.app.get('/api/v1/sample_controls/' + molecular_id)
         print "=============="+ str(return_value.status_code)
-        #assert return_value.status_code == expected_results
+        assert return_value.status_code == expected_results
         if expected_results == 200:
             assert len(return_value.data) > 0
             assert (json.loads(return_value.data))['site'] == "mocha"
