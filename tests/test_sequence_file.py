@@ -1,7 +1,5 @@
 import unittest
 from mock import patch
-import sys
-sys.path.append("..")
 from resources.sequence_file import SequenceFile
 from ddt import ddt, data, unpack
 import app
@@ -89,14 +87,13 @@ class TestSequenceFile(unittest.TestCase):
              )
         )
     @unpack
-    # TODO: I don't think this works. you have to mock the class where it is looked up not where it is defined.
-    @patch('accessors.sample_control_accessor.SampleControlAccessor')
-    # TODO: I don't think this works. you have to mock the class where it is looked up not where it is defined.
-    @patch('accessors.s3_accessor.S3Accessor.get_download_url')
+    @patch('resources.sequence_file.SampleControlAccessor')
+    @patch('resources.sequence_file.S3Accessor')
     def test_get_file_url(self, molecular_id, file_name, item, get_download_url_return, expect_return,
-                          get_download_url_function, mock_scAccessor_class):
-        get_download_url_function.return_value = get_download_url_return
-        instance = mock_scAccessor_class.return_value
+                          mock_s3_accessor, mock_sc_accessor):
+        s3_instance = mock_s3_accessor.return_value
+        s3_instance.get_download_url.return_value = get_download_url_return
+        instance = mock_sc_accessor.return_value
         instance.get_item.return_value = item
 
         try:
