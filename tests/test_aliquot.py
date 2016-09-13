@@ -7,7 +7,7 @@ sys.path.append("..")
 import app
 
 @ddt
-class TestSampleControlRecord(unittest.TestCase):
+class TestAliquot(unittest.TestCase):
     def setUp(self):
         self.app = app.app.test_client()
 
