@@ -31,6 +31,7 @@ class TestSampleControlRecord(unittest.TestCase):
         ({}, 'SC_YQ999', 404)
     )
     @unpack
+    # TODO: I don't think this works. you have to mock the class where it is looked up not where it is defined.
     @patch('accessors.sample_control_accessor.SampleControlAccessor')
     def test_get(self, item, molecular_id, expected_results, mock_scAccessor_class):
         instance = mock_scAccessor_class.return_value
@@ -49,6 +50,7 @@ class TestSampleControlRecord(unittest.TestCase):
         ('SC_5AMCC', '"message": "Item deleted"')
     )
     @unpack
+    # TODO: I don't think this works. you have to mock the class where it is looked up not where it is defined.
     @patch('accessors.celery_task_accessor.CeleryTaskAccessor')
     def test_delete(self, molecular_id, expected_results, mock_celeryTaskAccessor_class):
         instance = mock_celeryTaskAccessor_class.return_value
@@ -63,6 +65,7 @@ class TestSampleControlRecord(unittest.TestCase):
           'molecular_id': 'SC_5AMCC', 'analysis_id': 'SC_5AMCC_SC_5AMCC_k123_v1'}, '"message": "Item updated"')
     )
     @unpack
+    # TODO: I don't think this works. you have to mock the class where it is looked up not where it is defined.
     @patch('accessors.celery_task_accessor.CeleryTaskAccessor')
     def test_put(self, molecular_id, update_dictionary, expected_results, mock_celeryTaskAccessor_class):
         instance = mock_celeryTaskAccessor_class.return_value
