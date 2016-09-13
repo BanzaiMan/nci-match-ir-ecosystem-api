@@ -26,7 +26,6 @@ class TestSampleControlRecord(unittest.TestCase):
     @patch('resources.sample_control_record.SampleControlAccessor')
     def test_get(self, item, molecular_id, expected_results, mock_scRecord_class):
         instance = mock_scRecord_class.return_value
-        # instance.SampleControlAccessor.get_item.return_value = item
         instance.get_item.return_value = item
         return_value = self.app.get('/api/v1/sample_controls/' + molecular_id)
         print "==============" + str(return_value.status_code)
@@ -44,7 +43,6 @@ class TestSampleControlRecord(unittest.TestCase):
         instance = mock_scRecord_class.return_value
         instance.get_item.side_effect = Exception('Testing get_item exception')
         return_value = self.app.get('/api/v1/sample_controls/SC_5AMCC')
-        print return_value.status_code
         assert return_value.status_code == 500
         assert "Testing get_item exception" in return_value.data
 
@@ -59,6 +57,14 @@ class TestSampleControlRecord(unittest.TestCase):
         return_value = self.app.delete('/api/v1/sample_controls/' + molecular_id)
         print "return data=" + str(return_value.data)
         assert return_value.data.find(expected_results)
+
+    @patch('resources.sample_control_record.CeleryTaskAccessor')
+    def test_delete_exception(self, mock_scRecord_class):
+        instance = mock_scRecord_class.return_value
+        instance.delete_item.side_effect = Exception('Testing delete_item exception')
+        return_value = self.app.delete('/api/v1/sample_controls/SC_5AMCC')
+        assert "Testing delete_item exception" in return_value.data
+        assert return_value.status_code == 500
 
     @data(
         ('SC_5AMCC',
@@ -76,6 +82,22 @@ class TestSampleControlRecord(unittest.TestCase):
         print return_value.data
         assert return_value.data.find(molecular_id + " " + expected_results)
 
+    @data(
+        ('SC_5AMCC',
+         {'vcf_name': 'mocha/SC_5AMCC/SC_5AMCC_SC_5AMCC_k123_v1/SC_5AMCC_SC_5AMCC_analysis667_v1.vcf', 'site': 'mocha',
+          'molecular_id': 'SC_5AMCC', 'analysis_id': 'SC_5AMCC_SC_5AMCC_k123_v1'}
+         )
+    )
+    @unpack
+    @patch('resources.sample_control_record.CeleryTaskAccessor')
+    def test_put_exception(self, molecular_id, update_dictionary, mock_scRecord_class):
+        instance = mock_scRecord_class.return_value
+        instance.update_item.side_effect = Exception('Testing update_item exception')
+        return_value = self.app.put('/api/v1/sample_controls/' + molecular_id,
+                                    data=json.dumps(update_dictionary),
+                                    content_type='application/json')
+        assert return_value.status_code == 500
+        assert "Testing update_item exception" in return_value.data
 
 if __name__ == '__main__':
     unittest.main()
