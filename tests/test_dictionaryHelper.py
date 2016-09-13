@@ -1,8 +1,5 @@
 import unittest
-import sys
 from ddt import ddt, data, unpack
-
-sys.path.append('..')
 from common.dictionary_helper import DictionaryHelper
 
 
@@ -14,8 +11,7 @@ class TestDictionaryHelper(unittest.TestCase):
 
         assert DictionaryHelper.has_values(dic1) == expected_results
 
-# TODO: Fix, it is not passing in multiple sets of data, correct formatting
-
+    # TODO: Fix, it is not passing in multiple sets of data, correct formatting
     @data(({'a': None, 'b': 1, 'c': 2}, ['a', 'b'], False, ['b', 'd'], False, ['b', 'c'], True))
     @unpack
     def test_keys_have_value(self, test_dic, key1, result1, key2, result2, key3, result3):
