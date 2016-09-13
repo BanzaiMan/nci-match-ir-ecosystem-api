@@ -1,5 +1,6 @@
 from werkzeug.datastructures import ImmutableMultiDict
 
+
 class DictionaryHelper(object):
 
     @staticmethod
