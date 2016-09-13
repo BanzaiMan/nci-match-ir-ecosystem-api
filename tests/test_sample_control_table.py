@@ -41,15 +41,19 @@ class TestSampleControlTable(unittest.TestCase):
     @data(('?site=mocha', '{"result": "Batch deletion request placed on queue to be processed"}'),
           ('', '{"message": "Cannot use batch delete to delete all records.'))
     @unpack
+    @patch('resources.sample_control_table.SampleControlAccessor')
     @patch('resources.sample_control_table.CeleryTaskAccessor')
-    def test_delete(self, parameters, expected_results, mock_class):
+    def test_delete(self, parameters, expected_results, mock_class, mock_sample_control):
+        instance_sc = mock_sample_control.return_value
         instance = mock_class.return_value
         instance.delete_items.return_value = True
         return_value = self.app.delete('/api/v1/sample_controls' + parameters)
         assert expected_results in return_value.data
 
+    @patch('resources.sample_control_table.SampleControlAccessor')
     @patch('resources.sample_control_table.CeleryTaskAccessor')
-    def test_delete_exception(self, mock_class):
+    def test_delete_exception(self, mock_class, mock_sample_control):
+        instance_sc = mock_sample_control.return_value
         instance = mock_class.return_value
         instance.delete_items.side_effect = Exception('testing throwing exception')
         return_value = self.app.delete('/api/v1/sample_controls?site=mocha')
