@@ -10,7 +10,8 @@ class TestDictionaryHelper(unittest.TestCase):
         ({'dic1': None}, False),
         ('', False),
         ({}, False),
-        (None, False))
+        (None, False)
+    )
     @unpack
     def test_has_values(self, dic1, expected_results):
         assert DictionaryHelper.has_values(dic1) == expected_results
