@@ -13,7 +13,7 @@ class TestSequenceFile(unittest.TestCase):
     def setUp(self):
         self.app = app.app.test_client()
         pass
-
+    # TODO: Qing, is this much mock data needed just to test the get file url?
     @data(
            ('SC_YQ111', 'vcf_name',
             {'site_ip_address': '129.43.127.133',
