@@ -17,7 +17,10 @@ class TestDictionaryHelper(unittest.TestCase):
 
     @data(
         ({'a': None, 'b': 1, 'c': 2}, {'a': 'b'}, False),
+        ({}, {'b': 'd'}, False),
         ('', {'b': 'd'}, False),
+        (None, {'b': 'd'}, False),
+        (None, None, False),
         ({'a': None, 'b': 1, 'c': 2}, None, False),
         ({'a': 'x', 'b': 'y', 'c': 'z'}, {'q': 'c'}, False),
         ({'a': 'x', 'b': 'y', 'c': 'z'}, {'b': 'c'}, True)
