@@ -12,10 +12,12 @@ class TestSampleControlTable(unittest.TestCase):
         # Starting flask server
         self.app = app.app.test_client()
 
-    @data(([{"site": "mocha", "control_type": "no_template",
+    @data(
+        ([{"site": "mocha", "control_type": "no_template",
              "date_molecular_id_created": "2016-08-18 19:56:19.766",
              "molecular_id": "SC_SA1CB", "ion_reporter_id": "IR_WAO85"}], '', 200),
-          (None, '?site=brent', 404))
+        (None, '?site=brent', 404)
+    )
     @unpack
     def test_get(self, database_data, parameters, expected_results, mock_class):
         instance = mock_class.return_value
@@ -35,8 +37,10 @@ class TestSampleControlTable(unittest.TestCase):
         assert return_value.status_code == 500
         assert "testing throwing exception" in return_value.data
 
-    @data(('?site=mocha', '{"result": "Batch deletion request placed on queue to be processed"}'),
-          ('', '{"message": "Cannot use batch delete to delete all records.'))
+    @data(
+        ('?site=mocha', '{"result": "Batch deletion request placed on queue to be processed"}'),
+        ('', '{"message": "Cannot use batch delete to delete all records.')
+    )
     @unpack
     @patch('resources.sample_control_table.CeleryTaskAccessor')
     def test_delete(self, parameters, expected_results, mock_class, mock_sample_control):
@@ -53,15 +57,16 @@ class TestSampleControlTable(unittest.TestCase):
         assert "testing throwing exception" in return_value.data
         assert return_value.status_code == 500
 
-    @data(('?site=mocha&control_type=no_template',
-           '{"result": "New sample control created", "molecular_id":'),
-          ('?site=mocha', '{"message": "Sample Control creation failed, because both '
-                     'site and control_type were not passed in"}'),
-          ('?control_type=no_template', '{"message": "Sample Control creation failed, because both '
-                     'site and control_type were not passed in"}'),
-          ('', '{"message": "Sample Control creation failed, because both '
-                     'site and control_type were not passed in"}'),
-          ('?molecular_id=SC_WAO85', 'failed, because molecular_id'))
+    @data(
+        ('?site=mocha&control_type=no_template', '{"result": "New sample control created", "molecular_id":'),
+        ('?site=mocha', '{"message": "Sample Control creation failed, because both '
+                        'site and control_type were not passed in"}'),
+        ('?control_type=no_template', '{"message": "Sample Control creation failed, because both '
+                                      'site and control_type were not passed in"}'),
+        ('', '{"message": "Sample Control creation failed, because both '
+             'site and control_type were not passed in"}'),
+        ('?molecular_id=SC_WAO85', 'failed, because molecular_id')
+    )
     @unpack
     def test_post(self, parameters, expected_results, mock_key):
         mock_key.put_item.return_value = 'SC_WAO85'
