@@ -20,6 +20,7 @@ engines:
     - 82e71ac6a287b27dee61ef6039bafa6c
     - 9314ac817a64fe577043aa2aff5c4cd8
     - 5286038099bcbf33b246239a1d2f2d37
+    - 1c5d662bc408826f4ce56e3dab46c186
   duplication:
     enabled: true
     exclude_fingerprints:
