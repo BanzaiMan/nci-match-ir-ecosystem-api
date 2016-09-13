@@ -2,7 +2,7 @@ import unittest
 import app
 import json
 from ddt import ddt, data, unpack
-from mock import patch, MagicMock, Mock
+from mock import patch
 
 
 @ddt
