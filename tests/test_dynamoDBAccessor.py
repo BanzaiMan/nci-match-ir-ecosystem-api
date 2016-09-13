@@ -33,7 +33,7 @@ from unittest import TestCase
 #         self.fail()
 
 from unittest import TestCase
-import boto
+#import boto
 from resources.ion_reporter_record import IonReporterRecord
 
 TABLE_NAME = 'ion_reporters'
