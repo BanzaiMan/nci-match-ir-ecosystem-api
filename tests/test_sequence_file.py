@@ -89,7 +89,9 @@ class TestSequenceFile(unittest.TestCase):
              )
         )
     @unpack
+    # TODO: I don't think this works. you have to mock the class where it is looked up not where it is defined.
     @patch('accessors.sample_control_accessor.SampleControlAccessor')
+    # TODO: I don't think this works. you have to mock the class where it is looked up not where it is defined.
     @patch('accessors.s3_accessor.S3Accessor.get_download_url')
     def test_get_file_url(self, molecular_id, file_name, item, get_download_url_return, expect_return,
                           get_download_url_function, mock_scAccessor_class):

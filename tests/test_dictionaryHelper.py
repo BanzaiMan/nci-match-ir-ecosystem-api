@@ -8,7 +8,6 @@ class TestDictionaryHelper(unittest.TestCase):
     @data(({'dic1': 'a'}, True), ('', False), ({}, False), (None, False))
     @unpack
     def test_has_values(self, dic1, expected_results):
-
         assert DictionaryHelper.has_values(dic1) == expected_results
 
     @data(
@@ -18,7 +17,6 @@ class TestDictionaryHelper(unittest.TestCase):
     )
     @unpack
     def test_keys_have_value(self, test_dic, key, result):
-
         assert DictionaryHelper.keys_have_value(test_dic, key) == result
 
 if __name__ == '__main__':
