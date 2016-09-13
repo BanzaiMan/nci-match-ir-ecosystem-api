@@ -59,6 +59,7 @@ class TestIonReporterTable(unittest.TestCase):
           ('', '{"message": "Must send in a site in order to create an ion reporter record"}'),
           ('?ion_reporter_id=IR_WAO85', 'failed, because ion_reporter_id'))
     @unpack
+    # TODO: Waleed, Doesn't make sense to patch the class that is under test itself
     @patch('resources.ion_reporter_table.IonReporterTable')
     @patch('resources.ion_reporter_table.IonReporterAccessor')
     def test_post(self, parameters, expected_results, mock_class, mock_class2):
