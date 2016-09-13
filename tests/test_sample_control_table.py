@@ -59,21 +59,19 @@ class TestSampleControlTable(unittest.TestCase):
     @data(('?site=mocha&control_type=no_template',
            '{"result": "New sample control created", "molecular_id":'),
           ('?site=mocha', '{"message": "Sample Control creation failed, because both '
-                     'site and control_type were not passed in"}'),
+                          'site and control_type were not passed in"}'),
           ('?control_type=no_template', '{"message": "Sample Control creation failed, because both '
-                     'site and control_type were not passed in"}'),
+                                        'site and control_type were not passed in"}'),
           ('', '{"message": "Sample Control creation failed, because both '
-                     'site and control_type were not passed in"}'),
+               'site and control_type were not passed in"}'),
           ('?molecular_id=SC_WAO85', 'failed, because molecular_id'))
     @unpack
-    # TODO: Shouldn't be patching the SampleControlTable that is what we are trying to test. If you want to patch a method in there, just patch the method.
-    @patch('resources.sample_control_table.SampleControlTable')
+    @patch('resources.sample_control_table.SampleControlTable.get_unique_key')
     @patch('resources.sample_control_table.SampleControlAccessor')
-    def test_post(self, parameters, expected_results, mock_class, mock_class2):
+    def test_post(self, parameters, expected_results, mock_class, mock_get_unique_key_function):
         instance = mock_class.return_value
         instance.put_item.return_value = True
-        instance2 = mock_class2.return_value
-        instance2.get_unique_key.return_value = 'SC_WAO85'
+        mock_get_unique_key_function.return_value = 'SC_WAO85'
         return_value = self.app.post('/api/v1/sample_controls' + parameters)
         assert expected_results in return_value.data
 
