@@ -1,10 +1,9 @@
 import unittest
 import json
 from ddt import ddt, data, unpack
-from mock import patch, MagicMock, Mock
-import sys
-sys.path.append("..")
+from mock import patch
 import app
+
 
 @ddt
 class TestAliquot(unittest.TestCase):
