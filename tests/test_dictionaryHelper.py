@@ -18,9 +18,8 @@ class TestDictionaryHelper(unittest.TestCase):
     )
     @unpack
     def test_keys_have_value(self, test_dic, key, result):
-        print DictionaryHelper.keys_have_value(test_dic, key)
-        assert DictionaryHelper.keys_have_value(test_dic, key) == result
 
+        assert DictionaryHelper.keys_have_value(test_dic, key) == result
 
 if __name__ == '__main__':
     unittest.main()
