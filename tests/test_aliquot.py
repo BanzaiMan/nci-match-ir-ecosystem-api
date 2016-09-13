@@ -26,7 +26,7 @@ class TestAliquot(unittest.TestCase):
     def test_get(self, item, molecular_id, expected_results, mock_aliquot_class):
         instance = mock_aliquot_class.return_value
         instance.get_item.return_value = item
-        return_value = self.app.get('/api/v1/sample_controls/' + molecular_id)
+        return_value = self.app.get('/api/v1/aliquot/' + molecular_id)
         print "==============" + str(return_value.status_code)
         assert return_value.status_code == expected_results
         print return_value.data
