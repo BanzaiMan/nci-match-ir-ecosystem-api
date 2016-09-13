@@ -28,7 +28,7 @@ class TestSampleControlTable(unittest.TestCase):
             assert len(return_value.data) > 0
             assert (json.loads(return_value.data))[0]['site'] == "mocha"
         else:
-            assert return_value.data.startswith('{"message": "No sample controls meet the query parameters.')
+            assert return_value.data.startswith('{"message": "No records meet the query parameters')
 
     @patch('resources.sample_control_table.SampleControlAccessor')
     def test_get_exception(self, mock_class):

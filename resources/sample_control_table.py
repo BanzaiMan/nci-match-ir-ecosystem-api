@@ -5,9 +5,8 @@ from flask_restful import request, reqparse, Resource
 from accessors.celery_task_accessor import CeleryTaskAccessor
 from accessors.sample_control_accessor import SampleControlAccessor
 from common.dictionary_helper import DictionaryHelper
-from common.string_helper import StringHelper
 from resource_helpers.abort_logger import AbortLogger
-
+from table import Table
 parser = reqparse.RequestParser()
 # Essential for POST, all other parameters are ignored on post except molecular_id, which, if passed in will cause a
 # failure. The proper order is to first POST to get a molecular_id then to PUT the files using the molecular_id in the
@@ -18,7 +17,7 @@ parser.add_argument('site',         type=str, required=False)
 MOLECULAR_ID_LENGTH = 5
 
 
-class SampleControlTable(Resource):
+class SampleControlTable(Table):
 
     """This class is a tiny bit inconsistent by design. The argument types are all optional for the 'GET' but only the
     control_type and site are needed and required for the 'POST.' Passing in any other query parameters to the POST
@@ -29,23 +28,7 @@ class SampleControlTable(Resource):
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)
-
-    def get(self):
-        self.logger.info("Sample control GET called")
-        args = request.args
-        self.logger.debug(str(args))
-        try:
-            sample_control = SampleControlAccessor().scan(args) if DictionaryHelper.has_values(args) \
-                else SampleControlAccessor().scan(None)
-        except Exception as e:
-            AbortLogger.log_and_abort(500, self.logger.error, "Get failed because: " + e.message)
-        else:
-            self.logger.debug("Sample_control: " + str(sample_control))
-
-            if sample_control is None:
-                AbortLogger.log_and_abort(404, self.logger.debug, "No sample controls meet the query parameters")
-            else:
-                return sample_control
+        Table.__init__(self, SampleControlAccessor(), 'molecular_id', MOLECULAR_ID_LENGTH)
 
     def delete(self):
         self.logger.info("Sample control Batch Delete called")
@@ -99,19 +82,3 @@ class SampleControlTable(Resource):
             AbortLogger.log_and_abort(400, self.logger.debug,
                                       "Sample Control creation failed, "
                                       "because both site and control_type were not passed in")
-
-    # Internal method to get new_molecular_id and ensure its unique before trying to use it.
-    def get_unique_key(self):
-        new_molecular_id = ""
-        unique_key = False
-        while not unique_key:
-            new_molecular_id = StringHelper.generate_molecular_id(MOLECULAR_ID_LENGTH)
-            results = SampleControlAccessor().get_item({'molecular_id': new_molecular_id})
-            self.logger.debug(results)
-
-            if len(results) > 0:
-                self.logger.info("Generated Key was not unique, so we need to try again")
-            else:
-                unique_key = True
-
-        return new_molecular_id

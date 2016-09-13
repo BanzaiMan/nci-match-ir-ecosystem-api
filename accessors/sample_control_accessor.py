@@ -2,12 +2,11 @@ import logging
 import __builtin__
 from dynamodb_accessor import DynamoDBAccessor
 
-KEY = 'molecular_id'
-
 
 class SampleControlAccessor(DynamoDBAccessor):
 
     def __init__(self):
+        self.KEY = 'molecular_id'
         self.logger = logging.getLogger(__name__)
         self.logger.debug("SampleControlAccessor instantiated")
         self.logger.debug("__builtin__.environment: " + str(__builtin__.environment))
@@ -34,7 +33,7 @@ class SampleControlAccessor(DynamoDBAccessor):
         return self.handle_table_creation(table_name)
 
     def update(self, item_dictionary):
-        sample_control_table_key = str(item_dictionary.pop(KEY))
+        sample_control_table_key = str(item_dictionary.pop(self.KEY))
         self.logger.debug(sample_control_table_key)
         try:
             return self.update_item(item_dictionary, dict(molecular_id=sample_control_table_key))
@@ -51,7 +50,7 @@ class SampleControlAccessor(DynamoDBAccessor):
         items_to_delete = self.scan(query_parameters)
         for item in items_to_delete:
             try:
-                self.delete_item({'molecular_id': item[KEY]})
+                self.delete_item({'molecular_id': item[self.KEY]})
             except Exception as e:
                 self.logger.error("Batch delete item exception in dynamodb: " + e.message)
                 raise

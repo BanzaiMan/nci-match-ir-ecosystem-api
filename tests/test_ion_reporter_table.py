@@ -11,10 +11,12 @@ class TestIonReporterTable(unittest.TestCase):
         # Starting flask server
         self.app = app.app.test_client()
 
-    @data(([{"site": "mocha", "host_name": "NCI-MATCH-IR",
-             "status": "Contacted 4 minutes ago",
-             "last_contact": "August 29, 2016 2:01 PM GMT", "ion_reporter_id": "IR_WAO85"}], '', 200),
-          (None, '?site=brent', 404))
+    @data(
+        ([{"site": "mocha", "host_name": "NCI-MATCH-IR",
+           "status": "Contacted 4 minutes ago",
+           "last_contact": "August 29, 2016 2:01 PM GMT", "ion_reporter_id": "IR_WAO85"}], '', 200),
+        (None, '?site=brent', 404)
+    )
     @unpack
     @patch('resources.ion_reporter_table.IonReporterAccessor')
     def test_get(self, database_data, parameters, expected_results, mock_class):
@@ -26,7 +28,7 @@ class TestIonReporterTable(unittest.TestCase):
             assert len(return_value.data) > 0
             assert (json.loads(return_value.data))[0]['site'] == "mocha"
         else:
-            assert return_value.data.startswith('{"message": "No ion reporters meet the query parameters.')
+            assert return_value.data.startswith('{"message": "No records meet the query parameters')
 
     @patch('resources.ion_reporter_table.IonReporterAccessor')
     def test_get_exception(self, mock_class):
