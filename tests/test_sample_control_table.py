@@ -63,7 +63,6 @@ class TestSampleControlTable(unittest.TestCase):
                      'site and control_type were not passed in"}'),
           ('?molecular_id=SC_WAO85', 'failed, because molecular_id'))
     @unpack
-    @patch('resources.sample_control_table.SampleControlAccessor')
     def test_post(self, parameters, expected_results, mock_key):
         mock_key.put_item.return_value = 'SC_WAO85'
         return_value = self.app.post('/api/v1/sample_controls' + parameters)
