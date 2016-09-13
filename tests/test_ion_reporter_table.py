@@ -6,7 +6,6 @@ from mock import patch
 
 
 @ddt
-@patch('resources.ion_reporter_table.IonReporterAccessor')
 class TestIonReporterTable(unittest.TestCase):
     def setUp(self):
         # Starting flask server
@@ -19,6 +18,7 @@ class TestIonReporterTable(unittest.TestCase):
         (None, '?site=brent', 404)
     )
     @unpack
+    @patch('resources.ion_reporter_table.IonReporterAccessor')
     def test_get(self, database_data, parameters, expected_results, mock_class):
         instance = mock_class.return_value
         instance.scan.return_value = database_data
@@ -30,6 +30,7 @@ class TestIonReporterTable(unittest.TestCase):
         else:
             assert return_value.data.startswith('{"message": "No records meet the query parameters')
 
+    @patch('resources.ion_reporter_table.IonReporterAccessor')
     def test_get_exception(self, mock_class):
         instance = mock_class.return_value
         instance.scan.side_effect = Exception('testing throwing exception')
@@ -41,14 +42,14 @@ class TestIonReporterTable(unittest.TestCase):
           ('', '{"message": "Cannot use batch delete to delete all records.'))
     @unpack
     @patch('resources.ion_reporter_table.CeleryTaskAccessor')
-    def test_delete(self, parameters, expected_results, mock_class, mock_ir):
+    def test_delete(self, parameters, expected_results, mock_class):
         instance = mock_class.return_value
         instance.delete_ir_items.return_value = True
         return_value = self.app.delete('/api/v1/ion_reporters' + parameters)
         assert expected_results in return_value.data
 
     @patch('resources.ion_reporter_table.CeleryTaskAccessor')
-    def test_delete_exception(self, mock_class, mock_ir):
+    def test_delete_exception(self, mock_class):
         instance = mock_class.return_value
         instance.delete_ir_items.side_effect = Exception('testing throwing exception')
         return_value = self.app.delete('/api/v1/ion_reporters?site=mocha')
@@ -60,12 +61,14 @@ class TestIonReporterTable(unittest.TestCase):
           ('', '{"message": "Must send in a site in order to create an ion reporter record"}'),
           ('?ion_reporter_id=IR_WAO85', 'failed, because ion_reporter_id'))
     @unpack
+    @patch('resources.ion_reporter_table.IonReporterAccessor')
     def test_post(self, parameters, expected_results, mock_class):
         instance = mock_class.return_value
         instance.get_unique_key.return_value = 'IR_WAO85'
         return_value = self.app.post('/api/v1/ion_reporters' + parameters)
         assert expected_results in return_value.data
 
+    @patch('resources.ion_reporter_table.IonReporterAccessor')
     def test_post_exception(self, mock_class):
         instance = mock_class.return_value
         instance.put_item.side_effect = Exception('Ion reporter creation failed')

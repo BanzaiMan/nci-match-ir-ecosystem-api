@@ -18,8 +18,8 @@ class Table(Resource):
         args = request.args
         self.logger.debug(str(args))
         try:
-            records = self.accessor.scan(args) if DictionaryHelper.has_values(args) \
-                else self.accessor.scan(None)
+            records = self.accessor().scan(args) if DictionaryHelper.has_values(args) \
+                else self.accessor().scan(None)
         except Exception as e:
             AbortLogger.log_and_abort(500, self.logger.error, "Get failed because: " + e.message)
         else:
@@ -35,7 +35,7 @@ class Table(Resource):
         unique_key = False
         while not unique_key:
             new_record_id = StringHelper.generate_ion_reporter_id(self.id_len)
-            results = self.accessor.get_item({self.key: new_record_id})
+            results = self.accessor().get_item({self.key: new_record_id})
             self.logger.debug(results)
 
             if len(results) > 0:

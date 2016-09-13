@@ -6,7 +6,6 @@ from mock import patch
 
 
 @ddt
-@patch('resources.sample_control_table.SampleControlAccessor')
 class TestSampleControlTable(unittest.TestCase):
     def setUp(self):
         # Starting flask server
@@ -19,6 +18,7 @@ class TestSampleControlTable(unittest.TestCase):
         (None, '?site=brent', 404)
     )
     @unpack
+    @patch('resources.sample_control_table.SampleControlAccessor')
     def test_get(self, database_data, parameters, expected_results, mock_class):
         instance = mock_class.return_value
         instance.scan.return_value = database_data
@@ -30,6 +30,7 @@ class TestSampleControlTable(unittest.TestCase):
         else:
             assert return_value.data.startswith('{"message": "No records meet the query parameters')
 
+    @patch('resources.sample_control_table.SampleControlAccessor')
     def test_get_exception(self, mock_class):
         instance = mock_class.return_value
         instance.scan.side_effect = Exception('testing throwing exception')
@@ -43,14 +44,14 @@ class TestSampleControlTable(unittest.TestCase):
     )
     @unpack
     @patch('resources.sample_control_table.CeleryTaskAccessor')
-    def test_delete(self, parameters, expected_results, mock_class, mock_sample_control):
+    def test_delete(self, parameters, expected_results, mock_class):
         instance = mock_class.return_value
         instance.delete_items.return_value = True
         return_value = self.app.delete('/api/v1/sample_controls' + parameters)
         assert expected_results in return_value.data
 
     @patch('resources.sample_control_table.CeleryTaskAccessor')
-    def test_delete_exception(self, mock_class, mock_sample_control):
+    def test_delete_exception(self, mock_class):
         instance = mock_class.return_value
         instance.delete_items.side_effect = Exception('testing throwing exception')
         return_value = self.app.delete('/api/v1/sample_controls?site=mocha')
@@ -68,11 +69,13 @@ class TestSampleControlTable(unittest.TestCase):
         ('?molecular_id=SC_WAO85', 'failed, because molecular_id')
     )
     @unpack
+    @patch('resources.sample_control_table.SampleControlAccessor')
     def test_post(self, parameters, expected_results, mock_key):
         mock_key.put_item.return_value = 'SC_WAO85'
         return_value = self.app.post('/api/v1/sample_controls' + parameters)
         assert expected_results in return_value.data
 
+    @patch('resources.sample_control_table.SampleControlAccessor')
     def test_post_exception(self, mock_class):
         instance = mock_class.return_value
         instance.put_item.side_effect = Exception('Sample Control creation failed')

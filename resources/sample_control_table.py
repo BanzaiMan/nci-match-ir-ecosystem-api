@@ -1,6 +1,6 @@
 import logging
 import datetime
-from flask_restful import request, reqparse, Resource
+from flask_restful import request, reqparse
 
 from accessors.celery_task_accessor import CeleryTaskAccessor
 from accessors.sample_control_accessor import SampleControlAccessor
@@ -28,7 +28,7 @@ class SampleControlTable(Table):
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)
-        Table.__init__(self, SampleControlAccessor(), 'molecular_id', MOLECULAR_ID_LENGTH)
+        Table.__init__(self, SampleControlAccessor, 'molecular_id', MOLECULAR_ID_LENGTH)
 
     def delete(self):
         self.logger.info("Sample control Batch Delete called")
