@@ -33,8 +33,7 @@ from unittest import TestCase
 #         self.fail()
 
 from unittest import TestCase
-#import boto
-from resources.ion_reporter_record import IonReporterRecord
+import boto
 
 TABLE_NAME = 'ion_reporters'
 TABLE_RT = 45
@@ -117,26 +116,26 @@ class TestIonReporterRecord(TestCase):
         # Example chech
         self.assertEquals(expected, self.db.layer1.get_item(TABLE_NAME, key))
 
-    # def test_scan(self):
-    #     from ddbmock import connect_boto_patch
-    #     from ddbmock.database.db import dynamodb
-    #
-    #     # Example test
-    #     expected = {u'Count': 1, u'Items': [{u'status': u'Contacted 4 minutes ago',
-    #                                          u'last_contact': u'August 29, 2016 2:01 PM GMT',
-    #                                          u'internal_ip_address': u'172.20.174.24',
-    #                                          u'site': u'mdacc', u'host_name': u'MDACC-MATCH-IR',
-    #                                          u'data_files': u'Log File', u'ip_address': u'132.183.13.75',
-    #                                          u'ion_reporter_id': u'IR_AIO78'}], u'ScannedCount': 5,
-    #                 'ResponseMetadata': {'HTTPStatusCode': 200, 'RequestId': '5513cfd4-7a1c-443a-9a51-6b893f4a941f',
-    #                                      'HTTPHeaders': {'x-amzn-requestid': '5513cfd4-7a1c-443a-9a51-6b893f4a941f',
-    #                                                      'content-length': '332', 'content-type': 'application/x-amz-json-1.0',
-    #                                                      'x-amz-crc32': '640366951', 'server': 'Jetty(8.1.12.v20130726)'}}}
-    #
-    #     key = {
-    #         u"HashKeyElement":  {TABLE_HK_TYPE: HK_VALUE},
-    #         #u"RangeKeyElement": {TABLE_RK_TYPE: RK_VALUE},
-    #     }
-    #
-    #     # Example chech
-    #     self.assertEquals(expected, self.db.layer1.scan(TABLE_NAME, key))
+    def test_scan(self):
+        from ddbmock import connect_boto_patch
+        from ddbmock.database.db import dynamodb
+
+        # Example test
+        expected = {u'Count': 1, u'Items': [{u'status': u'Contacted 4 minutes ago',
+                                             u'last_contact': u'August 29, 2016 2:01 PM GMT',
+                                             u'internal_ip_address': u'172.20.174.24',
+                                             u'site': u'mdacc', u'host_name': u'MDACC-MATCH-IR',
+                                             u'data_files': u'Log File', u'ip_address': u'132.183.13.75',
+                                             u'ion_reporter_id': u'IR_AIO78'}], u'ScannedCount': 5,
+                    'ResponseMetadata': {'HTTPStatusCode': 200, 'RequestId': '5513cfd4-7a1c-443a-9a51-6b893f4a941f',
+                                         'HTTPHeaders': {'x-amzn-requestid': '5513cfd4-7a1c-443a-9a51-6b893f4a941f',
+                                                         'content-length': '332', 'content-type': 'application/x-amz-json-1.0',
+                                                         'x-amz-crc32': '640366951', 'server': 'Jetty(8.1.12.v20130726)'}}}
+
+        key = {
+            u"HashKeyElement":  {TABLE_HK_TYPE: HK_VALUE},
+            #u"RangeKeyElement": {TABLE_RK_TYPE: RK_VALUE},
+        }
+
+        # Example chech
+        self.assertEquals(expected, self.db.layer1.scan(TABLE_NAME, key))
