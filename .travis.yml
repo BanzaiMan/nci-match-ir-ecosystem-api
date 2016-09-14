@@ -11,7 +11,7 @@ script:
 #- python -m unittest discover tests
 - coverage run -m unittest discover tests
 after_success:
-- docker build -t matchbox/nci-match-ir-ecoystem-api .
+- docker build -t matchbox/nci-match-ir-ecosystem-api .
 - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
 - docker tag -f matchbox/nci-match-ir-ecosystem-api matchbox/nci-match-ir-ecosystem-api:latest
 - docker images
