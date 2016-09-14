@@ -8,18 +8,16 @@ from ddt import ddt, data, unpack
 
 @ddt
 class TestStringHelper(unittest.TestCase):
-
+    @data(
+        ('SC_'),
+        ('TR_'),
+        ('')
+    )
     @patch('common.string_helper.StringHelper.generate_random_string')
-    def test_generate_molecular_id(self, random_string_function):
+    def test_generate_molecular_id(self, prefix, random_string_function):
         random_string_function.return_value = "TR45G"
-        random_string = StringHelper.generate_molecular_id(5)
-        assert random_string.startswith("SC_")
-
-    @patch('common.string_helper.StringHelper.generate_random_string')
-    def test_generate_ion_reporter_id(self, random_string_function):
-        random_string_function.return_value = "WO85G"
-        random_string = StringHelper.generate_ion_reporter_id(5)
-        assert random_string.startswith("IR_")
+        random_string = StringHelper.generate_molecular_id(prefix)
+        assert random_string.startswith(prefix)
 
     @data((5, 5, ""),
           (0, "", "Invalid Input"),

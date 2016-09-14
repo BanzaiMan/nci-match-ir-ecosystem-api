@@ -10,10 +10,13 @@ class StringHelper(object):
         logger = logging.getLogger(__name__)
         logger.debug("Generating molecular id")
 
-        new_id = prefix + StringHelper.generate_random_string(length)
+        if type(prefix) is str:
+            new_id = prefix + StringHelper.generate_random_string(length)
 
-        logger.debug("New molecular id: " + new_id)
-        return new_id
+            logger.debug("New molecular id: " + new_id)
+            return new_id
+        else:
+            raise Exception('Prefix must be string.')
 
     @staticmethod
     def generate_random_string(length=5):
