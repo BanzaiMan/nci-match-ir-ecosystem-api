@@ -34,7 +34,10 @@ class Table(Resource):
         new_record_id = ""
         unique_key = False
         while not unique_key:
-            new_record_id = StringHelper.generate_ion_reporter_id(self.id_len)
+            if self.key.startswith('IR'):
+                new_record_id = StringHelper.generate_ion_reporter_id(self.id_len)
+            else:
+                new_record_id = StringHelper.generate_molecular_id(self.id_len)
             results = self.accessor().get_item({self.key: new_record_id})
             self.logger.debug(results)
 
