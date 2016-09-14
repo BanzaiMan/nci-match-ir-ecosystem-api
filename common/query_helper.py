@@ -12,15 +12,17 @@ class QueryHelper(object):
         logger.debug(str(multidict_query))
 
         filter_expression = None
-        # for key, value in multidict_query.iteritems(multi=False):
-        for key, value in multidict_query.iteritems():
-            if filter_expression is not None:
-                filter_expression = filter_expression & Attr(key).eq(value)
-            else:
-                filter_expression = Attr(key).eq(str(value))
+        if type(multidict_query) is multidict_query or type(multidict_query) is dict:
+            for key, value in multidict_query.iteritems():
+                if filter_expression is not None:
+                    filter_expression = filter_expression & Attr(key).eq(value)
+                else:
+                    filter_expression = Attr(key).eq(str(value))
 
-        logger.debug("Filter expression created: " + str(filter_expression))
-        return filter_expression
+            logger.debug("Filter expression created: " + str(filter_expression))
+            return filter_expression
+        else:
+            raise Exception("Must pass in a dictionary or mutlidict_query")
 
     @staticmethod
     def create_key_dict(function_description, key, *additional_keys):
