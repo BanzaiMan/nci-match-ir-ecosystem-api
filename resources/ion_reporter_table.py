@@ -20,7 +20,7 @@ ION_REPORTER_ID_LENGTH = 5
 class IonReporterTable(Table):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
-        Table.__init__(self, IonReporterAccessor, 'molecular_id', ION_REPORTER_ID_LENGTH)
+        Table.__init__(self, IonReporterAccessor, 'ion_reporter_id', ION_REPORTER_ID_LENGTH)
 
     def post(self):
         self.logger.info("POST Request to create a new ion reporter")

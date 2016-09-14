@@ -40,7 +40,7 @@ echo -e "${BLUE}GET /api/v1/ion_reporters/{ion_reporter_id}${NC}"
 echo -e "${PURPLE}To call resources.ion_reporter_record GET for Ion Reporter with ID IR_AIO78, SCAN and return only site and status values${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 
-curl -X GET "http://localhost:5000/api/v1/ion_reporters/IR_AIO78?projection=site&projection=status"
+curl -X GET "http://localhost:5000/api/v1/ion_reporters/IR_AIO78?projection=site&projection=ir_status"
 
 echo -e "${CYAN}***********************************************${NC}"
 echo -e "${BLUE}GET /api/v1/ion_reporters?site=mocha${NC}"
