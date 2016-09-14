@@ -83,7 +83,9 @@ echo -e "${CYAN}***********************************************${NC}"
 echo -e "${BLUE}DELETE /v1/ion_reporters/{ion_reporter_id}${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 
+# This should return pretty error
 curl -X DELETE "http://localhost:5000/api/v1/ion_reporters"
+# this should work by placing the delete on queue
 curl -X DELETE "http://localhost:5000/api/v1/ion_reporters/IR_WO3IA"
 
 echo -e "${CYAN}***********************************************${NC}"

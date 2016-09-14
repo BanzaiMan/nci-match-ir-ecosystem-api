@@ -30,6 +30,8 @@ engines:
     - 8400b393db6a5fd7f1e75af2f7af218c
     - 9cc23dfe588fe27cf86869a7f3d2ab77
     - 8400b393db6a5fd7f1e75af2f7af218c
+    - fd4e25e5b65a0f3f3aab2f74b2ad7be6
+    - e2adda30718d4e770b47b03682f21b16
     config:
       languages:
         python:
