@@ -5,4 +5,5 @@
 [![Test Coverage](https://codeclimate.com/github/CBIIT/nci-match-ir-ecosystem-api/badges/coverage.svg)](https://codeclimate.com/github/CBIIT/nci-match-ir-ecosystem-api/coverage)
 
 Celery must be started in order for updates to database to be processed. After configureing AWS environment variables and installing celery. It can be started by typing in the application root directory:
-celery -A tasks.tasks worker --loglevel=INFO
+
+**celery -A tasks.tasks worker --loglevel=INFO**
