@@ -2,7 +2,7 @@ import logging
 import json
 from boto3.dynamodb.conditions import Attr
 from werkzeug.datastructures import ImmutableMultiDict
-
+from common.dictionary_helper import DictionaryHelper
 
 class QueryHelper(object):
 
@@ -14,14 +14,15 @@ class QueryHelper(object):
 
         filter_expression = None
         if type(multidict_query) is ImmutableMultiDict or type(multidict_query) is dict:
-            for key, value in multidict_query.iteritems():
-                if filter_expression is not None:
-                    filter_expression = filter_expression & Attr(key).eq(value)
-                else:
-                    filter_expression = Attr(key).eq(str(value))
+            if DictionaryHelper.has_values(multidict_query) == True:
+                for key, value in multidict_query.iteritems():
+                    if filter_expression is not None:
+                        filter_expression = filter_expression & Attr(key).eq(value)
+                    else:
+                        filter_expression = Attr(key).eq(str(value))
 
-            logger.debug("Filter expression created: " + str(filter_expression))
-            return filter_expression
+                logger.debug("Filter expression created: " + str(filter_expression))
+                return filter_expression
 
         raise Exception("Must pass in a dictionary or mutlidict_query")
 

@@ -9,9 +9,9 @@ from common.query_helper import QueryHelper
 class TestQueryHelper(unittest.TestCase):
     @data(
         ({'ion_reporter_id': u'IR_AIO78'}, '<boto3.dynamodb.conditions.Equals object at'),
-        ({'ion_reporter_id': None}, '<boto3.dynamodb.conditions.Equals object at'),
+        ({'ion_reporter_id': None}, 'Must pass in a dictionary or mutlidict_query'),
         ({None: u'IR_AIO78'}, '<boto3.dynamodb.conditions.Equals object at'),
-        ({None: None}, '<boto3.dynamodb.conditions.Equals object at'),
+        ({None: None}, 'Must pass in a dictionary or mutlidict_query'),
         (None, 'Must pass in a dictionary or mutlidict_query')
     )
     @unpack
