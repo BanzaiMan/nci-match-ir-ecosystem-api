@@ -1,7 +1,6 @@
 import boto3
 import logging
 import __builtin__
-import json
 
 
 class S3Accessor(object):

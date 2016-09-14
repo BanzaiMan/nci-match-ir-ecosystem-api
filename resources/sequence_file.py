@@ -1,5 +1,4 @@
 import logging
-import __builtin__
 from flask_restful import Resource
 from accessors.s3_accessor import S3Accessor
 from accessors.sample_control_accessor import SampleControlAccessor

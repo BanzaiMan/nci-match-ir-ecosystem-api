@@ -86,7 +86,6 @@ class TestSequenceFile(unittest.TestCase):
         assert return_value.status_code == 500
         assert "Testing get_item exception" in return_value.data
 
-
     @data(
             ('SC_YQ111', 'vcf', None,
              {'site_ip_address': '129.43.127.133',
@@ -108,8 +107,8 @@ class TestSequenceFile(unittest.TestCase):
     @unpack
     @patch('resources.sequence_file.S3Accessor')
     def test_get_file_url_exception(self, molecular_id, file_format, nucleic_acid_type, item,
-                                                 mock_s3_accessor, mock_sc_accessor):
-        s3_instance=mock_s3_accessor.return_value
+                                    mock_s3_accessor, mock_sc_accessor):
+        s3_instance = mock_s3_accessor.return_value
         s3_instance.get_download_url.side_effect = Exception('Testing get_download_url exception')
         instance = mock_sc_accessor.return_value
         instance.get_item.return_value = item
@@ -150,7 +149,7 @@ class TestSequenceFile(unittest.TestCase):
     @unpack
     @patch('resources.sequence_file.S3Accessor')
     def test_get_file_url_key_error_exception(self, molecular_id, file_format, nucleic_acid_type, item,
-                                    mock_s3_accessor, mock_sc_accessor):
+                                              mock_s3_accessor, mock_sc_accessor):
         s3_instance = mock_s3_accessor.return_value
         s3_instance.get_download_url.side_effect = KeyError('Testing get_download_url s3 key')
         instance = mock_sc_accessor.return_value

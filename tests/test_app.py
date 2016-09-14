@@ -2,15 +2,11 @@ import unittest
 
 from ddt import ddt, data, unpack
 from mock import patch
-
-import sys
-sys.path.append('..')
 from common.datetime_helper import DateTimeHelper
 
 import app
 import json
 
-#from datetime import datetime
 
 @ddt
 class TestApp(unittest.TestCase):

@@ -1,10 +1,9 @@
 import unittest
 import json
 from ddt import ddt, data, unpack
-from mock import patch, MagicMock, Mock
-import sys
-sys.path.append("..")
+from mock import patch
 import app
+
 
 @ddt
 class TestSampleControlRecord(unittest.TestCase):
@@ -17,15 +16,13 @@ class TestSampleControlRecord(unittest.TestCase):
              "date_molecular_id_created": "2016-08-28 16:56:29.333",
              "site_ip_address": "129.43.127.133",
              "molecular_id": "SC_YQ111",
-             "site": "mocha"
-         }, 'SC_YQ111', 200
-        ),
+             "site": "mocha"}, 'SC_YQ111', 200),
         ({}, 'SC_YQ999', 404)
     )
     @unpack
     @patch('resources.sample_control_record.SampleControlAccessor')
-    def test_get(self, item, molecular_id, expected_results, mock_scRecord_class):
-        instance = mock_scRecord_class.return_value
+    def test_get(self, item, molecular_id, expected_results, mock_sc_record_class):
+        instance = mock_sc_record_class.return_value
         instance.get_item.return_value = item
         return_value = self.app.get('/api/v1/sample_controls/' + molecular_id)
         print "==============" + str(return_value.status_code)
@@ -39,8 +36,8 @@ class TestSampleControlRecord(unittest.TestCase):
             assert return_value.data.find("message")
 
     @patch('resources.sample_control_record.SampleControlAccessor')
-    def test_get_exception(self, mock_scRecord_class):
-        instance = mock_scRecord_class.return_value
+    def test_get_exception(self, mock_sc_record_class):
+        instance = mock_sc_record_class.return_value
         instance.get_item.side_effect = Exception('Testing get_item exception')
         return_value = self.app.get('/api/v1/sample_controls/SC_5AMCC')
         assert return_value.status_code == 500
@@ -51,16 +48,16 @@ class TestSampleControlRecord(unittest.TestCase):
     )
     @unpack
     @patch('resources.sample_control_record.CeleryTaskAccessor')
-    def test_delete(self, molecular_id, expected_results, mock_scRecord_class):
-        instance = mock_scRecord_class.return_value
+    def test_delete(self, molecular_id, expected_results, mock_sc_record_class):
+        instance = mock_sc_record_class.return_value
         instance.delete_item.return_value = True
         return_value = self.app.delete('/api/v1/sample_controls/' + molecular_id)
         print "return data=" + str(return_value.data)
         assert return_value.data.find(expected_results)
 
     @patch('resources.sample_control_record.CeleryTaskAccessor')
-    def test_delete_exception(self, mock_scRecord_class):
-        instance = mock_scRecord_class.return_value
+    def test_delete_exception(self, mock_sc_record_class):
+        instance = mock_sc_record_class.return_value
         instance.delete_item.side_effect = Exception('Testing delete_item exception')
         return_value = self.app.delete('/api/v1/sample_controls/SC_5AMCC')
         assert "Testing delete_item exception" in return_value.data
@@ -73,8 +70,8 @@ class TestSampleControlRecord(unittest.TestCase):
     )
     @unpack
     @patch('resources.sample_control_record.CeleryTaskAccessor')
-    def test_put(self, molecular_id, update_dictionary, expected_results, mock_scRecord_class):
-        instance = mock_scRecord_class.return_value
+    def test_put(self, molecular_id, update_dictionary, expected_results, mock_sc_record_class):
+        instance = mock_sc_record_class.return_value
         instance.update_item(update_dictionary).return_value = True
         return_value = self.app.put('/api/v1/sample_controls/' + molecular_id,
                                     data=json.dumps(update_dictionary),
@@ -90,8 +87,8 @@ class TestSampleControlRecord(unittest.TestCase):
     )
     @unpack
     @patch('resources.sample_control_record.CeleryTaskAccessor')
-    def test_put_exception(self, molecular_id, update_dictionary, mock_scRecord_class):
-        instance = mock_scRecord_class.return_value
+    def test_put_exception(self, molecular_id, update_dictionary, mock_sc_record_class):
+        instance = mock_sc_record_class.return_value
         instance.update_item.side_effect = Exception('Testing update_item exception')
         return_value = self.app.put('/api/v1/sample_controls/' + molecular_id,
                                     data=json.dumps(update_dictionary),

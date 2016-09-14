@@ -2,8 +2,6 @@ import unittest
 import json
 from ddt import ddt, data, unpack
 from mock import patch
-import sys
-sys.path.append("..")
 import app
 
 
@@ -38,7 +36,6 @@ class TestAliquot(unittest.TestCase):
         else:
             assert return_value.data.find(molecular_id + " was not found.")
 
-
     @data(
         ('SC_5AMCC',
          {'vcf_name': 'mocha/SC_5AMCC/SC_5AMCC_SC_5AMCC_k123_v1/SC_5AMCC_SC_5AMCC_analysis667_v1.vcf', 'site': 'mocha',
@@ -48,12 +45,12 @@ class TestAliquot(unittest.TestCase):
     @unpack
     @patch('resources.aliquot.DictionaryHelper')
     @patch('resources.aliquot.CeleryTaskAccessor')
-    def test_put(self, molecular_id, update_dictionary, dict_has_value, expected_results, mock_CeleryTaskAccessor_class,
-                 mock_DictionaryHelper_class):
+    def test_put(self, molecular_id, update_dictionary, dict_has_value, expected_results,
+                 mock_celery_task_accessor_class, mock_dictionary_helper_class):
 
-        instance = mock_CeleryTaskAccessor_class.return_value
+        instance = mock_celery_task_accessor_class.return_value
         instance.process_file(update_dictionary).return_value = dict_has_value
-        instance2 = mock_DictionaryHelper_class.return_value
+        instance2 = mock_dictionary_helper_class.return_value
         instance2.has_values.return_value = True
         return_value = self.app.put('/api/v1/aliquot/' + molecular_id,
                                     data=json.dumps(update_dictionary),
