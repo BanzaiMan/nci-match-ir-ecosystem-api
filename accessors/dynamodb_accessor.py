@@ -25,7 +25,6 @@ class DynamoDBAccessor(object):
         self.logger.debug("DynamoDBAccessor instantiated")
 
     # Used to get items without regard to keys from table based on some parameters
-    # TODO: Clean this code up...its very long and redundant
     def scan(self, query_parameters, *exclusive_start_key):
         if query_parameters is not None:
             self.logger.debug("Dynamodb SCAN with filter expression(s) called")
