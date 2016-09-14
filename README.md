@@ -3,3 +3,6 @@
 [![Code Climate](https://codeclimate.com/github/CBIIT/nci-match-ir-ecosystem-api/badges/gpa.svg)](https://codeclimate.com/github/CBIIT/nci-match-ir-ecosystem-api)
 [![Issue Count](https://codeclimate.com/github/CBIIT/nci-match-ir-ecosystem-api/badges/issue_count.svg)](https://codeclimate.com/github/CBIIT/nci-match-ir-ecosystem-api)
 [![Test Coverage](https://codeclimate.com/github/CBIIT/nci-match-ir-ecosystem-api/badges/coverage.svg)](https://codeclimate.com/github/CBIIT/nci-match-ir-ecosystem-api/coverage)
+
+Celery must be started
+celery -A tasks.tasks worker --loglevel=INFO

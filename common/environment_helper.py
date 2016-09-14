@@ -21,4 +21,3 @@ class EnvironmentHelper(object):
             # by the various modules as needed.
             with open(os.path.abspath("config/environment.yml"), 'r') as yaml_file:
                 __builtin__.environment_config = yaml.load(yaml_file)
-
