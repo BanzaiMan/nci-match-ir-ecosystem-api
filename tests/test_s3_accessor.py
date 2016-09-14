@@ -5,7 +5,7 @@ from mock import patch
 from accessors.s3_accessor import S3Accessor
 
 @ddt
-class TestSampleControlRecord(unittest.TestCase):
+class TestS3Accessor(unittest.TestCase):
     def setUp(self):
         self.app = app.app.test_client()
 
