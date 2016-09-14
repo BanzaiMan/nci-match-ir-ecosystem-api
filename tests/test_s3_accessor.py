@@ -29,6 +29,20 @@ class TestS3Accessor(unittest.TestCase):
         assert(return_value==expected_return)
 
 
+    @data(('mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_RNA_v2.bam',
+           'Testing get_download_url exception'))
+    @unpack
+    @patch('accessors.s3_accessor.boto3')
+    def test_get_download_url_exception(self, file_s3_path, exception_message, mock_boto3):
+        instance = mock_boto3.return_value
+        instance.client.return_value = True
+        instance.resource.return_value = True
+        s3_accessor = S3Accessor()
+        s3_accessor.client.generate_presigned_url.side_effect = Exception(exception_message)
+        try:
+            s3_accessor.get_download_url(file_s3_path)
+        except Exception as e:
+            assert (e.message == exception_message)
 
 if __name__ == '__main__':
     unittest.main()
