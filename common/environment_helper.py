@@ -19,6 +19,6 @@ class EnvironmentHelper(object):
             # Use the environment variable from above to read yaml config file and set
             # global variable to the loaded file so tier specific information may be retrieved
             # by the various modules as needed.
-            with open("config/environment.yml", 'r') as yaml_file:
+            with open(os.path.abspath("config/environment.yml"), 'r') as yaml_file:
                 __builtin__.environment_config = yaml.load(yaml_file)
 
