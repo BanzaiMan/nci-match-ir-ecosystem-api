@@ -75,7 +75,7 @@ echo -e "${BLUE}PUT /v1/ion_reporters/{ion_reporter_id}${NC}"
 echo -e "${PURPLE}The body of this service contains the json message that will notify the PED-MATCH system that the IR Uploader is communicating properly.${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 
-curl -X PUT -H 'Content-Type: application/json' -d '{"status":"Lost contact! Last heartbeat was sent 11355 minutes ago"}' "http://localhost:5000/api/v1/ion_reporters/IR_WO3IA"
+curl -X PUT -H 'Content-Type: application/json' -d '{"ir_status":"Lost contact! Last heartbeat was sent 11355 minutes ago"}' "http://localhost:5000/api/v1/ion_reporters/IR_WO3IA"
 
 curl -X PUT -H 'Content-Type: application/json' -d @./ir_item.json "http://localhost:5000/api/v1/ion_reporters/IR_WAO85"
 

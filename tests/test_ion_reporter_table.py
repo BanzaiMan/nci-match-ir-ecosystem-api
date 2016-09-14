@@ -15,7 +15,8 @@ class TestIonReporterTable(unittest.TestCase):
         ([{"site": "mocha", "host_name": "NCI-MATCH-IR",
            "status": "Contacted 4 minutes ago",
            "last_contact": "August 29, 2016 2:01 PM GMT", "ion_reporter_id": "IR_WAO85"}], '', 200),
-        (None, '?site=brent', 404)
+        (None, '?site=brent', 404),
+        ([], '', 404)
     )
     @unpack
     @patch('resources.ion_reporter_table.IonReporterAccessor')

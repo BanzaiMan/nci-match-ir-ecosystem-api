@@ -25,7 +25,7 @@ class Table(Resource):
         else:
             self.logger.debug("Records: " + str(records))
 
-            if records is None:
+            if records is None or len(records) < 1:
                 AbortLogger.log_and_abort(404, self.logger.debug, "No records meet the query parameters")
             else:
                 return records
