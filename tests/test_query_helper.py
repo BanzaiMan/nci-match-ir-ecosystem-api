@@ -1,13 +1,7 @@
 import unittest
 
 from ddt import ddt, data, unpack
-import sys
-
-
-sys.path.append('..')
 from common.query_helper import QueryHelper
-
-from boto3.dynamodb.conditions import Attr
 
 
 @ddt

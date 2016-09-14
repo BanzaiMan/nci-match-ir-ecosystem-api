@@ -19,8 +19,8 @@ class TestAliquot(unittest.TestCase):
              "site_ip_address": "129.43.127.133",
              "molecular_id": "SC_YQ111",
              "site": "mocha"
-         }, 'SC_YQ111', 200
-        ),
+         },
+         'SC_YQ111', 200),
         ({}, 'SC_YQ999', 404)
     )
     @unpack

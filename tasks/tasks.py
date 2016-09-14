@@ -17,6 +17,7 @@ app = Celery('tasks', broker=BROKER__URL)
 
 EnvironmentHelper.set_environment(logger.info)
 
+
 # I don't think we will use this for sample control as our sample control creation of records are not done through
 # the queueing system but directly on the database. However, I'll leave this for now.
 @app.task
@@ -44,8 +45,8 @@ def update_ir(update_message):
 def process_ir_file(file_process_message):
     logger.info("Updating sample_controls table before processing file" + str(file_process_message))
     new_file_process_message = file_process_message.copy()
-    # after running SampleControlAccessor().update(file_process_message), key 'molecular_id' will be removed from file_process_message
-    # see sample_control_access.py line37
+    # after running SampleControlAccessor().update(file_process_message), key 'molecular_id' will be
+    # removed from file_process_message. See sample_control_access.py line37
     SampleControlAccessor().update(file_process_message)
 
     try:

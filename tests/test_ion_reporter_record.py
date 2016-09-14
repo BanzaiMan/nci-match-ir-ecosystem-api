@@ -11,7 +11,6 @@ class TestIonReporterTable(unittest.TestCase):
         # Starting flask server
         self.app = app.app.test_client()
 
-
     @data(
             ({"status": "Contacted 5 minutes ago", "last_contact": "August 29, 2016 2:00 PM GMT"}, 'IR_WO3IA', 200),
             ({}, 'IR_WO4IA', 404)

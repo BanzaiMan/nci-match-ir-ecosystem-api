@@ -12,7 +12,7 @@ class QueryHelper(object):
         logger.debug(str(multidict_query))
 
         filter_expression = None
-        #for key, value in multidict_query.iteritems(multi=False):
+        # for key, value in multidict_query.iteritems(multi=False):
         for key, value in multidict_query.iteritems():
             if filter_expression is not None:
                 filter_expression = filter_expression & Attr(key).eq(value)

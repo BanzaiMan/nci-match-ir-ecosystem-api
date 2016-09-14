@@ -44,9 +44,9 @@ class S3Accessor(object):
         self.logger.info("*********** file_s3_path=" + file_s3_path)
         try:
             s3_url = self.client.generate_presigned_url('get_object',
-                                                      Params={'Bucket': self.bucket, 'Key': file_s3_path},
-                                                      ExpiresIn=__builtin__.environment_config[__builtin__.environment]
-                                                      ['aws_download_time_limit'])
+                                                        Params={'Bucket': self.bucket, 'Key': file_s3_path},
+                                                        ExpiresIn=__builtin__.environment_config
+                                                        [__builtin__.environment]['aws_download_time_limit'])
         except Exception as e:
             self.logger.error("Failed to create s3 download url because: " + e.message)
             raise

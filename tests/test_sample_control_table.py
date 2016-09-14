@@ -13,8 +13,8 @@ class TestSampleControlTable(unittest.TestCase):
 
     @data(
         ([{"site": "mocha", "control_type": "no_template",
-             "date_molecular_id_created": "2016-08-18 19:56:19.766",
-             "molecular_id": "SC_SA1CB", "ion_reporter_id": "IR_WAO85"}], '', 200),
+           "date_molecular_id_created": "2016-08-18 19:56:19.766",
+           "molecular_id": "SC_SA1CB", "ion_reporter_id": "IR_WAO85"}], '', 200),
         (None, '?site=brent', 404),
         ([], '', 404)
     )

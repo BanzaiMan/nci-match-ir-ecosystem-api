@@ -90,24 +90,20 @@ class TestSequenceFile(unittest.TestCase):
     @data(
             ('SC_YQ111', 'vcf', None,
              {'site_ip_address': '129.43.127.133',
-               'control_type': 'no_template',
-               'site': 'mocha',
-               'vcf_name': 'mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_v2.vcf',
-               'date_molecular_id_created': '2016-08-28 16:56:29.333',
-               'molecular_id': 'SC_YQ111',
-               'analysis_id': 'SC_YQ111_SC_YQ111_k123_v1'
-             }
-            ),
+              'control_type': 'no_template',
+              'site': 'mocha',
+              'vcf_name': 'mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_v2.vcf',
+              'date_molecular_id_created': '2016-08-28 16:56:29.333',
+              'molecular_id': 'SC_YQ111',
+              'analysis_id': 'SC_YQ111_SC_YQ111_k123_v1'}),
             ('SC_YQ111', 'bam', 'cdna',
              {'site_ip_address': '129.43.127.133',
-               'control_type': 'no_template',
-               'site': 'mocha',
-               'cdna_bam_name': 'mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_RNA_v2.bam',
-               'date_molecular_id_created': '2016-08-28 16:56:29.333',
-               'molecular_id': 'SC_YQ111',
-               'analysis_id': 'SC_YQ111_SC_YQ111_k123_v1'
-             }
-            )
+              'control_type': 'no_template',
+              'site': 'mocha',
+              'cdna_bam_name': 'mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_RNA_v2.bam',
+              'date_molecular_id_created': '2016-08-28 16:56:29.333',
+              'molecular_id': 'SC_YQ111',
+              'analysis_id': 'SC_YQ111_SC_YQ111_k123_v1'})
          )
     @unpack
     @patch('resources.sequence_file.S3Accessor')
