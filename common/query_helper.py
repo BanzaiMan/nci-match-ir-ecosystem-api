@@ -21,8 +21,8 @@ class QueryHelper(object):
 
             logger.debug("Filter expression created: " + str(filter_expression))
             return filter_expression
-        else:
-            raise Exception("Must pass in a dictionary or mutlidict_query")
+
+        raise Exception("Must pass in a dictionary or mutlidict_query")
 
     @staticmethod
     def create_key_dict(function_description, key, *additional_keys):
