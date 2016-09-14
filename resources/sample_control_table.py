@@ -13,6 +13,7 @@ parser = reqparse.RequestParser()
 # URI. From there other fields can be updated if needed.
 parser.add_argument('control_type', type=str, required=False)
 parser.add_argument('site',         type=str, required=False)
+parser.add_argument('projection',   type=str, required=False, action='append')
 
 MOLECULAR_ID_LENGTH = 5
 

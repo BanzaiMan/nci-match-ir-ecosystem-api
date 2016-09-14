@@ -127,6 +127,13 @@ echo -e "${CYAN}***********************************************${NC}"
 curl -X GET "${URL}/api/v1/sample_controls?site=mocha&control_type=no_template"
 
 echo -e "${CYAN}***********************************************${NC}"
+echo -e "${BLUE}GET /api/v1/sample_controls?site=mocha&projection=site&projection=molecular_id${NC}"
+echo -e "${PURPLE}Return back only the sample controls that match a site and then only return the attributes listed${NC}"
+echo -e "${CYAN}***********************************************${NC}"
+# Most awesome command ever! :-)
+curl -v -X GET "${URL}/api/v1/sample_controls?site=mocha&projection=site&projection=molecular_id"
+
+echo -e "${CYAN}***********************************************${NC}"
 echo -e "${BLUE}POST /api/v1/sample_controls?site={site}&control_type={sample_control_type}${NC}"
 echo -e "${PURPLE}Creates a new molecular id.${NC}"
 echo -e "${CYAN}***********************************************${NC}"

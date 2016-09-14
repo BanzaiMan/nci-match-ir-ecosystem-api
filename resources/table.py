@@ -18,6 +18,7 @@ class Table(Resource):
         self.logger.info("GET called for accessor: " + self.accessor.__class__.__name__)
         args = request.args
         self.logger.debug(str(args))
+        projection_list, args = DictionaryHelper.get_projection(args)
         try:
             records = self.accessor().scan(args) if DictionaryHelper.has_values(args) \
                 else self.accessor().scan(None)
@@ -29,7 +30,11 @@ class Table(Resource):
             if records is None or len(records) < 1:
                 AbortLogger.log_and_abort(404, self.logger.debug, "No records meet the query parameters")
             else:
-                return records
+                if len(records) > 0:
+                    if projection_list is not None and len(projection_list) > 0:
+                        return [{str(item): record[str(item)] for item in projection_list if item in record} for record in records]
+                    else:
+                        return records
 
     def get_unique_key(self):
         new_record_id = ""

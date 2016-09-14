@@ -4,6 +4,20 @@ from werkzeug.datastructures import ImmutableMultiDict
 class DictionaryHelper(object):
 
     @staticmethod
+    def get_projection(dictionary):
+        if type(dictionary) is ImmutableMultiDict and dictionary is not None:
+            projection_list = list()
+            non_projection_dictionary = dict()
+            for key, value in dictionary.iteritems():
+                if key == 'projection':
+                    projection_list = dictionary.getlist(key)
+                else:
+                    non_projection_dictionary[key] = value
+            return projection_list, non_projection_dictionary
+        else:
+            raise Exception("Must pass in a ImmutableMultiDict")
+
+    @staticmethod
     def has_values(dictionary):
         if type(dictionary) is ImmutableMultiDict or type(dictionary) is dict:
             if dictionary is not None:
