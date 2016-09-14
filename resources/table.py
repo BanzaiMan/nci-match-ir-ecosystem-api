@@ -7,8 +7,9 @@ from common.string_helper import StringHelper
 
 class Table(Resource):
 
-    def __init__(self, accessor, key, id_len):
+    def __init__(self, accessor, key, id_len, id_prefix):
         self.key = key
+        self.id_prefix = id_prefix
         self.id_len = id_len
         self.accessor = accessor
         self.logger = logging.getLogger(__name__)
@@ -34,10 +35,7 @@ class Table(Resource):
         new_record_id = ""
         unique_key = False
         while not unique_key:
-            if self.key.startswith('IR'):
-                new_record_id = StringHelper.generate_ion_reporter_id(self.id_len)
-            else:
-                new_record_id = StringHelper.generate_molecular_id(self.id_len)
+            new_record_id = StringHelper.generate_molecular_id(self.id_prefix, self.id_len)
             results = self.accessor().get_item({self.key: new_record_id})
             self.logger.debug(results)
 

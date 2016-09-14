@@ -27,6 +27,7 @@ class TestQueryHelper(unittest.TestCase):
 
     @data(
         ('get', {'ion_reporter_id': 'IR_K8CVV'}, '(((),),)', {'ion_reporter_id': 'IR_K8CVV'}),
+        ('get', {'molecular_id': 'SC_K8CVV'}, '(((),),)', {'molecular_id': 'SC_K8CVV'}),
     )
     @unpack
     def test_create_key_dict(self, function_description, key, additional_keys, return_result):

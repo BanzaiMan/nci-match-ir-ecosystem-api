@@ -28,7 +28,7 @@ class SampleControlTable(Table):
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)
-        Table.__init__(self, SampleControlAccessor, 'molecular_id', MOLECULAR_ID_LENGTH)
+        Table.__init__(self, SampleControlAccessor, 'molecular_id', MOLECULAR_ID_LENGTH, 'SC_')
 
     def delete(self):
         self.logger.info("Sample control Batch Delete called")
