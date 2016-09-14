@@ -13,11 +13,11 @@ script:
 after_success:
 - docker build -t matchbox/nci-match-ir-ecoystem-api .
 - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-- docker tag -f matchbox/nci-match-ir-ecoystem-api matchbox/nci-match-ir-ecoystem-api:latest
+- docker tag -f matchbox/nci-match-ir-ecosystem-api matchbox/nci-match-ir-ecosystem-api:latest
 - docker images
-- docker push matchbox/nci-match-ir-ecoystem-api:latest
+- docker push matchbox/nci-match-ir-ecosystem-api:latest
 #Deploy to AWS IntTest
-- docker run -it --rm -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION=us-east-1 silintl/ecs-deploy --cluster PedMatch-IntTest-Backend  --service-name uMatch-nci-match-ir-ecoystem-api-INTTEST -i matchbox/nci-match-ir-ecoystem-api:latest
+- docker run -it --rm -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION=us-east-1 silintl/ecs-deploy --cluster PedMatch-IntTest-Backend  --service-name uMatch-nci-match-ir-ecosystem-api-INTTEST -i matchbox/nci-match-ir-ecosystem-api:latest
 #Trigger Travis bdd tests
 # - curl -s -X POST -H "Content-Type:application/json" -H "Accept:application/json" -H "Travis-API-Version:3" -H "Authorization:token $TRAVIS_TOKEN" -d "{\"request\":{\"message\":\"Triggered by nci-match-patient-api $TRAVIS_COMMIT\", \"branch\":\"master\", \"config\":{\"env\":{\"matrix\":[\"TRIGGER_REPO=nci-match-patient-api;CUC_TAG=@patients\"]}}}}" https://api.travis-ci.org/repo/CBIIT%2Fnci-uMatch-bddtests/requests
 - codeclimate-test-reporter
