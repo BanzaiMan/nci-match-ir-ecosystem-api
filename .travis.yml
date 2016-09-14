@@ -11,11 +11,14 @@ script:
 #- python -m unittest discover tests
 - coverage run -m unittest discover tests
 after_success:
-- docker build -t matchbox/nci-match-ir-ecosystem-api .
+#- docker build -t matchbox/nci-match-ir-ecosystem-api .
+- docker build -f ./Dockerfile.python -t matchbox/nci-match-ir-ecosystem-api:latest .
+- docker build -f ./Dockerfile.celery -t matchbox/nci-match-ir-ecosystem-processor:latest .
 - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-- docker tag -f matchbox/nci-match-ir-ecosystem-api matchbox/nci-match-ir-ecosystem-api:latest
+#- docker tag -f matchbox/nci-match-ir-ecosystem-api matchbox/nci-match-ir-ecosystem-api:latest
 - docker images
 - docker push matchbox/nci-match-ir-ecosystem-api:latest
+- docker push matchbox/nci-match-ir-ecosystem-processor:latest
 #Deploy to AWS IntTest
 - docker run -it --rm -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION=us-east-1 silintl/ecs-deploy --cluster PedMatch-IntTest-Backend  --service-name uMatch-nci-match-ir-ecosystem-api-INTTEST -i matchbox/nci-match-ir-ecosystem-api:latest
 #Trigger Travis bdd tests

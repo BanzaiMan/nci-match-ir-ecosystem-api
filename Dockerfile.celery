@@ -11,6 +11,10 @@ RUN pip install -r /nci-match-ir-ecosystem-api/requirements.txt
 # Add the app code 
 COPY . /nci-match-ir-ecosystem-api/
 
+#Avoid running celery as root
+#RUN cat /etc/passwd
+USER nobody
+
 # Default command 
-#CMD ["python", "/nci-match-ir-ecosystem-api/app.py" ]
-CMD cd /nci-match-ir-ecosystem-api && python ./app.py
+#CMD cd /nci-match-ir-ecosystem-api && python ./app.py
+CMD cd /nci-match-ir-ecosystem-api && celery -A tasks.tasks worker --loglevel=INFO
