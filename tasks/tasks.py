@@ -4,8 +4,7 @@ import logging
 from accessors.ion_reporter_accessor import IonReporterAccessor
 from accessors.sample_control_accessor import SampleControlAccessor
 from celery import Celery
-from common.vcf_processor import VcfFileProcessor
-from common.bam_processor import BamFileProcessor
+from common.sequence_file_processor import SequenceFileProcessor
 from accessors.s3_accessor import S3Accessor
 from werkzeug.utils import secure_filename
 from common.environment_helper import EnvironmentHelper
@@ -67,17 +66,17 @@ def process_file_message(file_process_message):
     if 'vcf_name' in file_process_message and file_process_message['vcf_name'] is not None:
         logger.info("Processing VCF ")
         downloaded_file_path = S3Accessor().download(file_process_message['vcf_name'])
-        new_file_path = VcfFileProcessor().vcf_to_tsv(downloaded_file_path)
+        new_file_path = SequenceFileProcessor().vcf_to_tsv(downloaded_file_path)
         key = 'tsv_name'
     elif 'dna_bam_name' in file_process_message and file_process_message['dna_bam_name'] is not None:
         logger.info("Processing DNA BAM ")
         downloaded_file_path = S3Accessor().download(file_process_message['dna_bam_name'])
-        new_file_path = BamFileProcessor().bam_to_bai(downloaded_file_path)
+        new_file_path = SequenceFileProcessor().bam_to_bai(downloaded_file_path)
         key = 'dna_bai_name'
     elif 'cdna_bam_name' in file_process_message and file_process_message['cdna_bam_name'] is not None:
         logger.info("Processing RNA BAM ")
         downloaded_file_path = S3Accessor().download(file_process_message['cdna_bam_name'])
-        new_file_path = BamFileProcessor().bam_to_bai(downloaded_file_path)
+        new_file_path = SequenceFileProcessor().bam_to_bai(downloaded_file_path)
         key = 'cdna_bai_name'
     else:
         logger.error("No file needs process for " + str(file_process_message))
