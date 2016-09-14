@@ -1,12 +1,12 @@
 import unittest
 from mock import patch
 from ddt import ddt, data, unpack
-import sys
-sys.path.append("..")
 import app
 import json
 
+
 @ddt
+@patch('resources.sequence_file.SampleControlAccessor')
 class TestSequenceFile(unittest.TestCase):
 
     def setUp(self):
@@ -52,7 +52,6 @@ class TestSequenceFile(unittest.TestCase):
          )
     )
     @unpack
-    @patch('resources.sequence_file.SampleControlAccessor')
     @patch('resources.sequence_file.S3Accessor')
     def test_get_file_url(self, molecular_id, file_format, nucleic_acid_type, item, get_download_url_return,
                           expect_return, mock_s3_accessor, mock_sc_accessor):
@@ -74,7 +73,6 @@ class TestSequenceFile(unittest.TestCase):
             ('SC_YQ111', 'bam', 'cdna')
         )
     @unpack
-    @patch('resources.sequence_file.SampleControlAccessor')
     def test_get_item_exception(self, molecular_id, file_format, nucleic_acid_type, mock_sc_accessor):
         instance = mock_sc_accessor.return_value
         instance.get_item.side_effect = Exception('Testing get_item exception')
@@ -112,7 +110,6 @@ class TestSequenceFile(unittest.TestCase):
             )
          )
     @unpack
-    @patch('resources.sequence_file.SampleControlAccessor')
     @patch('resources.sequence_file.S3Accessor')
     def test_get_file_url_exception(self, molecular_id, file_format, nucleic_acid_type, item,
                                                  mock_s3_accessor, mock_sc_accessor):
@@ -120,7 +117,6 @@ class TestSequenceFile(unittest.TestCase):
         s3_instance.get_download_url.side_effect = Exception('Testing get_download_url exception')
         instance = mock_sc_accessor.return_value
         instance.get_item.return_value = item
-
 
         if nucleic_acid_type is None:
             return_value = self.app.get('/api/v1/sequence_files/' + molecular_id + '/' + file_format)
@@ -156,7 +152,6 @@ class TestSequenceFile(unittest.TestCase):
              )
         )
     @unpack
-    @patch('resources.sequence_file.SampleControlAccessor')
     @patch('resources.sequence_file.S3Accessor')
     def test_get_file_url_key_error_exception(self, molecular_id, file_format, nucleic_acid_type, item,
                                     mock_s3_accessor, mock_sc_accessor):
