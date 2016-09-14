@@ -1,6 +1,7 @@
-from boto3.dynamodb.conditions import Attr
 import logging
 import json
+from boto3.dynamodb.conditions import Attr
+from werkzeug.datastructures import ImmutableMultiDict
 
 
 class QueryHelper(object):
@@ -12,7 +13,7 @@ class QueryHelper(object):
         logger.debug(str(multidict_query))
 
         filter_expression = None
-        if type(multidict_query) is multidict_query or type(multidict_query) is dict:
+        if type(multidict_query) is ImmutableMultiDict or type(multidict_query) is dict:
             for key, value in multidict_query.iteritems():
                 if filter_expression is not None:
                     filter_expression = filter_expression & Attr(key).eq(value)
