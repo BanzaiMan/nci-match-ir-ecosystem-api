@@ -48,6 +48,42 @@ class TestS3Accessor(unittest.TestCase):
 
 
     @data(
+        ('mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_RNA_v2.bam',
+         '/tmp/SC_YQ111_SC_YQ111_analysis666_RNA_v2.bam')
+    )
+    @unpack
+    @patch('accessors.s3_accessor.boto3')
+    def test_download(self, file_s3_path, expected_return, mock_boto3):
+        instance = mock_boto3.return_value
+        instance.client.return_value = True
+        instance.resource.return_value = True
+        s3_accessor = S3Accessor()
+        s3_accessor.resource.meta.client.download_file.return_value = True
+        return_value = s3_accessor.download(file_s3_path)
+        print "===============" + str(return_value)
+        assert (return_value == expected_return)
+
+
+    @data(
+        ('/tmp/SC_YQ111_SC_YQ111_analysis666_RNA_v2.bam',
+         'mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_RNA_v2.bam',
+         'Testing s3 download exception')
+    )
+    @unpack
+    @patch('accessors.s3_accessor.boto3')
+    def test_download_exception(self, local_file_path, file_s3_path, exception_message, mock_boto3):
+        instance = mock_boto3.return_value
+        instance.client.return_value = True
+        instance.resource.return_value = True
+        s3_accessor = S3Accessor()
+        s3_accessor.resource.meta.client.download_file.side_effect = Exception(exception_message)
+        try:
+            s3_accessor.download(file_s3_path)
+        except Exception as e:
+            assert (e.message == exception_message)
+
+
+    @data(
             ('mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_RNA_v2.bam',
              'https://pedmatch-dev.s3.amazonaws.com/mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_RNA_v2.bam?AWSAccessKeyId=AKIAIJLVHIQJ3UBNO6OA&Expires=1473369011&Signature=u9fDnHtEH%2Bf70O1fV1kBBNEDXWQ%3D',
              'https://pedmatch-dev.s3.amazonaws.com/mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_RNA_v2.bam?AWSAccessKeyId=AKIAIJLVHIQJ3UBNO6OA&Expires=1473369011&Signature=u9fDnHtEH%2Bf70O1fV1kBBNEDXWQ%3D'

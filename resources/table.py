@@ -7,8 +7,9 @@ from common.string_helper import StringHelper
 
 class Table(Resource):
 
-    def __init__(self, accessor, key, id_len):
+    def __init__(self, accessor, key, id_len, id_prefix):
         self.key = key
+        self.id_prefix = id_prefix
         self.id_len = id_len
         self.accessor = accessor
         self.logger = logging.getLogger(__name__)
@@ -17,6 +18,7 @@ class Table(Resource):
         self.logger.info("GET called for accessor: " + self.accessor.__class__.__name__)
         args = request.args
         self.logger.debug(str(args))
+        projection_list, args = DictionaryHelper.get_projection(args)
         try:
             records = self.accessor().scan(args) if DictionaryHelper.has_values(args) \
                 else self.accessor().scan(None)
@@ -28,13 +30,17 @@ class Table(Resource):
             if records is None or len(records) < 1:
                 AbortLogger.log_and_abort(404, self.logger.debug, "No records meet the query parameters")
             else:
-                return records
+                if len(records) > 0:
+                    if projection_list is not None and len(projection_list) > 0:
+                        return [{str(item): record[str(item)] for item in projection_list if item in record} for record in records]
+                    else:
+                        return records
 
     def get_unique_key(self):
         new_record_id = ""
         unique_key = False
         while not unique_key:
-            new_record_id = StringHelper.generate_ion_reporter_id(self.id_len)
+            new_record_id = StringHelper.generate_molecular_id(self.id_prefix, self.id_len)
             results = self.accessor().get_item({self.key: new_record_id})
             self.logger.debug(results)
 

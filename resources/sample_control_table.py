@@ -13,6 +13,7 @@ parser = reqparse.RequestParser()
 # URI. From there other fields can be updated if needed.
 parser.add_argument('control_type', type=str, required=False)
 parser.add_argument('site',         type=str, required=False)
+parser.add_argument('projection',   type=str, required=False, action='append')
 
 MOLECULAR_ID_LENGTH = 5
 
@@ -28,7 +29,7 @@ class SampleControlTable(Table):
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)
-        Table.__init__(self, SampleControlAccessor, 'molecular_id', MOLECULAR_ID_LENGTH)
+        Table.__init__(self, SampleControlAccessor, 'molecular_id', MOLECULAR_ID_LENGTH, 'SC_')
 
     def delete(self):
         self.logger.info("Sample control Batch Delete called")

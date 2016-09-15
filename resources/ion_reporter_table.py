@@ -12,7 +12,8 @@ MESSAGE_500 = Template("Server Error contact help: $error")
 MESSAGE_404 = Template("No ion reporters with id: $ion_reporter_id found")
 
 parser = reqparse.RequestParser()
-parser.add_argument('ion_reporter_id', type=str, required=False, location='json', help="'ion_reporter_id' is required")
+parser.add_argument('ion_reporter_id', type=str, required=False, location='json')
+parser.add_argument('projection', type=str, required=False, action='append')
 
 ION_REPORTER_ID_LENGTH = 5
 
@@ -20,7 +21,7 @@ ION_REPORTER_ID_LENGTH = 5
 class IonReporterTable(Table):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
-        Table.__init__(self, IonReporterAccessor, 'ion_reporter_id', ION_REPORTER_ID_LENGTH)
+        Table.__init__(self, IonReporterAccessor, 'ion_reporter_id', ION_REPORTER_ID_LENGTH, 'IR_')
 
     def post(self):
         self.logger.info("POST Request to create a new ion reporter")
