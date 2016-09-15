@@ -11,13 +11,19 @@ class TestStringHelper(unittest.TestCase):
     @data(
         ('SC_'),
         ('TR_'),
-        ('')
+        (''),
+        (None),
+        (234)
     )
     @patch('common.string_helper.StringHelper.generate_random_string')
     def test_generate_molecular_id(self, prefix, random_string_function):
-        random_string_function.return_value = "TR45G"
-        random_string = StringHelper.generate_molecular_id(prefix)
-        assert random_string.startswith(prefix)
+        try:
+            random_string_function.return_value = "TR45G"
+            random_string = StringHelper.generate_molecular_id(prefix)
+            assert random_string.startswith(prefix)
+        except Exception, e:
+            assert str(e) == 'Prefix must be string.'
+
 
     @data((5, 5, ""),
           (0, "", "Invalid Input"),
