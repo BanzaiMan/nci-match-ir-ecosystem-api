@@ -51,7 +51,7 @@ api.add_resource(SampleControlRecord, '/api/v1/sample_controls/<string:molecular
 api.add_resource(VariantSequenceFile, '/api/v1/sequence_files/<string:molecular_id>/<string:file_format>')
 # TODO: still working on this
 api.add_resource(S3AuthenticationPolicy,
-                 '/api/v1/sequence_files/<string:molecular_id>/<string:analysis_id>/<string:file_name')
+                 '/api/v1/files/<string:molecular_id>/<string:analysis_id>/<string:file_name>')
 
 # Paths for downloading bam or bai file, format = bam|bai, type=cdna|dna
 api.add_resource(AlignmentSequenceFile,
