@@ -94,7 +94,7 @@ class DynamoDBAccessor(object):
         if not additional_keys:
             all_keys = QueryHelper.create_key_dict('update', key)
         else:
-            all_keys = QueryHelper.create_key_dict('update', key, additional_keys)
+            all_keys = QueryHelper.create_key_dict('update', key)
 
         self.logger.debug("Key=" + str(all_keys))
         self.logger.debug("UpdateExpression=" + str(update_expression))
@@ -179,7 +179,7 @@ class DynamoDBAccessor(object):
     def __item(self, function, function_description, key, *additional_keys):
         self.logger.debug("Dynamodb " + function_description + "_item with Keys called")
         self.logger.debug(str(key))
-        all_keys = QueryHelper.create_key_dict(function_description, key, additional_keys)
+        all_keys = QueryHelper.create_key_dict(function_description, key)
 
         self.logger.debug("Performing item " + function_description + " from table: " + self.table.name)
 
