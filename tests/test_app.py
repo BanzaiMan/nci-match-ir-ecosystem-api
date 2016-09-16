@@ -38,9 +38,8 @@ class TestApp(unittest.TestCase):
         assert m_str.called_once()
 
 # TODO: write unittests. Start with something simple like the dictionaryHelper, QueryHelper, and StringHelper
-if __name__ == '__main__':
-    unittest.main()
-
+# if __name__ == '__main__':
+#     unittest.main()
 
 
 

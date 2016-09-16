@@ -30,5 +30,5 @@ class TestDictionaryHelper(unittest.TestCase):
     def test_keys_have_value(self, test_dic, key, result):
         assert DictionaryHelper.keys_have_value(test_dic, key) == result
 
-if __name__ == '__main__':
-    unittest.main()
+# if __name__ == '__main__':
+#     unittest.main()

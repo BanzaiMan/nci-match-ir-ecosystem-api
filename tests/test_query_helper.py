@@ -57,6 +57,6 @@ class TestQueryHelper(unittest.TestCase):
             print e
             assert str(e) == return_result
 
-if __name__ == '__main__':
-    unittest.main()
+# if __name__ == '__main__':
+#     unittest.main()
 

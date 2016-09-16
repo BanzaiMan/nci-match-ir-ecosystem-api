@@ -78,5 +78,5 @@ class TestIonReporterTable(unittest.TestCase):
         assert "Ion reporter creation failed" in return_value.data
 
 
-if __name__ == '__main__':
-    unittest.main()
+# if __name__ == '__main__':
+#     unittest.main()
