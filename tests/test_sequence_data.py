@@ -14,9 +14,21 @@ class TestSequenceData(unittest.TestCase):
         pass
 
     @data(
-        # Should be returning a 404
         ('sample_controls',
-         'IR_WAO95', "No sample controls sequenced with id:", 200, {'projection': None}),
+         'IR_WAO95', {u'message': u'No sample controls sequenced with id: IR_WAO95 found. '
+                                  u'You have requested this URI [/api/v1/ion_reporters/IR_WAO95/sample_controls] '
+                                  u'but did you mean /api/v1/sample_controls or /api/v1/ion_reporters/version or '
+                                  u'/api/v1/sample_controls/<string:molecular_id> ?'}, 200, {'projection': None}),
+        ('sample_controls',
+         'IR_WAO85', [{"site": "mocha", "control_type": "no_template",
+                       "date_molecular_id_created": "2016-08-18 19:56:19.766",
+                       "molecular_id": "SC_SA1CB", "ion_reporter_id": "IR_WAO85"},
+                      {"site": "mocha", "control_type": "no_template",
+                       "date_molecular_id_created": "2016-08-18 19:56:19.766",
+                       "molecular_id": "SC_SAWCB", "ion_reporter_id": "IR_WAO85"},
+                      {"site": "mocha", "control_type": "positive",
+                       "date_molecular_id_created": "2016-08-18 20:09:45.667", "molecular_id": "SC_67VKV",
+                       "ion_reporter_id": "IR_WAO85"}], 200, {'projection': None}),
 
         ('patients',
          'IR_WAO85', {u'message': u'Finding patients sequenced with IR: IR_WAO85 not yet implemented.'}, 501, {'projection': ['site_ip_address', 'control_type', 'molecular_id']}),
