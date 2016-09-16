@@ -96,5 +96,5 @@ class TestSampleControlRecord(unittest.TestCase):
         assert return_value.status_code == 500
         assert "Testing update_item exception" in return_value.data
 
-if __name__ == '__main__':
-    unittest.main()
+# if __name__ == '__main__':
+#     unittest.main()

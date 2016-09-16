@@ -85,5 +85,5 @@ class TestSampleControlTable(unittest.TestCase):
         assert "Sample Control creation failed" in return_value.data
 
 
-if __name__ == '__main__':
-    unittest.main()
+# if __name__ == '__main__':
+#     unittest.main()

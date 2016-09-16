@@ -118,5 +118,5 @@ class TestS3Accessor(unittest.TestCase):
         except Exception as e:
             assert (e.message == exception_message)
 
-if __name__ == '__main__':
-    unittest.main()
+# if __name__ == '__main__':
+#     unittest.main()

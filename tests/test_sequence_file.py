@@ -164,5 +164,5 @@ class TestSequenceFile(unittest.TestCase):
         assert return_value.status_code == 404
         assert "Testing get_download_url s3 key" in return_value.data
 
-if __name__ == '__main__':
-    unittest.main()
+# if __name__ == '__main__':
+#     unittest.main()
