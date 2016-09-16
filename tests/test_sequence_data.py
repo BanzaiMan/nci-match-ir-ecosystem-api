@@ -14,8 +14,14 @@ class TestSequenceData(unittest.TestCase):
         pass
 
     @data(
+        # Should be returning a 404
+        ('sample_controls',
+         'IR_WAO95', "No sample controls sequenced with id:", 200),
+
         ('patients',
          'IR_WAO85', {u'message': u'Finding patients sequenced with IR: IR_WAO85 not yet implemented.'}, 501),
+
+       # Should be returning a 400.
         ('waleeds',
          'IR_WAO85', {u'message': u'Can only request patients or sample_controls. You requested: waleeds. '
                                   u'You have requested this URI [/api/v1/ion_reporters/IR_WAO85/waleeds] but did you '
@@ -29,7 +35,6 @@ class TestSequenceData(unittest.TestCase):
               "date_molecular_id_created": "2016-08-18 19:56:19.766"},
              {"ion_reporter_id": "IR_WAO85", "molecular_id": "SC_67VKV", "site": "mocha", "control_type": "positive",
               "date_molecular_id_created": "2016-08-18 20:09:45.667"}], 200),
-
     )
     @unpack
     def test_get(self, sequence_data, ion_reporter_id, expected_return, returned_stat_code, mock_sc_accessor):
@@ -40,7 +45,6 @@ class TestSequenceData(unittest.TestCase):
         print json.loads(return_value.data)
         assert return_value.status_code == returned_stat_code
         assert expected_return == json.loads(return_value.data)
-
 
     @data(
         ('sample_controls',
