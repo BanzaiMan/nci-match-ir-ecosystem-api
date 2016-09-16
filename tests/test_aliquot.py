@@ -58,5 +58,51 @@ class TestAliquot(unittest.TestCase):
         print return_value.data
         assert return_value.data.find(expected_results)
 
+
+    @data(
+        ('SC_YQ111', {}, False, 'Testing put item dictionary has_value exception')
+    )
+    @unpack
+    @patch('resources.aliquot.DictionaryHelper')
+    @patch('resources.aliquot.CeleryTaskAccessor')
+    def test_put_exception(self, molecular_id, update_dictionary, dict_has_value, exception_message,
+                           mock_celery_task_accessor_class, mock_dictionary_helper_class):
+        instance = mock_celery_task_accessor_class.return_value
+        instance.process_file(update_dictionary).return_value = dict_has_value
+        instance2 = mock_dictionary_helper_class.return_value
+        instance2.has_values.return_value = dict_has_value
+
+        return_value = self.app.put('/api/v1/aliquot/' + molecular_id,
+                                    data=json.dumps(update_dictionary),
+                                    content_type='application/json')
+        print return_value.status_code
+        print return_value.data
+        assert (return_value.status_code == 400)
+
+    @data(
+        ('SC_5AMCC',
+         {'vcf_name': 'mocha/SC_5AMCC/SC_5AMCC_SC_5AMCC_k123_v1/SC_5AMCC_SC_5AMCC_analysis667_v1.vcf', 'site': 'mocha',
+          'molecular_id': 'SC_5AMCC', 'analysis_id': 'SC_5AMCC_SC_5AMCC_k123_v1'}, True,
+         ' Testing put process_file exception')
+    )
+    @unpack
+    @patch('resources.aliquot.DictionaryHelper')
+    @patch('resources.aliquot.CeleryTaskAccessor')
+    def test_put_process_file_exception(self, molecular_id, update_dictionary, dict_has_value, exception_message,
+                                        mock_celery_task_accessor_class, mock_dictionary_helper_class):
+        instance = mock_celery_task_accessor_class.return_value
+        instance.process_file.side_effect = Exception(exception_message)
+        instance2 = mock_dictionary_helper_class.return_value
+        instance2.has_values.return_value = dict_has_value
+
+        return_value = self.app.put('/api/v1/aliquot/' + molecular_id,
+                                    data=json.dumps(update_dictionary),
+                                    content_type='application/json')
+        print "-----------------" + str(return_value.status_code)
+        print return_value.data
+        assert return_value.status_code == 500
+        assert exception_message in return_value.data
+
+
 if __name__ == '__main__':
     unittest.main()
