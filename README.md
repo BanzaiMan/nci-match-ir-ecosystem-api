@@ -6,7 +6,9 @@
 
 pip install -r requirements.txt
 
-Celery must be started in order for updates to database to be processed. After configureing AWS environment variables and installing celery. It can be started by typing in the application root directory:
+Celery must be started in order for updates to database to be processed. 
+After configuring AWS environment variables and installing celery. 
+It can be started by typing in the application root directory:
 **celery -A tasks.tasks worker --loglevel=INFO**
 
 Main application is started as
