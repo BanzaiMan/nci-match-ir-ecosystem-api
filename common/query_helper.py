@@ -14,7 +14,7 @@ class QueryHelper(object):
 
         filter_expression = None
         if type(multidict_query) is ImmutableMultiDict or type(multidict_query) is dict:
-            if DictionaryHelper.has_values(multidict_query) == True:
+            if DictionaryHelper.has_values(multidict_query):
                 for key, value in multidict_query.iteritems():
                     if filter_expression is not None:
                         filter_expression = filter_expression & Attr(key).eq(value)

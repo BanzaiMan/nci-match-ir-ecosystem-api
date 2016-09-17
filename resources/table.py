@@ -32,7 +32,8 @@ class Table(Resource):
             else:
                 if len(records) > 0:
                     if projection_list is not None and len(projection_list) > 0:
-                        return [{str(item): record[str(item)] for item in projection_list if item in record} for record in records]
+                        return [{str(item): record[str(item)] for item in projection_list if item in record}
+                                for record in records]
                     else:
                         return records
 
