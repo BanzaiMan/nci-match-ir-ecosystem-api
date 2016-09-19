@@ -14,6 +14,7 @@ class TestDictionaryHelper(unittest.TestCase):
         (ImmutableMultiDict([('a', 'b'), ('a', 'c')]), ([], {'a': 'b'})),
         (ImmutableMultiDict([('site', 'mocha')]), ([], {'site': 'mocha'})),
         (ImmutableMultiDict([('site', 'mocha'), ('control_type', 'no_template')]), ([], {'site': 'mocha', 'control_type': 'no_template'})),
+        ((ImmutableMultiDict([('site', u'mocha'), ('projection', u'site'), ('projection', u'molecular_id')])), ([u'site', u'molecular_id'], {'site': u'mocha'}))
     )
     @unpack
     def test_get_projection(self, dic1, expected_results):
