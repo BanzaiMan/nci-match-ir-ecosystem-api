@@ -158,7 +158,7 @@ echo -e "${BLUE}GET /api/v1/sample_controls/{molecular_id}${NC}"
 echo -e "${PURPLE}Return back the sample control for a specific molecular id.${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 
-curl -X GET "${URL}/api/v1/sample_controls/SC_YQ111"
+curl -X GET "${URL}/api/v1/sample_controls/SC_SA1CB"
 
 echo -e "${CYAN}***********************************************${NC}"
 echo -e "${BLUE}DELETE /api/v1/sample_controls/{molecular_id}${NC}"
@@ -172,18 +172,17 @@ echo -e "${BLUE}PUT /api/v1/sample_controls/{molecular_id}${NC}"
 echo -e "${PURPLE}JSON to update sample control record with${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 
-curl -X PUT -H 'Content-Type: application/json' -d @./item.json "${URL}/api/v1/sample_controls/SC_YQ111"
+curl -X PUT -H 'Content-Type: application/json' -d @./item.json "${URL}/api/v1/sample_controls/SC_SA1CB"
 
-curl -H 'Content-Type: application/json' -X PUT -d @./sc_update_data.json "${URL}/api/v1/sample_controls/SC_YQ111"
 
 echo -e "${CYAN}***********************************************${NC}"
 echo -e "${BLUE}GET /api/v1/sample_controls/{molecular_id}/{format}${NC}"
 echo -e "${PURPLE}format = vcf|tsv in this case${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 
-curl -X GET "${URL}/api/v1/sequence_files/SC_YQ111/vcf"
-curl -X GET "${URL}/api/v1/sequence_files/SC_YQ111/tsv"
-curl -X GET "${URL}/api/v1/sequence_files/SC_YQ111/pdf"
+curl -X GET "${URL}/api/v1/sequence_files/SC_SA1CB/vcf"
+curl -X GET "${URL}/api/v1/sequence_files/SC_SA1CB/tsv"
+curl -X GET "${URL}/api/v1/sequence_files/SC_SA1CB/pdf"
 
 echo -e "${CYAN}***********************************************${NC}"
 echo -e "${BLUE}GET /api/v1/sample_controls/{molecular_id}/{bam|bai}/{cdna|dna}${NC}"
@@ -191,10 +190,10 @@ echo -e "${PURPLE}format = bam|bai in this case and type = cdna|dna is required$
 echo -e "${PURPLE}These return back a link to download files for a specific sample control.${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 
-curl -X GET "${URL}/api/v1/sequence_files/SC_YQ111/bam/dna"
-curl -X GET "${URL}/api/v1/sequence_files/SC_YQ111/bai/dna"
-curl -X GET "${URL}/api/v1/sequence_files/SC_YQ111/bam/cdna"
-curl -X GET "${URL}/api/v1/sequence_files/SC_YQ111/bai/cdna"
+curl -X GET "${URL}/api/v1/sequence_files/SC_SA1CB/bam/dna"
+curl -X GET "${URL}/api/v1/sequence_files/SC_SA1CB/bai/dna"
+curl -X GET "${URL}/api/v1/sequence_files/SC_SA1CB/bam/cdna"
+curl -X GET "${URL}/api/v1/sequence_files/SC_SA1CB/bai/cdna"
 
 echo -e "${YELLOW}------------------------------------------------------------------------------------------------------------------------${NC}"
 
@@ -206,13 +205,13 @@ echo -e "${BLUE}GET /api/v1/aliquot/{molecular_id}${NC}"
 echo -e "${PURPLE}Returns data for molecular id if valid else 404${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 
-curl -X GET "${URL}/api/v1/aliquot/SC_YQ111"
+curl -X GET "${URL}/api/v1/aliquot/SC_SA1CB"
 
 echo -e "${CYAN}***********************************************${NC}"
 echo -e "${BLUE}PUT /api/v1/aliquot/{molecular_id}${NC}"
 echo -e "${PURPLE}Upload IR file names and this will update database, update s3 with processed files (bai and tsv)${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 
-curl -H 'Content-Type: application/json' -X PUT -d @./sc_update_data.json "${URL}/api/v1/aliquot/SC_YQ111"
+curl -H 'Content-Type: application/json' -X PUT -d @./sc_update_data.json "${URL}/api/v1/aliquot/SC_SA1CB"
 
 
