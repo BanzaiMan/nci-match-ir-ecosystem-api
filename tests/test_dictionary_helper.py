@@ -1,24 +1,27 @@
 import unittest
 from ddt import ddt, data, unpack
 from common.dictionary_helper import DictionaryHelper
-
+from werkzeug.datastructures import ImmutableMultiDict
 
 @ddt
 class TestDictionaryHelper(unittest.TestCase):
     @data(
-        ({'dic1': 'a'}, ([], {'dic1': 'a'})),
-        ({'dic1': None}, ([], {'dic1': None})),
+        ({'dic1': 'a'}, 'Must pass in a ImmutableMultiDict or dict'),
+        ({'dic1': None}, 'Must pass in a ImmutableMultiDict or dict'),
         ('', 'Must pass in a ImmutableMultiDict or dict'),
-        ({}, ([], {})),
+        ({}, 'Must pass in a ImmutableMultiDict or dict'),
         (None, 'Must pass in a ImmutableMultiDict or dict'),
-        ({'projection': ['site', 'ir_status']}, "'dict' object has no attribute 'getlist'"),
-        ({'projection': 'ir_status'}, "'dict' object has no attribute 'getlist'")
+        (ImmutableMultiDict([('a', 'b'), ('a', 'c')]), ([], {'a': 'b'})),
+        (ImmutableMultiDict([('site', 'mocha')]), ([], {'site': 'mocha'})),
+        (ImmutableMultiDict([('site', 'mocha'), ('control_type', 'no_template')]), ([], {'site': 'mocha', 'control_type': 'no_template'})),
     )
     @unpack
     def test_get_projection(self, dic1, expected_results):
         try:
+            print DictionaryHelper.get_projection(dic1)
             assert DictionaryHelper.get_projection(dic1) == expected_results
         except Exception as e:
+            print e
             assert str(e) == expected_results
     @data(
         ({'dic1': 'a'}, True),
