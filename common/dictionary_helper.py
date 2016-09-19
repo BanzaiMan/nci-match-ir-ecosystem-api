@@ -5,7 +5,7 @@ class DictionaryHelper(object):
 
     @staticmethod
     def get_projection(dictionary):
-        if type(dictionary) is ImmutableMultiDict and dictionary is not None:
+        if type(dictionary) is ImmutableMultiDict or type(dictionary) is dict and dictionary is not None:
             projection_list = list()
             non_projection_dictionary = dict()
             for key, value in dictionary.iteritems():
@@ -15,7 +15,7 @@ class DictionaryHelper(object):
                     non_projection_dictionary[key] = value
             return projection_list, non_projection_dictionary
         else:
-            raise Exception("Must pass in a ImmutableMultiDict")
+            raise Exception("Must pass in a ImmutableMultiDict or dict")
 
     @staticmethod
     def has_values(dictionary):
