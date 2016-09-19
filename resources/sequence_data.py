@@ -18,7 +18,8 @@ class SequenceData(Resource):
         self.logger = logging.getLogger(__name__)
 
     def get(self, ion_reporter_id, sequence_data):
-        self.logger.info("Getting sequence data for ion reporter with id: " + str(ion_reporter_id))
+        self.logger.info("Getting sequence data for ion reporter with id: " + str(ion_reporter_id) + " sequence_data: "
+                         + sequence_data)
         args = parser.parse_args()
 
         if sequence_data == 'patients':
@@ -36,7 +37,7 @@ class SequenceData(Resource):
                 AbortLogger.log_and_abort(404, self.logger.error,
                                           MESSAGE_404.substitute(ion_reporter_id=ion_reporter_id))
         else:
-            AbortLogger.log_and_abort(404, self.logger.debug, MESSAGE_400.substitute(sequence_data=sequence_data))
+            AbortLogger.log_and_abort(400, self.logger.debug, MESSAGE_400.substitute(sequence_data=sequence_data))
 
     @staticmethod
     def __create_projection(sample_controls, args):

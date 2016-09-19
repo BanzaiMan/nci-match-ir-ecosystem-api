@@ -38,7 +38,7 @@ class TestSequenceData(unittest.TestCase):
          'IR_WAO85', {u'message': u'Can only request patients or sample_controls. You requested: waleeds. '
                                   u'You have requested this URI [/api/v1/ion_reporters/IR_WAO85/waleeds] but did you '
                                   u'mean /api/v1/ion_reporters/<string:ion_reporter_id> or '
-                                  u'/api/v1/ion_reporters/version or /api/v1/ion_reporters ?'}, 404, {'projection': ['site_ip_address', 'control_type', 'molecular_id']}),
+                                  u'/api/v1/ion_reporters/version or /api/v1/ion_reporters ?'}, 400, {'projection': ['site_ip_address', 'control_type', 'molecular_id']}),
         ('sample_controls',
          'IR_WAO85', [
              {"ion_reporter_id": "IR_WAO85", "molecular_id": "SC_SA1CB", "site": "mocha", "control_type": "no_template",
