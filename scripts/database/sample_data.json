@@ -5,7 +5,7 @@
         "Item": {
           "date_molecular_id_created": {"S": "2016-08-18 19:56:19.766"},
           "control_type": {"S": "no_template"},
-          "molecular_id": {"S": "SC_SAWCB"},
+          "molecular_id": {"S": "SC_SA1CB"},
           "ion_reporter_id": {"S": "IR_WAO85"},
           "site": {"S": "mocha"}
         }
@@ -16,7 +16,7 @@
         "Item": {
           "date_molecular_id_created": {"S": "2016-08-18 19:56:19.766"},
           "control_type": {"S": "no_template"},
-          "molecular_id": {"S": "SC_SA1CB"},
+          "molecular_id": {"S": "SC_YQ111"},
           "ion_reporter_id": {"S": "IR_WAO85"},
           "site": {"S": "mocha"}
         }
