@@ -11,14 +11,14 @@ class TestDictionaryHelper(unittest.TestCase):
         ('', 'Must pass in a ImmutableMultiDict or dict'),
         ({}, ([], {})),
         (None, 'Must pass in a ImmutableMultiDict or dict'),
+        ({'projection': ['site', 'ir_status']}, "'dict' object has no attribute 'getlist'"),
+        ({'projection': 'ir_status'}, "'dict' object has no attribute 'getlist'")
     )
     @unpack
     def test_get_projection(self, dic1, expected_results):
-
         try:
             assert DictionaryHelper.get_projection(dic1) == expected_results
         except Exception as e:
-            print e
             assert str(e) == expected_results
     @data(
         ({'dic1': 'a'}, True),
