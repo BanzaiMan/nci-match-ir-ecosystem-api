@@ -1,5 +1,6 @@
 import logging
 from flask_restful import reqparse, Resource
+from flask import request
 from accessors.sample_control_accessor import SampleControlAccessor
 from common.dictionary_helper import DictionaryHelper
 from accessors.celery_task_accessor import CeleryTaskAccessor
@@ -36,7 +37,7 @@ class Aliquot(Resource):
 
     def put(self, molecular_id):
         self.logger.info("updating molecular_id: " + str(molecular_id))
-        args = parser.parse_args()
+        args = request.json
         self.logger.debug(str(args))
 
         if not DictionaryHelper.has_values(args):
