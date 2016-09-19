@@ -182,7 +182,7 @@ echo -e "${CYAN}***********************************************${NC}"
 
 curl -X GET "${URL}/api/v1/sequence_files/SC_SA1CB/vcf"
 curl -X GET "${URL}/api/v1/sequence_files/SC_SA1CB/tsv"
-curl -X GET "${URL}/api/v1/sequence_files/SC_SA1CB/pdf"
+curl -X GET "${URL}/api/v1/sequence_files/SC_SA1CB/qc"
 
 echo -e "${CYAN}***********************************************${NC}"
 echo -e "${BLUE}GET /api/v1/sample_controls/{molecular_id}/{bam|bai}/{cdna|dna}${NC}"
