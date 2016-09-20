@@ -4,7 +4,7 @@ from accessors.sample_control_accessor import SampleControlAccessor
 from common.dictionary_helper import DictionaryHelper
 from accessors.celery_task_accessor import CeleryTaskAccessor
 from resource_helpers.abort_logger import AbortLogger
-import json
+import json, ast
 
 parser = reqparse.RequestParser()
 parser.add_argument('analysis_id',   type=str, required=True,  help="'analysis_id' is required")
@@ -38,7 +38,7 @@ class Aliquot(Resource):
     def put(self, molecular_id):
         self.logger.info("updating molecular_id: " + str(molecular_id))
         args = request.json
-        args = json.dumps(json.loads(args))
+        args = ast.literal_eval(json.dumps(args))
         self.logger.debug(str(args))
 
         if not DictionaryHelper.has_values(args):
