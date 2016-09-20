@@ -1,18 +1,18 @@
 import logging
-from flask_restful import reqparse, Resource
-from flask import request
+from flask_restful import request, Resource, reqparse
 from accessors.sample_control_accessor import SampleControlAccessor
 from common.dictionary_helper import DictionaryHelper
 from accessors.celery_task_accessor import CeleryTaskAccessor
 from resource_helpers.abort_logger import AbortLogger
+import json
 
 parser = reqparse.RequestParser()
-parser.add_argument('analysis_id',   type=str, required=True,  location='json', help="'analysis_id' is required")
-parser.add_argument('site',          type=str, required=True,  location='json', help="'site' is required")
-parser.add_argument('dna_bam_name',  type=str, required=False, location='json')
-parser.add_argument('cdna_bam_name', type=str, required=False, location='json')
-parser.add_argument('vcf_name',      type=str, required=False, location='json')
-parser.add_argument('qc_name',       type=str, required=False, location='json')
+parser.add_argument('analysis_id',   type=str, required=True,  help="'analysis_id' is required")
+parser.add_argument('site',          type=str, required=True,  help="'site' is required")
+parser.add_argument('dna_bam_name',  type=str, required=False)
+parser.add_argument('cdna_bam_name', type=str, required=False)
+parser.add_argument('vcf_name',      type=str, required=False)
+parser.add_argument('qc_name',       type=str, required=False)
 
 
 class Aliquot(Resource):
@@ -38,6 +38,7 @@ class Aliquot(Resource):
     def put(self, molecular_id):
         self.logger.info("updating molecular_id: " + str(molecular_id))
         args = request.json
+        args = json.dumps(json.loads(args))
         self.logger.debug(str(args))
 
         if not DictionaryHelper.has_values(args):
@@ -83,4 +84,3 @@ class Aliquot(Resource):
                 'molecular_id': molecular_id,
                 'analysis_id': item_dictionary['analysis_id'],
                 file_dict_key: item_dictionary[file_dict_key]}
-
