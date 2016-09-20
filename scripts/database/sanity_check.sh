@@ -146,12 +146,6 @@ curl -X POST -H "Content-Type: application/json" -d '{ip_address:"143.333.85.66"
 
 curl -X POST -H "Content-Type: application/json" -d '{ip_address:"143.333.85.66"}' "${URL}/api/v1/sample_controls?control_type=no_template"
 
-echo -e "${CYAN}***********************************************${NC}"
-echo -e "${BLUE}DELETE /api/v1/sample_controls?site={site}${NC}"
-echo -e "${PURPLE}Delete all sample controls matching the given parameters. Deleting with query parameters is not supported.${NC}"
-echo -e "${CYAN}***********************************************${NC}"
-
-curl -X DELETE "${URL}/api/v1/sample_controls?site=mocha"
 
 echo -e "${CYAN}***********************************************${NC}"
 echo -e "${BLUE}GET /api/v1/sample_controls/{molecular_id}${NC}"
@@ -175,6 +169,26 @@ echo -e "${CYAN}***********************************************${NC}"
 curl -X PUT -H 'Content-Type: application/json' -d @./item.json "${URL}/api/v1/sample_controls/SC_SA1CB"
 
 
+echo -e "${YELLOW}------------------------------------------------------------------------------------------------------------------------${NC}"
+
+
+echo -e "${CYAN}***********************************************${NC}"
+echo -e "${GREEN}ALIQUOT RESOURCE${NC}"
+echo -e "${CYAN}***********************************************${NC}"
+echo -e "${BLUE}GET /api/v1/aliquot/{molecular_id}${NC}"
+echo -e "${PURPLE}Returns data for molecular id if valid else 404${NC}"
+echo -e "${CYAN}***********************************************${NC}"
+
+curl -X GET "${URL}/api/v1/aliquot/SC_SA1CB"
+
+echo -e "${CYAN}***********************************************${NC}"
+echo -e "${BLUE}PUT /api/v1/aliquot/{molecular_id}${NC}"
+echo -e "${PURPLE}Upload IR file names and this will update database, update s3 with processed files (bai and tsv)${NC}"
+echo -e "${CYAN}***********************************************${NC}"
+
+curl -H 'Content-Type: application/json' -X PUT -d @./sc_update_data.json "${URL}/api/v1/aliquot/SC_SA1CB"
+
+
 echo -e "${CYAN}***********************************************${NC}"
 echo -e "${BLUE}GET /api/v1/sample_controls/{molecular_id}/{format}${NC}"
 echo -e "${PURPLE}format = vcf|tsv in this case${NC}"
@@ -195,23 +209,12 @@ curl -X GET "${URL}/api/v1/sequence_files/SC_SA1CB/bai/dna"
 curl -X GET "${URL}/api/v1/sequence_files/SC_SA1CB/bam/cdna"
 curl -X GET "${URL}/api/v1/sequence_files/SC_SA1CB/bai/cdna"
 
-echo -e "${YELLOW}------------------------------------------------------------------------------------------------------------------------${NC}"
-
 
 echo -e "${CYAN}***********************************************${NC}"
-echo -e "${GREEN}ALIQUOT RESOURCE${NC}"
-echo -e "${CYAN}***********************************************${NC}"
-echo -e "${BLUE}GET /api/v1/aliquot/{molecular_id}${NC}"
-echo -e "${PURPLE}Returns data for molecular id if valid else 404${NC}"
+echo -e "${BLUE}DELETE /api/v1/sample_controls?site={site}${NC}"
+echo -e "${PURPLE}Delete all sample controls matching the given parameters. Deleting with query parameters is not supported.${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 
-curl -X GET "${URL}/api/v1/aliquot/SC_SA1CB"
-
-echo -e "${CYAN}***********************************************${NC}"
-echo -e "${BLUE}PUT /api/v1/aliquot/{molecular_id}${NC}"
-echo -e "${PURPLE}Upload IR file names and this will update database, update s3 with processed files (bai and tsv)${NC}"
-echo -e "${CYAN}***********************************************${NC}"
-
-curl -H 'Content-Type: application/json' -X PUT -d @./sc_update_data.json "${URL}/api/v1/aliquot/SC_SA1CB"
+curl -X DELETE "${URL}/api/v1/sample_controls?site=mocha"
 
 
