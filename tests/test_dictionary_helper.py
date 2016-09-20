@@ -3,6 +3,7 @@ from ddt import ddt, data, unpack
 from common.dictionary_helper import DictionaryHelper
 from werkzeug.datastructures import ImmutableMultiDict
 
+
 @ddt
 class TestDictionaryHelper(unittest.TestCase):
     @data(
@@ -24,6 +25,7 @@ class TestDictionaryHelper(unittest.TestCase):
         except Exception as e:
             print e
             assert str(e) == expected_results
+
     @data(
         ({'dic1': 'a'}, True),
         ({'dic1': None}, False),
