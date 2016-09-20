@@ -1,5 +1,8 @@
 import os
 import logging
+from logging.config import fileConfig
+import json
+import ast
 
 from accessors.ion_reporter_accessor import IonReporterAccessor
 from accessors.sample_control_accessor import SampleControlAccessor
@@ -10,6 +13,7 @@ from werkzeug.utils import secure_filename
 from common.environment_helper import EnvironmentHelper
 
 # Logging functionality
+fileConfig(os.path.abspath("config/logging_config.ini"))
 logger = logging.getLogger(__name__)
 
 BROKER__URL = "sqs://" + os.environ['AWS_ACCESS_KEY_ID'] + ":" + os.environ['AWS_SECRET_ACCESS_KEY'] + "@"
@@ -62,33 +66,46 @@ def process_ir_file(file_process_message):
 
 # process vcf, bam files based on message dictionary key: vcf_name, dna_bam_name, or cdna_bam_name
 def process_file_message(file_process_message):
-    logger.info("Processing file message in function process_file_message()" + str(file_process_message))
-
-    if 'vcf_name' in file_process_message and file_process_message['vcf_name'] is not None:
+    logger.debug("Processing file message in function process_file_message()" + str(file_process_message))
+    unicode_free_dictionary = ast.literal_eval(json.dumps(file_process_message))
+    logger.debug("After Removing unicode" + str(unicode_free_dictionary))
+    if 'vcf_name' in unicode_free_dictionary and unicode_free_dictionary['vcf_name'] is not None:
         logger.info("Processing VCF ")
-        downloaded_file_path = S3Accessor().download(file_process_message['vcf_name'])
-        new_file_path = SequenceFileProcessor().vcf_to_tsv(downloaded_file_path)
-        key = 'tsv_name'
-    elif 'dna_bam_name' in file_process_message and file_process_message['dna_bam_name'] is not None:
+        downloaded_file_path = S3Accessor().download(unicode_free_dictionary['vcf_name'])
+        try:
+            new_file_path = SequenceFileProcessor().vcf_to_tsv(downloaded_file_path)
+        except Exception as e:
+            raise Exception("VCF creation failed because: " + e.message)
+        else:
+            key = 'tsv_name'
+    elif 'dna_bam_name' in unicode_free_dictionary and unicode_free_dictionary['dna_bam_name'] is not None:
         logger.info("Processing DNA BAM ")
-        downloaded_file_path = S3Accessor().download(file_process_message['dna_bam_name'])
-        new_file_path = SequenceFileProcessor().bam_to_bai(downloaded_file_path)
-        key = 'dna_bai_name'
-    elif 'cdna_bam_name' in file_process_message and file_process_message['cdna_bam_name'] is not None:
+        downloaded_file_path = S3Accessor().download(unicode_free_dictionary['dna_bam_name'])
+        try:
+            new_file_path = SequenceFileProcessor().bam_to_bai(downloaded_file_path)
+        except Exception as e:
+            raise Exception("BAI creation failed because: " + e.message)
+        else:
+            key = 'dna_bai_name'
+    elif 'cdna_bam_name' in unicode_free_dictionary and unicode_free_dictionary['cdna_bam_name'] is not None:
         logger.info("Processing RNA BAM ")
-        downloaded_file_path = S3Accessor().download(file_process_message['cdna_bam_name'])
-        new_file_path = SequenceFileProcessor().bam_to_bai(downloaded_file_path)
-        key = 'cdna_bai_name'
+        downloaded_file_path = S3Accessor().download(unicode_free_dictionary['cdna_bam_name'])
+        try:
+            new_file_path = SequenceFileProcessor().bam_to_bai(downloaded_file_path)
+        except Exception as e:
+            raise Exception("BAI creation failed because: " + e.message)
+        else:
+            key = 'cdna_bai_name'
     else:
-        logger.error("No file needs process for " + str(file_process_message))
-        raise Exception("No file needs process")
+        logger.info("File does not require processing" + str(file_process_message))
+        return unicode_free_dictionary
 
     new_file_name = secure_filename(os.path.basename(new_file_path))
-    new_file_s3_path = file_process_message['site'] + "/" + file_process_message['molecular_id'] + \
-                       "/" + file_process_message['analysis_id'] + "/" + new_file_name
+    new_file_s3_path = unicode_free_dictionary['site'] + "/" + unicode_free_dictionary['molecular_id'] + \
+                       "/" + unicode_free_dictionary['analysis_id'] + "/" + new_file_name
     S3Accessor().upload(downloaded_file_path, new_file_s3_path)
-    file_process_message.update({key: new_file_s3_path})
-    return file_process_message
+    unicode_free_dictionary.update({key: new_file_s3_path})
+    return unicode_free_dictionary
 
 
 @app.task

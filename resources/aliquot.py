@@ -38,7 +38,6 @@ class Aliquot(Resource):
     def put(self, molecular_id):
         self.logger.info("updating molecular_id: " + str(molecular_id))
         args = request.json
-        args = json.dumps(json.loads(args))
         self.logger.debug(str(args))
 
         if not DictionaryHelper.has_values(args):
