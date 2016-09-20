@@ -6,11 +6,11 @@ from werkzeug.datastructures import ImmutableMultiDict
 @ddt
 class TestDictionaryHelper(unittest.TestCase):
     @data(
-        ({'dic1': 'a'}, 'Must pass in a ImmutableMultiDict or dict'),
-        ({'dic1': None}, 'Must pass in a ImmutableMultiDict or dict'),
-        ('', 'Must pass in a ImmutableMultiDict or dict'),
-        ({}, 'Must pass in a ImmutableMultiDict or dict'),
-        (None, 'Must pass in a ImmutableMultiDict or dict'),
+        ({'dic1': 'a'}, 'Must pass in a ImmutableMultiDict'),
+        ({'dic1': None}, 'Must pass in a ImmutableMultiDict'),
+        ('', 'Must pass in a ImmutableMultiDict'),
+        ({}, 'Must pass in a ImmutableMultiDict'),
+        (None, 'Must pass in a ImmutableMultiDict'),
         (ImmutableMultiDict([('a', 'b'), ('a', 'c')]), ([], {'a': 'b'})),
         (ImmutableMultiDict([('site', 'mocha')]), ([], {'site': 'mocha'})),
         (ImmutableMultiDict([('site', 'mocha'), ('control_type', 'no_template')]), ([], {'site': 'mocha', 'control_type': 'no_template'})),

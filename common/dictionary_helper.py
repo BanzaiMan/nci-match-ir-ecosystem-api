@@ -15,7 +15,7 @@ class DictionaryHelper(object):
                     non_projection_dictionary[key] = value
             return projection_list, non_projection_dictionary
         else:
-            raise Exception("Must pass in a ImmutableMultiDict or dict")
+            raise Exception("Must pass in a ImmutableMultiDict")
 
     @staticmethod
     def has_values(dictionary):
