@@ -71,6 +71,7 @@ def process_file_message(file_process_message):
     logger.debug("After Removing unicode" + str(unicode_free_dictionary))
     if 'vcf_name' in unicode_free_dictionary and unicode_free_dictionary['vcf_name'] is not None:
         logger.info("Processing VCF ")
+        # TODO: Need to check for error
         downloaded_file_path = S3Accessor().download(unicode_free_dictionary['vcf_name'])
         try:
             new_file_path = SequenceFileProcessor().vcf_to_tsv(downloaded_file_path)
