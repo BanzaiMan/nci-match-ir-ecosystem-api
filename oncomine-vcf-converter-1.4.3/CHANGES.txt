@@ -1,3 +1,7 @@
+v1.4.3
+    - Renamed VCF class to ion_VCF in order to not conflict with other python bioinformatics libraries
+       - Put version variable inside convert_vcf.py.
+
 v1.4.1, 2015-06-19
   - Added switch to command line to support the optional inclusion of VCF metadata in the output
   - Updated tool to support IonReporterExportVersion 0.1.5
