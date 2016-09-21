@@ -4,7 +4,7 @@ import sys
 import json
 from collections import OrderedDict
 
-class Vcf(object):
+class IonVcf(object):
     NORMALIZED_ALT_FIELD_NAME = 'normalizedAlt'
     NORMALIZED_REF_FIELD_NAME = 'normalizedRef'
     NORMALIZED_POS_FIELD_NAME = 'normalizedPos'

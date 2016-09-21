@@ -2,7 +2,7 @@
 
 from distutils.core import setup
 
-from vcf import __version__
+from ion_vcf import __version__
 
 setup(
     name='oncomine-vcf-converter',
@@ -12,11 +12,11 @@ setup(
     author='Thermo Fisher Scientific Inc.',
     author_email='ann_dev@lifetech.com',
     url='http://en.wikipedia.org/wiki/Variant_Call_Format',
-    packages=['vcf', 'vcf.test'],
-    package_dir={'vcf': 'vcf', 'vcf.test': 'vcf/test'},
+    packages=['ion_vcf', 'ion_vcf.test'],
+    package_dir={'ion_vcf': 'ion_vcf', 'ion_vcf.test': 'ion_vcf/test'},
     package_data={
-        'vcf': ['oncomine_genes.txt'],
-        'vcf.test': ['*.vcf', '*.tsv'],
+        'ion_vcf': ['oncomine_genes.txt'],
+        'ion_vcf.test': ['*.vcf', '*.tsv'],
     },
     scripts=['scripts/convert_vcf.py']
 )

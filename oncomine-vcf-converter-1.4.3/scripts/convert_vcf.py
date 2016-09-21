@@ -9,9 +9,11 @@ import inspect
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
-from vcf.vcf import Vcf
-from vcf.conversion import VcfConverter
-from vcf import __version__
+from ion_vcf.ion_vcf import IonVcf
+from ion_vcf.conversion import VcfConverter
+from ion_vcf import __version__
+
+supported_ir_vcf_versions = ['0.1.2', '0.1.4', '0.1.5']
 
 
 def main(args_text=None):
@@ -64,7 +66,7 @@ def main(args_text=None):
 
     args = parser.parse_args(args_text.split() if args_text is not None else None)
 
-    vcf_object = Vcf.create_from_vcf_file(args.vcf_file_name)
+    vcf_object = IonVcf.create_from_vcf_file(args.vcf_file_name)
     converter = VcfConverter()
 
     output_file_name = args.tsv_file_name if args.tsv_file_name else args.vcf_file_name.replace('.vcf', '.tsv')
