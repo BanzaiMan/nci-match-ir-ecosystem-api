@@ -18,42 +18,48 @@ class TestTasks(unittest.TestCase):
             ({'site_ip_address': '129.43.127.133',
               'control_type': 'no_template',
               'site': 'mocha',
-              'vcf_name': 'mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_v2.vcf',
-              'molecular_id': 'SC_YQ111',
-              'analysis_id': 'SC_YQ111_SC_YQ111_k123_v1'
+              "ion_reporter_id": "IR_WAO85",
+              'vcf_name': 'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1.vcf',
+              'molecular_id': 'SC_SA1CB',
+              'analysis_id': 'SC_SA1CB_SC_SA1CB_a888_v1'
               },
-             'mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_v2.tsv',
-             {'analysis_id': 'SC_YQ111_SC_YQ111_k123_v1', 'control_type': 'no_template', 'site': 'mocha',
-              'tsv_name': 'mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_v2.tsv',
-              'vcf_name': 'mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_v2.vcf',
-              'molecular_id': 'SC_YQ111', 'site_ip_address': '129.43.127.133'}
+             'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1.tsv',
+             {'analysis_id': 'SC_SA1CB_SC_SA1CB_a888_v1', 'control_type': 'no_template', 'site': 'mocha',
+              "ion_reporter_id": "IR_WAO85",
+              'tsv_name': 'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1.tsv',
+              'vcf_name': 'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1.vcf',
+              'molecular_id': 'SC_SA1CB', 'site_ip_address': '129.43.127.133'}
             ),
             ({'site_ip_address': '129.43.127.133',
               'control_type': 'no_template',
               'site': 'mocha',
-              'dna_bam_name': 'mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_DNA_v2.bam',
-              'molecular_id': 'SC_YQ111',
-              'analysis_id': 'SC_YQ111_SC_YQ111_k123_v1'
+              "ion_reporter_id": "IR_WAO85",
+              'dna_bam_name': 'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1.bam',
+              'molecular_id': 'SC_SA1CB',
+              'analysis_id': 'SC_SA1CB_SC_SA1CB_a888_v1'
               },
-             'mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_DNA_v2.bai',
-             {'analysis_id': 'SC_YQ111_SC_YQ111_k123_v1', 'control_type': 'no_template',
-              'dna_bam_name': 'mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_DNA_v2.bam',
+             'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1.bai',
+             {'analysis_id': 'SC_SA1CB_SC_SA1CB_a888_v1', 'control_type': 'no_template',
+              'dna_bam_name': 'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1.bam',
               'site': 'mocha',
-              'dna_bai_name': 'mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_DNA_v2.bai',
-              'molecular_id': 'SC_YQ111', 'site_ip_address': '129.43.127.133'}
+              "ion_reporter_id": "IR_WAO85",
+              'dna_bai_name': 'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1.bai',
+              'molecular_id': 'SC_SA1CB', 'site_ip_address': '129.43.127.133'}
             ),
             ({'site_ip_address': '129.43.127.133',
               'control_type': 'no_template',
               'site': 'mocha',
-              'cdna_bam_name': 'mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_RNA_v2.bam',
-              'molecular_id': 'SC_YQ111',
-              'analysis_id': 'SC_YQ111_SC_YQ111_k123_v1'
+              "ion_reporter_id": "IR_WAO85",
+              'cdna_bam_name': 'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1.bam',
+              'molecular_id': 'SC_SA1CB',
+              'analysis_id': 'SC_SA1CB_SC_SA1CB_a888_v1'
               },
-             'mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_RNA_v2.bai',
-             {'analysis_id': 'SC_YQ111_SC_YQ111_k123_v1', 'control_type': 'no_template', 'site': 'mocha',
-              'cdna_bam_name': 'mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_RNA_v2.bam',
-              'cdna_bai_name': 'mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_RNA_v2.bai',
-              'molecular_id': 'SC_YQ111', 'site_ip_address': '129.43.127.133'}
+             'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1.bai',
+             {'analysis_id': 'SC_SA1CB_SC_SA1CB_a888_v1', 'control_type': 'no_template', 'site': 'mocha',
+              "ion_reporter_id": "IR_WAO85",
+              'cdna_bam_name': 'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1.bam',
+              'cdna_bai_name': 'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1.bai',
+              'molecular_id': 'SC_SA1CB', 'site_ip_address': '129.43.127.133'}
             )
          )
     @unpack
@@ -72,6 +78,7 @@ class TestTasks(unittest.TestCase):
         print "===================" + str(return_value)
         assert (return_value == expected_return)
 
+    #TODO add test exception, and test else ...
 
 # if __name__ == '__main__':
 #     unittest.main()

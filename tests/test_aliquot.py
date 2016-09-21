@@ -16,6 +16,7 @@ class TestAliquot(unittest.TestCase):
              "date_molecular_id_created": "2016-08-28 16:56:29.333",
              "site_ip_address": "129.43.127.133",
              "molecular_id": "SC_YQ111",
+             "ion_reporter_id": "IR_WAO85",
              "site": "mocha"
          },
          'SC_YQ111', 200),
@@ -44,6 +45,7 @@ class TestAliquot(unittest.TestCase):
           "qc_name": "mocha/SC_YQ111/SC_YQ111_SC_YQ111_k123_v1/SC_YQ111_SC_YQ111_analysis666_v2_QC.pdf",
           "site": "mocha",
           "molecular_id": "SC_5AMCC",
+          "ion_reporter_id": "IR_WAO85",
           "analysis_id": "SC_5AMCC_SC_5AMCC_k123_v1"},
          True, 'Item updated'),
         ('SC_YQ111', {}, False, 'Need to pass in item updating information in order to update a sample control item')
@@ -85,7 +87,7 @@ class TestAliquot(unittest.TestCase):
     @data(
         ('SC_5AMCC',
          {"vcf_name": "mocha/SC_5AMCC/SC_5AMCC_SC_5AMCC_k123_v1/SC_5AMCC_SC_5AMCC_analysis667_v1.vcf", "site": "mocha",
-          "molecular_id": "SC_5AMCC", "analysis_id": "SC_5AMCC_SC_5AMCC_k123_v1"},
+          "molecular_id": "SC_5AMCC", "analysis_id": "SC_5AMCC_SC_5AMCC_k123_v1", "ion_reporter_id": "IR_WAO85"},
          ' Testing put process_file exception')
     )
     @unpack
@@ -108,7 +110,7 @@ class TestAliquot(unittest.TestCase):
     @data(
         ('SC_5AMCC',
          {"vgg_name": "mocha/SC_5AMCC/SC_5AMCC_SC_5AMCC_k123_v1/SC_5AMCC_SC_5AMCC_analysis667_v1.vcf", "site": "mocha",
-          "molecular_id": "SC_5AMCC", "analysis_id": "SC_5AMCC_SC_5AMCC_k123_v1"},
+          "molecular_id": "SC_5AMCC", "analysis_id": "SC_5AMCC_SC_5AMCC_k123_v1", "ion_reporter_id": "IR_WAO85"},
          'No distinct tasks where found in message')
     )
     @unpack
@@ -128,5 +130,5 @@ class TestAliquot(unittest.TestCase):
         assert return_value.status_code == 404
         assert exception_message in return_value.data
 
-    #if __name__ == '__main__':
-    #unittest.main()
+# if __name__ == '__main__':
+#     unittest.main()
