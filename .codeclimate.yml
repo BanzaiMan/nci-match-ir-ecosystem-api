@@ -54,5 +54,5 @@ ratings:
 exclude_paths:
 - config/
 - tests/
-- oncomine-vcf-converter-1.4.1/
+- oncomine-vcf-converter-1.4.3/
 - scripts/
