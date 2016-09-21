@@ -37,7 +37,7 @@ class TestApp(unittest.TestCase):
         assert m_split.called_once_with('.')
         assert m_str.called_once()
 
-# TODO: write unittests. Start with something simple like the dictionaryHelper, QueryHelper, and StringHelper
+
 # if __name__ == '__main__':
 #     unittest.main()
 

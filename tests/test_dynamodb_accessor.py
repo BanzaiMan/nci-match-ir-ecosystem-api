@@ -1,24 +1,17 @@
 from unittest import TestCase
 
 TABLE_NAME = 'ion_reporters'
-TABLE_RT = 45
-TABLE_WT = 123
-TABLE_HK_NAME = u'hash_key'
+TABLE_RT = 5
+TABLE_WT = 5
+TABLE_HK_NAME = u'ion_reporter_id'
 TABLE_HK_TYPE = u'S'
-TABLE_RK_NAME = u'range_key'
-TABLE_RK_TYPE = u'S'
 
-HK_VALUE = u'ion_reporter_id'
-RK_VALUE = u'Decode this data if you are a coder'
+HK_VALUE = u'IR_5467A'
 
 ITEM = {
     TABLE_HK_NAME: {TABLE_HK_TYPE: HK_VALUE},
-    TABLE_RK_NAME: {TABLE_RK_TYPE: RK_VALUE},
-    u'ion_reporter_id': {u'S': u'IR_WO3IA'},
+    u'test': {u'S': u'something goes here'}
 }
-
-import sys
-sys.path.append('..')
 
 
 class TestIonReporterRecord(TestCase):
@@ -31,15 +24,14 @@ class TestIonReporterRecord(TestCase):
         # Do a full database wipe
         dynamodb.hard_reset()
 
-        # Instanciate the keys
+        # Instantiate the keys
         hash_key = PrimaryKey(TABLE_HK_NAME, TABLE_HK_TYPE)
-        range_key = PrimaryKey(TABLE_RK_NAME, TABLE_RK_TYPE)
 
         # Create a test table and register it in ``self`` so that you can use it directly
-        self.t1 = Table(TABLE_NAME, TABLE_RT, TABLE_WT, hash_key, range_key)
+        self.t1 = Table(TABLE_NAME, TABLE_RT, TABLE_WT, hash_key, None)
 
         # Very important: register the table in the DB
-        dynamodb.data[TABLE_NAME]  = self.t1
+        dynamodb.data[TABLE_NAME] = self.t1
 
         # Unconditionally add some data, for example.
         self.t1.put(ITEM, {})
@@ -68,13 +60,12 @@ class TestIonReporterRecord(TestCase):
         }
 
         key = {
-            u"HashKeyElement":  {TABLE_HK_TYPE: HK_VALUE},
-            u"RangeKeyElement": {TABLE_RK_TYPE: RK_VALUE},
+            u"HashKeyElement":  {TABLE_HK_TYPE: HK_VALUE}
         }
 
-        # Example chech
+        # Example check
         self.assertEquals(expected, self.db.layer1.get_item(TABLE_NAME, key))
 
-        # Example chech
-        self.assertEquals(expected, self.db.layer1.scan(TABLE_NAME, key))
+        # Example check
+        #self.assertEquals(expected, self.db.layer1.scan(TABLE_NAME, 'test', 'EQ', 'something goes here'))
 
