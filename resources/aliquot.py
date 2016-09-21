@@ -63,16 +63,16 @@ class Aliquot(Resource):
     def __get_distinct_tasks(item_dictionary, molecular_id):
         distinct_tasks_list = list()
 
-        if 'vcf_name' in item_dictionary and 'analysis_id' and 'site' in item_dictionary:
+        if 'vcf_name' in item_dictionary and 'analysis_id' and 'ion_reporter_id' in item_dictionary:
             distinct_tasks_list.append(Aliquot.__get_tasks_dictionary(item_dictionary, molecular_id, 'vcf_name'))
 
-        if 'dna_bam_name' in item_dictionary and 'analysis_id' and 'site' in item_dictionary:
+        if 'dna_bam_name' in item_dictionary and 'analysis_id' and 'ion_reporter_id' in item_dictionary:
             distinct_tasks_list.append(Aliquot.__get_tasks_dictionary(item_dictionary, molecular_id, 'dna_bam_name'))
 
-        if 'cdna_bam_name' in item_dictionary and 'analysis_id' and 'site' in item_dictionary:
+        if 'cdna_bam_name' in item_dictionary and 'analysis_id' and 'ion_reporter_id' in item_dictionary:
             distinct_tasks_list.append(Aliquot.__get_tasks_dictionary(item_dictionary, molecular_id, 'cdna_bam_name'))
 
-        if 'qc_name' in item_dictionary and 'analysis_id' and 'site' in item_dictionary:
+        if 'qc_name' in item_dictionary and 'analysis_id' and 'ion_reporter_id' in item_dictionary:
             distinct_tasks_list.append(Aliquot.__get_tasks_dictionary(item_dictionary, molecular_id, 'qc_name'))
 
         return distinct_tasks_list
@@ -82,4 +82,5 @@ class Aliquot(Resource):
         return {'site': item_dictionary['site'],
                 'molecular_id': molecular_id,
                 'analysis_id': item_dictionary['analysis_id'],
+                'ion_reporter_id': item_dictionary['ion_reporter_id'],
                 file_dict_key: item_dictionary[file_dict_key]}

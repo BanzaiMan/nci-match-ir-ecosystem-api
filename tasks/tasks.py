@@ -89,7 +89,7 @@ def process_file_message(file_process_message):
 
     else:
         new_file_name = secure_filename(os.path.basename(new_file_path))
-        new_file_s3_path = unicode_free_dictionary['site'] + "/" + unicode_free_dictionary['molecular_id'] + \
+        new_file_s3_path = unicode_free_dictionary['ion_reporter_id'] + "/" + unicode_free_dictionary['molecular_id'] + \
                            "/" + unicode_free_dictionary['analysis_id'] + "/" + new_file_name
 
         S3Accessor().upload(downloaded_file_path, new_file_s3_path)
@@ -100,27 +100,34 @@ def process_file_message(file_process_message):
 
 def process_vcf(dictionary):
     logger.info("Processing VCF ")
-    # TODO: Need to check for error
-    downloaded_file_path = S3Accessor().download(dictionary['vcf_name'])
     try:
-        new_file_path = SequenceFileProcessor().vcf_to_tsv(downloaded_file_path)
+        downloaded_file_path = S3Accessor().download(dictionary['vcf_name'])
     except Exception as e:
-        raise Exception("VCF creation failed because: " + e.message)
+        raise Exception("Failed to download vcf file from S3, because: " + e.message)
     else:
-        key = 'tsv_name'
-        return new_file_path, key, downloaded_file_path
+        try:
+            new_file_path = SequenceFileProcessor().vcf_to_tsv(downloaded_file_path)
+        except Exception as e:
+            raise Exception("VCF creation failed because: " + e.message)
+        else:
+            key = 'tsv_name'
+            return new_file_path, key, downloaded_file_path
 
 
 def process_bam(dictionary, nucleic_acid_type):
     logger.info("Processing " + nucleic_acid_type + " BAM ")
-    downloaded_file_path = S3Accessor().download(dictionary[nucleic_acid_type + '_bam_name'])
     try:
-        new_file_path = SequenceFileProcessor().bam_to_bai(downloaded_file_path)
+        downloaded_file_path = S3Accessor().download(dictionary[nucleic_acid_type + '_bam_name'])
     except Exception as e:
-        raise Exception("BAI creation failed because: " + e.message)
+        raise Exception("Failed to download " + nucleic_acid_type + " BAM file from S3, because: " + e.message)
     else:
-        key = nucleic_acid_type + '_bai_name'
-        return new_file_path, key, downloaded_file_path
+        try:
+            new_file_path = SequenceFileProcessor().bam_to_bai(downloaded_file_path)
+        except Exception as e:
+            raise Exception("BAI creation failed because: " + e.message)
+        else:
+            key = nucleic_acid_type + '_bai_name'
+            return new_file_path, key, downloaded_file_path
 
 
 @app.task
