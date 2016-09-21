@@ -11,7 +11,7 @@ parentdir = os.path.dirname(currentdir)
 sys.path.append(parentdir)
 from vcf.vcf import Vcf
 from vcf.conversion import VcfConverter
-from vcf import __version__, supported_ir_vcf_versions
+from vcf import __version__
 
 
 def main(args_text=None):
