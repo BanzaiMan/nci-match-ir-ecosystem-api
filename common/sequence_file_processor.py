@@ -43,7 +43,7 @@ class SequenceFileProcessor(object):
         tsv_full_path = p.sub('.tsv', vcf_full_path)
         logger.debug("destination tsv file: " + str(tsv_full_path))
 
-        conversion_script = 'convert_vcf.py'
+        conversion_script = 'oncomine-vcf-converter-1.4.3/build/scripts-2.7/convert_vcf.py'
         conv_full_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', conversion_script))
 
         conversion_cmd = '%s --force -i %s -o %s' % (conv_full_path, vcf_full_path, tsv_full_path)
