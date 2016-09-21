@@ -69,44 +69,58 @@ def process_file_message(file_process_message):
     logger.debug("Processing file message in function process_file_message()" + str(file_process_message))
     unicode_free_dictionary = ast.literal_eval(json.dumps(file_process_message))
     logger.debug("After Removing unicode" + str(unicode_free_dictionary))
-    if 'vcf_name' in unicode_free_dictionary and unicode_free_dictionary['vcf_name'] is not None:
-        logger.info("Processing VCF ")
-        # TODO: Need to check for error
-        downloaded_file_path = S3Accessor().download(unicode_free_dictionary['vcf_name'])
-        try:
-            new_file_path = SequenceFileProcessor().vcf_to_tsv(downloaded_file_path)
-        except Exception as e:
-            raise Exception("VCF creation failed because: " + e.message)
+
+    try:
+        if 'vcf_name' in unicode_free_dictionary and unicode_free_dictionary['vcf_name'] is not None:
+            new_file_path, key, downloaded_file_path = process_vcf(unicode_free_dictionary)
+
+        elif 'dna_bam_name' in unicode_free_dictionary and unicode_free_dictionary['dna_bam_name'] is not None:
+            new_file_path, key, downloaded_file_path = process_bam(unicode_free_dictionary, 'dna')
+
+        elif 'cdna_bam_name' in unicode_free_dictionary and unicode_free_dictionary['cdna_bam_name'] is not None:
+            new_file_path, key, downloaded_file_path = process_bam(unicode_free_dictionary, 'cdna')
+
         else:
-            key = 'tsv_name'
-    elif 'dna_bam_name' in unicode_free_dictionary and unicode_free_dictionary['dna_bam_name'] is not None:
-        logger.info("Processing DNA BAM ")
-        downloaded_file_path = S3Accessor().download(unicode_free_dictionary['dna_bam_name'])
-        try:
-            new_file_path = SequenceFileProcessor().bam_to_bai(downloaded_file_path)
-        except Exception as e:
-            raise Exception("BAI creation failed because: " + e.message)
-        else:
-            key = 'dna_bai_name'
-    elif 'cdna_bam_name' in unicode_free_dictionary and unicode_free_dictionary['cdna_bam_name'] is not None:
-        logger.info("Processing RNA BAM ")
-        downloaded_file_path = S3Accessor().download(unicode_free_dictionary['cdna_bam_name'])
-        try:
-            new_file_path = SequenceFileProcessor().bam_to_bai(downloaded_file_path)
-        except Exception as e:
-            raise Exception("BAI creation failed because: " + e.message)
-        else:
-            key = 'cdna_bai_name'
+            logger.info("File does not require processing" + str(file_process_message))
+            return unicode_free_dictionary
+
+    except Exception as e:
+        raise Exception(e.message)
+
     else:
-        logger.info("File does not require processing" + str(file_process_message))
+        new_file_name = secure_filename(os.path.basename(new_file_path))
+        new_file_s3_path = unicode_free_dictionary['site'] + "/" + unicode_free_dictionary['molecular_id'] + \
+                           "/" + unicode_free_dictionary['analysis_id'] + "/" + new_file_name
+
+        S3Accessor().upload(downloaded_file_path, new_file_s3_path)
+        unicode_free_dictionary.update({key: new_file_s3_path})
+
         return unicode_free_dictionary
 
-    new_file_name = secure_filename(os.path.basename(new_file_path))
-    new_file_s3_path = unicode_free_dictionary['site'] + "/" + unicode_free_dictionary['molecular_id'] + \
-                       "/" + unicode_free_dictionary['analysis_id'] + "/" + new_file_name
-    S3Accessor().upload(downloaded_file_path, new_file_s3_path)
-    unicode_free_dictionary.update({key: new_file_s3_path})
-    return unicode_free_dictionary
+
+def process_vcf(dictionary):
+    logger.info("Processing VCF ")
+    # TODO: Need to check for error
+    downloaded_file_path = S3Accessor().download(dictionary['vcf_name'])
+    try:
+        new_file_path = SequenceFileProcessor().vcf_to_tsv(downloaded_file_path)
+    except Exception as e:
+        raise Exception("VCF creation failed because: " + e.message)
+    else:
+        key = 'tsv_name'
+        return new_file_path, key, downloaded_file_path
+
+
+def process_bam(dictionary, nucleic_acid_type):
+    logger.info("Processing " + nucleic_acid_type + " BAM ")
+    downloaded_file_path = S3Accessor().download(dictionary[nucleic_acid_type + '_bam_name'])
+    try:
+        new_file_path = SequenceFileProcessor().bam_to_bai(downloaded_file_path)
+    except Exception as e:
+        raise Exception("BAI creation failed because: " + e.message)
+    else:
+        key = nucleic_acid_type + '_bai_name'
+        return new_file_path, key, downloaded_file_path
 
 
 @app.task

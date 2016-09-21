@@ -24,7 +24,7 @@ class SequenceFileProcessor(object):
             pysam.index(bam_full_path, bai_full_path)
         except Exception as e:
             logger.error("Failed to generate bai file, because : " + e.message)
-            raise
+            raise Exception("Failed to generate bai file, because : " + e.message)
 
         logger.info("Generated bai file success!")
         return bai_full_path
@@ -51,12 +51,13 @@ class SequenceFileProcessor(object):
             conversion_cmd = '%s --force -i %s -o %s' % (conv_full_path, vcf_full_path, tsv_full_path)
             logger.debug("Convert vcf to tsv command: " + str(conversion_cmd))
             os.system(conversion_cmd)
-            if os.path.isfile(tsv_full_path):
-                logger.info("Generated tsv file: " + str(tsv_full_path))
-                return tsv_full_path
-            else:
-                logger.debug("Failed to generate tsv file from : " + str(vcf_full_path))
-                return None
         except Exception as e:
             logger.error("Failure reason: " + e.message)
-            raise
+            raise Exception("TSV did not get generated because: " + e.message)
+        else:
+            if not os.path.isfile(tsv_full_path):
+                logger.error("Failed to generate tsv file from : " + str(vcf_full_path))
+                raise Exception("Failed to generate tsv file from : " + str(vcf_full_path))
+
+            logger.info("Generated tsv file: " + str(tsv_full_path))
+            return tsv_full_path
