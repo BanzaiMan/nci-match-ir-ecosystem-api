@@ -17,6 +17,7 @@ class DictionaryHelper(object):
         else:
             raise Exception("Must pass in a ImmutableMultiDict")
 
+    # must be used before projection
     @staticmethod
     def get_attribute(dictionary):
         if type(dictionary) is ImmutableMultiDict:
