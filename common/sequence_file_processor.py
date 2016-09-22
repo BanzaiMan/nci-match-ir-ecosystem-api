@@ -2,10 +2,10 @@ import os.path
 import logging
 import re
 import pysam
+from resource_helpers.abort_logger import AbortLogger
 
 
 class SequenceFileProcessor(object):
-
     @staticmethod
     def bam_to_bai(bam_full_path):
         logger = logging.getLogger(__name__)
@@ -14,7 +14,8 @@ class SequenceFileProcessor(object):
 
         if not os.path.isfile(bam_full_path):
             logger.debug("bam file does not exist: " + str(bam_full_path))
-            logger.debug("Failed to convert vcf file to tsv file.")
+            logger.debug("Failed to convert bam file to bai file.")
+            AbortLogger.log_and_abort(404, logger.error, str(bam_full_path + " does not exist"))
 
         p = re.compile('.bam')
         bai_full_path = p.sub('.bai', bam_full_path)
@@ -38,6 +39,7 @@ class SequenceFileProcessor(object):
         if not os.path.isfile(vcf_full_path):
             logger.debug("vcf file does not exist: " + str(vcf_full_path))
             logger.debug("Failed to convert vcf file to tsv file.")
+            AbortLogger.log_and_abort(404, logger.error, str(vcf_full_path + " does not exist"))
 
         p = re.compile('.vcf')
         tsv_full_path = p.sub('.tsv', vcf_full_path)
