@@ -50,8 +50,13 @@ class IonReporterRecord(Resource):
         # were explicitly passed in. In reality, we only want to update the attributes that have been explicitly
         # passed in from the params. If they haven't been passed in then they shouldn't be updated.
         item_dictionary = dict((k, v) for k, v in item_dictionary.iteritems() if v)
+
         try:
             # TODO: BIG BUG...Need to query table to see that items exists before trying to update
+            try:
+                self.get(ion_reporter_id)
+            except Exception as e:
+                AbortLogger.log_and_abort(404, self.logger.error, MESSAGE_404.substitute(error=e.message))
             CeleryTaskAccessor().update_ir_item(item_dictionary)
         except Exception as e:
             AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
