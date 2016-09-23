@@ -63,14 +63,9 @@ class IonReporterTable(Table):
                                       "Cannot use batch delete to delete all records. "
                                       "This is just to make things a little safer.")
         try:
-            Table.get(self)
+            self.logger.info("Deleting items based on query: " + str(args))
+            CeleryTaskAccessor().delete_ir_items(args)
+        except Exception as e:
+            AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
 
-            try:
-                self.logger.info("Deleting items based on query: " + str(args))
-                CeleryTaskAccessor().delete_ir_items(args)
-            except Exception as e:
-                AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
-
-            return {"result": "Batch deletion request placed on queue to be processed"}
-        except:
-            AbortLogger.log_and_abort(404, self.logger.error, MESSAGE_404.substitute(query_parameters=args))
+        return {"result": "Batch deletion request placed on queue to be processed"}
