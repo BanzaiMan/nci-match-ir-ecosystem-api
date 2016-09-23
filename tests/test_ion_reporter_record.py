@@ -57,10 +57,10 @@ class TestIonReporterRecord(unittest.TestCase):
     @patch('resources.ion_reporter_record.CeleryTaskAccessor')
     def test_delete_exception(self, mock_class):
         instance = mock_class.return_value
-        instance.delete_ir_item.side_effect = Exception('testing throwing exception')
+        instance.delete_ir_item.side_effect = Exception('No ion reporters with id')
         return_value = self.app.delete('/api/v1/ion_reporters/IR_WO3IA')
-        assert return_value.status_code == 500
-        assert "testing throwing exception" in return_value.data
+        assert return_value.status_code == 404
+        assert "No ion reporters with id" in return_value.data
 
     @data(
         ('IR_WO3IA',

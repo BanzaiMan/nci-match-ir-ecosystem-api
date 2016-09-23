@@ -66,9 +66,13 @@ class IonReporterRecord(Resource):
     def delete(self, ion_reporter_id):
         self.logger.info("Deleting ion reporter with id: " + str(ion_reporter_id))
         try:
-            # TODO: BIG BUG...Need to query table to see that items exists before trying to delete
-            CeleryTaskAccessor().delete_ir_item({'ion_reporter_id': ion_reporter_id})
-        except Exception as e:
-            AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
+            self.get(ion_reporter_id)
+            try:
+                # TODO: BIG BUG...Need to query table to see that items exists before trying to delete
+                CeleryTaskAccessor().delete_ir_item({'ion_reporter_id': ion_reporter_id})
+            except Exception as e:
+                AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
+        except:
+            AbortLogger.log_and_abort(404, self.logger.error, MESSAGE_404.substitute(ion_reporter_id=ion_reporter_id))
         else:
             return {"message": "Item deleted", "ion_reporter_id": ion_reporter_id}
