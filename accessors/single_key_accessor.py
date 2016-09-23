@@ -46,7 +46,7 @@ class SingleKeyAccessor(DynamoDBAccessor):
     # dynamodb is because this function requires knowledge of the tables KEY so a generic means of doing this isn't
     # as straight forward and is probably overly complicated for our purposes.
     def batch_delete(self, query_parameters):
-        items_to_delete = self.scan(query_parameters)
+        items_to_delete = self.scan(query_parameters, '')
         for item in items_to_delete:
             try:
                 self.delete_item({self.key_name: item[self.key_name]})
