@@ -9,7 +9,7 @@ from resource_helpers.abort_logger import AbortLogger
 from table import Table
 
 MESSAGE_500 = Template("Server Error contact help: $error")
-MESSAGE_404 = Template("No ion reporters with id: $ion_reporter_id found")
+MESSAGE_404 = Template("No items with query parameters: $query_parameters found")
 
 parser = reqparse.RequestParser()
 parser.add_argument('ion_reporter_id', type=str, required=False, location='json')
@@ -63,10 +63,14 @@ class IonReporterTable(Table):
                                       "Cannot use batch delete to delete all records. "
                                       "This is just to make things a little safer.")
         try:
-            self.logger.info("Deleting items based on query: " + str(args))
-            # TODO: BIG BUG...Need to query table to see that items exists before trying to delete
-            CeleryTaskAccessor().delete_ir_items(args)
-        except Exception as e:
-            AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
+            Table.get(self)
 
-        return {"result": "Batch deletion request placed on queue to be processed"}
+            try:
+                self.logger.info("Deleting items based on query: " + str(args))
+                CeleryTaskAccessor().delete_ir_items(args)
+            except Exception as e:
+                AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
+
+            return {"result": "Batch deletion request placed on queue to be processed"}
+        except:
+            AbortLogger.log_and_abort(404, self.logger.error, MESSAGE_404.substitute(query_parameters=args))

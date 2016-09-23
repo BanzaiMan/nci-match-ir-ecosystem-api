@@ -68,7 +68,6 @@ class IonReporterRecord(Resource):
         try:
             self.get(ion_reporter_id)
             try:
-                # TODO: BIG BUG...Need to query table to see that items exists before trying to delete
                 CeleryTaskAccessor().delete_ir_item({'ion_reporter_id': ion_reporter_id})
             except Exception as e:
                 AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
