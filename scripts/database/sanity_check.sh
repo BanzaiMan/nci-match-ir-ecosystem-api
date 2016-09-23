@@ -120,13 +120,6 @@ echo -e "${CYAN}***********************************************${NC}"
 curl -X GET "${URL}/api/v1/sample_controls"
 
 echo -e "${CYAN}***********************************************${NC}"
-echo -e "${BLUE}DELETE /api/v1/sample_controls?attribute=value ${NC}"
-echo -e "${PURPLE}delete all records with attribute=value in table sample_controls.${NC}"
-echo -e "${CYAN}***********************************************${NC}"
-
-curl -X DELETE "${URL}/api/v1/sample_controls?site=mdacc"
-
-echo -e "${CYAN}***********************************************${NC}"
 echo -e "${BLUE}GET /api/v1/sample_controls?site={site}&control_type={sample_control_type}${NC}"
 echo -e "${PURPLE}Return back all the sample controls for a given site and control_type. Any parameter is supported${NC}"
 echo -e "${CYAN}***********************************************${NC}"
@@ -222,6 +215,6 @@ echo -e "${BLUE}DELETE /api/v1/sample_controls?site={site}${NC}"
 echo -e "${PURPLE}Delete all sample controls matching the given parameters. Deleting with query parameters is not supported.${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 
-curl -X DELETE "${URL}/api/v1/sample_controls?site=mocha"
+curl -X DELETE "${URL}/api/v1/sample_controls?site=mdacc"
 
 
