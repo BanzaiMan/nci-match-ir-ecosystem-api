@@ -55,7 +55,7 @@ class TestIonReporterTable(unittest.TestCase):
         instance.delete_ir_items.side_effect = Exception('No items with query parameters')
         return_value = self.app.delete('/api/v1/ion_reporters?site=mocha')
         assert "No items with query parameters" in return_value.data
-        assert return_value.status_code == 404
+        assert return_value.status_code == 500
 
     @data(('?site=mocha',
            '{"result": "New ion reporter created", "ion_reporter_id":'),
