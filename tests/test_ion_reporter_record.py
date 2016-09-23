@@ -11,8 +11,6 @@ class TestIonReporterRecord(unittest.TestCase):
         # Starting flask server
         self.app = app.app.test_client()
 
-    # TODO:Waleed why is the return code 200 when there is no data in the database_data variable on the first and last run of this method?
-    # TODO: corrected error
     @data(
             ({'ir_status': 'Contacted 4 minutes ago', 'site': 'mdacc'}, 'IR_AIO78', {'projection': ['site', 'ir_status']}, 200),
             ({}, 'IR_WO4IA', None, 404),
