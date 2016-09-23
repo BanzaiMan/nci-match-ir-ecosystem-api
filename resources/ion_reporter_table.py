@@ -64,6 +64,7 @@ class IonReporterTable(Table):
                                       "This is just to make things a little safer.")
         try:
             self.logger.info("Deleting items based on query: " + str(args))
+            # TODO: BIG BUG...Need to query table to see that items exists before trying to delete
             CeleryTaskAccessor().delete_ir_items(args)
         except Exception as e:
             AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))

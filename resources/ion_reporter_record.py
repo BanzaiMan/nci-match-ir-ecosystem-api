@@ -51,6 +51,7 @@ class IonReporterRecord(Resource):
         # passed in from the params. If they haven't been passed in then they shouldn't be updated.
         item_dictionary = dict((k, v) for k, v in item_dictionary.iteritems() if v)
         try:
+            # TODO: BIG BUG...Need to query table to see that items exists before trying to update
             CeleryTaskAccessor().update_ir_item(item_dictionary)
         except Exception as e:
             AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
@@ -60,6 +61,7 @@ class IonReporterRecord(Resource):
     def delete(self, ion_reporter_id):
         self.logger.info("Deleting ion reporter with id: " + str(ion_reporter_id))
         try:
+            # TODO: BIG BUG...Need to query table to see that items exists before trying to delete
             CeleryTaskAccessor().delete_ir_item({'ion_reporter_id': ion_reporter_id})
         except Exception as e:
             AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))

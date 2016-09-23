@@ -41,6 +41,7 @@ class SampleControlTable(Table):
                                       "This is just to make things a little safer.")
         self.logger.info("Deleting items based on query: " + str(args))
         try:
+            # TODO: BIG BUG...Need to query table to see that items exists before trying to delete
             CeleryTaskAccessor().delete_items(args)
         except Exception as e:
             AbortLogger.log_and_abort(500, self.logger.error, "Batch delete failed because: " + e.message)
