@@ -52,14 +52,14 @@ class IonReporterRecord(Resource):
         item_dictionary = dict((k, v) for k, v in item_dictionary.iteritems() if v)
 
         try:
-            # TODO: BIG BUG...Need to query table to see that items exists before trying to update
+            self.get(ion_reporter_id)
             try:
-                self.get(ion_reporter_id)
+                CeleryTaskAccessor().update_ir_item(item_dictionary)
             except Exception as e:
-                AbortLogger.log_and_abort(404, self.logger.error, MESSAGE_404.substitute(error=e.message))
-            CeleryTaskAccessor().update_ir_item(item_dictionary)
-        except Exception as e:
-            AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
+                AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
+        except:
+            AbortLogger.log_and_abort(404, self.logger.error, MESSAGE_404.substitute(ion_reporter_id=ion_reporter_id))
+
         else:
             return {"message": "Ion reporter with ion reporter id: " + ion_reporter_id + " updated"}
 

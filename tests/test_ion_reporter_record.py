@@ -85,8 +85,9 @@ class TestIonReporterRecord(unittest.TestCase):
         return_value = self.app.put('/api/v1/ion_reporters/IR_WO3IA',
                                     data='{"status":"Lost contact! Last heartbeat was sent 11355 minutes ago"}',
                                     headers={'Content-Type': 'application/json'})
-        assert return_value.status_code == 500
-        assert "Ion reporter creation failed" in return_value.data
+        print return_value.status_code
+        assert return_value.status_code == 404
+        assert "No ion reporters with id" in return_value.data
 
 
 # if __name__ == '__main__':
