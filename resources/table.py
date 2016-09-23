@@ -20,8 +20,8 @@ class Table(Resource):
         self.logger.debug(str(args))
         projection_list, args = DictionaryHelper.get_projection(args)
         try:
-            records = self.accessor().scan(args) if DictionaryHelper.has_values(args) \
-                else self.accessor().scan(None)
+            records = self.accessor().scan(args, ','.join(projection_list)) if DictionaryHelper.has_values(args) \
+                else self.accessor().scan(None, ','.join(projection_list))
         except Exception as e:
             AbortLogger.log_and_abort(500, self.logger.error, "Get failed because: " + e.message)
         else:
@@ -29,13 +29,8 @@ class Table(Resource):
 
             if records is None or len(records) < 1:
                 AbortLogger.log_and_abort(404, self.logger.debug, "No records meet the query parameters")
-            else:
-                if len(records) > 0:
-                    if projection_list is not None and len(projection_list) > 0:
-                        return [{str(item): record[str(item)] for item in projection_list if item in record}
-                                for record in records]
-                    else:
-                        return records
+
+            return records
 
     def get_unique_key(self):
         new_record_id = ""

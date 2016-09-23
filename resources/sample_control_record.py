@@ -56,11 +56,12 @@ class SampleControlRecord(Resource):
             return {"message": "Item deleted", "molecular_id": molecular_id}
 
     def get(self, molecular_id):
-
         self.logger.info("Getting sample control with id: " + str(molecular_id))
+        args = request.args
+        projection_list, args = DictionaryHelper.get_projection(args)
 
         try:
-            results = SampleControlAccessor().get_item({'molecular_id': molecular_id})
+            results = SampleControlAccessor().get_item({'molecular_id': molecular_id}, ','.join(projection_list))
         except Exception as e:
             AbortLogger.log_and_abort(500, self.logger.error, "get_item failed because " + e.message)
         else:

@@ -4,6 +4,7 @@ from boto3.dynamodb.conditions import Attr
 from werkzeug.datastructures import ImmutableMultiDict
 from common.dictionary_helper import DictionaryHelper
 
+
 class QueryHelper(object):
 
     @staticmethod

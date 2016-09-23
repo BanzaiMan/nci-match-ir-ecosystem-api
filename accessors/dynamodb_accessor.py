@@ -25,22 +25,34 @@ class DynamoDBAccessor(object):
         self.logger.debug("DynamoDBAccessor instantiated")
 
     # Used to get items without regard to keys from table based on some parameters
-    def scan(self, query_parameters, *exclusive_start_key):
+    def scan(self, query_parameters, projection, *exclusive_start_key):
         if query_parameters is not None:
             self.logger.debug("Dynamodb SCAN with filter expression(s) called")
             self.logger.debug(str(query_parameters))
             if any(exclusive_start_key):
                 self.logger.debug("Exclusive start key is " + str(exclusive_start_key[0]))
                 try:
-                    results = self.table.scan(FilterExpression=QueryHelper.create_filter_expression(query_parameters),
-                                              ExclusiveStartKey=exclusive_start_key[0])
+                    if len(projection) > 0:
+                        results = self.table.scan(FilterExpression=QueryHelper.create_filter_expression(query_parameters),
+                                                  ExclusiveStartKey=exclusive_start_key[0],
+                                                  ProjectionExpression=projection)
+                    else:
+                        results = self.table.scan(
+                            FilterExpression=QueryHelper.create_filter_expression(query_parameters),
+                            ExclusiveStartKey=exclusive_start_key[0])
                 except Exception as e:
                     self.logger.error("Scan of database failed because " + e.message)
                     raise
             else:
                 self.logger.debug("Scan with no start key")
                 try:
-                    results = self.table.scan(FilterExpression=QueryHelper.create_filter_expression(query_parameters))
+                    if len(projection) > 0:
+                        results = self.table.scan(
+                            FilterExpression=QueryHelper.create_filter_expression(query_parameters),
+                            ProjectionExpression=projection)
+                    else:
+                        results = self.table.scan(
+                            FilterExpression=QueryHelper.create_filter_expression(query_parameters))
                 except Exception as e:
                     self.logger.error("Scan of database failed because " + e.message)
                     raise
@@ -49,13 +61,20 @@ class DynamoDBAccessor(object):
             if any(exclusive_start_key):
                 self.logger.debug("Exclusive start key is " + str(exclusive_start_key[0]))
                 try:
-                    results = self.table.scan(ExclusiveStartKey=exclusive_start_key[0])
+                    if len(projection) > 0:
+                        results = self.table.scan(ExclusiveStartKey=exclusive_start_key[0],
+                                                  ProjectionExpression=projection)
+                    else:
+                        results = self.table.scan(ExclusiveStartKey=exclusive_start_key[0])
                 except Exception as e:
                     self.logger.error("Scan of database failed because " + e.message)
                     raise
             else:
                 try:
-                    results = self.table.scan()
+                    if len(projection) > 0:
+                        results = self.table.scan(ProjectionExpression=projection)
+                    else:
+                        results = self.table.scan()
                 except Exception as e:
                     self.logger.error("Scan of database failed because " + e.message)
                     raise
@@ -64,7 +83,7 @@ class DynamoDBAccessor(object):
         items = results['Items'] if len(results) > 0 else []
         if results.get('LastEvaluatedKey'):
             try:
-                items += self.scan(query_parameters, results['LastEvaluatedKey'])
+                items += self.scan(query_parameters, projection, results['LastEvaluatedKey'])
             except Exception as e:
                 self.logger.error("Scan of database failed because " + e.message)
                 raise
@@ -108,9 +127,9 @@ class DynamoDBAccessor(object):
 
     # this function and delete_item are essentially the same except the function name
     # Used to get a single item by ID from the table
-    def get_item(self, key, *additional_keys):
+    def get_item(self, key, projection, *additional_keys):
         try:
-            results = self.__item(self.table.get_item, 'get', key, additional_keys)
+            results = self.__item(self.table.get_item, 'get', key, projection, additional_keys)
             return results['Item'] if 'Item' in results else []
         except ClientError as e:
             self.logger.error("Client Error on get_item: " + e.message)
@@ -176,7 +195,7 @@ class DynamoDBAccessor(object):
         return self.dynamodb.Table(table_name)
 
     # This function supports the DRY principle and allows me to consolidate the delete and get code into one.
-    def __item(self, function, function_description, key, *additional_keys):
+    def __item(self, function, function_description, key, projection, *additional_keys):
         self.logger.debug("Dynamodb " + function_description + "_item with Keys called")
         self.logger.debug(str(key))
         all_keys = QueryHelper.create_key_dict(function_description, key)
@@ -184,7 +203,10 @@ class DynamoDBAccessor(object):
         self.logger.debug("Performing item " + function_description + " from table: " + self.table.name)
 
         try:
-            return function(Key=all_keys)
+            if len(projection) > 0:
+                return function(Key=all_keys, ProjectionExpression=projection)
+            else:
+                return function(Key=all_keys)
         except ClientError as e:
             self.logger.error("Client Error on " + function_description + ": " + e.message)
             raise
