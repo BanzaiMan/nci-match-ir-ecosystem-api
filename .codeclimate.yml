@@ -25,6 +25,8 @@ engines:
     - 3b3bae94717e49b3af756d172f380d4e
     - 22e74f0c3bf568049da1ce0ba433215a
     - 406433e2d03773270f95d124c62594c7
+    - 6e88f1858fa9d13c78e51308f2601866
+    - 9d3fafb5914fb726038d31afcf3fd41b
   duplication:
     enabled: true
     exclude_fingerprints:
@@ -36,6 +38,8 @@ engines:
     - 8400b393db6a5fd7f1e75af2f7af218c
     - fd4e25e5b65a0f3f3aab2f74b2ad7be6
     - e2adda30718d4e770b47b03682f21b16
+    - 5b82b7851d9332b71cc2fb8f2e7aa8b8
+    - 6475b14996fe831075eaedda81e84447
     config:
       languages:
         python:
