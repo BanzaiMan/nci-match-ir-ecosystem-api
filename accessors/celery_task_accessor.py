@@ -12,16 +12,16 @@ class CeleryTaskAccessor(object):
     def put_item(self, item_dictionary):
         return self.__process_item(item_dictionary, put, "put")
 
-    def update_item(self, item_dictionary):
+    def update_sample_control_record(self, item_dictionary):
         return self.__process_item(item_dictionary, update, "update")
 
-    def update_ir_item(self, item_dictionary):
+    def update_ion_reporter_record(self, item_dictionary):
         return self.__process_item(item_dictionary, update_ir, "update ir")
 
-    def delete_item(self, item_dictionary):
+    def delete_sample_control_record(self, item_dictionary):
         return self.__process_item(item_dictionary, delete, "delete")
 
-    def delete_ir_item(self, item_dictionary):
+    def delete_ion_reporter_record(self, item_dictionary):
         return self.__process_item(item_dictionary, delete_ir, "delete ir")
 
     def delete_items(self, query_parameters):

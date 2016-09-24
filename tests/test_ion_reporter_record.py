@@ -52,48 +52,61 @@ class TestIonReporterRecord(unittest.TestCase):
         ('IR_WO3IA', '"message": "Item deleted"')
     )
     @unpack
+    @patch('resources.record.Record.record_exist')
     @patch('resources.ion_reporter_record.CeleryTaskAccessor')
-    def test_delete(self, ion_reporter_id, expected_results, mock_class):
+    def test_delete(self, ion_reporter_id, expected_results, mock_class, mock_method):
+        # TODO: Change to pass in True or False from data runner to test different conditions
+        mock_method.return_value = True
         instance = mock_class.return_value
         instance.delete_ir_item.return_value = True
         return_value = self.app.delete('/api/v1/ion_reporters/' + ion_reporter_id)
         print "return data=" + str(return_value.data)
         assert expected_results in return_value.data
 
+    @patch('resources.record.Record.record_exist')
     @patch('resources.ion_reporter_record.CeleryTaskAccessor')
-    def test_delete_exception(self, mock_class):
+    def test_delete_exception(self, mock_class, mock_method):
+        # TODO: Change to pass in True or False from data runner to test different conditions
+        mock_method.return_value = True
         instance = mock_class.return_value
-        instance.delete_ir_item.side_effect = Exception('No ion reporters with id')
+        instance.delete_ion_reporter_record.side_effect = Exception('Celery Task Accessor blew up!')
         return_value = self.app.delete('/api/v1/ion_reporters/IR_WO3IA')
-        assert return_value.status_code == 404
-        assert "No ion reporters with id" in return_value.data
+        assert return_value.status_code == 500
+        assert "Celery Task Accessor blew up!" in return_value.data
 
+    # TODO: This needs more tests to make sure all exceptions and paths are executed in the test
     @data(
         ('IR_WO3IA',
-         {"status": "Contacted 5 minutes ago"}, 'Ion reporter with ion reporter id'),
-        ('IR_WO3IA', None, 'Update item failed')
+         {"status": "Contacted 5 minutes ago"}, 'updated', True, 200),
+        ('IR_WO3IA', None, 'Update item failed', True, 400),
+        ('IR_WO3IA', {"status": "Contacted 5 minutes ago"}, ' with id: ', False, 404)
     )
     @unpack
+    @patch('resources.record.Record.record_exist')
     @patch('resources.ion_reporter_record.CeleryTaskAccessor')
-    def test_put(self, ion_reporter_id, item, expected_results, mock_class):
+    def test_put(self, ion_reporter_id, item, expected_results, item_in_database, return_status, mock_class, mock_method):
+        mock_method.return_value = item_in_database
         instance = mock_class.return_value
-        instance.update_ir_item.return_value = True
+        instance.update_ion_reporter_record.return_value = True
         return_value = self.app.put('/api/v1/ion_reporters/' + ion_reporter_id,
                                     data=json.dumps(item),
                                     content_type='application/json')
-        print return_value.data
+
+        assert return_value.status_code == return_status
         assert expected_results in return_value.data
 
+    @patch('resources.record.Record.record_exist')
     @patch('resources.ion_reporter_record.CeleryTaskAccessor')
-    def test_put_exception(self, mock_class):
+    def test_put_exception(self, mock_class, mock_method):
+        mock_method.return_value = True
         instance = mock_class.return_value
-        instance.update_ir_item.side_effect = Exception('Ion reporter creation failed')
+        instance.update_ion_reporter_record.side_effect = Exception('Celery Failed')
         return_value = self.app.put('/api/v1/ion_reporters/IR_WO3IA',
                                     data='{"status":"Lost contact! Last heartbeat was sent 11355 minutes ago"}',
                                     headers={'Content-Type': 'application/json'})
-        print return_value.status_code
-        assert return_value.status_code == 404
-        assert "No ion reporters with id" in return_value.data
+
+        assert return_value.status_code == 500
+        assert "Celery Failed" in return_value.data
 
 
 # if __name__ == '__main__':

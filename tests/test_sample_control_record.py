@@ -25,7 +25,7 @@ class TestSampleControlRecord(unittest.TestCase):
         instance = mock_sc_record_class.return_value
         instance.get_item.return_value = item
         return_value = self.app.get('/api/v1/sample_controls/' + molecular_id)
-        print "==============" + str(return_value.status_code)
+
         assert return_value.status_code == expected_results
         print return_value.data
         if expected_results == 200:
@@ -47,21 +47,26 @@ class TestSampleControlRecord(unittest.TestCase):
         ('SC_5AMCC', '"message": "Item deleted"')
     )
     @unpack
+    @patch('resources.record.Record.record_exist')
     @patch('resources.sample_control_record.CeleryTaskAccessor')
-    def test_delete(self, molecular_id, expected_results, mock_sc_record_class):
+    def test_delete(self, molecular_id, expected_results, mock_sc_record_class, mock_method):
+        mock_method.return_value = True
         instance = mock_sc_record_class.return_value
         instance.delete_item.return_value = True
         return_value = self.app.delete('/api/v1/sample_controls/' + molecular_id)
-        print "return data=" + str(return_value.data)
+
         assert return_value.data.find(expected_results)
 
+    @patch('resources.record.Record.record_exist')
     @patch('resources.sample_control_record.CeleryTaskAccessor')
-    def test_delete_exception(self, mock_sc_record_class):
+    def test_delete_exception(self, mock_sc_record_class, mock_method):
+        # TODO: Change to pass in True or False from data runner to test different conditions
+        mock_method.return_value = True
         instance = mock_sc_record_class.return_value
-        instance.delete_item.side_effect = Exception('Testing delete_item exception')
+        instance.delete_sample_control_record.side_effect = Exception('Celery Task Accessor blew up!')
         return_value = self.app.delete('/api/v1/sample_controls/SC_5AMCC')
-        assert "Testing delete_item exception" in return_value.data
         assert return_value.status_code == 500
+        assert "Celery Task Accessor blew up!" in return_value.data
 
     @data(
         ('SC_5AMCC',
@@ -69,14 +74,17 @@ class TestSampleControlRecord(unittest.TestCase):
           'molecular_id': 'SC_5AMCC', 'analysis_id': 'SC_5AMCC_SC_5AMCC_k123_v1'}, 'updated')
     )
     @unpack
+    @patch('resources.record.Record.record_exist')
     @patch('resources.sample_control_record.CeleryTaskAccessor')
-    def test_put(self, molecular_id, update_dictionary, expected_results, mock_sc_record_class):
+    def test_put(self, molecular_id, update_dictionary, expected_results, mock_sc_record_class, mock_method):
+        # TODO: Change to pass in True or False from data runner to test different conditions
+        mock_method.return_value = True
         instance = mock_sc_record_class.return_value
-        instance.update_item(update_dictionary).return_value = True
+        instance.update_sample_control_record(update_dictionary).return_value = True
         return_value = self.app.put('/api/v1/sample_controls/' + molecular_id,
                                     data=json.dumps(update_dictionary),
                                     content_type='application/json')
-        print return_value.data
+
         assert return_value.data.find(molecular_id + " " + expected_results)
 
     @data(
@@ -86,10 +94,13 @@ class TestSampleControlRecord(unittest.TestCase):
          )
     )
     @unpack
+    @patch('resources.record.Record.record_exist')
     @patch('resources.sample_control_record.CeleryTaskAccessor')
-    def test_put_exception(self, molecular_id, update_dictionary, mock_sc_record_class):
+    def test_put_exception(self, molecular_id, update_dictionary, mock_sc_record_class, mock_method):
+        # TODO: Change to pass in True or False from data runner to test different conditions
+        mock_method.return_value = True
         instance = mock_sc_record_class.return_value
-        instance.update_item.side_effect = Exception('Testing update_item exception')
+        instance.update_sample_control_record.side_effect = Exception('Testing update_item exception')
         return_value = self.app.put('/api/v1/sample_controls/' + molecular_id,
                                     data=json.dumps(update_dictionary),
                                     content_type='application/json')

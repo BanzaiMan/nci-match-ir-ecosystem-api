@@ -45,7 +45,7 @@ EnvironmentHelper.set_environment(logger.info)
 api.add_resource(SampleControlTable, '/api/v1/sample_controls')
 
 # Path for Updating and deleting a specific sample control
-api.add_resource(SampleControlRecord, '/api/v1/sample_controls/<string:molecular_id>')
+api.add_resource(SampleControlRecord, '/api/v1/sample_controls/<string:identifier>')
 
 # Paths for downloading vcf or tsv file, format = vcf|tsv
 api.add_resource(VariantSequenceFile, '/api/v1/sequence_files/<string:molecular_id>/<string:file_format>')
@@ -59,7 +59,7 @@ api.add_resource(AlignmentSequenceFile,
 
 # Paths for updating information about ion reporters themselves
 api.add_resource(IonReporterTable, '/api/v1/ion_reporters')
-api.add_resource(IonReporterRecord, '/api/v1/ion_reporters/<string:ion_reporter_id>')
+api.add_resource(IonReporterRecord, '/api/v1/ion_reporters/<string:identifier>')
 api.add_resource(SequenceData, '/api/v1/ion_reporters/<string:ion_reporter_id>/<string:sequence_data>')
 
 # Path for either sending in files from the ir (bam,vcf) to process them and store them based on their molecular id
