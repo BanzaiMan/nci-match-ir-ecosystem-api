@@ -86,20 +86,28 @@ class TestIonReporterRecord(unittest.TestCase):
         assert return_value.status_code == stat_code
         assert expected_results in return_value.data
 
-    # TODO: This needs more tests to make sure all exceptions and paths are executed in the test
+
     @data(
         ('IR_WO3IA',
-         {"status": "Contacted 5 minutes ago"}, 'updated', True, 200),
-        ('IR_WO3IA', None, 'Update item failed', True, 400),
-        ('IR_WO3IA', {"status": "Contacted 5 minutes ago"}, ' with id: ', False, 404)
+         {"status": "Contacted 5 minutes ago"}, 'updated', True, 200, True),
+        ('IR_WO3IA', None, 'Update item failed', True, 400, True),
+        ('IR_WO3IA', {"status": "Contacted 5 minutes ago"}, ' with id: ', False, 404, True),
+        ('IR_WO3IA',
+         {"status": "Contacted 5 minutes ago"}, 'updated', True, 200, False),
+
+        ('IR_WO3IA', None, 'Update item failed', True, 400, False),
+
+        ('IR_WO3IA', {"status": "Contacted 5 minutes ago"}, ' with id: ', False, 404, False)
+
     )
     @unpack
     @patch('resources.record.Record.record_exist')
     @patch('resources.ion_reporter_record.CeleryTaskAccessor')
-    def test_put(self, ion_reporter_id, item, expected_results, item_in_database, return_status, mock_class, mock_method):
+    def test_put(self, ion_reporter_id, item, expected_results, item_in_database, return_status, record_exist_value, mock_class, mock_method):
         mock_method.return_value = item_in_database
         instance = mock_class.return_value
-        instance.update_ion_reporter_record.return_value = True
+        instance.update_ion_reporter_record.return_value = record_exist_value
+        print instance.update().return_value
         return_value = self.app.put('/api/v1/ion_reporters/' + ion_reporter_id,
                                     data=json.dumps(item),
                                     content_type='application/json')
@@ -107,18 +115,27 @@ class TestIonReporterRecord(unittest.TestCase):
         assert return_value.status_code == return_status
         assert expected_results in return_value.data
 
+
+    @data(
+        ("Server Error", True, 500),
+        ("Server Error", True, 500),
+        ("No ABCMeta with id: IR_WO3IA found.", False, 404),
+        ("No ABCMeta with id: IR_WO3IA found.", False, 404)
+    )
+    @unpack
     @patch('resources.record.Record.record_exist')
     @patch('resources.ion_reporter_record.CeleryTaskAccessor')
-    def test_put_exception(self, mock_class, mock_method):
-        mock_method.return_value = True
+    def test_put_exception(self, expected_results, record_exist_value, stat_code, mock_class, mock_method):
+        mock_method.return_value = record_exist_value
         instance = mock_class.return_value
         instance.update_ion_reporter_record.side_effect = Exception('Celery Failed')
         return_value = self.app.put('/api/v1/ion_reporters/IR_WO3IA',
                                     data='{"status":"Lost contact! Last heartbeat was sent 11355 minutes ago"}',
                                     headers={'Content-Type': 'application/json'})
 
-        assert return_value.status_code == 500
-        assert "Celery Failed" in return_value.data
+        print return_value.data
+        assert return_value.status_code == stat_code
+        assert expected_results in return_value.data
 
 
 # if __name__ == '__main__':
