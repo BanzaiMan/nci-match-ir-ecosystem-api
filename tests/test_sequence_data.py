@@ -45,7 +45,7 @@ class TestSequenceData(unittest.TestCase):
 
         ('sample_controls',
          'IR_WAO85', [{u'control_type': u'no_template', u'molecular_id': u'SC_SA1CB'}, {u'control_type': u'no_template', u'molecular_id': u'SC_SAWCB'}, {u'control_type': u'positive', u'molecular_id': u'SC_67VKV'}], 200,
-         {'projection': ['site_ip_address', 'control_type', 'molecular_id']}, "'ion_reporter_id': u'IR_WAO85'"),
+         {'projection': ['site_ip_address', 'control_type', 'molecular_id']}, "'molecular_id': u'SC_SAWCB'"),
     )
     @unpack
     @patch('resources.sequence_data.reqparse.RequestParser.parse_args')
