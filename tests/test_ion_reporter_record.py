@@ -49,30 +49,42 @@ class TestIonReporterRecord(unittest.TestCase):
         assert "testing throwing exception" in return_value.data
 
     @data(
-        ('IR_WO3IA', '"message": "Item deleted"')
+        ('IR_WO3IA', '"message": "Item deleted"', True, True, 200),
+        ('IR_WO3IA', '"message": "Item deleted"', True, False, 200),
+        ('IR_WO3IB', "No ABCMeta with id: IR_WO3IB found.", False, True, 404),
+        ('IR_WO3IB', "No ABCMeta with id: IR_WO3IB found.", False, False, 404)
     )
     @unpack
     @patch('resources.record.Record.record_exist')
     @patch('resources.ion_reporter_record.CeleryTaskAccessor')
-    def test_delete(self, ion_reporter_id, expected_results, mock_class, mock_method):
-        # TODO: Change to pass in True or False from data runner to test different conditions
-        mock_method.return_value = True
+    def test_delete(self, ion_reporter_id, expected_results, record_exist_value, celery_task_ir_item_value, stat_code, mock_class, mock_method):
+        mock_method.return_value = record_exist_value
         instance = mock_class.return_value
-        instance.delete_ir_item.return_value = True
+        instance.delete_ir_item.return_value = celery_task_ir_item_value
         return_value = self.app.delete('/api/v1/ion_reporters/' + ion_reporter_id)
         print "return data=" + str(return_value.data)
+        print return_value.status_code
         assert expected_results in return_value.data
+        assert stat_code == return_value.status_code
 
+    @data(
+        ("Celery Task Accessor blew up!", True, 500),
+        ("Celery Task Accessor blew up!", True, 500),
+        ("No ABCMeta with id: IR_WO3IA found.", False, 404),
+        ("No ABCMeta with id: IR_WO3IA found.", False, 404)
+    )
+    @unpack
     @patch('resources.record.Record.record_exist')
     @patch('resources.ion_reporter_record.CeleryTaskAccessor')
-    def test_delete_exception(self, mock_class, mock_method):
-        # TODO: Change to pass in True or False from data runner to test different conditions
-        mock_method.return_value = True
+    def test_delete_exception(self, expected_results, record_exist_value, stat_code,  mock_class, mock_method):
+        mock_method.return_value = record_exist_value
         instance = mock_class.return_value
         instance.delete_ion_reporter_record.side_effect = Exception('Celery Task Accessor blew up!')
         return_value = self.app.delete('/api/v1/ion_reporters/IR_WO3IA')
-        assert return_value.status_code == 500
-        assert "Celery Task Accessor blew up!" in return_value.data
+        print return_value.status_code
+        print return_value.data
+        assert return_value.status_code == stat_code
+        assert expected_results in return_value.data
 
     # TODO: This needs more tests to make sure all exceptions and paths are executed in the test
     @data(
