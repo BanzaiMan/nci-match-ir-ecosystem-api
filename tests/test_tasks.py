@@ -83,7 +83,8 @@ class TestTasks(unittest.TestCase):
     @unpack
     @patch('tasks.tasks.S3Accessor')
     @patch('tasks.tasks.SequenceFileProcessor')
-    def test_process_file_message(self, file_process_message, new_file_path, expected_return, mock_sf_accessor_class,
+    def test_process_file_message(self, file_process_message, new_file_path, expected_return,
+                                  mock_sf_accessor_class,
                                   mock_s3_accessor_class):
 
         s3_instance = mock_s3_accessor_class.return_value
@@ -103,6 +104,16 @@ class TestTasks(unittest.TestCase):
           'site': 'mocha',
           "ion_reporter_id": "IR_WAO85",
           'vcf_name': 'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1.vcf',
+          'molecular_id': 'SC_SA1CB',
+          'analysis_id': 'SC_SA1CB_SC_SA1CB_a888_v1'
+          },
+         "Testing in process_file_message s3 download failed"
+         ),
+        ({'site_ip_address': '129.43.127.133',
+          'control_type': 'no_template',
+          'site': 'mocha',
+          "ion_reporter_id": "IR_WAO85",
+          'dna_bam_name': 'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1.bam',
           'molecular_id': 'SC_SA1CB',
           'analysis_id': 'SC_SA1CB_SC_SA1CB_a888_v1'
           },
@@ -128,8 +139,68 @@ class TestTasks(unittest.TestCase):
             print "==================" + e.message
             assert exception_message in e.message
 
+    @data(
+        ({'site_ip_address': '129.43.127.133',
+          'control_type': 'no_template',
+          'site': 'mocha',
+          "ion_reporter_id": "IR_WAO85",
+          'vcf_name': 'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1.vcf',
+          'molecular_id': 'SC_SA1CB',
+          'analysis_id': 'SC_SA1CB_SC_SA1CB_a888_v1'
+          },
+         "Testing in process_file_message vcf_to_tsv failed"
+         )
+    )
+    @unpack
+    @patch('tasks.tasks.S3Accessor')
+    @patch('tasks.tasks.SequenceFileProcessor')
+    def test_process_file_message_vcf2tsv_exception(self, file_process_message, exception_message,
+                                                    mock_sf_accessor_class,
+                                                    mock_s3_accessor_class):
+        s3_instance = mock_s3_accessor_class.return_value
+        s3_instance.download.return_value = True
+        s3_instance.upload.return_value = True
+        sf_instance = mock_sf_accessor_class.return_value
+        sf_instance.vcf_to_tsv.side_effect = Exception(exception_message)
+        sf_instance.bam_to_bai.return_value = True
 
-    #TODO add test exception, and test else ...
+        try:
+            tasks.process_file_message(file_process_message)
+        except Exception as e:
+            print "==================" + e.message
+            assert exception_message in e.message
+
+    @data(
+        ({'site_ip_address': '129.43.127.133',
+          'control_type': 'no_template',
+          'site': 'mocha',
+          "ion_reporter_id": "IR_WAO85",
+          'dna_bam_name': 'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1.bam',
+          'molecular_id': 'SC_SA1CB',
+          'analysis_id': 'SC_SA1CB_SC_SA1CB_a888_v1'
+          },
+         "Testing in process_file_message bam_to_bai failed"
+         )
+    )
+    @unpack
+    @patch('tasks.tasks.S3Accessor')
+    @patch('tasks.tasks.SequenceFileProcessor')
+    def test_process_file_message_bam2bai_exception(self, file_process_message, exception_message,
+                                                    mock_sf_accessor_class,
+                                                    mock_s3_accessor_class):
+        s3_instance = mock_s3_accessor_class.return_value
+        s3_instance.download.return_value = True
+        s3_instance.upload.return_value = True
+        sf_instance = mock_sf_accessor_class.return_value
+        sf_instance.vcf_to_tsv.return_value = True
+        sf_instance.bam_to_bai.side_effect = Exception(exception_message)
+
+        try:
+            tasks.process_file_message(file_process_message)
+        except Exception as e:
+            print "==================" + e.message
+            assert exception_message in e.message
+
 
 # if __name__ == '__main__':
 #     unittest.main()
