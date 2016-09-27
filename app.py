@@ -4,6 +4,7 @@ import os
 from logging.config import fileConfig
 
 from flask import Flask
+from flask.ext.cors import CORS
 from flask_restful import Api
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
@@ -25,6 +26,7 @@ from common.environment_helper import EnvironmentHelper
 # Boilerplate code to start flask
 app = Flask(__name__)
 api = Api(app)
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # Logging functionality
 fileConfig(os.path.abspath("config/logging_config.ini"))
