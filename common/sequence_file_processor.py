@@ -15,8 +15,7 @@ class SequenceFileProcessor(object):
         if not os.path.isfile(bam_full_path):
             logger.debug("bam file does not exist: " + str(bam_full_path))
             logger.debug("Failed to convert bam file to bai file.")
-            # TODO: Qing you have to raise an exception here. You shouldn't call abort logger since this code should not be aware that it is being used by a restful api
-            AbortLogger.log_and_abort(404, logger.error, str(bam_full_path + " does not exist"))
+            raise Exception("Failed to convert bam file to bai because bam file does not exist.")
 
         p = re.compile('.bam')
         bai_full_path = p.sub('.bai', bam_full_path)
@@ -40,8 +39,7 @@ class SequenceFileProcessor(object):
         if not os.path.isfile(vcf_full_path):
             logger.debug("vcf file does not exist: " + str(vcf_full_path))
             logger.debug("Failed to convert vcf file to tsv file.")
-            # TODO: Qing you have to raise an exception here. You shouldn't call abort logger since this code should not be aware that it is being used by a restful api
-            AbortLogger.log_and_abort(404, logger.error, str(vcf_full_path + " does not exist"))
+            raise Exception("Failed to convert vcf file to tsv because vcf file does not exist.")
 
         p = re.compile('.vcf')
         tsv_full_path = p.sub('.tsv', vcf_full_path)
