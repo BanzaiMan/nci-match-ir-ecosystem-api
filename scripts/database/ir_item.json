@@ -1,10 +1,9 @@
 {
-      "ion_reporter_id": {"S": "IR_WO3IA"},
-      "ip_address": {"S": "129.43.39.182"},
-      "internal_ip_address": {"S": "129.43.39.182"},
-      "host_name": {"S": "NCI-MATCH-IR"},
-      "site": {"S": "mocha"},
-      "ir_status": {"S": "Contacted 4 minutes ago"},
-      "last_contact": {"S": "August 29, 2016 2:01 PM GMT"},
-      "data_files": {"S": "DB Report"}
+      "ip_address": "129.43.39.182",
+      "internal_ip_address": "129.43.39.182",
+      "host_name": "NCI-MATCH-IR",
+      "site": "mocha",
+      "status": "Contacted 4 minutes ago",
+      "last_contact": "August 29, 2016 2:01 PM GMT",
+      "data_files": "DB Report"
 }
