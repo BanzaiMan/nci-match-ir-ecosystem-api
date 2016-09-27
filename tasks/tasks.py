@@ -91,11 +91,13 @@ def process_file_message(file_process_message):
         new_file_name = secure_filename(os.path.basename(new_file_path))
         new_file_s3_path = unicode_free_dictionary['ion_reporter_id'] + "/" + unicode_free_dictionary['molecular_id'] + \
                            "/" + unicode_free_dictionary['analysis_id'] + "/" + new_file_name
-
-        S3Accessor().upload(downloaded_file_path, new_file_s3_path)
-        unicode_free_dictionary.update({key: new_file_s3_path})
-
-        return unicode_free_dictionary
+        try:
+            S3Accessor().upload(downloaded_file_path, new_file_s3_path)
+        except Exception as e:
+            raise Exception(e.message)
+        else:
+            unicode_free_dictionary.update({key: new_file_s3_path})
+            return unicode_free_dictionary
 
 
 def process_vcf(dictionary):
