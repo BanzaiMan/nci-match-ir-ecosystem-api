@@ -5,6 +5,7 @@ celery==3.1.23
 ddbmock==1.0.3
 ddt==1.1.0
 Flask==0.11.1
+flask-cors==2.1.0
 Flask_RESTful==0.3.5
 mock==2.0.0
 pysam==0.9.1.4
