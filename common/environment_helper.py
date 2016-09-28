@@ -13,6 +13,7 @@ class EnvironmentHelper(object):
         except KeyError as e:
             logger_function("Must configure ENVIRONMENT variable in your environment in order for application to start")
             logger_function(e.message)
+            exit()
         else:
             logger_function("Environment set to: " + __builtin__.environment)
 
