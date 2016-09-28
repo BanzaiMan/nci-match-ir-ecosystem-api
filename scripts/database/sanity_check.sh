@@ -168,7 +168,7 @@ echo -e "${BLUE}PUT /api/v1/sample_controls/{molecular_id}${NC}"
 echo -e "${PURPLE}JSON to update sample control record with${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 
-curl -X PUT -H 'Content-Type: application/json' -d @./item.json "${URL}/api/v1/sample_controls/SC_SA1CB"
+curl -X PUT -H 'Content-Type: application/json' -d @./sc_item.json "${URL}/api/v1/sample_controls/SC_SA1CB"
 
 
 echo -e "${YELLOW}------------------------------------------------------------------------------------------------------------------------${NC}"
