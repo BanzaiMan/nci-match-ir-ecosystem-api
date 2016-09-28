@@ -41,6 +41,8 @@ engines:
     - 5b82b7851d9332b71cc2fb8f2e7aa8b8
     - 6475b14996fe831075eaedda81e84447
     - 1162141f9a64098e8778e5cfcc52a5a8
+    - ba1202cf2abcf4e81312c9204f153b4b
+    - 85792d04853917421e55d2eb550b9ea3
     config:
       languages:
         python:
