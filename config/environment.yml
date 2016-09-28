@@ -14,6 +14,7 @@ test:
   bucket: "pedmatch-int"
   tmp_file_dir: "/tmp"
   polling_interval: "10"
+  ir_queue_name: "ion_reporter_queue"
   aws_download_time_limit: 600
 
 uat:
@@ -23,6 +24,7 @@ uat:
   bucket: "pedmatch-uat"
   tmp_file_dir: "/tmp"
   polling_interval: "10"
+  ir_queue_name: "ion_reporter_queue"
   aws_download_time_limit: 600
 
 production:
@@ -32,4 +34,5 @@ production:
   bucket: "pedmatch"
   tmp_file_dir: "/tmp"
   polling_interval: "10"
+  ir_queue_name: "ion_reporter_queue"
   aws_download_time_limit: 600

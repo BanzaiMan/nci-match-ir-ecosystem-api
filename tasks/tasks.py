@@ -25,7 +25,15 @@ BROKER_TRANSPORT_OPTIONS = {
 app = Celery('tasks', broker=BROKER__URL, broker_transport_options=BROKER_TRANSPORT_OPTIONS)
 app.conf.CELERY_ACCEPT_CONTENT = ['json']
 app.conf.CELERY_TASK_SERIALIZER = 'json'
-app.conf.CELERY_DEFAULT_QUEUE = os.environ['IR_QUEUE_NAME']
+try:
+    app.conf.CELERY_DEFAULT_QUEUE = os.environ['IR_QUEUE_NAME']
+except KeyError as e:
+    try:
+        app.conf.CELERY_DEFAULT_QUEUE = __builtin__.environment_config[__builtin__.environment]['ir_queue_name']
+    except KeyError as e:
+        logger.error("Need to setup your queue name by setting IR_QUEUE_NAME variable: " + e.message)
+        exit()
+
 app.conf.CELERY_ENABLE_REMOTE_CONTROL = False
 
 # I don't think we will use this for sample control as our sample control creation of records are not done through
