@@ -18,23 +18,29 @@ fileConfig(os.path.abspath("config/logging_config.ini"))
 logger = logging.getLogger(__name__)
 EnvironmentHelper.set_environment(logger.info)
 
-BROKER__URL = "sqs://" + os.environ['AWS_ACCESS_KEY_ID'] + ":" + os.environ['AWS_SECRET_ACCESS_KEY'] + "@"
-BROKER_TRANSPORT_OPTIONS = {
-    'polling_interval': __builtin__.environment_config[__builtin__.environment]['polling_interval']
-}
-app = Celery('tasks', broker=BROKER__URL, broker_transport_options=BROKER_TRANSPORT_OPTIONS)
-app.conf.CELERY_ACCEPT_CONTENT = ['json']
-app.conf.CELERY_TASK_SERIALIZER = 'json'
+# Setting up the Celery broker but making sure to ensure environment variables are in place
 try:
-    app.conf.CELERY_DEFAULT_QUEUE = os.environ['IR_QUEUE_NAME']
+    BROKER__URL = "sqs://" + os.environ['AWS_ACCESS_KEY_ID'] + ":" + os.environ['AWS_SECRET_ACCESS_KEY'] + "@"
 except KeyError as e:
+    logger.error("Setup your queue name by setting AWS_ACCESS_KEY_ID or AWS_SECRET_ACCESS_KEY variable: " + e.message)
+    exit()
+else:
+    BROKER_TRANSPORT_OPTIONS = {
+        'polling_interval': __builtin__.environment_config[__builtin__.environment]['polling_interval']
+    }
+    app = Celery('tasks', broker=BROKER__URL, broker_transport_options=BROKER_TRANSPORT_OPTIONS)
+    app.conf.CELERY_ACCEPT_CONTENT = ['json']
+    app.conf.CELERY_TASK_SERIALIZER = 'json'
     try:
-        app.conf.CELERY_DEFAULT_QUEUE = __builtin__.environment_config[__builtin__.environment]['ir_queue_name']
+        app.conf.CELERY_DEFAULT_QUEUE = os.environ['IR_QUEUE_NAME']
     except KeyError as e:
-        logger.error("Need to setup your queue name by setting IR_QUEUE_NAME variable: " + e.message)
-        exit()
+        try:
+            app.conf.CELERY_DEFAULT_QUEUE = __builtin__.environment_config[__builtin__.environment]['ir_queue_name']
+        except KeyError as e:
+            logger.error("Need to setup your queue name by setting IR_QUEUE_NAME variable: " + e.message)
+            exit()
 
-app.conf.CELERY_ENABLE_REMOTE_CONTROL = False
+    app.conf.CELERY_ENABLE_REMOTE_CONTROL = False
 
 # I don't think we will use this for sample control as our sample control creation of records are not done through
 # the queueing system but directly on the database. However, I'll leave this for now.
