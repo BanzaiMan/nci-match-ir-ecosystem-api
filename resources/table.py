@@ -37,7 +37,7 @@ class Table(Resource):
         unique_key = False
         while not unique_key:
             new_record_id = StringHelper.generate_molecular_id(self.id_prefix, self.id_len)
-            results = self.accessor().get_item({self.key: new_record_id}, '')
+            results = self.accessor().get_item({self.key: new_record_id}, self.key)
             self.logger.debug(results)
 
             if len(results) > 0:
