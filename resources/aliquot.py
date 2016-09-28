@@ -4,7 +4,7 @@ from accessors.sample_control_accessor import SampleControlAccessor
 from common.dictionary_helper import DictionaryHelper
 from accessors.celery_task_accessor import CeleryTaskAccessor
 from resource_helpers.abort_logger import AbortLogger
-import json
+
 
 parser = reqparse.RequestParser()
 parser.add_argument('analysis_id',   type=str, required=True,  help="'analysis_id' is required")
@@ -23,8 +23,11 @@ class Aliquot(Resource):
     def get(self, molecular_id):
         # 1, Check sample control tables by calling get
         self.logger.info("Checking if molecular id: " + str(molecular_id) + " is in sample control table")
-        # TODO: QIng I think we should be sending in the projection not ''
-        results = SampleControlAccessor().get_item({'molecular_id': molecular_id},'')
+        args = request.args
+        self.logger.debug(str(args))
+        projection_list, args = DictionaryHelper.get_projection(args)
+
+        results = SampleControlAccessor().get_item({'molecular_id': molecular_id}, ','.join(projection_list))
 
         if len(results) > 0:
             self.logger.info("Molecular id: " + str(molecular_id) + " found in sample control table")

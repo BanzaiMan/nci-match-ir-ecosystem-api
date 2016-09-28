@@ -182,6 +182,7 @@ echo -e "${PURPLE}Returns data for molecular id if valid else 404${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 
 curl -X GET "${URL}/api/v1/aliquot/SC_SA1CB"
+curl -X GET "${URL}/api/v1/aliquot/SC_SA1CB?projection=site&projection=molecular_id&projection=date_molecular_id_created"
 
 echo -e "${CYAN}***********************************************${NC}"
 echo -e "${BLUE}PUT /api/v1/aliquot/{molecular_id}${NC}"
