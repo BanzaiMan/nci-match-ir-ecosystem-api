@@ -3,6 +3,7 @@ import logging
 from logging.config import fileConfig
 import json
 import ast
+import __builtin__
 
 from accessors.ion_reporter_accessor import IonReporterAccessor
 from accessors.sample_control_accessor import SampleControlAccessor
@@ -15,12 +16,15 @@ from common.environment_helper import EnvironmentHelper
 # Logging functionality
 fileConfig(os.path.abspath("config/logging_config.ini"))
 logger = logging.getLogger(__name__)
-
-BROKER__URL = "sqs://" + os.environ['AWS_ACCESS_KEY_ID'] + ":" + os.environ['AWS_SECRET_ACCESS_KEY'] + "@"
-app = Celery('tasks', broker=BROKER__URL)
-
 EnvironmentHelper.set_environment(logger.info)
 
+BROKER__URL = "sqs://" + os.environ['AWS_ACCESS_KEY_ID'] + ":" + os.environ['AWS_SECRET_ACCESS_KEY'] + "@"
+BROKER_TRANSPORT_OPTIONS = {
+    'polling_interval': __builtin__.environment_config[__builtin__.environment]['polling_interval']
+}
+app = Celery('tasks', broker=BROKER__URL)
+app.conf.CELERY_DEFAULT_QUEUE = os.environ['QUEUE_NAME']
+app.conf.CELERY_ENABLE_REMOTE_CONTROL = False
 
 # I don't think we will use this for sample control as our sample control creation of records are not done through
 # the queueing system but directly on the database. However, I'll leave this for now.

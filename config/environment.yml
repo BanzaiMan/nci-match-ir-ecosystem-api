@@ -4,6 +4,7 @@ development:
   port: "10241"
   bucket: "pedmatch-dev"
   tmp_file_dir: "/tmp"
+  polling_interval: "10"
   aws_download_time_limit: 600
 
 test:
@@ -12,6 +13,7 @@ test:
   port: "10241"
   bucket: "pedmatch-int"
   tmp_file_dir: "/tmp"
+  polling_interval: "10"
   aws_download_time_limit: 600
 
 uat:
@@ -20,6 +22,7 @@ uat:
   port: "10241"
   bucket: "pedmatch-uat"
   tmp_file_dir: "/tmp"
+  polling_interval: "10"
   aws_download_time_limit: 600
 
 production:
@@ -28,4 +31,5 @@ production:
   port: "10241"
   bucket: "pedmatch"
   tmp_file_dir: "/tmp"
+  polling_interval: "10"
   aws_download_time_limit: 600
