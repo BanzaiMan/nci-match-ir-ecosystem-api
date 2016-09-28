@@ -42,6 +42,7 @@ else:
 
     app.conf.CELERY_ENABLE_REMOTE_CONTROL = False
 
+
 # I don't think we will use this for sample control as our sample control creation of records are not done through
 # the queueing system but directly on the database. However, I'll leave this for now.
 @app.task
