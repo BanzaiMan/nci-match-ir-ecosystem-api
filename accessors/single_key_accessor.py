@@ -21,7 +21,9 @@ class SingleKeyAccessor(DynamoDBAccessor):
                 TableName=table_name,
                 KeySchema=[{'AttributeName': self.key_name, 'KeyType': 'HASH'}],
                 AttributeDefinitions=[{'AttributeName': self.key_name, 'AttributeType': 'S'}],
-                ProvisionedThroughput={'ReadCapacityUnits': 5, 'WriteCapacityUnits': 5})
+                ProvisionedThroughput={
+                    'ReadCapacityUnits':  __builtin__.environment_config[__builtin__.environment]['read_capacity'],
+                    'WriteCapacityUnits': __builtin__.environment_config[__builtin__.environment]['write_capacity']})
             self.logger.info("Table " + table_name + " created!")
         except Exception as e:
             self.logger.error("create table exception in dynamodb: " + e.message)

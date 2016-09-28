@@ -5,6 +5,8 @@ development:
   bucket: "pedmatch-dev"
   tmp_file_dir: "/tmp"
   polling_interval: "10"
+  read_capacity: "5"
+  write_capacity: "5"
   aws_download_time_limit: 600
 
 test:
@@ -14,5 +16,7 @@ test:
   bucket: "pedmatch-int"
   tmp_file_dir: "/tmp"
   polling_interval: "10"
+  read_capacity: "5"
+  write_capacity: "5"
   ir_queue_name: "ion_reporter_queue"
   aws_download_time_limit: 600
