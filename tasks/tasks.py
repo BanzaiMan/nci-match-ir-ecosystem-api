@@ -22,8 +22,10 @@ BROKER__URL = "sqs://" + os.environ['AWS_ACCESS_KEY_ID'] + ":" + os.environ['AWS
 BROKER_TRANSPORT_OPTIONS = {
     'polling_interval': __builtin__.environment_config[__builtin__.environment]['polling_interval']
 }
-app = Celery('tasks', broker=BROKER__URL)
-app.conf.CELERY_DEFAULT_QUEUE = os.environ['QUEUE_NAME']
+app = Celery('tasks', broker=BROKER__URL, broker_transport_options=BROKER_TRANSPORT_OPTIONS)
+app.conf.CELERY_ACCEPT_CONTENT = ['json']
+app.conf.CELERY_TASK_SERIALIZER = 'json'
+app.conf.CELERY_DEFAULT_QUEUE = os.environ['IR_QUEUE_NAME']
 app.conf.CELERY_ENABLE_REMOTE_CONTROL = False
 
 # I don't think we will use this for sample control as our sample control creation of records are not done through
