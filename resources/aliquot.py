@@ -23,7 +23,7 @@ class Aliquot(Resource):
     def get(self, molecular_id):
         # 1, Check sample control tables by calling get
         self.logger.info("Checking if molecular id: " + str(molecular_id) + " is in sample control table")
-        results = SampleControlAccessor().get_item({'molecular_id': molecular_id})
+        results = SampleControlAccessor().get_item({'molecular_id': molecular_id},'')
 
         if len(results) > 0:
             self.logger.info("Molecular id: " + str(molecular_id) + " found in sample control table")
