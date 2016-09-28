@@ -17,7 +17,7 @@ class SequenceFile(Resource):
                           str(file_name))
 
         try:
-            item = SampleControlAccessor().get_item({'molecular_id': molecular_id}, '')
+            item = SampleControlAccessor().get_item({'molecular_id': molecular_id})
         except Exception as e:
             AbortLogger.log_and_abort(500, self.logger.error, "get_item failed because " + e.message)
         else:

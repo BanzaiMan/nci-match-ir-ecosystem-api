@@ -127,7 +127,7 @@ class DynamoDBAccessor(object):
 
     # this function and delete_item are essentially the same except the function name
     # Used to get a single item by ID from the table
-    def get_item(self, key, projection, *additional_keys):
+    def get_item(self, key, projection='', *additional_keys):
         try:
             results = self.__item(self.table.get_item, 'get', key, projection, additional_keys)
             return results['Item'] if 'Item' in results else []
