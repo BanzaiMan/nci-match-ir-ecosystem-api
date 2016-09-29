@@ -1,7 +1,7 @@
 import logging
 import datetime
 from string import Template
-from flask_restful import request, reqparse
+from flask_restful import request
 from accessors.celery_task_accessor import CeleryTaskAccessor
 from accessors.ion_reporter_accessor import IonReporterAccessor
 from common.dictionary_helper import DictionaryHelper
