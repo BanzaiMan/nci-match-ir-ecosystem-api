@@ -6,15 +6,6 @@ from accessors.celery_task_accessor import CeleryTaskAccessor
 from resource_helpers.abort_logger import AbortLogger
 
 
-parser = reqparse.RequestParser()
-parser.add_argument('analysis_id',   type=str, required=True,  help="'analysis_id' is required")
-parser.add_argument('ion_reporter_id', type=str, required=True,  help="'site' is required")
-parser.add_argument('dna_bam_name',  type=str, required=False)
-parser.add_argument('cdna_bam_name', type=str, required=False)
-parser.add_argument('vcf_name',      type=str, required=False)
-parser.add_argument('qc_name',       type=str, required=False)
-
-
 class Aliquot(Resource):
     """This class is for dealing with concepts associated with an aliquot whether it be a sample control or patient.
     Practically, speaking this means when an aliquot has data that needs to be associated with it (like the fact that

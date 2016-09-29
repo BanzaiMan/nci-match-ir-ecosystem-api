@@ -1,19 +1,12 @@
 import logging
 import datetime
-from flask_restful import request, reqparse
+from flask_restful import request
 
 from accessors.celery_task_accessor import CeleryTaskAccessor
 from accessors.sample_control_accessor import SampleControlAccessor
 from common.dictionary_helper import DictionaryHelper
 from resource_helpers.abort_logger import AbortLogger
 from table import Table
-parser = reqparse.RequestParser()
-# Essential for POST, all other parameters are ignored on post except molecular_id, which, if passed in will cause a
-# failure. The proper order is to first POST to get a molecular_id then to PUT the files using the molecular_id in the
-# URI. From there other fields can be updated if needed.
-parser.add_argument('control_type', type=str, required=False)
-parser.add_argument('site',         type=str, required=False)
-parser.add_argument('projection',   type=str, required=False, action='append')
 
 MOLECULAR_ID_LENGTH = 5
 
@@ -47,11 +40,15 @@ class SampleControlTable(Table):
 
         return {"result": "Batch deletion request placed on queue to be processed"}
 
-    # This is the method I noted at top of class as not being perfectly consistent with standards.
+    # This is the method is not being perfectly consistent with standards.
     # all things considered this seems best for now unless a non verbose way can be thought up.
     # Go directly to database...do not change to use queue because we need the molecular_id back and written
     # Also note that while the rest call is "POST" the database call is "put_item" Dynamodb just uses the word "put"
     # to indicate creation whereas REST uses "put" more often for "update" and POST for creation.
+
+    # control_type and site are essential for POST, all other parameters are ignored on post except molecular_id
+    # which, if passed in will cause a failure. The proper order is to first POST to get a molecular_id then to PUT
+    # the files using the molecular_id in the URI. From there other fields can be updated if needed.
     def post(self):
         self.logger.info("POST Request to create a new sample control")
         args = request.args

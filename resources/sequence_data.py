@@ -10,9 +10,6 @@ MESSAGE_500 = Template("Server Error contact help: $error")
 MESSAGE_404 = Template("No sample controls sequenced with id: $ion_reporter_id found")
 MESSAGE_400 = Template("Can only request patients or sample_controls. You requested: $sequence_data")
 
-parser = reqparse.RequestParser()
-parser.add_argument('projection', type=str, required=False, action='append')
-
 
 class SequenceData(Resource):
     def __init__(self):
