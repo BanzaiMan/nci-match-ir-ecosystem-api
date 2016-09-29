@@ -8,7 +8,7 @@ from resource_helpers.abort_logger import AbortLogger
 
 parser = reqparse.RequestParser()
 parser.add_argument('analysis_id',   type=str, required=True,  help="'analysis_id' is required")
-parser.add_argument('site',          type=str, required=True,  help="'site' is required")
+parser.add_argument('ion_reporter_id', type=str, required=True,  help="'site' is required")
 parser.add_argument('dna_bam_name',  type=str, required=False)
 parser.add_argument('cdna_bam_name', type=str, required=False)
 parser.add_argument('vcf_name',      type=str, required=False)
@@ -16,6 +16,10 @@ parser.add_argument('qc_name',       type=str, required=False)
 
 
 class Aliquot(Resource):
+    """This class is for dealing with concepts associated with an aliquot whether it be a sample control or patient.
+    Practically, speaking this means when an aliquot has data that needs to be associated with it (like the fact that
+    sequence files have been created and loaded to S3, this is the class that handles routing that message to the
+    right place"""
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)
@@ -48,9 +52,11 @@ class Aliquot(Resource):
             AbortLogger.log_and_abort(400, self.logger.debug, "Need to pass in item updating information in "
                                                               "order to update a sample control item. ")
 
+        self.logger.debug("args has values")
+        # TODO: before we create messages to tell everyone that the file exist we should just double check that molecular id exist in either the sample control or the patient table. If it doesn't we should return a 404
         item_dictionary = args.copy()
         distinct_tasks_list = self.__get_distinct_tasks(item_dictionary, molecular_id)
-
+        self.logger.debug("Distinct tasks created")
         if len(distinct_tasks_list) > 0:
             try:
                 for distinct_task in distinct_tasks_list:
@@ -59,7 +65,7 @@ class Aliquot(Resource):
             except Exception as e:
                 AbortLogger.log_and_abort(500, self.logger.error, "updated_item failed because" + e.message)
         else:
-            AbortLogger.log_and_abort(404, self.logger.debug, "No distinct tasks where found in message")
+            AbortLogger.log_and_abort(400, self.logger.debug, "No distinct tasks where found in message")
 
         return {"message": "Item updated", "molecular_id": molecular_id}
 
@@ -83,8 +89,12 @@ class Aliquot(Resource):
 
     @staticmethod
     def __get_tasks_dictionary(item_dictionary, molecular_id, file_dict_key):
-        return {'site': item_dictionary['site'],
-                'molecular_id': molecular_id,
-                'analysis_id': item_dictionary['analysis_id'],
-                'ion_reporter_id': item_dictionary['ion_reporter_id'],
-                file_dict_key: item_dictionary[file_dict_key]}
+
+        tasks_dictionary = {'molecular_id': molecular_id, 'analysis_id': item_dictionary['analysis_id'],
+                            'ion_reporter_id': item_dictionary['ion_reporter_id'],
+                            file_dict_key: item_dictionary[file_dict_key]}
+
+        if 'site' in item_dictionary:
+            tasks_dictionary['site'] = item_dictionary['site']
+
+        return tasks_dictionary

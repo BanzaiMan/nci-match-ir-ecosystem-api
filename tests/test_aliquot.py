@@ -88,6 +88,10 @@ class TestAliquot(unittest.TestCase):
         ('SC_5AMCC',
          {"vcf_name": "mocha/SC_5AMCC/SC_5AMCC_SC_5AMCC_k123_v1/SC_5AMCC_SC_5AMCC_analysis667_v1.vcf", "site": "mocha",
           "molecular_id": "SC_5AMCC", "analysis_id": "SC_5AMCC_SC_5AMCC_k123_v1", "ion_reporter_id": "IR_WAO85"},
+         ' Testing put process_file exception'),
+        ('SC_5AMCC',
+         {"vcf_name": "mocha/SC_5AMCC/SC_5AMCC_SC_5AMCC_k123_v1/SC_5AMCC_SC_5AMCC_analysis667_v1.vcf",
+          "molecular_id": "SC_5AMCC", "analysis_id": "SC_5AMCC_SC_5AMCC_k123_v1", "ion_reporter_id": "IR_WAO85"},
          ' Testing put process_file exception')
     )
     @unpack
@@ -109,14 +113,16 @@ class TestAliquot(unittest.TestCase):
 
     @data(
         ('SC_5AMCC',
+         {"vcf_name": "mocha/SC_5AMCC/SC_5AMCC_SC_5AMCC_k123_v1/SC_5AMCC_SC_5AMCC_analysis667_v1.vcf", "site": "mocha",
+          "molecular_id": "SC_5AMCC", "analysis_id": "SC_5AMCC_SC_5AMCC_k123_v1", "ion_reporter_id": "IR_WAO85"}, 200),
+        ('SC_5AMCC',
          {"vgg_name": "mocha/SC_5AMCC/SC_5AMCC_SC_5AMCC_k123_v1/SC_5AMCC_SC_5AMCC_analysis667_v1.vcf", "site": "mocha",
-          "molecular_id": "SC_5AMCC", "analysis_id": "SC_5AMCC_SC_5AMCC_k123_v1", "ion_reporter_id": "IR_WAO85"},
-         'No distinct tasks where found in message')
+          "molecular_id": "SC_5AMCC", "analysis_id": "SC_5AMCC_SC_5AMCC_k123_v1", "ion_reporter_id": "IR_WAO85"}, 400)
     )
     @unpack
     @patch('resources.aliquot.DictionaryHelper.has_values')
     @patch('resources.aliquot.CeleryTaskAccessor')
-    def test_put_distinct_tasks_list_exception(self, molecular_id, update_dictionary, exception_message,
+    def test_put_distinct_tasks_list_exception(self, molecular_id, update_dictionary, result_status_code,
                                                mock_celery_task_accessor_class, mock_has_values_function):
         instance = mock_celery_task_accessor_class.return_value
         instance.process_file.return_value = True
@@ -125,10 +131,9 @@ class TestAliquot(unittest.TestCase):
         return_value = self.app.put('/api/v1/aliquot/' + molecular_id,
                                     data=json.dumps(update_dictionary),
                                     content_type='application/json')
-        print "-----------------" + str(return_value.status_code)
+
         print return_value.data
-        assert return_value.status_code == 404
-        assert exception_message in return_value.data
+        assert return_value.status_code == result_status_code
 
 # if __name__ == '__main__':
 #     unittest.main()
