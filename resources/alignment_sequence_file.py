@@ -9,4 +9,4 @@ class AlignmentSequenceFile(SequenceFile):
                 (nucleic_acid_type.lower() == 'cdna' or nucleic_acid_type.lower() == 'dna'):
             return self.get_file_url(molecular_id, str(nucleic_acid_type) + "_" + str(file_format) + "_name")
 
-        AbortLogger.log_and_abort(500, self.logger.error, "Only supports bam|bai and cdna|dna")
+        AbortLogger.log_and_abort(400, self.logger.error, "Only supports bam|bai and cdna|dna")
