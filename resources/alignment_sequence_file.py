@@ -1,11 +1,11 @@
-from resources.sequence_file import SequenceFile
+from resources.generic_file import GenericFile
 from resource_helpers.abort_logger import AbortLogger
 
 valid_file_formats = ['bam', 'bai']
 valid_nucleic_acid_types = ['cdna', 'dna']
 
 
-class AlignmentSequenceFile(SequenceFile):
+class AlignmentGenericFile(GenericFile):
 
     def get(self, molecular_id, file_format, nucleic_acid_type):
         if (file_format.lower() in valid_file_formats) and (nucleic_acid_type.lower() in valid_nucleic_acid_types):

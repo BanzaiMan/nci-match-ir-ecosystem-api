@@ -1,10 +1,10 @@
-from resources.sequence_file import SequenceFile
+from resources.generic_file import GenericFile
 from resource_helpers.abort_logger import AbortLogger
 
 valid_file_formats = ['vcf', 'tsv']
 
 
-class VariantSequenceFile(SequenceFile):
+class VariantGenericFile(GenericFile):
 
     def get(self, molecular_id, file_format):
         if file_format.lower() in valid_file_formats:

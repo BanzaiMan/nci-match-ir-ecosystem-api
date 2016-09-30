@@ -5,7 +5,7 @@ from accessors.sample_control_accessor import SampleControlAccessor
 from resource_helpers.abort_logger import AbortLogger
 
 
-class SequenceFile(Resource):
+class GenericFile(Resource):
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)

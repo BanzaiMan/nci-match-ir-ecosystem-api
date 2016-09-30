@@ -6,7 +6,7 @@ import json
 
 
 @ddt
-@patch('resources.sequence_file.SampleControlAccessor')
+@patch('resources.generic_file.SampleControlAccessor')
 class TestSequenceFile(unittest.TestCase):
 
     def setUp(self):
@@ -52,7 +52,7 @@ class TestSequenceFile(unittest.TestCase):
          )
     )
     @unpack
-    @patch('resources.sequence_file.S3Accessor')
+    @patch('resources.generic_file.S3Accessor')
     def test_get_file_url(self, molecular_id, file_format, nucleic_acid_type, item, get_download_url_return,
                           expect_return, mock_s3_accessor, mock_sc_accessor):
         s3_instance = mock_s3_accessor.return_value
@@ -105,7 +105,7 @@ class TestSequenceFile(unittest.TestCase):
               'analysis_id': 'SC_YQ111_SC_YQ111_k123_v1'})
          )
     @unpack
-    @patch('resources.sequence_file.S3Accessor')
+    @patch('resources.generic_file.S3Accessor')
     def test_get_file_url_exception(self, molecular_id, file_format, nucleic_acid_type, item,
                                     mock_s3_accessor, mock_sc_accessor):
         s3_instance = mock_s3_accessor.return_value
@@ -147,7 +147,7 @@ class TestSequenceFile(unittest.TestCase):
              )
         )
     @unpack
-    @patch('resources.sequence_file.S3Accessor')
+    @patch('resources.generic_file.S3Accessor')
     def test_get_file_url_key_error_exception(self, molecular_id, file_format, nucleic_acid_type, item,
                                               mock_s3_accessor, mock_sc_accessor):
         s3_instance = mock_s3_accessor.return_value
