@@ -1,20 +1,24 @@
 import urllib
 import json
+import logging
+from string import Template
+from flask_restful import request, Resource
+from resource_helpers.abort_logger import AbortLogger
+
 
 SC_URL = "http://localhost:5000"
 PT_URL = "http://localhost:10240"
 
+MESSAGE_404 = Template("No molecular id with id: $molecular_id found")
 
-class PatientEcosystemIntegrator(object):
 
-    # @staticmethod
-    # def retrieve_url(url):
-    #     response = urllib.urlopen(SC_URL + '/api/v1/sample_controls/SC_SA1C')
-    #     json_data = json.loads(response.read())
-    #     return json_data
+class PatientEcosystemConnector(object):
+    def __init__(self):
+        self.logger = logging.getLogger(__name__)
 
-    @staticmethod
-    def verify_molecular_id(molecular_id):
+    def verify_molecular_id(self, molecular_id):
+
+        self.logger.info("Checking if molecular id: " + str(molecular_id) + " is in sample control table or patient ecosystem")
 
         lookup_sc_url = urllib.urlopen(SC_URL + '/api/v1/sample_controls/' + molecular_id)
         json_data_sc = json.loads(lookup_sc_url.read())
@@ -27,18 +31,19 @@ class PatientEcosystemIntegrator(object):
             if len(json_data_pt) > 0:
                 return json_data_pt
             else:
-                return json_data_pt
-
+                # AbortLogger.log_and_abort(404, self.logger.debug, str(molecular_id + " was not found"))
+                AbortLogger.log_and_abort(404, self.logger.debug,
+                                          MESSAGE_404.substitute(molecular_id=molecular_id))
 
 if __name__ == '__main__':
-    result1 = PatientEcosystemIntegrator().verify_molecular_id('SC_SA1CB')
-    result2 = PatientEcosystemIntegrator().verify_molecular_id('SC_SA1C')
-    result3 = PatientEcosystemIntegrator().verify_molecular_id('PT_SR10_BdVRRejected_BD_MOI1')
-    result4 = PatientEcosystemIntegrator().verify_molecular_id('44')
+    result1 = PatientEcosystemConnector().verify_molecular_id('SC_SA1CB')
+    # result2 = PatientEcosystemConnector().verify_molecular_id('SC_SA1C')
+    # result3 = PatientEcosystemConnector().verify_molecular_id('PT_SR10_BdVRRejected_BD_MOI1')
+    # result4 = PatientEcosystemConnector().verify_molecular_id('44')
     print result1
-    print result2
-    print result3
-    print result4
+    # print result2
+    # print result3
+    # print result4
 
 
 
