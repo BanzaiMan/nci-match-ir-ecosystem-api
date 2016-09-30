@@ -25,22 +25,23 @@ from common.environment_helper import EnvironmentHelper
 # Boilerplate code to start flask
 app = flask.Flask(__name__)
 api = flask_restful.Api(app)
+# Very important for development as this stands for Cross Origin Resource sharing. Essentially this is what allows for
+# the UI to be run on the same box as this middleware piece of code. Consider this code boiler plate.
 cors = flask_cors.CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # Logging functionality
 fileConfig(os.path.abspath("config/logging_config.ini"))
 logger = logging.getLogger(__name__)
 
-# Use this variable to read the config file which contains the database connection and
+# Use this class to read the config file which contains the database connection and
 # tier (i.e., development, tests, uat, production) specific configuration information.
-
 EnvironmentHelper.set_environment(logger.info)
 
 # Notice that the class names are singular, but I choose to keep the routes all plural
 # this was following a pattern I found on a blog. Its really just a matter of opinion. The goal
 # is to make an API consistent for the user. So neither plural nor singular is 'grammatically' correct
 # but we pick plural because it tends to be the favored practice for the user, yet we break OO practice by having
-# plural classes.
+# plural classes so classes are all singular because they are a single instance.
 
 # Path for Querying and Creating sample controls
 # Delete and Put in batch must do those using specific IDs, not allowed here
@@ -70,10 +71,11 @@ api.add_resource(SequenceData, '/api/v1/ion_reporters/<string:ion_reporter_id>/<
 # Path for version call, returning 200 as test response
 api.add_resource(Version, '/api/v1/ion_reporters/version')
 
-# Path for either sending in file paths from the ir (bam,vcf) to process them by pulling them down from s3
-# and store the new files to s3 and their paths, based on their molecular id, in either the patient or sample_control
-# table. Also a path to query with GET to see if molecular_id is valid and what type of molecular id it is
-# (i.e., sample_control or patient)
+# Path for getting information about an aliquot (essentially because the user doesn't know if its a patient or sample
+# control). So it is the path for querying with GET to see if  molecular_id is valid and what type of molecular id it
+# is (i.e., sample_control or patient). Or it could be used for sending (PUT) in file paths from the ir (bam,vcf) to
+# process them by pulling the files based on the path passed in, down from s3 and store the new files (TSV or BAI) to
+# s3 and these new paths to DynamoDB, based on  their molecular id, in either the patient or sample_control table.
 api.add_resource(Aliquot, '/api/v1/aliquot/<string:molecular_id>')
 
 # For the most part, this is boilerplate code to start tornado server
