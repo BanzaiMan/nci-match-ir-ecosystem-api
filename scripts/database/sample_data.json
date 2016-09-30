@@ -55,6 +55,18 @@
           "site": {"S": "mdacc"}
         }
       }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "date_molecular_id_created": {"S": "2016-09-30 21:12:24.123"},
+          "control_type": {"S": "proficiency_competency"},
+          "site_ip_address": {"S": "129.43.127.133"},
+          "molecular_id": {"S": "SC_FDK09"},
+          "ion_reporter_id": {"S": "IR_AIO78"},
+          "site": {"S": "mdacc"}
+        }
+      }
     }
   ]
 }
