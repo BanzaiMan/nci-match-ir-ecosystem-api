@@ -50,9 +50,9 @@ api.add_resource(SampleControlTable, '/api/v1/sample_controls')
 # Path for Updating, deleting, and retrieving a specific sample control
 api.add_resource(SampleControlRecord, '/api/v1/sample_controls/<string:identifier>')
 
-# Paths for downloading vcf or tsv file, format = vcf|tsv
+# Paths for downloading vcf or tsv file, file_format = vcf|tsv
 api.add_resource(VariantSequenceFile, '/api/v1/sequence_files/<string:molecular_id>/<string:file_format>')
-# Paths for downloading bam or bai file, format = bam|bai, type=cdna|dna
+# Paths for downloading bam or bai file, file_format = bam|bai, nucleic_acid_type=cdna|dna
 api.add_resource(AlignmentSequenceFile,
                  '/api/v1/sequence_files/<string:molecular_id>/<string:file_format>/<string:nucleic_acid_type>')
 
