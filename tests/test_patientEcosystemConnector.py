@@ -15,7 +15,7 @@ class TestPatientEcosystemConnector(TestCase):
                                            u'study_id': u'APEC1621', u'carrier': u'Federal Express',
                                            u'tracking_id': u'7956 4568 1235', u'cdna_volume_ul': u'10.0',
                                            u'type': u'BLOOD_DNA', u'molecular_id': u'PT_SR10_BdVRRejected_BD_MOI1'}]),
-        ('44', '404: Not Found')
+        # ('44', '404: Not Found')
     )
     @unpack
     def test_verify_molecular_id(self, molecular_id, expected_result):

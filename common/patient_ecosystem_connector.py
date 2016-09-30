@@ -11,6 +11,7 @@ PT_URL = "http://localhost:10240"
 
 MESSAGE_404 = Template("No molecular id with id: $molecular_id found")
 
+# http://localhost:10240/api/v1/shipments/PT_SR10_BdVRRejected_BD_MOI1 temporary record
 
 class PatientEcosystemConnector(object):
     def __init__(self):
@@ -31,21 +32,8 @@ class PatientEcosystemConnector(object):
             if len(json_data_pt) > 0:
                 return json_data_pt
             else:
-                # AbortLogger.log_and_abort(404, self.logger.debug, str(molecular_id + " was not found"))
                 AbortLogger.log_and_abort(404, self.logger.debug,
                                           MESSAGE_404.substitute(molecular_id=molecular_id))
 
-if __name__ == '__main__':
-    result1 = PatientEcosystemConnector().verify_molecular_id('SC_SA1CB')
-    # result2 = PatientEcosystemConnector().verify_molecular_id('SC_SA1C')
-    # result3 = PatientEcosystemConnector().verify_molecular_id('PT_SR10_BdVRRejected_BD_MOI1')
-    # result4 = PatientEcosystemConnector().verify_molecular_id('44')
-    print result1
-    # print result2
-    # print result3
-    # print result4
 
 
-
-
-# http://localhost:10240/api/v1/shipments/PT_SR10_BdVRRejected_BD_MOI1
