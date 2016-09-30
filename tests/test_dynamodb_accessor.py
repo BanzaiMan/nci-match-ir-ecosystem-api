@@ -9,15 +9,15 @@ TABLE_RT = 5
 TABLE_WT = 5
 TABLE_HK_NAME = u'ion_reporter_id'
 TABLE_HK_TYPE = u'S'
-
-HK_VALUE = u'IR_5467A'
+#
+# HK_VALUE = u'IR_5467A'
 
 HK_VALUE2 = u'IR_AIO78'
 
-ITEM = {
-    TABLE_HK_NAME: {TABLE_HK_TYPE: HK_VALUE},
-    u'test': {u'S': u'something goes here'}
-}
+# ITEM = {
+#     TABLE_HK_NAME: {TABLE_HK_TYPE: HK_VALUE},
+#     u'test': {u'S': u'something goes here'}
+# }
 
 ITEM2 = {
     # TABLE_HK_NAME: {TABLE_HK_TYPE: HK_VALUE2},
@@ -78,13 +78,13 @@ class TestIonReporterRecord(TestCase):
             # Remove the patch from Boto code (if any)
             clean_boto_patch()
 
-        # @data(
-        #     ({'ion_reporter_id': u'IR_AIO78'}, '')
-        # )
-
-        # @patch('accessors.dynamodb_accessor.DynamoDBAccessor')
-        @patch('accessors.ion_reporter_accessor.IonReporterAccessor')
-        def test_get_item(self, mock_IR_accessor):
+        @data(
+            ({'ion_reporter_id': 'IR_AIO78'}, '')
+        )
+        @unpack
+        @patch('accessors.dynamodb_accessor.DynamoDBAccessor')
+        # @patch('accessors.ion_reporter_accessor.IonReporterAccessor')
+        def test_get_item(self, query_parameters, projection, mock_DB_accessor):
             from ddbmock import connect_boto_patch
             from ddbmock.database.db import dynamodb
 
@@ -94,14 +94,23 @@ class TestIonReporterRecord(TestCase):
                 u'Item': ITEM2,
             }
 
-
             key = {
                 u"HashKeyElement": {TABLE_HK_TYPE: HK_VALUE2}
             }
 
-            instance = mock_IR_accessor.return_value
-            instance.get_item.return_value = expected
+            mc = mock_DB_accessor.return_value
+            mc.scan.return_value = self.db.layer1.get_item(TABLE_NAME, key)
+            IonReporterAccessor_class = IonReporterAccessor()
+            result = IonReporterAccessor_class.scan(query_parameters, projection)
 
-            return_value = self.db.layer1.get_item(TABLE_NAME, key)
+            self.assertEquals(result, self.db.layer1.get_item(TABLE_NAME, key))
 
-            self.assertEquals(return_value, self.db.layer1.get_item(TABLE_NAME, key))
+
+            # self.assertTrue(result)
+
+            # instance = mock_IR_accessor.return_value
+            # instance.get_item.return_value = expected
+            #
+            # return_value = self.db.layer1.get_item(TABLE_NAME, key)
+            #
+            # self.assertEquals(return_value, self.db.layer1.get_item(TABLE_NAME, key))
