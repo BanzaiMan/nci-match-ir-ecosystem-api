@@ -2,6 +2,7 @@ import logging
 from flask_restful import request, Resource, reqparse
 from accessors.sample_control_accessor import SampleControlAccessor
 from common.dictionary_helper import DictionaryHelper
+from common.patient_ecosystem_connector import PatientEcosystemConnector
 from accessors.celery_task_accessor import CeleryTaskAccessor
 from resource_helpers.abort_logger import AbortLogger
 
@@ -29,10 +30,16 @@ class Aliquot(Resource):
             item = results.copy()
             item.update({'molecular_id_type': 'sample_control'})
             return item
-
-        # TODO: Finish the write for the GET molecular_id by calling the patient ecosystem
-        # 2. Import requests library and then make a rest call to patient ecosystem to check patient table
-        AbortLogger.log_and_abort(404, self.logger.debug, str(molecular_id + " was not found"))
+        else:
+            # check if molecular_id exists in patient table
+            pt_results = PatientEcosystemConnector().verify_pt_molecular_id(molecular_id)
+            if len(pt_results) > 0:
+                print pt_results
+                item = pt_results[0].copy()
+                item.update({'molecular_id_type': 'patient'})
+                return item
+            else:
+                AbortLogger.log_and_abort(404, self.logger.debug, str(molecular_id + " was not found"))
 
     def put(self, molecular_id):
         self.logger.info("updating molecular_id: " + str(molecular_id))
