@@ -10,7 +10,7 @@ Flask_RESTful==0.3.5
 mock==2.0.0
 pysam==0.9.1.4
 tornado==4.4.1
-PyVCF==0.6.7
+PyVCF==0.6.8
 Werkzeug==0.11.11
 PyJWT==1.4.2
 PyYAML==3.12
