@@ -35,5 +35,34 @@ class PatientEcosystemConnector(object):
                 AbortLogger.log_and_abort(404, self.logger.debug,
                                           MESSAGE_404.substitute(molecular_id=molecular_id))
 
+    def verify_sc_molecular_id(self, molecular_id):
 
+        self.logger.info("Checking if molecular id: " + str(molecular_id) + " is in sample control table")
+        url = "http://localhost:5000/api/v1/sample_controls/"
+        json_data = PatientEcosystemConnector.open_url(url, molecular_id)
+
+        if len(json_data) > 1:
+            return {'molecular_id': json_data['molecular_id'], 'control_type' : json_data['control_type']}
+        else:
+            AbortLogger.log_and_abort(404, self.logger.debug,
+                                        MESSAGE_404.substitute(molecular_id=molecular_id))
+
+    def verify_pt_molecular_id(self, molecular_id):
+
+        self.logger.info("Checking if molecular id: " + str(molecular_id) + " is in sample control table")
+        url = "http://localhost:10240/api/v1/shipments/"
+        json_data = PatientEcosystemConnector.open_url(url, molecular_id)
+
+        if len(json_data) > 0:
+            return json_data
+        else:
+            AbortLogger.log_and_abort(404, self.logger.debug,
+                                      MESSAGE_404.substitute(molecular_id=molecular_id))
+
+    @staticmethod
+    def open_url(url, molecular_id):
+
+        lookup_url = urllib.urlopen(url + molecular_id)
+        json_data = json.loads(lookup_url.read())
+        return json_data
 
