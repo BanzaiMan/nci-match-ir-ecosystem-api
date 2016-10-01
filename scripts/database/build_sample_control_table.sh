@@ -30,8 +30,8 @@ TABLE_KEY_FILE="file://sample_table_key_conditions.json"
 
 # Change to whatever ip address you want, http://localhost:8000 is
 # the default and will cause tables to be setup on your local dynamodb
-#LOCAL_URL="http://localhost:8000"
-LOCAL_URL="https://dynamodb.us-east-1.amazonaws.com:8000"
+LOCAL_URL="http://localhost:8000"
+
 
 # Uncomment to make script setup table on your amazon account
 # END_POINT=""
