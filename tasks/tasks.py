@@ -4,7 +4,8 @@ from logging.config import fileConfig
 import json
 import ast
 import __builtin__
-import re
+#import re
+import urllib
 
 from accessors.ion_reporter_accessor import IonReporterAccessor
 from accessors.sample_control_accessor import SampleControlAccessor
@@ -21,8 +22,10 @@ EnvironmentHelper.set_environment(logger.info)
 
 # Setting up the Celery broker but making sure to ensure environment variables are in place
 try:
-    BROKER__URL = "sqs://" + re.escape(os.environ['AWS_ACCESS_KEY_ID']) + \
-                  ":" + re.escape(os.environ['AWS_SECRET_ACCESS_KEY']) + "@"
+    # BROKER__URL = "sqs://" + re.escape(os.environ['AWS_ACCESS_KEY_ID']) + \
+    #               ":" + re.escape(os.environ['AWS_SECRET_ACCESS_KEY']) + "@"
+    BROKER__URL = 'sqs://%s:%s@' % (urllib.quote(os.environ['AWS_ACCESS_KEY_ID'], safe=''),
+                                   urllib.quote(os.environ['AWS_SECRET_ACCESS_KEY'], safe=''))
 except KeyError as e:
     logger.error("Setup your queue name by setting AWS_ACCESS_KEY_ID or AWS_SECRET_ACCESS_KEY variable: " + e.message)
     exit()
