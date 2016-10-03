@@ -223,3 +223,14 @@ echo -e "${CYAN}***********************************************${NC}"
 curl -X DELETE "${URL}/api/v1/sample_controls?site=mdacc"
 
 
+echo -e "${YELLOW}------------------------------------------------------------------------------------------------------------------------${NC}"
+
+
+echo -e "${CYAN}***********************************************${NC}"
+echo -e "${GREEN}MISCFILE RESOURCE${NC}"
+echo -e "${CYAN}***********************************************${NC}"
+echo -e "${BLUE}GET /api/v1/files/<string:molecular_id>/<string:file_name>${NC}"
+echo -e "${PURPLE}Returns s3_download_file_url for molecular id if valid else 404${NC}"
+echo -e "${CYAN}***********************************************${NC}"
+
+curl -X GET "${URL}/api/v1/files/SC_SA1CB/qc_name"
