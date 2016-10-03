@@ -32,7 +32,7 @@ class Aliquot(Resource):
             return item
         else:
             # check if molecular_id exists in patient table
-            pt_results = PatientEcosystemConnector().verify_pt_molecular_id(molecular_id)
+            pt_results = PatientEcosystemConnector().verify_molecular_id(molecular_id)
             if len(pt_results) > 0:
                 print pt_results
                 item = pt_results[0].copy()
