@@ -24,7 +24,7 @@ class GenericFile(Resource):
             if len(item) > 0:
                 self.logger.debug("Found: " + str(item))
                 try:
-                    s3_url = S3Accessor().get_download_url(item[file_name])
+                    s3_url = S3Accessor().get_download_url(item[file_name+'_name'])
                 except KeyError as k:
                     AbortLogger.log_and_abort(404, self.logger.debug, "Failed to get download url because " +
                                               k.message + " does not exist")
