@@ -4,11 +4,10 @@ import logging
 from string import Template
 from resource_helpers.abort_logger import AbortLogger
 
-
-SC_URL = "http://localhost:5000"
-PT_URL = "http://localhost:10240"
+URL = "http://localhost:10240"
 
 MESSAGE_404 = Template("No molecular id with id: $molecular_id found")
+MESSAGE_500 = Template("Server Error could not connect to patient ecosystem APIcontact help: $error")
 
 # http://localhost:10240/api/v1/shipments/PT_SR10_BdVRRejected_BD_MOI1 temporary record
 
@@ -16,25 +15,15 @@ class PatientEcosystemConnector(object):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
-    # TODO: Why would we need this? This is already done. Also its nothing to do with 'pateint' so wouldn't make sense to be in this class.
-    def verify_sc_molecular_id(self, molecular_id):
-
-        self.logger.info("Checking if molecular id: " + str(molecular_id) + " is in sample control table")
-        url = (SC_URL + "/api/v1/sample_controls/")
-        json_data = PatientEcosystemConnector.open_url(url, molecular_id)
-
-        if len(json_data) > 1:
-            return {'molecular_id': json_data['molecular_id'], 'control_type' : json_data['control_type']}
-        else:
-            AbortLogger.log_and_abort(404, self.logger.debug,
-                                        MESSAGE_404.substitute(molecular_id=molecular_id))
-
-    def verify_pt_molecular_id(self, molecular_id):
+    def verify_molecular_id(self, molecular_id):
 
         self.logger.info("Checking if molecular id: " + str(molecular_id) + " is in patient table")
-        url = (PT_URL + "/api/v1/shipments/")
-        # TODO: What happens if patient ecosystem isn't up? Should be try catch and throwing a 500.
-        json_data = PatientEcosystemConnector.open_url(url, molecular_id)
+        url = (URL + "/api/v1/shipments/")
+
+        try:
+            json_data = PatientEcosystemConnector.open_url(url, molecular_id)
+        except Exception as e:
+            AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
 
         if len(json_data) > 0:
             return json_data
