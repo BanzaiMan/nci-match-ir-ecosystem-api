@@ -16,6 +16,7 @@ class PatientEcosystemConnector(object):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
+    # TODO: Why would we need this? This is already done. Also its nothing to do with 'pateint' so wouldn't make sense to be in this class.
     def verify_sc_molecular_id(self, molecular_id):
 
         self.logger.info("Checking if molecular id: " + str(molecular_id) + " is in sample control table")
@@ -32,6 +33,7 @@ class PatientEcosystemConnector(object):
 
         self.logger.info("Checking if molecular id: " + str(molecular_id) + " is in patient table")
         url = (PT_URL + "/api/v1/shipments/")
+        # TODO: What happens if patient ecosystem isn't up? Should be try catch and throwing a 500.
         json_data = PatientEcosystemConnector.open_url(url, molecular_id)
 
         if len(json_data) > 0:
