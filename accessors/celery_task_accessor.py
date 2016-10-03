@@ -6,8 +6,9 @@ class CeleryTaskAccessor(object):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
-    def process_file(self, item_dictionary):
-        return self.__process_item(item_dictionary, process_ir_file, "process_ir_file")
+    # molecular_id_type is 'sample_control' or 'patient'
+    def process_file(self, item_dictionary, molecular_id_type):
+        return self.__process_item(item_dictionary, process_ir_file, "process_ir_file", molecular_id_type)
 
     def put_item(self, item_dictionary):
         return self.__process_item(item_dictionary, put, "put")

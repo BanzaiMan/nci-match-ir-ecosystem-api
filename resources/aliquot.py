@@ -41,6 +41,7 @@ class Aliquot(Resource):
             else:
                 AbortLogger.log_and_abort(404, self.logger.debug, str(molecular_id + " was not found"))
 
+
     def put(self, molecular_id):
         self.logger.info("updating molecular_id: " + str(molecular_id))
         args = request.json
@@ -51,7 +52,19 @@ class Aliquot(Resource):
                                                               "order to update a sample control item. ")
 
         self.logger.debug("args has values")
-        # TODO: before we create messages to tell everyone that the file exist we should just double check that molecular id exist in either the sample control or the patient table. If it doesn't we should return a 404
+
+        # check if molecular_id exists in sample_controls table
+        molecular_id_type = 'sample_control'
+        item = SampleControlAccessor().get_item({'molecular_id': molecular_id})
+        if len(item) == 0:
+            # check if molecular_id exists in patient table
+            pt_results = PatientEcosystemConnector().verify_molecular_id(molecular_id)
+            print pt_results
+            if len(pt_results) > 0:
+                molecular_id_type = 'patient'
+            else:
+                AbortLogger.log_and_abort(404, self.logger.debug, str(molecular_id + " was not found. Cannot update."))
+
         item_dictionary = args.copy()
         distinct_tasks_list = self.__get_distinct_tasks(item_dictionary, molecular_id)
         self.logger.debug("Distinct tasks created")
@@ -59,13 +72,14 @@ class Aliquot(Resource):
             try:
                 for distinct_task in distinct_tasks_list:
                     self.logger.debug("Adding task to queue: " + str(distinct_task))
-                    CeleryTaskAccessor().process_file(distinct_task)
+                    CeleryTaskAccessor().process_file(distinct_task, molecular_id_type)
             except Exception as e:
                 AbortLogger.log_and_abort(500, self.logger.error, "updated_item failed because" + e.message)
         else:
             AbortLogger.log_and_abort(400, self.logger.debug, "No distinct tasks where found in message")
 
         return {"message": "Item updated", "molecular_id": molecular_id}
+
 
     @staticmethod
     def __get_distinct_tasks(item_dictionary, molecular_id):
@@ -84,6 +98,7 @@ class Aliquot(Resource):
             distinct_tasks_list.append(Aliquot.__get_tasks_dictionary(item_dictionary, molecular_id, 'qc_name'))
 
         return distinct_tasks_list
+
 
     @staticmethod
     def __get_tasks_dictionary(item_dictionary, molecular_id, file_dict_key):
