@@ -47,7 +47,7 @@ class TestAliquot(unittest.TestCase):
         mock_verify_pt_function.return_value = verify_pt_return
         return_value = self.app.get('/api/v1/aliquot/' + molecular_id)
         print "==============" + str(return_value.status_code)
-        #assert return_value.status_code == expected_results
+        assert return_value.status_code == expected_results
         print return_value.data
         if expected_results == 200:
             assert len(return_value.data) > 0
