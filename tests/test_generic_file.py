@@ -14,11 +14,22 @@ class TestGenericFile(TestCase):
 
     @data(
         ('SC_SA1CB', 'qc', "u's3_download_file_url': u'https://pedmatch-dev.s3.amazonaws.com/IR_WAO85/"
-                           "SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1_QC.pdf?", 200),
-        ('SC_SA1C', 'qc', "u'SC_SA1C was not found.", 404)
+                           "SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1_QC.pdf?",
+         {u'ion_reporter_id': u'IR_WAO85', u'analysis_id': u'SC_SA1CB_SC_SA1CB_a888_v1', u'control_type': u'no_template', u'dna_bam_name': u'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_DNA_v1.bam', u'site': u'mocha', u'qc_name': u'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1_QC.pdf', u'dna_bai_name': u'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_DNA_v1.bai', u'cdna_bam_name': u'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_RNA_v1.bam', u'vcf_name': u'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1.vcf', u'cdna_bai_name': u'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_RNA_v1.bai', u'date_molecular_id_created': u'2016-09-28 19:56:19.777', u'molecular_id': u'SC_SA1CB'} ,200),
+        # ('SC_SA1CB', 'dna_bam', "u's3_download_file_url': u'https://pedmatch-dev.s3.amazonaws.com/IR_WAO85/"
+        #                    "SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1_QC.pdf?", 200),
+        # ('SC_SA1CB', 'cdna_bam', "u's3_download_file_url': u'https://pedmatch-dev.s3.amazonaws.com/IR_WAO85/"
+        #                    "SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1_QC.pdf?", 200),
+        # ('SC_SA1CB', 'vcf', "u's3_download_file_url': u'https://pedmatch-dev.s3.amazonaws.com/IR_WAO85/"
+        #                    "SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1_QC.pdf?", 200),
+        # ('SC_SA1CB', 'cdna_bai', "u's3_download_file_url': u'https://pedmatch-dev.s3.amazonaws.com/IR_WAO85/"
+        #                    "SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1_QC.pdf?", 200),
+        # ('SC_SA1C', 'qc', "u'SC_SA1C was not found.", 404)
     )
     @unpack
-    def test_get_file_url(self, molecular_id, file_type, return_message, returned_stat_code, mock_sc_accessor):
+    @patch('accessors.s3_accessor.S3Accessor')
+    def test_get_file_url(self, molecular_id, file_type, return_message, s3_item, returned_stat_code, mock_s3_accessor, mock_sc_accessor):
+        mock_s3_accessor.return_value = s3_item
         sc_instance = mock_sc_accessor.return_value
         sc_instance.get_item.return_value = True
         return_value = self.app.get('/api/v1/files/' + molecular_id + '/' + file_type)
