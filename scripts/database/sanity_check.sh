@@ -186,6 +186,9 @@ echo -e "${CYAN}***********************************************${NC}"
 curl -X GET "${URL}/api/v1/aliquot/SC_SA1CB"
 curl -X GET "${URL}/api/v1/aliquot/SC_SA1CB?projection=site&projection=molecular_id&projection=date_molecular_id_created"
 
+echo -e "${PURPLE}Get patient item. Need start patient ecosystem on server before testing ${NC}"
+#curl -X GET "http://localhost:5000/api/v1/aliquot/PT_SR10_BdVRRejected_BD_MOI1"
+
 echo -e "${CYAN}***********************************************${NC}"
 echo -e "${BLUE}PUT /api/v1/aliquot/{molecular_id}${NC}"
 echo -e "${PURPLE}Upload IR file names and this will update database, update s3 with processed files (bai and tsv)${NC}"
@@ -193,6 +196,15 @@ echo -e "${CYAN}***********************************************${NC}"
 
 curl -H 'Content-Type: application/json' -X PUT -d @./sc_update_data.json "${URL}/api/v1/aliquot/SC_SA1CB"
 
+echo -e "${CYAN}***********************************************${NC}"
+echo -e "${BLUE}PUT /api/v1/aliquot/{molecular_id}${NC}"
+echo -e "${PURPLE}Process bam and vcf files for patient, send s3 path of processed files (bai and tsv) to patient ecosystem${NC}"
+echo -e "${PURPLE}Get patient item. Need start patient ecosystem on server before testing ${NC}"
+echo -e "${CYAN}***********************************************${NC}"
+
+#curl -H 'Content-Type: application/json' -X PUT -d @./pt_update_data.json "http://localhost:5000/api/v1/aliquot/PT_SR10_BdVRRejected_BD_MOI1"
+
+echo -e "${CYAN}***********************************************${NC}"
 
 echo -e "${CYAN}***********************************************${NC}"
 echo -e "${BLUE}GET /api/v1/sample_controls/{molecular_id}/{format}${NC}"
