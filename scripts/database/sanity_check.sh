@@ -246,7 +246,7 @@ echo -e "${CYAN}***********************************************${NC}"
 
 curl -X GET "${URL}/api/v1/files/SC_SA1CB/qc"
 curl -X GET "${URL}/api/v1/files/SC_SA1CB/dna_bam"
+curl -X GET "${URL}/api/v1/files/SC_SA1CB/dna_bai"
 curl -X GET "${URL}/api/v1/files/SC_SA1CB/cdna_bam"
 curl -X GET "${URL}/api/v1/files/SC_SA1CB/vcf"
-curl -X GET "${URL}/api/v1/files/SC_SA1CB/cdna_bai"
 curl -X GET "${URL}/api/v1/files/SC_SA1CB/cdna_bai"
