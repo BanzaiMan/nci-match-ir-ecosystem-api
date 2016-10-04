@@ -31,11 +31,11 @@ class CeleryTaskAccessor(object):
     def delete_ir_items(self, query_parameters):
         return self.__process_item(query_parameters, batch_delete_ir, " batch ir delete")
 
-    def __process_item(self, item_dictionary, task, task_description):
+    def __process_item(self, item_dictionary, task, task_description, molecular_id_type=None):
         self.logger.debug("Celery " + task_description + " called")
         self.logger.debug(str(item_dictionary))
         try:
-            return task.delay(item_dictionary)
+            return task.delay(item_dictionary, molecular_id_type)
         except Exception as e:
             self.logger.debug("Client Error on celery " + task_description + ": " + e.message)
             raise
