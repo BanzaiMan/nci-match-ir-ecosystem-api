@@ -72,7 +72,7 @@ api.add_resource(S3AuthenticationPolicy,
 # Path for Querying and Creating ion reporters
 # Delete and Put in batch must do those using specific IDs, not allowed here
 api.add_resource(IonReporterTable, '/api/v1/ion_reporters')
-# Paths for updating, deleting, and retrieveing information about ion reporters themselves
+# Paths for updating, deleting, and retrieving information about ion reporters themselves
 api.add_resource(IonReporterRecord, '/api/v1/ion_reporters/<string:identifier>')
 # Retrieves a list of all the patients or sample_controls sequenced on the given IR reporter
 api.add_resource(SequenceData, '/api/v1/ion_reporters/<string:ion_reporter_id>/<string:sequence_data>')

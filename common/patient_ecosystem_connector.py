@@ -23,11 +23,13 @@ class PatientEcosystemConnector(object):
         try:
             json_data = PatientEcosystemConnector.open_url(url, molecular_id)
         except Exception as e:
+            # TODO: Can't call abort logger here...need to raise exception. Notice I put abort logger in a folder called resource_helpers. The reason is that this helper is only for resource classes.
             AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
 
         if len(json_data) > 0:
             return json_data
         else:
+            # TODO: Can't call abort logger here...need to raise exception. Notice I put abort logger in a folder called resource_helpers. The reason is that this helper is only for resource classes.
             AbortLogger.log_and_abort(404, self.logger.debug,
                                       MESSAGE_404.substitute(molecular_id=molecular_id))
 
