@@ -13,7 +13,7 @@ class TestGenericFile(TestCase):
         pass
 
     @data(
-        ('SC_SA1CB', 'qc', "u's3_download_file_url': u'https://pedmatch-dev.s3.amazonaws.com/IR_WAO85/"
+        ('SC_SA1CB', 'qc_name', "u's3_download_file_url': u'https://pedmatch-dev.s3.amazonaws.com/IR_WAO85/"
                            "SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1_QC.pdf?",
          {u'ion_reporter_id': u'IR_WAO85', u'analysis_id': u'SC_SA1CB_SC_SA1CB_a888_v1',
           u'control_type': u'no_template',
@@ -28,7 +28,7 @@ class TestGenericFile(TestCase):
          'https://pedmatch-dev.s3.amazonaws.com/IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis'
          '888_v1_QC.pdf?'
          , 200),
-        ('SC_SA1CB', 'dna_bam', "u's3_download_file_url': u'https://pedmatch-dev.s3.amazonaws.com/IR_WAO85/"
+        ('SC_SA1CB', 'dna_bam_name', "u's3_download_file_url': u'https://pedmatch-dev.s3.amazonaws.com/IR_WAO85/"
                            "SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_DNA_v1.bam",
          {u'ion_reporter_id': u'IR_WAO85', u'analysis_id': u'SC_SA1CB_SC_SA1CB_a888_v1',
           u'control_type': u'no_template',
@@ -42,7 +42,7 @@ class TestGenericFile(TestCase):
           u'date_molecular_id_created': u'2016-09-28 19:56:19.777', u'molecular_id': u'SC_SA1CB'},
          'https://pedmatch-dev.s3.amazonaws.com/IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_DNA_v1.bam'
          , 200),
-        ('SC_SA1CB', 'dna_bai', "u's3_download_file_url': u'https://pedmatch-dev.s3.amazonaws.com/IR_WAO85/"
+        ('SC_SA1CB', 'dna_bai_name', "u's3_download_file_url': u'https://pedmatch-dev.s3.amazonaws.com/IR_WAO85/"
                                 "SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_DNA_v1.bai",
          {u'ion_reporter_id': u'IR_WAO85', u'analysis_id': u'SC_SA1CB_SC_SA1CB_a888_v1',
           u'control_type': u'no_template',
@@ -56,7 +56,7 @@ class TestGenericFile(TestCase):
           u'date_molecular_id_created': u'2016-09-28 19:56:19.777', u'molecular_id': u'SC_SA1CB'},
          'https://pedmatch-dev.s3.amazonaws.com/IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_DNA_v1.bai'
          , 200),
-        ('SC_SA1CB', 'cdna_bam', "u's3_download_file_url': u'https://pedmatch-dev.s3.amazonaws.com/IR_WAO85/"
+        ('SC_SA1CB', 'cdna_bam_name', "u's3_download_file_url': u'https://pedmatch-dev.s3.amazonaws.com/IR_WAO85/"
                                 "SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_RNA_v1.bam",
          {u'ion_reporter_id': u'IR_WAO85', u'analysis_id': u'SC_SA1CB_SC_SA1CB_a888_v1',
           u'control_type': u'no_template',
@@ -70,7 +70,7 @@ class TestGenericFile(TestCase):
           u'date_molecular_id_created': u'2016-09-28 19:56:19.777', u'molecular_id': u'SC_SA1CB'},
          'https://pedmatch-dev.s3.amazonaws.com/IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_RNA_v1.bam'
          , 200),
-        ('SC_SA1CB', 'vcf', "u's3_download_file_url': u'https://pedmatch-dev.s3.amazonaws.com/IR_WAO85/"
+        ('SC_SA1CB', 'vcf_name', "u's3_download_file_url': u'https://pedmatch-dev.s3.amazonaws.com/IR_WAO85/"
                                  "SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1.vcf",
          {u'ion_reporter_id': u'IR_WAO85', u'analysis_id': u'SC_SA1CB_SC_SA1CB_a888_v1',
           u'control_type': u'no_template',
@@ -84,7 +84,7 @@ class TestGenericFile(TestCase):
           u'date_molecular_id_created': u'2016-09-28 19:56:19.777', u'molecular_id': u'SC_SA1CB'},
          'https://pedmatch-dev.s3.amazonaws.com/IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1.vcf'
          , 200),
-        ('SC_SA1CB', 'cdna_bai', "u's3_download_file_url': u'https://pedmatch-dev.s3.amazonaws.com/IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_RNA_v1.bai",
+        ('SC_SA1CB', 'cdna_bai_name', "u's3_download_file_url': u'https://pedmatch-dev.s3.amazonaws.com/IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_RNA_v1.bai",
          {u'ion_reporter_id': u'IR_WAO85', u'analysis_id': u'SC_SA1CB_SC_SA1CB_a888_v1',
           u'control_type': u'no_template',
           u'dna_bam_name': u'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_DNA_v1.bam',
@@ -97,7 +97,7 @@ class TestGenericFile(TestCase):
           u'date_molecular_id_created': u'2016-09-28 19:56:19.777', u'molecular_id': u'SC_SA1CB'},
          'https://pedmatch-dev.s3.amazonaws.com/IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_RNA_v1.bai'
          , 200),
-        ('SC_SA1CB', 'qcc', "Failed to get download url because qcc_name does not exist.",
+        ('SC_SA1CB', 'qcc_name', "Failed to get download url because qcc_name does not exist.",
          {u'ion_reporter_id': u'IR_WAO85', u'analysis_id': u'SC_SA1CB_SC_SA1CB_a888_v1',
           u'control_type': u'no_template',
           u'dna_bam_name': u'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_DNA_v1.bam',
@@ -111,7 +111,7 @@ class TestGenericFile(TestCase):
          'https://pedmatch-dev.s3.amazonaws.com/IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis'
          '888_v1_QC.pdf'
          , 404),
-        ('SC_SA1C', 'qc', "SC_SA1C was not found.", [], '', 404),
+        ('SC_SA1C', 'qc_name', "SC_SA1C was not found.", [], '', 404),
 
     )
     @unpack
@@ -133,7 +133,7 @@ class TestGenericFile(TestCase):
 
 
     @data(
-        ('SC_SA1CB', 'qc', "u's3_download_file_url': u'https://pedmatch-dev.s3.amazonaws.com/IR_WAO85/"
+        ('SC_SA1CB', 'qc_name', "u's3_download_file_url': u'https://pedmatch-dev.s3.amazonaws.com/IR_WAO85/"
                            "SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1_QC.pdf?",
          {u'ion_reporter_id': u'IR_WAO85', u'analysis_id': u'SC_SA1CB_SC_SA1CB_a888_v1',
           u'control_type': u'no_template',
@@ -167,7 +167,7 @@ class TestGenericFile(TestCase):
         assert 'Error' in return_value.data
 
     @data(
-        ('SC_SA1CB', 'qc', "u's3_download_file_url': u'https://pedmatch-dev.s3.amazonaws.com/IR_WAO85/"
+        ('SC_SA1CB', 'qc_name', "u's3_download_file_url': u'https://pedmatch-dev.s3.amazonaws.com/IR_WAO85/"
                            "SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1_QC.pdf?",
          {u'ion_reporter_id': u'IR_WAO85', u'analysis_id': u'SC_SA1CB_SC_SA1CB_a888_v1',
           u'control_type': u'no_template',

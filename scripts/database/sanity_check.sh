@@ -202,7 +202,7 @@ echo -e "${PURPLE}Process bam and vcf files for patient, send s3 path of process
 echo -e "${PURPLE}Get patient item. Need start patient ecosystem on server before testing ${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 
-#curl -H 'Content-Type: application/json' -X PUT -d @./pt_update_data.json "http://localhost:5000/api/v1/aliquot/PT_SR10_BdVRRejected_BD_MOI1"
+curl -H 'Content-Type: application/json' -X PUT -d @./pt_update_data.json "http://localhost:5000/api/v1/aliquot/PT_SR10_BdVRRejected_BD_MOI1"
 
 echo -e "${CYAN}***********************************************${NC}"
 
@@ -244,9 +244,9 @@ echo -e "${BLUE}GET /api/v1/files/<string:molecular_id>/<string:file_name>${NC}"
 echo -e "${PURPLE}Returns s3_download_file_url for molecular id if valid else 404${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 
-curl -X GET "${URL}/api/v1/files/SC_SA1CB/qc"
-curl -X GET "${URL}/api/v1/files/SC_SA1CB/dna_bam"
-curl -X GET "${URL}/api/v1/files/SC_SA1CB/dna_bai"
-curl -X GET "${URL}/api/v1/files/SC_SA1CB/cdna_bam"
-curl -X GET "${URL}/api/v1/files/SC_SA1CB/vcf"
-curl -X GET "${URL}/api/v1/files/SC_SA1CB/cdna_bai"
+curl -X GET "${URL}/api/v1/files/SC_SA1CB/qc_name"
+curl -X GET "${URL}/api/v1/files/SC_SA1CB/dna_bam_name"
+curl -X GET "${URL}/api/v1/files/SC_SA1CB/dna_bai_name"
+curl -X GET "${URL}/api/v1/files/SC_SA1CB/cdna_bam_name"
+curl -X GET "${URL}/api/v1/files/SC_SA1CB/vcf_name"
+curl -X GET "${URL}/api/v1/files/SC_SA1CB/cdna_bai_name"
