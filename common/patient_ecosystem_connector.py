@@ -4,6 +4,7 @@ import logging
 from string import Template
 from resource_helpers.abort_logger import AbortLogger
 
+# TODO: This needs to be read from evironment.yml not hard coded. This won't work in production as it won't be localhost
 URL = "http://localhost:10240"
 
 MESSAGE_404 = Template("No molecular id with id: $molecular_id found")
@@ -18,6 +19,7 @@ class PatientEcosystemConnector(object):
     def verify_molecular_id(self, molecular_id):
 
         self.logger.info("Checking if molecular id: " + str(molecular_id) + " is in patient table")
+        # TODO: This needs to be read from evironment.yml not hard coded
         url = (URL + "/api/v1/shipments/")
 
         try:
