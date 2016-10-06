@@ -1,6 +1,4 @@
 import requests
-import urllib
-import json
 import __builtin__
 
 
@@ -8,6 +6,7 @@ class PatientEcosystemConnector(object):
 
     @staticmethod
     def verify_molecular_id(molecular_id):
+
         url = (__builtin__.environment_config[__builtin__.environment]['patient_endpoint'] + "/api/v1/shipments/")
         try:
             json_data = PatientEcosystemConnector.open_url(url, molecular_id)
@@ -22,6 +21,7 @@ class PatientEcosystemConnector(object):
     @staticmethod
     def open_url(url, molecular_id):
 
-        lookup_url = urllib.urlopen(url + molecular_id)
-        json_data = json.loads(lookup_url.read())
-        return json_data
+        lookup_url = (url + molecular_id)
+        json_data = requests.get(lookup_url)
+
+        return json_data.json()
