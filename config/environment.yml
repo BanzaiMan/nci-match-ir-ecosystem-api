@@ -1,6 +1,7 @@
 development:
   dynamo_endpoint: "http://localhost:8000"
   patient_endpoint: "http://localhost:10240"
+  shipments_path: "/api/v1/shipments/"
   region: "us-east-1"
   port: "10241"
   bucket: "pedmatch-dev"
@@ -13,6 +14,7 @@ development:
 test:
   dynamo_endpoint: "https://dynamodb.us-east-1.amazonaws.com"
   patient_endpoint: "https://pedmatch-int.nci.nih.gov"
+  shipments_path: "/api/v1/shipments/"
   region: "us-east-1"
   port: "10241"
   bucket: "pedmatch-int"
@@ -26,6 +28,7 @@ test:
 uat:
   dynamo_endpoint: "https://dynamodb.us-east-1.amazonaws.com"
   patient_endpoint: "https://pedmatch-uat.nci.nih.gov"
+  shipments_path: "/api/v1/shipments/"
   region: "us-east-1"
   port: "10241"
   bucket: "pedmatch-uat"
@@ -39,6 +42,7 @@ uat:
 production:
   dynamo_endpoint: "https://dynamodb.us-east-1.amazonaws.com"
   patient_endpoint: "https://pedmatch.nci.nih.gov"
+  shipments_path: "/api/v1/shipments/"
   region: "us-east-1"
   port: "10241"
   bucket: "pedmatch"
