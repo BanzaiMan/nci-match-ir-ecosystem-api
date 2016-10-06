@@ -1,39 +1,23 @@
+import requests
 import urllib
 import json
-import logging
-from string import Template
-from resource_helpers.abort_logger import AbortLogger
+import __builtin__
 
-# TODO: This needs to be read from evironment.yml not hard coded. This won't work in production as it won't be localhost
-URL = "http://localhost:10240"
-
-MESSAGE_404 = Template("No molecular id with id: $molecular_id found")
-MESSAGE_500 = Template("Server Error could not connect to patient ecosystem APIcontact help: $error")
-
-# http://localhost:10240/api/v1/shipments/PT_SR10_BdVRRejected_BD_MOI1 temporary record
 
 class PatientEcosystemConnector(object):
-    def __init__(self):
-        self.logger = logging.getLogger(__name__)
 
-    def verify_molecular_id(self, molecular_id):
-
-        self.logger.info("Checking if molecular id: " + str(molecular_id) + " is in patient table")
-        # TODO: This needs to be read from evironment.yml not hard coded
-        url = (URL + "/api/v1/shipments/")
-
+    @staticmethod
+    def verify_molecular_id(molecular_id):
+        url = (__builtin__.environment_config[__builtin__.environment]['patient_endpoint'] + "/api/v1/shipments/")
         try:
             json_data = PatientEcosystemConnector.open_url(url, molecular_id)
         except Exception as e:
-            # TODO: Can't call abort logger here...need to raise exception. Notice I put abort logger in a folder called resource_helpers. The reason is that this helper is only for resource classes.
-            AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
+            raise Exception("Failed to connect to patient ecosystem, because : " + e.message)
 
         if len(json_data) > 0:
             return json_data
         else:
-            # TODO: Can't call abort logger here...need to raise exception. Notice I put abort logger in a folder called resource_helpers. The reason is that this helper is only for resource classes.
-            AbortLogger.log_and_abort(404, self.logger.debug,
-                                      MESSAGE_404.substitute(molecular_id=molecular_id))
+            raise Exception("Failed to connect to patient ecosystem, because : ")
 
     @staticmethod
     def open_url(url, molecular_id):
