@@ -13,13 +13,9 @@ class PatientEcosystemConnector(object):
 
         try:
             request_data = PatientEcosystemConnector.open_url(url, molecular_id)
+            return request_data.json()
         except Exception as e:
             raise Exception("Failed to connect to patient ecosystem, because : " + e.message)
-
-        if request_data.status_code == 200:
-            return request_data.json()
-        else:
-            return request_data.status_code
 
     @staticmethod
     def open_url(url, molecular_id):
