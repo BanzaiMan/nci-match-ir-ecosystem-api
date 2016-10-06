@@ -9,6 +9,7 @@ class PatientEcosystemConnector(object):
 
     @staticmethod
     def verify_molecular_id(molecular_id):
+        # TODO: This shouldn't be hardcoded
         pt_eco_route = '/api/v1/shipments/'
         url = (__builtin__.environment_config[__builtin__.environment]['patient_endpoint'] + pt_eco_route)
 
