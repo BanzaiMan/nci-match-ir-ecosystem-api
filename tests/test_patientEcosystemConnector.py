@@ -4,8 +4,6 @@ from ddt import ddt, data, unpack
 from common.patient_ecosystem_connector import PatientEcosystemConnector
 from mock import patch
 import mock
-import app
-
 
 @ddt
 class TestPatientEcosystemConnector(TestCase):
@@ -41,10 +39,10 @@ class TestPatientEcosystemConnector(TestCase):
         mock_get.return_value = mock_response
 
         url = ('http://localhost:10240/api/v1/shipments/'+ molecular_id)
-        response_dict = self.patient_ecosystem_connector.open_url(url=url, molecular_id=molecular_id)
+        response_dict = self.patient_ecosystem_connector.verify_molecular_id(molecular_id=molecular_id)
 
         # Check that our function made the expected internal calls
-        mock_get.assert_called_once_with(url + molecular_id)
+        mock_get.assert_called_once_with(url)
         print mock_response.json.call_count
         self.assertEqual(1, mock_response.json.call_count)
 
@@ -53,8 +51,6 @@ class TestPatientEcosystemConnector(TestCase):
         print mock_response.json.call_count
         # If we want, we can check the contents of the response
         self.assertEqual(response_dict, expected_result)
-
-
 
 
     if __name__ == "__main__":
