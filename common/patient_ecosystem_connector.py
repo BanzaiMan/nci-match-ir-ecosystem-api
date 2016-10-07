@@ -25,6 +25,6 @@ class PatientEcosystemConnector(object):
     def open_url(url, molecular_id):
 
         lookup_url = (url + molecular_id)
-        request_data = requests.get(lookup_url).json.return_value
+        request_data = requests.get(lookup_url).json()
 
         return request_data

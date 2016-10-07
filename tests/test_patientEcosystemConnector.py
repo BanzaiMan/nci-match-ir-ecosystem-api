@@ -46,7 +46,7 @@ class TestPatientEcosystemConnector(TestCase):
         # Check that our function made the expected internal calls
         mock_get.assert_called_once_with(url + molecular_id)
         print mock_response.json.call_count
-        self.assertEqual(0, mock_response.json.call_count)
+        self.assertEqual(1, mock_response.json.call_count)
 
         print response_dict
 
