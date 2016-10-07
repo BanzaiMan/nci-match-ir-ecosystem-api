@@ -4,6 +4,9 @@ from ddt import ddt, data, unpack
 from common.patient_ecosystem_connector import PatientEcosystemConnector
 from mock import patch
 import mock
+import __builtin__
+import app
+
 
 @ddt
 class TestPatientEcosystemConnector(TestCase):
@@ -31,6 +34,7 @@ class TestPatientEcosystemConnector(TestCase):
                 """
         # Construct our mock response object, giving it relevant expected
         # behaviours
+
         mock_response = mock.Mock()
 
         mock_response.json.return_value = expected_result
@@ -38,7 +42,9 @@ class TestPatientEcosystemConnector(TestCase):
         # Assign our mock response as the result of our patched function
         mock_get.return_value = mock_response
 
-        url = ('http://localhost:10240/api/v1/shipments/'+ molecular_id)
+        url = (__builtin__.environment_config[__builtin__.environment]['patient_endpoint']
+               + __builtin__.environment_config[__builtin__.environment]['shipments_path'] + molecular_id)
+
         response_dict = self.patient_ecosystem_connector.verify_molecular_id(molecular_id=molecular_id)
 
         # Check that our function made the expected internal calls
@@ -51,6 +57,8 @@ class TestPatientEcosystemConnector(TestCase):
         print mock_response.json.call_count
         # If we want, we can check the contents of the response
         self.assertEqual(response_dict, expected_result)
+
+
 
 
     if __name__ == "__main__":
