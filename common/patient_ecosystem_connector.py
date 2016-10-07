@@ -1,4 +1,5 @@
 import requests
+import json
 from flask_restful import abort
 import __builtin__
 
@@ -15,7 +16,8 @@ class PatientEcosystemConnector(object):
 
         try:
             request_data = PatientEcosystemConnector.open_url(url, molecular_id)
-            return request_data.json()
+
+            return request_data
         except Exception as e:
             abort(500, message="Failed to connect to patient ecosystem, because : " + e.message)
 
@@ -23,6 +25,6 @@ class PatientEcosystemConnector(object):
     def open_url(url, molecular_id):
 
         lookup_url = (url + molecular_id)
-        request_data = requests.get(lookup_url)
+        request_data = requests.get(lookup_url).json.return_value
 
         return request_data
