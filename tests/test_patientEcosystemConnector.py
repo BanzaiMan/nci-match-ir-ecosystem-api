@@ -16,8 +16,8 @@ class TestPatientEcosystemConnector(TestCase):
         self.patient_ecosystem_connector = PatientEcosystemConnector()
 
     @data(
-        # ('SC_SA1CB', '404: Not Found'),
-        # ('SC_SA1C', '404: Not Found'),
+        ('SC_SA1CB', '404: Not Found'),
+        ('', '404: Not Found'),
         ('PT_VU16_BdVRUploaded_BD_MOI1', {"uuid":"98fb0d64-27af-4237-8fbe-22abc0ad2bb8",
                                           "shipped_date":"2016-05-01T19:42:13+00:00",
                                           "patient_id":"PT_VU16_BdVRUploaded",
@@ -30,7 +30,7 @@ class TestPatientEcosystemConnector(TestCase):
     @patch('common.patient_ecosystem_connector.requests.get')
     def test_verify_molecular_id(self, molecular_id, expected_result, mock_get):
         """
-                Test getting a 200 OK response from the open_url method of PatientEcosystemConnector.
+                Test getting a 200 OK response and 404 from the open_url method of PatientEcosystemConnector.
                 """
         # Construct our mock response object, giving it relevant expected
         # behaviours
@@ -58,14 +58,29 @@ class TestPatientEcosystemConnector(TestCase):
         # If we want, we can check the contents of the response
         self.assertEqual(response_dict, expected_result)
 
-
-
-
-    if __name__ == "__main__":
-        unittest.main()
-
-
-
-
-
-
+    #
+    # @patch('common.patient_ecosystem_connector.PatientEcosystemConnector')
+    # def test_get_exception(self, mock_class):
+    #     # Testing exception
+    #
+    #
+    #     url = (__builtin__.environment_config[__builtin__.environment]['patient_endpoint']
+    #            + __builtin__.environment_config[__builtin__.environment]['shipments_path'] + 'PT_VU16_BdVRUploaded_BD_MOI1')
+    #
+    #     instance = mock_class.return_value
+    #
+    #     instance.open_url(url, 'PT_VU16_BdVRUploaded_BD_MOI1').side_effect = Exception('testing throwing exception')
+    #
+    #     return_value = self.patient_ecosystem_connector.verify_molecular_id('PT_VU16_BdVRUploaded_BD_MOI1')
+    #
+    #     print return_value
+    #     print return_value.status_code
+    #     print return_value.data
+    #
+    #     assert return_value.status_code == 500
+    #     assert "testing throwing exception" in return_value.data
+    #
+    #
+    #
+    # if __name__ == "__main__":
+    #     unittest.main()
