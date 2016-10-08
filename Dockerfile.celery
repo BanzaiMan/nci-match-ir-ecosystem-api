@@ -14,8 +14,11 @@ RUN pip install -r requirements.txt
 # Add the app code 
 COPY . .
 
+#Insert script to change localhost to docker-compose names
+ADD https://raw.githubusercontent.com/CBIIT/match-docker/master/docker-compose-env.sh .
+RUN chmod 755 docker-compose-env.sh && ls -alt $INSTALL_PATH
+
 #Avoid running celery as root
 USER nobody
-
 # Default command 
 CMD cd $INSTALL_PATH && ./docker-compose-env.sh && celery -A tasks.tasks worker --loglevel=INFO
