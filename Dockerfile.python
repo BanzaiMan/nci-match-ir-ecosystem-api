@@ -3,17 +3,23 @@ FROM python:2.7.12
 
 MAINTAINER jeremy.pumphrey@nih.gov
 
-# Install requirements
-RUN mkdir -p /nci-match-ir-ecosystem-api && chmod 777 /nci-match-ir-ecosystem-api
-COPY requirements.txt /nci-match-ir-ecosystem-api/
-RUN pip install -r /nci-match-ir-ecosystem-api/requirements.txt
+ENV INSTALL_PATH /usr/app
+RUN mkdir -p $INSTALL_PATH && chmod 777 $INSTALL_PATH
+WORKDIR $INSTALL_PATH
+
+#Install requirements
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
 # Add the app code 
-COPY . /nci-match-ir-ecosystem-api/
+COPY . .
 
 # Install oncomine-vcf-converter
-RUN cd  /nci-match-ir-ecosystem-api/oncomine-vcf-converter-1.4.3 && python setup.py install && which convert_vcf.py
+RUN cd $INSTALL_PATH/oncomine-vcf-converter-1.4.3 && python setup.py install && which convert_vcf.py
+
+#Insert script to change localhost to docker-compose names
+ADD https://raw.githubusercontent.com/CBIIT/match-docker/master/docker-compose-env.sh .
+RUN chmod 755 docker-compose-env.sh && ls -alt $INSTALL_PATH
 
 # Default command 
-CMD cd /nci-match-ir-ecosystem-api && python ./app.py
-#CMD cd /nci-match-ir-ecosystem-api && celery -A tasks.tasks worker --loglevel=INFO
+CMD cd $INSTALL_PATH && ./docker-compose-env.sh && python ./app.py

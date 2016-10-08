@@ -3,18 +3,19 @@ FROM python:2.7.12
 
 MAINTAINER jeremy.pumphrey@nih.gov
 
-# Install requirements
-RUN mkdir -p /nci-match-ir-ecosystem-api && chmod 777 /nci-match-ir-ecosystem-api
-COPY requirements.txt /nci-match-ir-ecosystem-api/
-RUN pip install -r /nci-match-ir-ecosystem-api/requirements.txt
+ENV INSTALL_PATH /usr/app
+RUN mkdir -p $INSTALL_PATH && chmod 777 $INSTALL_PATH
+WORKDIR $INSTALL_PATH
+
+#Install requirements
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
 # Add the app code 
-COPY . /nci-match-ir-ecosystem-api/
+COPY . .
 
 #Avoid running celery as root
-#RUN cat /etc/passwd
 USER nobody
 
 # Default command 
-#CMD cd /nci-match-ir-ecosystem-api && python ./app.py
-CMD cd /nci-match-ir-ecosystem-api && celery -A tasks.tasks worker --loglevel=INFO
+CMD cd $INSTALL_PATH && ./docker-compose-env.sh && celery -A tasks.tasks worker --loglevel=INFO
