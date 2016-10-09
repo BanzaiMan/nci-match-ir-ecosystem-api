@@ -1,7 +1,7 @@
 development:
   dynamo_endpoint: "http://localhost:8000"
   patient_endpoint: "http://localhost:10240"
-  shipments_path: "/api/v1/shipments/"
+  shipments_path: "/api/v1/patients/shipments/"
   region: "us-east-1"
   port: "10241"
   bucket: "pedmatch-dev"
