@@ -6,6 +6,9 @@ from mock import patch
 import mock
 import __builtin__
 import app
+import requests
+from requests import RequestException
+
 
 
 @ddt
@@ -58,29 +61,21 @@ class TestPatientEcosystemConnector(TestCase):
         # If we want, we can check the contents of the response
         self.assertEqual(response_dict, expected_result)
 
-    #
-    # @patch('common.patient_ecosystem_connector.PatientEcosystemConnector')
-    # def test_get_exception(self, mock_class):
-    #     # Testing exception
-    #
-    #
-    #     url = (__builtin__.environment_config[__builtin__.environment]['patient_endpoint']
-    #            + __builtin__.environment_config[__builtin__.environment]['shipments_path'] + 'PT_VU16_BdVRUploaded_BD_MOI1')
-    #
-    #     instance = mock_class.return_value
-    #
-    #     instance.open_url(url, 'PT_VU16_BdVRUploaded_BD_MOI1').side_effect = Exception('testing throwing exception')
-    #
-    #     return_value = self.patient_ecosystem_connector.verify_molecular_id('PT_VU16_BdVRUploaded_BD_MOI1')
-    #
-    #     print return_value
-    #     print return_value.status_code
-    #     print return_value.data
-    #
-    #     assert return_value.status_code == 500
-    #     assert "testing throwing exception" in return_value.data
-    #
-    #
-    #
-    # if __name__ == "__main__":
-    #     unittest.main()
+    @patch('common.patient_ecosystem_connector.requests')
+    def test_get_exception(self, mock_class):
+        # Testing exception
+
+        # instance = mock_class.return_value
+        mock_class.get.side_effect = Exception('testing throwing exception')
+        try:
+            return_value = PatientEcosystemConnector().verify_molecular_id('PT_VU16_BdVRUploaded_BD_MOI1')
+        except Exception as e:
+            assert "testing throwing exception" in e.message
+        else:
+            assert False
+
+
+
+
+    if __name__ == "__main__":
+        unittest.main()
