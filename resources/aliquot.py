@@ -1,4 +1,6 @@
 import logging
+import re
+import os
 from flask_restful import request, Resource, reqparse
 from accessors.sample_control_accessor import SampleControlAccessor
 from common.dictionary_helper import DictionaryHelper
@@ -32,15 +34,14 @@ class Aliquot(Resource):
             return item
         else:
             # check if molecular_id exists in patient table
-            pt_results = PatientEcosystemConnector().verify_molecular_id(molecular_id)
+            pt_results = PatientEcosystemConnector.verify_molecular_id(molecular_id)
             if len(pt_results) > 0:
                 print pt_results
-                item = pt_results[0].copy()
+                item = pt_results.copy()
                 item.update({'molecular_id_type': 'patient'})
                 return item
             else:
                 AbortLogger.log_and_abort(404, self.logger.debug, str(molecular_id + " was not found"))
-
 
     def put(self, molecular_id):
         self.logger.info("updating molecular_id: " + str(molecular_id))
@@ -58,7 +59,7 @@ class Aliquot(Resource):
         item = SampleControlAccessor().get_item({'molecular_id': molecular_id})
         if len(item) == 0:
             # check if molecular_id exists in patient table
-            pt_results = PatientEcosystemConnector().verify_molecular_id(molecular_id)
+            pt_results = PatientEcosystemConnector.verify_molecular_id(molecular_id)
             print pt_results
             if len(pt_results) > 0:
                 molecular_id_type = 'patient'
@@ -68,17 +69,27 @@ class Aliquot(Resource):
         item_dictionary = args.copy()
         distinct_tasks_list = self.__get_distinct_tasks(item_dictionary, molecular_id)
         self.logger.debug("Distinct tasks created")
+        tsv_name = None
         if len(distinct_tasks_list) > 0:
+
             try:
                 for distinct_task in distinct_tasks_list:
                     self.logger.debug("Adding task to queue: " + str(distinct_task))
-                    CeleryTaskAccessor().process_file(distinct_task, molecular_id_type)
+                    if 'vcf_name' in distinct_task:
+                        p = re.compile('.vcf')
+                        tsv_name = p.sub('.tsv', distinct_task['vcf_name'])
+                        tsv_name = os.path.basename("/" + tsv_name)
+                        CeleryTaskAccessor().process_file(distinct_task, molecular_id_type)
             except Exception as e:
                 AbortLogger.log_and_abort(500, self.logger.error, "updated_item failed because" + e.message)
         else:
             AbortLogger.log_and_abort(400, self.logger.debug, "No distinct tasks where found in message")
 
-        return {"message": "Item updated", "molecular_id": molecular_id}
+        if molecular_id_type == 'sample_control':
+            return {"message": "Item updated", "molecular_id": molecular_id}
+        else:
+            return {"ion_reporter_id": item_dictionary['ion_reporter_id'], "molecular_id": molecular_id,
+                    "analysis_id": item_dictionary['analysis_id'], "tsv_name": tsv_name}
 
 
     @staticmethod

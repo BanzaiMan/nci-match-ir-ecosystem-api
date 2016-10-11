@@ -6,6 +6,7 @@ import ast
 import __builtin__
 #import re
 import urllib
+from flask import jsonify
 
 from accessors.ion_reporter_accessor import IonReporterAccessor
 from accessors.sample_control_accessor import SampleControlAccessor
@@ -94,10 +95,10 @@ def process_ir_file(file_process_message, molecular_id_type):
         if molecular_id_type == 'sample_control':
             logger.info("Updating sample_controls table after processing file")
             SampleControlAccessor().update(updated_file_process_message)
+            return None
         else:
             logger.info("Passing processed file S3 path to patient ecosystem")
-            print "processed file for patient: " + str(updated_file_process_message)
-            # TODO send S3 path of processed files to patient ecosystem
+            logger.info("processed file for patient: " + str(updated_file_process_message))
 
 
 # process vcf, bam files based on message dictionary key: vcf_name, dna_bam_name, or cdna_bam_name

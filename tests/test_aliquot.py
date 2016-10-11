@@ -21,7 +21,8 @@ class TestAliquot(unittest.TestCase):
          },
          'SC_YQ111', {}, 200),
         ({}, 'SC_YQ999', {}, 404),
-        ({}, 'PT_SR10_BdVRRejected_BD_MOI1', [{
+        ({}, 'PT_SR10_BdVRRejected_BD_MOI1',
+         {
             "uuid": "69cf6ae8-d95b-463a-be4e-1ba2b7ebdf04",
             "shipped_date": "2016-05-01T19:42:13+00:00",
             "patient_id": "PT_SR10_BdVRRejected",
@@ -34,7 +35,7 @@ class TestAliquot(unittest.TestCase):
             "dna_volume_ul": "10.0",
             "dna_concentration_ng_per_ul": "25.0",
             "cdna_volume_ul": "10.0"
-        }], 200)
+        }, 200)
 
     )
     @unpack
@@ -98,27 +99,33 @@ class TestAliquot(unittest.TestCase):
               "dna_volume_ul": "10.0",
               "dna_concentration_ng_per_ul": "25.0",
               "cdna_volume_ul": "10.0"
-          }, 'Item updated'
+          }, "3366.tsv"
         ),
         ('SC_YQ111', {}, False, {}, {}, 'Need to pass in item updating information in order to update a sample control item')
     )
     @unpack
     @patch('resources.aliquot.PatientEcosystemConnector.verify_molecular_id')
-    @patch('resources.aliquot.SampleControlAccessor.get_item')
+    @patch('resources.aliquot.SampleControlAccessor')
     @patch('resources.aliquot.DictionaryHelper.has_values')
     @patch('resources.aliquot.CeleryTaskAccessor')
     def test_put(self, molecular_id, update_dictionary, dict_has_value, sc_get_return, verify_pt_return, expected_results,
-                 mock_celery_task_accessor_class, mock_has_values_function, mock_sc_get_function, mock_verify_pt_function):
+                 mock_celery_task_accessor_class, mock_has_values_function, mock_sc_class, mock_verify_pt_function):
         instance = mock_celery_task_accessor_class.return_value
         instance.process_file.return_value = True
+        instance_sc = mock_sc_class.return_value
+        instance_sc.get_item.return_value = sc_get_return
         mock_has_values_function.return_value = dict_has_value
-        mock_sc_get_function.return_value = sc_get_return
+
         mock_verify_pt_function.return_value = verify_pt_return
         return_value = self.app.put('/api/v1/aliquot/' + molecular_id,
                                     data=json.dumps(update_dictionary),
                                     content_type='application/json')
-        print return_value.data
-        assert expected_results in return_value.data
+        print return_value.status_code
+        print "=====================?" + str(return_value.data)
+        if len(verify_pt_return)>0:
+            assert expected_results == json.loads(return_value.data)["tsv_name"]
+        else:
+            assert expected_results in return_value.data
 
     @data(
         ('SC_YQ111',
@@ -135,15 +142,16 @@ class TestAliquot(unittest.TestCase):
     )
     @unpack
     @patch('resources.aliquot.PatientEcosystemConnector.verify_molecular_id')
-    @patch('resources.aliquot.SampleControlAccessor.get_item')
+    @patch('resources.aliquot.SampleControlAccessor')
     @patch('resources.aliquot.DictionaryHelper.has_values')
     @patch('resources.aliquot.CeleryTaskAccessor')
     def test_put_exception(self, molecular_id, update_dictionary, sc_get_return, verify_pt_return, exception_message,
-            mock_celery_task_accessor_class, mock_has_values_function, mock_sc_get_function, mock_verify_pt_function):
+            mock_celery_task_accessor_class, mock_has_values_function, mock_sc_class, mock_verify_pt_function):
         instance = mock_celery_task_accessor_class.return_value
         instance.process_file.return_value = False
         mock_has_values_function.return_value = True
-        mock_sc_get_function.return_value = sc_get_return
+        instance_sc = mock_sc_class.return_value
+        instance_sc.get_item.return_value = sc_get_return
         mock_verify_pt_function.return_value = verify_pt_return
 
         return_value = self.app.put('/api/v1/aliquot/' + molecular_id,
@@ -164,15 +172,17 @@ class TestAliquot(unittest.TestCase):
     )
     @unpack
     @patch('resources.aliquot.PatientEcosystemConnector.verify_molecular_id')
-    @patch('resources.aliquot.SampleControlAccessor.get_item')
+    @patch('resources.aliquot.SampleControlAccessor')
     @patch('resources.aliquot.DictionaryHelper.has_values')
     @patch('resources.aliquot.CeleryTaskAccessor')
-    def test_put_process_file_exception(self, molecular_id, update_dictionary, sc_get_return, verify_pt_return, exception_message,
-            mock_celery_task_accessor_class, mock_has_values_function, mock_sc_get_function, mock_verify_pt_function):
+    def test_put_process_file_exception(self, molecular_id, update_dictionary, sc_get_return, verify_pt_return,
+                                        exception_message, mock_celery_task_accessor_class, mock_has_values_function,
+                                        mock_sc_class, mock_verify_pt_function):
         instance = mock_celery_task_accessor_class.return_value
         instance.process_file.side_effect = Exception(exception_message)
         mock_has_values_function.return_value = True
-        mock_sc_get_function.return_value = sc_get_return
+        instance_sc = mock_sc_class.return_value
+        instance_sc.get_item.return_value = sc_get_return
         mock_verify_pt_function.return_value = verify_pt_return
 
         return_value = self.app.put('/api/v1/aliquot/' + molecular_id,
@@ -193,16 +203,17 @@ class TestAliquot(unittest.TestCase):
     )
     @unpack
     @patch('resources.aliquot.PatientEcosystemConnector.verify_molecular_id')
-    @patch('resources.aliquot.SampleControlAccessor.get_item')
+    @patch('resources.aliquot.SampleControlAccessor')
     @patch('resources.aliquot.DictionaryHelper.has_values')
     @patch('resources.aliquot.CeleryTaskAccessor')
     def test_put_distinct_tasks_list_exception(self, molecular_id, update_dictionary, sc_get_return, verify_pt_return,
                                         result_status_code, mock_celery_task_accessor_class, mock_has_values_function,
-                                        mock_sc_get_function, mock_verify_pt_function):
+                                        mock_sc_class, mock_verify_pt_function):
         instance = mock_celery_task_accessor_class.return_value
         instance.process_file.return_value = True
         mock_has_values_function.return_value = True
-        mock_sc_get_function.return_value = sc_get_return
+        instance_sc = mock_sc_class.return_value
+        instance_sc.get_item.return_value = sc_get_return
         mock_verify_pt_function.return_value = verify_pt_return
 
         return_value = self.app.put('/api/v1/aliquot/' + molecular_id,
