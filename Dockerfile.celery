@@ -18,7 +18,5 @@ COPY . .
 ADD https://raw.githubusercontent.com/CBIIT/match-docker/master/docker-compose-env.sh .
 RUN chmod 755 docker-compose-env.sh && ls -alt $INSTALL_PATH
 
-#Avoid running celery as root
-USER nobody
 # Default command 
-CMD cd $INSTALL_PATH && ./docker-compose-env.sh && celery -A tasks.tasks worker --loglevel=INFO
+CMD cd $INSTALL_PATH && ./docker-compose-env.sh && celery -A tasks.tasks worker --loglevel=INFO --uid=nobody
