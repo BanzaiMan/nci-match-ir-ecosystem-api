@@ -74,11 +74,11 @@ def update_ir(update_message):
 # as updating both S3 and dynamodb.
 @app.task
 # molecular_id_type is 'sample_control' or 'patient'
-def process_ir_file(file_process_message, molecular_id_type):
+def process_ir_file(file_process_message):
 
     new_file_process_message = file_process_message.copy()
 
-    if molecular_id_type == 'sample_control':
+    if file_process_message['molecular_id_type'] == 'sample_control':
         logger.info("Updating sample_controls table before processing file" + str(file_process_message))
        # new_file_process_message = file_process_message.copy()
         # after running SampleControlAccessor().update(file_process_message), key 'molecular_id' will be
@@ -92,7 +92,7 @@ def process_ir_file(file_process_message, molecular_id_type):
         logger.error("Cannot process file because: " + ex.message)
         raise
     else:
-        if molecular_id_type == 'sample_control':
+        if file_process_message['molecular_id_type']  == 'sample_control':
             logger.info("Updating sample_controls table after processing file")
             SampleControlAccessor().update(updated_file_process_message)
             return None

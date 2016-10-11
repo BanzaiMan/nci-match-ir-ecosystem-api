@@ -6,9 +6,8 @@ class CeleryTaskAccessor(object):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
-    # molecular_id_type is 'sample_control' or 'patient'
-    def process_file(self, item_dictionary, molecular_id_type):
-        return self.__process_item(item_dictionary, process_ir_file, "process_ir_file", molecular_id_type)
+    def process_file(self, item_dictionary):
+        return self.__process_item(item_dictionary, process_ir_file, "process_ir_file")
 
     def put_item(self, item_dictionary):
         return self.__process_item(item_dictionary, put, "put")
@@ -31,11 +30,11 @@ class CeleryTaskAccessor(object):
     def delete_ir_items(self, query_parameters):
         return self.__process_item(query_parameters, batch_delete_ir, " batch ir delete")
 
-    def __process_item(self, item_dictionary, task, task_description, molecular_id_type=None):
+    def __process_item(self, item_dictionary, task, task_description):
         self.logger.debug("Celery " + task_description + " called")
         self.logger.debug(str(item_dictionary))
         try:
-            return task.delay(item_dictionary, molecular_id_type)
+            return task.delay(item_dictionary)
         except Exception as e:
             self.logger.debug("Client Error on celery " + task_description + ": " + e.message)
             raise
