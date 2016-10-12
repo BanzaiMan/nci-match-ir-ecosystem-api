@@ -48,6 +48,8 @@ else:
 
     app.conf.CELERY_ENABLE_REMOTE_CONTROL = False
 
+slack_channel_id = (__builtin__.environment_config[__builtin__.environment]['slack_channel_id'])
+
 
 # I don't think we will use this for sample control as our sample control creation of records are not done through
 # the queueing system but directly on the database. However, I'll leave this for now.
@@ -89,7 +91,7 @@ def process_ir_file(file_process_message):
         # process vcf, dna_bam, or cdna_bam file
         updated_file_process_message = process_file_message(new_file_process_message)
     except Exception as ex:
-        PedBot().send_message(channel_id='C2N1BJX0U', message="Cannot process file because: " + ex.message)
+        PedBot().send_message(channel_id=slack_channel_id, message="Cannot process file because: " + ex.message)
         logger.error("Cannot process file because: " + ex.message)
     else:
         if file_process_message['molecular_id_type']  == 'sample_control':
@@ -122,6 +124,7 @@ def process_file_message(file_process_message):
             return unicode_free_dictionary
 
     except Exception as e:
+        PedBot().send_message(channel_id=slack_channel_id, message="Cannot process file because: " + e.message)
         raise Exception(e.message)
 
     else:
@@ -131,7 +134,7 @@ def process_file_message(file_process_message):
         try:
             S3Accessor().upload(downloaded_file_path, new_file_s3_path)
         except Exception as e:
-            PedBot().send_message(channel_id='C2N1BJX0U', message="Cannot process file because: " + e.message)
+
             raise Exception(e.message)
         else:
             unicode_free_dictionary.update({key: new_file_s3_path})
@@ -156,7 +159,7 @@ def process_vcf(dictionary):
             new_file_path = SequenceFileProcessor().vcf_to_tsv(downloaded_file_path)
         except Exception as e:
             # TODO: Posting that a vcf to tsv failed by itself isn't enough information for us to fix the issue. We need the file full paths etc.
-            PedBot().send_message(channel_id='C2N1BJX0U', message="VCF creation failed because: " + e.message)
+            PedBot().send_message(channel_id=slack_channel_id, message="VCF creation failed because: " + e.message)
             raise Exception("VCF creation failed because: " + e.message)
         else:
             key = 'tsv_name'
@@ -174,7 +177,7 @@ def process_bam(dictionary, nucleic_acid_type):
             new_file_path = SequenceFileProcessor().bam_to_bai(downloaded_file_path)
         except Exception as e:
             # TODO: Posting that a bam to bai failed by itself isn't enough information for us to fix the issue. We need the file full paths etc.
-            PedBot().send_message(channel_id='C2N1BJX0U', message="BAI creation failed because: " + e.message)
+            PedBot().send_message(channel_id=slack_channel_id, message="BAI creation failed because: " + e.message)
             raise Exception("BAI creation failed because: " + e.message)
         else:
             key = nucleic_acid_type + '_bai_name'
@@ -195,13 +198,13 @@ def post_tsv_info(dictionary, tsv_file_name):
         r = requests.post(patient_url, data=json.dumps(content), headers=headers)
     except Exception as e:
         # TODO: Posting that a vcf to tsv failed by itself isn't enough information for us to fix the issue. We need the file full paths etc.
-        PedBot().send_message(channel_id='C2N1BJX0U', message="Failed to post tsv file name to Patient Ecosystem because: " + e.message)
+        PedBot().send_message(channel_id=slack_channel_id, message="Failed to post tsv file name to Patient Ecosystem because: " + e.message)
         raise Exception("Failed to post tsv file name to Patient Ecosystem for " + dictionary['molecular_id'] + ", because: " + e.message)
     else:
         if r.status_code ==200:
             logger.info("Successfully post tsv file name to Patient Ecosystem for " + dictionary['molecular_id'])
         else:
-            PedBot().send_message(channel_id='C2N1BJX0U',
+            PedBot().send_message(channel_id=slack_channel_id,
                                   message="Failed to post tsv file name to Patient Ecosystem because: " + r.text)
             logger.debug("Failed to post tsv file name to Patient Ecosystem for " + dictionary['molecular_id'] + ", because:" + r.text)
 

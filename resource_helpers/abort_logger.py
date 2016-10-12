@@ -9,7 +9,6 @@ class AbortLogger(object):
     @staticmethod
     def log_and_abort(error_code, logger_level_function, message):
         slack_channel_id = (__builtin__.environment_config[__builtin__.environment]['slack_channel_id'])
-        USER = (__builtin__.environment_config[__builtin__.environment]['USER'])
 
         try:
             calling_function = inspect.stack()[1][3]
@@ -18,8 +17,8 @@ class AbortLogger(object):
         else:
             logger_level_function("Calling Method: " + calling_function + " :: Log message: " + message)
             if error_code == 500:
-                PedBot().send_message(channel_id=slack_channel_id, message="User: " + USER + "Calling Method: "
-                                                            + calling_function + " :: Log message: " + message)
+                PedBot().send_message(channel_id=slack_channel_id, message=("Calling Method: " + calling_function
+                                                                            + " :: Log message: " + message))
 
         abort(error_code, message=message)
 
