@@ -89,7 +89,6 @@ def process_ir_file(file_process_message):
         updated_file_process_message = process_file_message(new_file_process_message)
     except Exception as ex:
         logger.error("Cannot process file because: " + ex.message)
-        raise
     else:
         if file_process_message['molecular_id_type']  == 'sample_control':
             logger.info("Updating sample_controls table after processing file")

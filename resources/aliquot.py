@@ -76,6 +76,7 @@ class Aliquot(Resource):
             try:
                 for distinct_task in distinct_tasks_list:
                     self.logger.debug("Adding task to queue: " + str(distinct_task))
+                    # TODO: Remind me why are we doing this?
                     if 'vcf_name' in distinct_task:
                         p = re.compile('.vcf')
                         tsv_name = p.sub('.tsv', distinct_task['vcf_name'])
@@ -89,9 +90,9 @@ class Aliquot(Resource):
         if molecular_id_type == 'sample_control':
             return {"message": "Item updated", "molecular_id": molecular_id}
         else:
+            # TODO: What happens if vcf_name isn't in message, thus tsv_name is not created?
             return {"ion_reporter_id": item_dictionary['ion_reporter_id'], "molecular_id": molecular_id,
                     "analysis_id": item_dictionary['analysis_id'], "tsv_name": tsv_name}
-
 
     @staticmethod
     def __get_distinct_tasks(item_dictionary, molecular_id):
@@ -111,10 +112,10 @@ class Aliquot(Resource):
 
         return distinct_tasks_list
 
-
     @staticmethod
     def __get_tasks_dictionary(item_dictionary, molecular_id, file_dict_key):
 
+        # TODO: Wny is molecular_id_type and control_type being passed? Not all tasks will have a control type
         tasks_dictionary = {'molecular_id': molecular_id, 'analysis_id': item_dictionary['analysis_id'],
                             'ion_reporter_id': item_dictionary['ion_reporter_id'],
                             'molecular_id_type': item_dictionary['molecular_id_type'],
