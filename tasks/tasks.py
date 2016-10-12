@@ -16,6 +16,7 @@ from common.sequence_file_processor import SequenceFileProcessor
 from accessors.s3_accessor import S3Accessor
 from werkzeug.utils import secure_filename
 from common.environment_helper import EnvironmentHelper
+from resource_helpers.ped_match_bot import PedBot
 
 # Logging functionality
 fileConfig(os.path.abspath("config/logging_config.ini"))
@@ -88,6 +89,7 @@ def process_ir_file(file_process_message):
         # process vcf, dna_bam, or cdna_bam file
         updated_file_process_message = process_file_message(new_file_process_message)
     except Exception as ex:
+        PedBot().send_message(channel_id='C2N1BJX0U', message="Cannot process file because: " + ex.message)
         logger.error("Cannot process file because: " + ex.message)
     else:
         if file_process_message['molecular_id_type']  == 'sample_control':
@@ -129,6 +131,7 @@ def process_file_message(file_process_message):
         try:
             S3Accessor().upload(downloaded_file_path, new_file_s3_path)
         except Exception as e:
+            PedBot().send_message(channel_id='C2N1BJX0U', message="Cannot process file because: " + e.message)
             raise Exception(e.message)
         else:
             unicode_free_dictionary.update({key: new_file_s3_path})
@@ -152,6 +155,7 @@ def process_vcf(dictionary):
         try:
             new_file_path = SequenceFileProcessor().vcf_to_tsv(downloaded_file_path)
         except Exception as e:
+            PedBot().send_message(channel_id='C2N1BJX0U', message="VCF creation failed because: " + e.message)
             raise Exception("VCF creation failed because: " + e.message)
         else:
             key = 'tsv_name'
@@ -168,6 +172,7 @@ def process_bam(dictionary, nucleic_acid_type):
         try:
             new_file_path = SequenceFileProcessor().bam_to_bai(downloaded_file_path)
         except Exception as e:
+            PedBot().send_message(channel_id='C2N1BJX0U', message="BAI creation failed because: " + e.message)
             raise Exception("BAI creation failed because: " + e.message)
         else:
             key = nucleic_acid_type + '_bai_name'
@@ -187,6 +192,7 @@ def post_tsv_info(dictionary, tsv_file_name):
     try:
         r = requests.post(patient_url, data=json.dumps(content), headers=headers)
     except Exception as e:
+        PedBot().send_message(channel_id='C2N1BJX0U', message="Failed to post tsv file name to Patient Ecosystem because: " + e.message)
         raise Exception("Failed to post tsv file name to Patient Ecosystem for " + dictionary['molecular_id'] + ", because: " + e.message)
     else:
         print "================= r.status_code=" + str(r.status_code)
@@ -194,6 +200,8 @@ def post_tsv_info(dictionary, tsv_file_name):
         if r.status_code ==200:
             logger.info("Successfully post tsv file name to Patient Ecosystem for " + dictionary['molecular_id'])
         else:
+            PedBot().send_message(channel_id='C2N1BJX0U',
+                                  message="Failed to post tsv file name to Patient Ecosystem because: " + r.text)
             logger.debug("Failed to post tsv file name to Patient Ecosystem for " + dictionary['molecular_id'] + ", because:" + r.text)
 
 # TODO: save varient report data to sample_controls table
