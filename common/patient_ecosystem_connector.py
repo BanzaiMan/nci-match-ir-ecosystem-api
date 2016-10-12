@@ -18,7 +18,7 @@ class PatientEcosystemConnector(object):
         try:
             request_data = requests.get(url + molecular_id).json()
         except Exception as e:
-            self.logger.info("Unable to connect to patient ecosystem!!!")
+            self.logger.info("Unable to connect to patient ecosystem: " + str(e))
             raise
         else:
             return request_data
