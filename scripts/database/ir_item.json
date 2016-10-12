@@ -4,7 +4,7 @@
       "internal_ip_address": {"S": "129.43.39.182"},
       "host_name": {"S": "NCI-MATCH-IR"},
       "site": {"S": "mocha"},
-      "status": {"S": "Contacted 4 minutes ago"},
+      "ir_status": {"S": "Contacted 4 minutes ago"},
       "last_contact": {"S": "August 29, 2016 2:01 PM GMT"},
       "data_files": {"S": "DB Report"}
 }
