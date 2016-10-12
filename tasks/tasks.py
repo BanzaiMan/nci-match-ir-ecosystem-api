@@ -155,6 +155,7 @@ def process_vcf(dictionary):
         try:
             new_file_path = SequenceFileProcessor().vcf_to_tsv(downloaded_file_path)
         except Exception as e:
+            # TODO: Posting that a vcf to tsv failed by itself isn't enough information for us to fix the issue. We need the file full paths etc.
             PedBot().send_message(channel_id='C2N1BJX0U', message="VCF creation failed because: " + e.message)
             raise Exception("VCF creation failed because: " + e.message)
         else:
@@ -172,6 +173,7 @@ def process_bam(dictionary, nucleic_acid_type):
         try:
             new_file_path = SequenceFileProcessor().bam_to_bai(downloaded_file_path)
         except Exception as e:
+            # TODO: Posting that a bam to bai failed by itself isn't enough information for us to fix the issue. We need the file full paths etc.
             PedBot().send_message(channel_id='C2N1BJX0U', message="BAI creation failed because: " + e.message)
             raise Exception("BAI creation failed because: " + e.message)
         else:
@@ -192,11 +194,10 @@ def post_tsv_info(dictionary, tsv_file_name):
     try:
         r = requests.post(patient_url, data=json.dumps(content), headers=headers)
     except Exception as e:
+        # TODO: Posting that a vcf to tsv failed by itself isn't enough information for us to fix the issue. We need the file full paths etc.
         PedBot().send_message(channel_id='C2N1BJX0U', message="Failed to post tsv file name to Patient Ecosystem because: " + e.message)
         raise Exception("Failed to post tsv file name to Patient Ecosystem for " + dictionary['molecular_id'] + ", because: " + e.message)
     else:
-        print "================= r.status_code=" + str(r.status_code)
-        print "================= r.text=" + str(r.text)
         if r.status_code ==200:
             logger.info("Successfully post tsv file name to Patient Ecosystem for " + dictionary['molecular_id'])
         else:
