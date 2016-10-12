@@ -3,9 +3,10 @@ import time
 
 from slackclient import SlackClient
 
-
+# TODO: I would think we wouldn't want to hard code this.
 BOT_NAME = 'pedmatchbot'
 # BOT_ID = os.environ.get("BOT_ID")
+# TODO: I would think we wouldn't want to hard code this.
 BOT_ID = 'U2MUQUA4Q'
 
 # constants
@@ -62,7 +63,7 @@ class PedBot(object):
             return channel_info['channel']
         return None
 
-
+    # TODO: Waleed do we need all of these methods? I think this one is the only one that we really need.
     def send_message(self, channel_id, message):
         slack_client.api_call(
             "chat.postMessage",
