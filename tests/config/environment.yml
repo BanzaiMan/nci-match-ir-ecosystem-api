@@ -2,6 +2,8 @@ development:
   dynamo_endpoint: "http://localhost:8000"
   patient_endpoint: "http://localhost:10240"
   shipments_path: "/api/v1/shipments/"
+  bot_name: "pedmatchbot_dev"
+  slack_channel_id: "C2NE5J18S"
   region: "us-east-1"
   port: "10241"
   bucket: "pedmatch-dev"
@@ -14,6 +16,8 @@ development:
 test:
   dynamo_endpoint: "https://dynamodb.us-east-1.amazonaws.com"
   patient_endpoint: "https://pedmatch-int.nci.nih.gov"
+  bot_name: "pedmatchbot_test"
+  slack_channel_id: "C2NDP4QKA"
   region: "us-east-1"
   port: "10241"
   bucket: "pedmatch-int"
