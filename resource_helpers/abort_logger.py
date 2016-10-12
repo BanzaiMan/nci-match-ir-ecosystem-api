@@ -1,7 +1,9 @@
-import inspect
-from flask_restful import abort
 import __builtin__
-from resource_helpers.ped_match_bot import PedBot
+import inspect
+
+from flask_restful import abort
+
+from common.ped_match_bot import PedBot
 
 
 class AbortLogger(object):
