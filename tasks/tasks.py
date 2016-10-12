@@ -4,9 +4,10 @@ from logging.config import fileConfig
 import json
 import ast
 import __builtin__
-#import re
 import urllib
-from flask import jsonify
+import requests
+from collections import Mapping, Set, Sequence
+from decimal import Decimal
 
 from accessors.ion_reporter_accessor import IonReporterAccessor
 from accessors.sample_control_accessor import SampleControlAccessor
@@ -23,8 +24,6 @@ EnvironmentHelper.set_environment(logger.info)
 
 # Setting up the Celery broker but making sure to ensure environment variables are in place
 try:
-    # BROKER__URL = "sqs://" + re.escape(os.environ['AWS_ACCESS_KEY_ID']) + \
-    #               ":" + re.escape(os.environ['AWS_SECRET_ACCESS_KEY']) + "@"
     BROKER__URL = 'sqs://%s:%s@' % (urllib.quote(os.environ['AWS_ACCESS_KEY_ID'], safe=''),
                                    urllib.quote(os.environ['AWS_SECRET_ACCESS_KEY'], safe=''))
 except KeyError as e:
@@ -134,6 +133,13 @@ def process_file_message(file_process_message):
             raise Exception(e.message)
         else:
             unicode_free_dictionary.update({key: new_file_s3_path})
+            if key=='tsv_name':
+                if unicode_free_dictionary['molecular_id_type']=='patient':
+                    post_tsv_info(unicode_free_dictionary, new_file_name)
+                # try:
+                #   unicode_free_dictionary = process_rule_by_tsv(unicode_free_dictionary, new_file_name)
+                # except Exception as e:
+                #     raise Exception("Failed to read Rule Engine for " + new_file_name+ " , because: " + e.message)
             return unicode_free_dictionary
 
 
@@ -168,6 +174,67 @@ def process_bam(dictionary, nucleic_acid_type):
             key = nucleic_acid_type + '_bai_name'
             return new_file_path, key, downloaded_file_path
 
+def post_tsv_info(dictionary, tsv_file_name):
+
+    logger.info("Posting tsv file name to Patient Ecosystem for " + dictionary['molecular_id'])
+    patient_url = (__builtin__.environment_config[__builtin__.environment]['patient_endpoint']
+           + __builtin__.environment_config[__builtin__.environment]['patient_post_path'])
+    headers = {'Content-type': 'application/json'}
+    content = {'tsv_file_name': tsv_file_name,
+               'ion_reporter_id': dictionary['ion_reporter_id'],
+                'molecular_id': dictionary['molecular_id'],
+                'analysis_id': dictionary['analysis_id']}
+
+    try:
+        r = requests.post(patient_url, data=json.dumps(content), headers=headers)
+    except Exception as e:
+        raise Exception("Failed to post tsv file name to Patient Ecosystem for " + dictionary['molecular_id'] + ", because: " + e.message)
+    else:
+        print "================= r.status_code=" + str(r.status_code)
+        print "================= r.text=" + str(r.text)
+        if r.status_code ==200:
+            logger.info("Successfully post tsv file name to Patient Ecosystem for " + dictionary['molecular_id'])
+        else:
+            logger.debug("Failed to post tsv file name to Patient Ecosystem for " + dictionary['molecular_id'] + ", because:" + r.text)
+
+# TODO: save varient report data to sample_controls table
+# def process_rule_by_tsv(dictionary, tsv_file_name):
+#     url = (__builtin__.environment_config[__builtin__.environment]['rule_endpoint']
+#            + __builtin__.environment_config[__builtin__.environment]['rule_path'])
+#
+#     url = url + dictionary['control_type'] + "/" + dictionary['ion_reporter_id'] + "/" + dictionary['molecular_id'] \
+#         + "/" + dictionary['analysis_id'] + "/" + tsv_file_name.split(".")[0] + "?format=tsv"
+#
+#     print "========================== rule_URL= " + str(url)
+#     try:
+#         headers = {'Content-type': 'application/json'}
+#         rule_data = requests.post(url, data=json.dumps({}), headers=headers)
+#     except Exception as e:
+#         raise Exception("Failed to get rule engine data for " + tsv_file_name + ", because: " + e.message)
+#     else:
+#         print "========================== rule_data=" + str(rule_data.text)
+#
+#     return dictionary
+
+
+def sanitize(data):
+    """ Sanitizes an object so it can be updated to dynamodb (recursive) """
+    if not data and isinstance(data, (basestring, Set)):
+        new_data = None  # empty strings/sets are forbidden by dynamodb
+    elif isinstance(data, (basestring, bool)):
+        new_data = data  # important to handle these one before sequence and int!
+    elif isinstance(data, Mapping):
+        new_data = {key: sanitize(data[key]) for key in data}
+    elif isinstance(data, Sequence):
+        new_data = [sanitize(item) for item in data]
+    elif isinstance(data, Set):
+        new_data = {sanitize(item) for item in data}
+    elif isinstance(data, (float, int, long, complex)):
+        new_data = Decimal(str(data))
+    else:
+        new_data = data
+
+    return new_data
 
 @app.task
 def delete(molecular_id):
