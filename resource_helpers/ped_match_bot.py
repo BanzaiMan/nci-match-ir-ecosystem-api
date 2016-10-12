@@ -12,8 +12,7 @@ BOT_ID = 'U2MUQUA4Q'
 AT_BOT = "<@" + BOT_ID + ">"
 EXAMPLE_COMMAND = "do"
 
-# slack_client = SlackClient(os.environ.get('SLACK_TOKEN'))
-slack_client = SlackClient('xoxb-89976962160-MkbqjjAWHZgU3M343JXLb4r5')
+slack_client = SlackClient(os.environ.get('SLACK_TOKEN'))
 
 class PedBot(object):
 
