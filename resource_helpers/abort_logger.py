@@ -15,7 +15,8 @@ class AbortLogger(object):
         else:
             logger_level_function("Calling Method: " + calling_function + " :: Log message: " + message)
             if error_code == 500:
-                PedBot().send_message(channel_id=slack_channel_id, message="Calling Method: " + calling_function + " :: Log message: " + message)
+                PedBot().send_message(channel_id=slack_channel_id, message="Calling Method: " + calling_function +
+                                                                           " :: Log message: " + message)
 
         abort(error_code, message=message)
 
