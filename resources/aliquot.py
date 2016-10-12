@@ -34,7 +34,7 @@ class Aliquot(Resource):
             return item
         else:
             # check if molecular_id exists in patient table
-            pt_results = PatientEcosystemConnector.verify_molecular_id(molecular_id)
+            pt_results = PatientEcosystemConnector().verify_molecular_id(molecular_id)
             if len(pt_results) > 0:
                 print pt_results
                 item = pt_results.copy()
@@ -59,7 +59,7 @@ class Aliquot(Resource):
         item = SampleControlAccessor().get_item({'molecular_id': molecular_id})
         if len(item) == 0:
             # check if molecular_id exists in patient table
-            pt_results = PatientEcosystemConnector.verify_molecular_id(molecular_id)
+            pt_results = PatientEcosystemConnector().verify_molecular_id(molecular_id)
             print pt_results
             if len(pt_results) > 0:
                 molecular_id_type = 'patient'
@@ -118,6 +118,7 @@ class Aliquot(Resource):
         tasks_dictionary = {'molecular_id': molecular_id, 'analysis_id': item_dictionary['analysis_id'],
                             'ion_reporter_id': item_dictionary['ion_reporter_id'],
                             'molecular_id_type': item_dictionary['molecular_id_type'],
+                            'control_type': item_dictionary['control_type'],
                             file_dict_key: item_dictionary[file_dict_key]}
 
         if 'site' in item_dictionary:
