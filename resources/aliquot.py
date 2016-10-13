@@ -70,29 +70,18 @@ class Aliquot(Resource):
         item_dictionary.update({'molecular_id_type': molecular_id_type})
         distinct_tasks_list = self.__get_distinct_tasks(item_dictionary, molecular_id)
         self.logger.debug("Distinct tasks created")
-        tsv_name = None
         if len(distinct_tasks_list) > 0:
 
             try:
                 for distinct_task in distinct_tasks_list:
                     self.logger.debug("Adding task to queue: " + str(distinct_task))
-                    # TODO: Remind me why are we doing this?
-                    if 'vcf_name' in distinct_task:
-                        p = re.compile('.vcf')
-                        tsv_name = p.sub('.tsv', distinct_task['vcf_name'])
-                        tsv_name = os.path.basename("/" + tsv_name)
                     CeleryTaskAccessor().process_file(distinct_task)
             except Exception as e:
                 AbortLogger.log_and_abort(500, self.logger.error, "updated_item failed because" + e.message)
         else:
             AbortLogger.log_and_abort(400, self.logger.debug, "No distinct tasks where found in message")
 
-        if molecular_id_type == 'sample_control':
-            return {"message": "Item updated", "molecular_id": molecular_id}
-        else:
-            # TODO: What happens if vcf_name isn't in message, thus tsv_name is not created?
-            return {"ion_reporter_id": item_dictionary['ion_reporter_id'], "molecular_id": molecular_id,
-                    "analysis_id": item_dictionary['analysis_id'], "tsv_name": tsv_name}
+        return {"message": "Item updated", "molecular_id": molecular_id}
 
     @staticmethod
     def __get_distinct_tasks(item_dictionary, molecular_id):
