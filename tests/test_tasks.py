@@ -15,23 +15,23 @@ class TestTasks(unittest.TestCase):
         pass
 
     @data(
-        ({'site_ip_address': '129.43.127.133',
-          'control_type': 'no_template',
-          'molecular_id_type': 'sample_control',
-          'site': 'mocha',
-          "ion_reporter_id": "IR_WAO85",
-          'vcf_name': 'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1.vcf',
-          'molecular_id': 'SC_SA1CB',
-          'analysis_id': 'SC_SA1CB_SC_SA1CB_a888_v1'
-          },
-         'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1.tsv',
-         {'analysis_id': 'SC_SA1CB_SC_SA1CB_a888_v1', 'control_type': 'no_template', 'site': 'mocha',
-          'molecular_id_type': 'sample_control',
-          "ion_reporter_id": "IR_WAO85",
-          'tsv_name': 'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1.tsv',
-          'vcf_name': 'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1.vcf',
-          'molecular_id': 'SC_SA1CB', 'site_ip_address': '129.43.127.133'}
-         ),
+        # ({'site_ip_address': '129.43.127.133',
+        #   'control_type': 'no_template',
+        #   'molecular_id_type': 'sample_control',
+        #   'site': 'mocha',
+        #   "ion_reporter_id": "IR_WAO85",
+        #   'vcf_name': 'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1.vcf',
+        #   'molecular_id': 'SC_SA1CB',
+        #   'analysis_id': 'SC_SA1CB_SC_SA1CB_a888_v1'
+        #   },
+        #  'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1.tsv',
+        #  {'analysis_id': 'SC_SA1CB_SC_SA1CB_a888_v1', 'control_type': 'no_template', 'site': 'mocha',
+        #   'molecular_id_type': 'sample_control',
+        #   "ion_reporter_id": "IR_WAO85",
+        #   'tsv_name': 'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1.tsv',
+        #   'vcf_name': 'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1.vcf',
+        #   'molecular_id': 'SC_SA1CB', 'site_ip_address': '129.43.127.133'}
+        #  ),
         ({'site_ip_address': '129.43.127.133',
           'control_type': 'no_template',
           'molecular_id_type': 'sample_control',
