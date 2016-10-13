@@ -57,17 +57,22 @@ class Aliquot(Resource):
         # check if molecular_id exists in sample_controls table
         molecular_id_type = 'sample_control'
         item = SampleControlAccessor().get_item({'molecular_id': molecular_id})
+        control_type = ""
         if len(item) == 0:
             # check if molecular_id exists in patient table
             pt_results = PatientEcosystemConnector().verify_molecular_id(molecular_id)
             print pt_results
             if len(pt_results) > 0:
                 molecular_id_type = 'patient'
+                control_type = 'NA'
             else:
                 AbortLogger.log_and_abort(404, self.logger.debug, str(molecular_id + " was not found. Cannot update."))
+        else:
+            control_type = item['control_type']
 
         item_dictionary = args.copy()
         item_dictionary.update({'molecular_id_type': molecular_id_type})
+        item_dictionary.update({'control_type': control_type})
         distinct_tasks_list = self.__get_distinct_tasks(item_dictionary, molecular_id)
         self.logger.debug("Distinct tasks created")
         if len(distinct_tasks_list) > 0:
@@ -104,7 +109,9 @@ class Aliquot(Resource):
     @staticmethod
     def __get_tasks_dictionary(item_dictionary, molecular_id, file_dict_key):
 
-        # TODO: Wny is molecular_id_type and control_type being passed? Not all tasks will have a control type
+        # TODO: Wny is molecular_id_type and control_type being passed? Not all tasks will have a control type. See explain below
+        # Explain: molecular_id_type and control_type are assigned internally at put(). They are needed in process_ir_file()
+        # in tasks.py. control_type is required to read Rule Engine for tsv for sample control.
         tasks_dictionary = {'molecular_id': molecular_id, 'analysis_id': item_dictionary['analysis_id'],
                             'ion_reporter_id': item_dictionary['ion_reporter_id'],
                             'molecular_id_type': item_dictionary['molecular_id_type'],
