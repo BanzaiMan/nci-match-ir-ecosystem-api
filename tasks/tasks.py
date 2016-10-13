@@ -4,8 +4,6 @@ import json
 import logging
 import os
 import urllib
-from collections import Mapping, Set, Sequence
-from decimal import Decimal
 from logging.config import fileConfig
 
 import requests
@@ -83,7 +81,6 @@ def process_ir_file(file_process_message):
 
     if file_process_message['molecular_id_type'] == 'sample_control':
         logger.info("Updating sample_controls table before processing file" + str(file_process_message))
-       # new_file_process_message = file_process_message.copy()
         # after running SampleControlAccessor().update(file_process_message), key 'molecular_id' will be
         # removed from file_process_message. See sample_control_access.py line37
         SampleControlAccessor().update(file_process_message)
@@ -98,7 +95,6 @@ def process_ir_file(file_process_message):
         if file_process_message['molecular_id_type']  == 'sample_control':
             logger.info("Updating sample_controls table after processing file")
             SampleControlAccessor().update(updated_file_process_message)
-            return None
         else:
             logger.info("Passing processed file S3 path to patient ecosystem")
             logger.info("processed file for patient: " + str(updated_file_process_message))
@@ -141,7 +137,6 @@ def process_file_message(file_process_message):
                 # post tsv name to patient ecosystem for patient only
                 if unicode_free_dictionary['molecular_id_type']=='patient':
                     post_tsv_info(unicode_free_dictionary, new_file_name)
-
                 else:
                     # process rule engine for tsv file for sample_control only
                     try:
@@ -204,7 +199,7 @@ def post_tsv_info(dictionary, tsv_file_name):
         else:
             logger.debug("Failed to post tsv file name to Patient Ecosystem for " + dictionary['molecular_id'] + ", because:" + r.text)
 
-# TODO: save varient report data to sample_controls table
+
 def process_rule_by_tsv(dictionary, tsv_file_name):
     url = (__builtin__.environment_config[__builtin__.environment]['rule_endpoint']
            + __builtin__.environment_config[__builtin__.environment]['rule_path'])
@@ -212,37 +207,22 @@ def process_rule_by_tsv(dictionary, tsv_file_name):
     url = url + dictionary['control_type'] + "/" + dictionary['ion_reporter_id'] + "/" + dictionary['molecular_id'] \
         + "/" + dictionary['analysis_id'] + "/" + tsv_file_name.split(".")[0] + "?format=tsv"
 
-    #print "========================== rule_URL= " + str(url)
     try:
         headers = {'Content-type': 'application/json'}
-        rule_data = requests.post(url, data=json.dumps([]), headers=headers)
+        rule_response = requests.post(url, data=json.dumps([]), headers=headers)
     except Exception as e:
         raise Exception("Failed to get rule engine data for " + tsv_file_name + ", because: " + e.message)
     else:
-        print "========================== rule_data=" + str(rule_data.status_code)
-        print "========================== rule_data=" + str(rule_data.text)
-       # print "========================== rule_data=" + str(rule_data.content)
+        var_dict_new = {}
+        var_dict = json.loads(rule_response.text)
+        # to get rid of unicode in rule response
+        for key, value in var_dict.iteritems():
+            print key, value
+            var_dict_new.update({str(key): str(value)})
+        dictionary.update({'variant_report': str(var_dict_new)})
+
     return dictionary
 
-
-def sanitize(data):
-    """ Sanitizes an object so it can be updated to dynamodb (recursive) """
-    if not data and isinstance(data, (basestring, Set)):
-        new_data = None  # empty strings/sets are forbidden by dynamodb
-    elif isinstance(data, (basestring, bool)):
-        new_data = data  # important to handle these one before sequence and int!
-    elif isinstance(data, Mapping):
-        new_data = {key: sanitize(data[key]) for key in data}
-    elif isinstance(data, Sequence):
-        new_data = [sanitize(item) for item in data]
-    elif isinstance(data, Set):
-        new_data = {sanitize(item) for item in data}
-    elif isinstance(data, (float, int, long, complex)):
-        new_data = Decimal(str(data))
-    else:
-        new_data = data
-
-    return new_data
 
 @app.task
 def delete(molecular_id):
