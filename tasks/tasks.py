@@ -139,13 +139,17 @@ def process_file_message(file_process_message):
             raise Exception(e.message)
         else:
             unicode_free_dictionary.update({key: new_file_s3_path})
-            if key=='tsv_name':
+            if key == 'tsv_name':
+                # post tsv name to patient ecosystem for patient only
                 if unicode_free_dictionary['molecular_id_type']=='patient':
                     post_tsv_info(unicode_free_dictionary, new_file_name)
-                # try:
-                #   unicode_free_dictionary = process_rule_by_tsv(unicode_free_dictionary, new_file_name)
-                # except Exception as e:
-                #     raise Exception("Failed to read Rule Engine for " + new_file_name+ " , because: " + e.message)
+
+                else:
+                    # process rule engine for tsv file for sample_control only
+                    try:
+                        unicode_free_dictionary = process_rule_by_tsv(unicode_free_dictionary, new_file_name)
+                    except Exception as e:
+                        raise Exception("Failed to read Rule Engine for " + new_file_name+ " , because: " + e.message)
             return unicode_free_dictionary
 
 
@@ -210,23 +214,24 @@ def post_tsv_info(dictionary, tsv_file_name):
             logger.debug("Failed to post tsv file name to Patient Ecosystem for " + dictionary['molecular_id'] + ", because:" + r.text)
 
 # TODO: save varient report data to sample_controls table
-# def process_rule_by_tsv(dictionary, tsv_file_name):
-#     url = (__builtin__.environment_config[__builtin__.environment]['rule_endpoint']
-#            + __builtin__.environment_config[__builtin__.environment]['rule_path'])
-#
-#     url = url + dictionary['control_type'] + "/" + dictionary['ion_reporter_id'] + "/" + dictionary['molecular_id'] \
-#         + "/" + dictionary['analysis_id'] + "/" + tsv_file_name.split(".")[0] + "?format=tsv"
-#
-#     print "========================== rule_URL= " + str(url)
-#     try:
-#         headers = {'Content-type': 'application/json'}
-#         rule_data = requests.post(url, data=json.dumps({}), headers=headers)
-#     except Exception as e:
-#         raise Exception("Failed to get rule engine data for " + tsv_file_name + ", because: " + e.message)
-#     else:
-#         print "========================== rule_data=" + str(rule_data.text)
-#
-#     return dictionary
+def process_rule_by_tsv(dictionary, tsv_file_name):
+    url = (__builtin__.environment_config[__builtin__.environment]['rule_endpoint']
+           + __builtin__.environment_config[__builtin__.environment]['rule_path'])
+
+    url = url + dictionary['control_type'] + "/" + dictionary['ion_reporter_id'] + "/" + dictionary['molecular_id'] \
+        + "/" + dictionary['analysis_id'] + "/" + tsv_file_name.split(".")[0] + "?format=tsv"
+
+    #print "========================== rule_URL= " + str(url)
+    try:
+        headers = {'Content-type': 'application/json'}
+        rule_data = requests.post(url, data=json.dumps([]), headers=headers)
+    except Exception as e:
+        raise Exception("Failed to get rule engine data for " + tsv_file_name + ", because: " + e.message)
+    else:
+        print "========================== rule_data=" + str(rule_data.status_code)
+        print "========================== rule_data=" + str(rule_data.text)
+       # print "========================== rule_data=" + str(rule_data.content)
+    return dictionary
 
 
 def sanitize(data):
