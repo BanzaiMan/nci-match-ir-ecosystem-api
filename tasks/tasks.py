@@ -92,7 +92,7 @@ def process_ir_file(file_process_message):
         # process vcf, dna_bam, or cdna_bam file
         updated_file_process_message = process_file_message(new_file_process_message)
     except Exception as ex:
-        PedBot().send_message(channel_id=slack_channel_id, message="Cannot process file because: " + ex.message + " File process message:" + str(file_process_message))
+        PedBot().send_message(channel_id=slack_channel_id, message="IR ECOSYSTEM::: "+ str(ex) +"Error processing:"  +  str(file_process_message))
         logger.error("Cannot process file because: " + ex.message)
     else:
         if file_process_message['molecular_id_type']  == 'sample_control':
@@ -125,7 +125,6 @@ def process_file_message(file_process_message):
             return unicode_free_dictionary
 
     except Exception as e:
-        PedBot().send_message(channel_id=slack_channel_id, message="failed because: " + str(file_process_message))
         raise Exception(e.message)
 
     else:
@@ -135,8 +134,7 @@ def process_file_message(file_process_message):
         try:
             S3Accessor().upload(downloaded_file_path, new_file_s3_path)
         except Exception as e:
-            PedBot().send_message(channel_id=slack_channel_id, message="failed because: " + e.message + new_file_s3_path)
-            raise Exception(e.message)
+            raise Exception(str(new_file_s3_path))
         else:
             unicode_free_dictionary.update({key: new_file_s3_path})
             if key=='tsv_name':
@@ -154,13 +152,11 @@ def process_vcf(dictionary):
     try:
         downloaded_file_path = S3Accessor().download(dictionary['vcf_name'])
     except Exception as e:
-        PedBot().send_message(channel_id=slack_channel_id, message=("Failed to download vcf file from S3: " + e.message))
         raise Exception("Failed to download vcf file from S3, because: " + e.message)
     else:
         try:
             new_file_path = SequenceFileProcessor().vcf_to_tsv(downloaded_file_path)
         except Exception as e:
-            PedBot().send_message(channel_id=slack_channel_id, message=("VCF creation failed because: " + e.message))
             raise Exception("VCF creation failed because: " + e.message)
         else:
             key = 'tsv_name'
@@ -172,13 +168,11 @@ def process_bam(dictionary, nucleic_acid_type):
     try:
         downloaded_file_path = S3Accessor().download(dictionary[nucleic_acid_type + '_bam_name'])
     except Exception as e:
-        PedBot().send_message(channel_id=slack_channel_id, message="Failed to download " + nucleic_acid_type + " BAM file from S3, because: " + e.message)
         raise Exception("Failed to download " + nucleic_acid_type + " BAM file from S3, because: " + e.message)
     else:
         try:
             new_file_path = SequenceFileProcessor().bam_to_bai(downloaded_file_path)
         except Exception as e:
-            PedBot().send_message(channel_id=slack_channel_id, message="BAI creation failed because: " + e.message)
             raise Exception("BAI creation failed because: " + e.message)
         else:
             key = nucleic_acid_type + '_bai_name'
@@ -198,15 +192,12 @@ def post_tsv_info(dictionary, tsv_file_name):
     try:
         r = requests.post(patient_url, data=json.dumps(content), headers=headers)
     except Exception as e:
-        PedBot().send_message(channel_id=slack_channel_id, message="Failed to post tsv file name to Patient Ecosystem because: " + e.message)
         raise Exception("Failed to post tsv file name to Patient Ecosystem for " + str(dictionary['molecular_id'])
                         + ", because: " + e.message)
     else:
         if r.status_code ==200:
             logger.info("Successfully post tsv file name to Patient Ecosystem for " + dictionary['molecular_id'])
         else:
-            # PedBot().send_message(channel_id=slack_channel_id,
-            #                       message="Failed to post tsv file name to Patient Ecosystem because: " + r.text)
             logger.debug("Failed to post tsv file name to Patient Ecosystem for " + dictionary['molecular_id'] + ", because:" + r.text)
 
 # TODO: save varient report data to sample_controls table
