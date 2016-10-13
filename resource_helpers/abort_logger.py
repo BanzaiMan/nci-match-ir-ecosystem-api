@@ -21,6 +21,9 @@ class AbortLogger(object):
         else:
             logger_level_function("Calling Method: " + calling_function + " :: Log message: " + message)
             if error_code == 500:
+                newitem = []
+                for item in inspect.trace():
+                    newitem.append(item[1:])
                 PedBot().send_message(channel_id=slack_channel_id,
                                       message=(
                                           "IR ECOSYSTEM::: "
@@ -29,10 +32,10 @@ class AbortLogger(object):
                                            " :: Calling Class: " + str(sys.exc_info()[0]) +
                                            " :: Log message: " + message +
                                            " :: Error: " + str(sys.exc_info()[1]) +
-                                           " :: Traceback: " + str(sys.exc_info()[2:])
+                                           " :: Traceback: " + str(sys.exc_info()[2:]) + '\n' +
+                                          str(newitem)
                                                )
                                       )
-
 
         abort(error_code, message=message)
 
