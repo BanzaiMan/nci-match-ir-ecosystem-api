@@ -89,7 +89,7 @@ def process_ir_file(file_process_message):
         # process vcf, dna_bam, or cdna_bam file
         updated_file_process_message = process_file_message(new_file_process_message)
     except Exception as ex:
-        PedBot().send_message(channel_id=slack_channel_id, message="IR ECOSYSTEM::: "+ str(ex) +"Error processing:"  +  str(file_process_message))
+        PedBot().send_message(channel_id=slack_channel_id, message="IR ECOSYSTEM::: "+ str(ex) +"  Error processing: "  +  str(file_process_message[((str(ex)[0:3]).lower() + '_name')]))
         logger.error("Cannot process file because: " + ex.message)
     else:
         if file_process_message['molecular_id_type']  == 'sample_control':
