@@ -19,6 +19,7 @@ development:
 test:
   dynamo_endpoint: "https://dynamodb.us-east-1.amazonaws.com"
   patient_endpoint: "https://pedmatch-int.nci.nih.gov"
+  rule_endpoint: "https://pedmatch-int.nci.nih.gov"
   patient_post_path: "/api/v1/patients/ir"
   rule_path: "/api/v1/rules/sample_control_report/"
   shipments_path: "/api/v1/patients/shipments/"
@@ -36,8 +37,9 @@ test:
 
 uat:
   dynamo_endpoint: "https://dynamodb.us-east-1.amazonaws.com"
-  patient_post_path: "/api/v1/patients/ir"
   patient_endpoint: "https://pedmatch-uat.nci.nih.gov"
+  rule_endpoint: "https://pedmatch-uat.nci.nih.gov"
+  patient_post_path: "/api/v1/patients/ir"
   rule_path: "/api/v1/rules/sample_control_report/"
   shipments_path: "/api/v1/patients/shipments/"
   bot_name: "pedmatchbot_uat"
@@ -55,6 +57,7 @@ uat:
 production:
   dynamo_endpoint: "https://dynamodb.us-east-1.amazonaws.com"
   patient_endpoint: "https://pedmatch.nci.nih.gov"
+  rule_endpoint: "https://pedmatch.nci.nih.gov"
   patient_post_path: "/api/v1/patients/ir"
   rule_path: "/api/v1/rules/sample_control_report/"
   shipments_path: "/api/v1/patients/shipments/"
