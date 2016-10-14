@@ -212,7 +212,6 @@ def process_rule_by_tsv(dictionary, tsv_file_name):
         headers = {'Content-type': 'application/json'}
         rule_response = requests.post(url, data=json.dumps([]), headers=headers)
     except Exception as e:
-        print "URL = " + url
         raise Exception("Failed to get rule engine data for " + tsv_file_name + ", because: " + e.message + "URL = " + url)
     else:
         var_dict_new = {}
