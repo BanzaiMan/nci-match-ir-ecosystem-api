@@ -20,7 +20,7 @@ class TestAliquot(unittest.TestCase):
              "site": "mocha"
          },
          'SC_YQ111', {}, 200),
-        ({}, 'SC_YQ999', {}, 404),
+        ({}, 'SC_YQ999', {'message': 'Resource not found'}, 404),
         ({}, 'PT_SR10_BdVRRejected_BD_MOI1',
          {
             "uuid": "69cf6ae8-d95b-463a-be4e-1ba2b7ebdf04",
@@ -48,10 +48,10 @@ class TestAliquot(unittest.TestCase):
         mock_verify_pt_function.return_value = verify_pt_return
         return_value = self.app.get('/api/v1/aliquot/' + molecular_id)
         print "==============" + str(return_value.status_code)
+        print expected_results
         assert return_value.status_code == expected_results
         print return_value.data
-        if expected_results == 200:
-            assert len(return_value.data) > 0
+        if return_value.status_code == 200:
             if len(verify_pt_return) > 0:
                 assert (json.loads(return_value.data))['patient_id'] == "PT_SR10_BdVRRejected"
             else:
