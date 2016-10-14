@@ -62,7 +62,7 @@ class Aliquot(Resource):
             # check if molecular_id exists in patient table
             pt_results = PatientEcosystemConnector().verify_molecular_id(molecular_id)
             print pt_results
-            if len(pt_results) > 0:
+            if 'message' not in pt_results: # if patient molecular_id not exist, result is {u'message': u'Resource not found'}
                 molecular_id_type = 'patient'
                 # TODO: Qing a general rule of thumb is that when you find yourself having to code around something, then there is usually a better way.  You should be able to pass in a parameter seperatly to simplify this.
                 control_type = 'NA'
