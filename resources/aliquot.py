@@ -35,7 +35,7 @@ class Aliquot(Resource):
         else:
             # check if molecular_id exists in patient table
             pt_results = PatientEcosystemConnector().verify_molecular_id(molecular_id)
-            if len(pt_results) > 0:
+            if 'message' not in pt_results:  # if patient molecular_id not exist, result is {u'message': u'Resource not found'}
                 print pt_results
                 item = pt_results.copy()
                 item.update({'molecular_id_type': 'patient'})
