@@ -1,11 +1,11 @@
 import __builtin__
 import inspect
-import traceback
-import sys
+import datetime
+import time
 
 from flask_restful import abort
 
-from common.ped_match_bot import PedBot
+from common.ped_match_bot import PedMatchBot
 
 
 class AbortLogger(object):
@@ -20,23 +20,20 @@ class AbortLogger(object):
             logger_level_function("Calling method not found in stack :: Log message: " + message + " :: " + e.message)
         else:
             logger_level_function("Calling Method: " + calling_function + " :: Log message: " + message)
-            if error_code == 500:
-                newitem = []
-                for item in inspect.trace():
-                    newitem.append(item[1:])
+            if error_code >= 500:
+                error = traceback.format_exc()
+                stack = inspect.stack()
+                class_called = str(stack[1][0].f_locals["self"].__class__)
+                ts = time.time()
+                st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
                 # TODO: Not quite as its not printing the correct class and the traceback needs to be the stack trace...different things.
-                PedBot().send_message(channel_id=slack_channel_id,
-                                      message=(
-                                          "IR ECOSYSTEM::: "
-                                           "Error Code: " + str(error_code) +
-                                           " :: Calling Method: " + calling_function +
-                                           " :: Calling Class: " + str(sys.exc_info()[0]) +
-                                           " :: Log message: " + message +
-                                           " :: Error: " + str(sys.exc_info()[1]) +
-                                           " :: Traceback: " + str(sys.exc_info()[2:]) + '\n' +
-                                          str(newitem)
-                                               )
-                                      )
+                PedMatchBot().send_message(channel_id=slack_channel_id,
+                                           message=(
+                                          "*IR ECOSYSTEM:::*  The class, *" + class_called + "* and method *" +
+                                          calling_function + "* were called at *" + st + "* and produced a *" +
+                                          str(error_code) + "* error." + "\n" + "*Error message:* "  + message +
+                                          "\n" + error )
+                                           )
 
         abort(error_code, message=message)
 

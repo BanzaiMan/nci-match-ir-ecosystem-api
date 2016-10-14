@@ -13,8 +13,7 @@ logger = logging.getLogger(__name__)
 EnvironmentHelper.set_environment(logger.info)
 slack_client = SlackClient(os.environ.get('SLACK_TOKEN'))
 
-# TODO: Waleed our standards are that class name should match file name except file name is snake case and class name is camel case.
-class PedBot(object):
+class PedMatchBot(object):
     @staticmethod
     def send_message(channel_id, message):
 
