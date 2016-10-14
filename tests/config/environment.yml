@@ -1,6 +1,9 @@
 development:
   dynamo_endpoint: "http://localhost:8000"
   patient_endpoint: "http://localhost:10240"
+  rule_endpoint: "http://localhost:10250"
+  patient_post_path: "/api/v1/patients/ir"
+  rule_path: "/api/v1/rules/sample_control_report/"
   shipments_path: "/api/v1/shipments/"
   bot_name: "pedmatchbot_dev"
   slack_channel_id: "C2NE9M08N"
@@ -16,6 +19,9 @@ development:
 test:
   dynamo_endpoint: "https://dynamodb.us-east-1.amazonaws.com"
   patient_endpoint: "https://pedmatch-int.nci.nih.gov"
+  patient_post_path: "/api/v1/patients/ir"
+  rule_path: "/api/v1/rules/sample_control_report/"
+  shipments_path: "/api/v1/patients/shipments/"
   bot_name: "pedmatchbot_test"
   slack_channel_id: "C2NEK70F9"
   region: "us-east-1"

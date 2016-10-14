@@ -90,7 +90,7 @@ def process_ir_file(file_process_message):
         updated_file_process_message = process_file_message(new_file_process_message)
     except Exception as ex:
         PedMatchBot().send_message(channel_id=slack_channel_id, message=
-        "IR ECOSYSTEM::: " + str(ex) + "  Error processing: " + str(file_process_message))
+        "*IR ECOSYSTEM:::* " + str(ex) + "  Error processing: " + "*" + str(file_process_message) + "*")
 
         logger.error("Cannot process file because: " + ex.message)
     else:
@@ -208,12 +208,12 @@ def process_rule_by_tsv(dictionary, tsv_file_name):
 
     url = url + dictionary['control_type'] + "/" + dictionary['ion_reporter_id'] + "/" + dictionary['molecular_id'] \
         + "/" + dictionary['analysis_id'] + "/" + tsv_file_name.split(".")[0] + "?format=tsv"
-
     try:
         headers = {'Content-type': 'application/json'}
         rule_response = requests.post(url, data=json.dumps([]), headers=headers)
     except Exception as e:
-        raise Exception("Failed to get rule engine data for " + tsv_file_name + ", because: " + e.message)
+        print "URL = " + url
+        raise Exception("Failed to get rule engine data for " + tsv_file_name + ", because: " + e.message + "URL = " + url)
     else:
         var_dict_new = {}
         var_dict = json.loads(rule_response.text)
