@@ -57,16 +57,19 @@ class TestIonReporterTable(unittest.TestCase):
         assert "No items with query parameters" in return_value.data
         assert return_value.status_code == 500
 
-    @data(('?site=mocha',
+    @data(
+        ('?site=mocha',
            '{"result": "New ion reporter created", "ion_reporter_id":'),
-          ('', '{"message": "Must send in a site in order to create an ion reporter record"}'),
-          ('?ion_reporter_id=IR_WAO85', 'failed, because ion_reporter_id'))
+          ('', 'Ion reporter creation failed, because site was not passed in.'),
+          ('?ion_reporter_id=IR_WAO85', 'failed, because ion_reporter_id')
+    )
     @unpack
     @patch('resources.ion_reporter_table.IonReporterAccessor')
     def test_post(self, parameters, expected_results, mock_class):
         instance = mock_class.return_value
         instance.get_unique_key.return_value = 'IR_WAO85'
         return_value = self.app.post('/api/v1/ion_reporters' + parameters)
+        print return_value.data
         assert expected_results in return_value.data
 
     @patch('resources.ion_reporter_table.IonReporterAccessor')

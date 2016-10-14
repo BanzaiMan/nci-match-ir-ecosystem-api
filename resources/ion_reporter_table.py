@@ -1,15 +1,11 @@
 import logging
 import datetime
-from string import Template
 from flask_restful import request
 from accessors.celery_task_accessor import CeleryTaskAccessor
 from accessors.ion_reporter_accessor import IonReporterAccessor
 from common.dictionary_helper import DictionaryHelper
 from resource_helpers.abort_logger import AbortLogger
 from table import Table
-
-MESSAGE_500 = Template("Server Error contact help: $error")
-MESSAGE_404 = Template("No items with query parameters: $query_parameters found")
 
 ION_REPORTER_ID_LENGTH = 5
 
@@ -47,11 +43,11 @@ class IonReporterTable(Table):
                 IonReporterAccessor().put_item(new_item_dictionary)
                 return {"result": "New ion reporter created", "ion_reporter_id": new_item_dictionary['ion_reporter_id']}
             except Exception as e:
-                AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
+                AbortLogger.log_and_abort(500, self.logger.error, "Could not put_item because " + e.message)
 
         else:
             AbortLogger.log_and_abort(400, self.logger.debug,
-                                      "Must send in a site in order to create an ion reporter record")
+                                      "Ion reporter creation failed, because site was not passed in.")
 
     def delete(self):
         self.logger.info("Ion Reporter Batch Delete called")
@@ -65,6 +61,6 @@ class IonReporterTable(Table):
             self.logger.info("Deleting items based on query: " + str(args))
             CeleryTaskAccessor().delete_ir_items(args)
         except Exception as e:
-            AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
+            AbortLogger.log_and_abort(500, self.logger.error, "Batch delete failed because: " + e.message)
 
         return {"result": "Batch deletion request placed on queue to be processed"}
