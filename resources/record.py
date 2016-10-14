@@ -59,7 +59,8 @@ class Record(Resource):
                 update(item_dictionary)
                 # self.celery_accessor().update_ion_reporter_record(item_dictionary)
             except Exception as e:
-                AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
+                #AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
+                AbortLogger.log_and_abort(500, self.logger.error, "Failed to update " + identifier + ", because : " + e.message)
             else:
                 return {"message": self.database_accessor.__class__.__name__ + " with id: " + identifier + " updated"}
         else:
@@ -77,7 +78,8 @@ class Record(Resource):
                 delete({self.key_name: identifier})
                 # self.celery_accessor().delete_ir_item()
             except Exception as e:
-                AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
+                #AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
+                AbortLogger.log_and_abort(500, self.logger.error, "Failed to delete " + identifier + ", because : " + e.message)
             else:
                 return {"message": "Item deleted", self.key_name: identifier}
         else:
@@ -89,6 +91,7 @@ class Record(Resource):
         try:
             results = self.get(identifier)
         except Exception as e:
-            AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
+            #AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
+            AbortLogger.log_and_abort(500, self.logger.error, identifier + " does not exist: " + e.message)
         else:
             return len(results) > 0
