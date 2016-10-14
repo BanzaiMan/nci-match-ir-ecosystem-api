@@ -61,10 +61,10 @@ class SampleControlTable(Table):
         if DictionaryHelper.keys_have_value(args, ['control_type', 'site']):
             self.logger.debug("Sample Control creation failed, because request molecular_id was passed in")
 
-            new_item_dictionary = args.copy()
-            # If user pass date_molecular_id_created in argument, ignore the passed value. Will create later
-            if 'date_molecular_id_created' in new_item_dictionary:
-                new_item_dictionary.pop('date_molecular_id_created')
+            # if user pass keys other than 'site' and 'control_type' in arguments, will ignore
+            new_item_dictionary = {}
+            new_item_dictionary.update({'site': args['site']})
+            new_item_dictionary.update({'control_type': args['control_type']})
 
             new_item_dictionary.update({'molecular_id': self.get_unique_key(),
                                         'date_molecular_id_created': str(datetime.datetime.utcnow())})
