@@ -5,6 +5,7 @@ import yaml
 
 class EnvironmentHelper(object):
 
+    # TODO: Waleed this can be greatly simplified. Notice that  line  27 and 42 are identical. Also line30 -36 is almost the same as 13 throgugh 21. Any time you see a repetive pattern in code it typically means the code can be greatly simplfied and reduced
     @staticmethod
     def set_environment(logger_function):
         __builtin__.environment = None

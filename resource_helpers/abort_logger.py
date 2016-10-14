@@ -24,6 +24,7 @@ class AbortLogger(object):
                 newitem = []
                 for item in inspect.trace():
                     newitem.append(item[1:])
+                # TODO: Not quite as its not printing the correct class and the traceback needs to be the stack trace...different things.
                 PedBot().send_message(channel_id=slack_channel_id,
                                       message=(
                                           "IR ECOSYSTEM::: "

@@ -64,6 +64,7 @@ class Aliquot(Resource):
             print pt_results
             if len(pt_results) > 0:
                 molecular_id_type = 'patient'
+                # TODO: Qing a general rule of thumb is that when you find yourself having to code around something, then there is usually a better way.  You should be able to pass in a parameter seperatly to simplify this.
                 control_type = 'NA'
             else:
                 AbortLogger.log_and_abort(404, self.logger.debug, str(molecular_id + " was not found. Cannot update."))
