@@ -11,7 +11,7 @@ class EnvironmentHelper(object):
         __builtin__.slack_token = None
         try:
             __builtin__.environment = os.environ['ENVIRONMENT']
-
+        # TODO: I will simplify this code after the environment variables are set up on TRAVIS.
         except KeyError as e:
             logger_function("Must configure ENVIRONMENT variable in your environment in order for application to start")
             logger_function(e.message)
