@@ -2,6 +2,7 @@ import __builtin__
 import inspect
 import datetime
 import time
+import traceback
 
 from flask_restful import abort
 
@@ -26,7 +27,7 @@ class AbortLogger(object):
                 class_called = str(stack[1][0].f_locals["self"].__class__)
                 ts = time.time()
                 st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-                # TODO: Not quite as its not printing the correct class and the traceback needs to be the stack trace...different things.
+
                 PedMatchBot().send_message(channel_id=slack_channel_id,
                                            message=(
                                           "*IR ECOSYSTEM:::*  The class, *" + class_called + "* and method *" +
