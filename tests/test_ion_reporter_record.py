@@ -117,8 +117,8 @@ class TestIonReporterRecord(unittest.TestCase):
 
 
     @data(
-        ("Server Error", True, 500),
-        ("Server Error", True, 500),
+        ("Failed to update IR_WO3IA, because : Celery Failed", True, 500),
+        ("Failed to update IR_WO3IA, because : Celery Failed", True, 500),
         ("No ABCMeta with id: IR_WO3IA found.", False, 404),
         ("No ABCMeta with id: IR_WO3IA found.", False, 404)
     )

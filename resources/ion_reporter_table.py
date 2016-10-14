@@ -31,9 +31,13 @@ class IonReporterTable(Table):
         if DictionaryHelper.keys_have_value(args, ['site']):
             self.logger.debug("creating ion reporter id for site: " + str(args))
 
-            new_item_dictionary = args.copy()
-            new_item_dictionary.update({'ion_reporter_id': self.get_unique_key(),
-                                        'date_ion_reporter_id_created': str(datetime.datetime.utcnow())})
+            # if user pass keys other than 'site' and 'control_type' in arguments, will ignore
+            new_item_dictionary = {}
+            new_item_dictionary.update({'site': args['site']})
+            new_item_dictionary.update({'control_type': args['control_type']})
+
+            new_item_dictionary.update({'molecular_id': self.get_unique_key(),
+                                        'date_molecular_id_created': str(datetime.datetime.utcnow())})
 
             self.logger.debug("Attempting to write: " + str(new_item_dictionary))
             try:
