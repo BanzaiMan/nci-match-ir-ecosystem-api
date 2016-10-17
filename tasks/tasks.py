@@ -5,6 +5,7 @@ import logging
 import os
 import urllib
 from logging.config import fileConfig
+from threading import Timer
 
 import requests
 from celery import Celery
@@ -94,8 +95,18 @@ def process_ir_file(file_process_message):
     except Exception as ex:
         PedMatchBot().send_message(channel_id=slack_channel_id, message=
         "*IR ECOSYSTEM:::* " + str(ex) + "  Error processing: " + "*" + str(file_process_message) + "*")
-
         logger.error("Cannot process file because: " + ex.message)
+        logger.info("Attempting to process file again in 3 hours.")
+        try:
+            # Attempting to process file a second time in 10,800 seconds (3 hours).
+            t = Timer(10800.0, process_file_message(new_file_process_message))
+            t.start()
+        except Exception as ex:
+            PedMatchBot().send_message(channel_id=slack_channel_id, message=
+            "*IR ECOSYSTEM:::* " + str(ex) + "  Error processing: " + "*" + str(file_process_message) + "* on second attempt, will not attempt a third time.")
+            logger.error("Cannot process file because: " + ex.message)
+            logger.info("Will not attempt to process file a third time.")
+
     else:
         if new_file_process_message['molecular_id_type']  == 'sample_control':
             logger.info("Updating sample_controls table after processing file")
