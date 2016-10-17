@@ -5,7 +5,7 @@ import logging
 import os
 import urllib
 from logging.config import fileConfig
-from threading import Timer
+
 
 import requests
 from celery import Celery
@@ -99,18 +99,13 @@ def process_ir_file(file_process_message):
         logger.error("Cannot process file because: " + ex.message + ", will attempt again in 3 hours.")
         logger.info("Attempting to process file again in 3 hours.")
         try:
-            # TODO: Waleed ...sorry can't work this way...you are blocking ...jut seend countdown = XXX to task.delay is all that is need I think
-            # http: // docs.celeryproject.org / en / latest / userguide / calling.html  # eta-and-countdown
-            # Attempting to process file a second time in 10,800 seconds (3 hours).
-            t = Timer(10800.0, process_file_message, [new_file_process_message])
-            updated_file_process_message = t.start()
-        except Exception as ex:
+            updated_file_process_message = process_file_message.apply_async(args=[file_process_message], countdown = 120)
+        except:
+            logger.error("Cannot process file because: " + ex.message + ", after second attempt.")
+            logger.info("Cannot process file because: " + ex.message + ", after second attempt.")
             PedMatchBot().send_message(channel_id=slack_channel_id, message=
             "*IR ECOSYSTEM:::* " + str(ex) + "  Error processing: " + "*" +
-            str(file_process_message) + "* on second attempt, will not attempt a third time.")
-            logger.error("Cannot process file on second attempt because: " + ex.message)
-            logger.info("Will not attempt to process file a third time.")
-
+            str(file_process_message) + "*, SECOND attempt failed.")
     else:
         if new_file_process_message['molecular_id_type']  == 'sample_control':
             logger.info("Updating sample_controls table after processing file")
@@ -119,7 +114,7 @@ def process_ir_file(file_process_message):
             logger.info("Passing processed file S3 path to patient ecosystem")
             logger.info("processed file for patient: " + str(updated_file_process_message))
 
-
+@app.task
 # process vcf, bam files based on message dictionary key: vcf_name, dna_bam_name, or cdna_bam_name
 def process_file_message(file_process_message):
     logger.debug("Processing file message in function process_file_message()" + str(file_process_message))
