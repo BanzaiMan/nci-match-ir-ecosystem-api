@@ -99,6 +99,8 @@ def process_ir_file(file_process_message):
         logger.error("Cannot process file because: " + ex.message + ", will attempt again in 3 hours.")
         logger.info("Attempting to process file again in 3 hours.")
         try:
+            # TODO: Waleed ...sorry can't work this way...you are blocking ...jut seend countdown = XXX to task.delay is all that is need I think
+            # http: // docs.celeryproject.org / en / latest / userguide / calling.html  # eta-and-countdown
             # Attempting to process file a second time in 10,800 seconds (3 hours).
             t = Timer(10800.0, process_file_message, [new_file_process_message])
             updated_file_process_message = t.start()
