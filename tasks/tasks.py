@@ -79,11 +79,14 @@ def process_ir_file(file_process_message):
 
     new_file_process_message = file_process_message.copy()
 
-    if file_process_message['molecular_id_type'] == 'sample_control':
-        logger.info("Updating sample_controls table before processing file" + str(file_process_message))
+    if new_file_process_message['molecular_id'] .startswith('SC_'):
+        new_file_process_message.update({'molecular_id_type': 'sample_control'})
+        logger.info("Updating sample_controls table before processing file" + str(new_file_process_message))
         # after running SampleControlAccessor().update(file_process_message), key 'molecular_id' will be
         # removed from file_process_message. See sample_control_access.py line37
         SampleControlAccessor().update(file_process_message)
+    else:
+        new_file_process_message.update({'molecular_id_type': 'patient'})
 
     try:
         # process vcf, dna_bam, or cdna_bam file
@@ -94,7 +97,7 @@ def process_ir_file(file_process_message):
 
         logger.error("Cannot process file because: " + ex.message)
     else:
-        if file_process_message['molecular_id_type']  == 'sample_control':
+        if new_file_process_message['molecular_id_type']  == 'sample_control':
             logger.info("Updating sample_controls table after processing file")
             SampleControlAccessor().update(updated_file_process_message)
         else:
@@ -203,11 +206,19 @@ def post_tsv_info(dictionary, tsv_file_name):
 
 
 def process_rule_by_tsv(dictionary, tsv_file_name):
+
+    item = SampleControlAccessor().get_item({'molecular_id': dictionary['molecular_id']})
+    if len(item)>0:
+        control_type = item['control_type']
+    else:
+        raise Exception("Cannot get control_type for "+ dictionary['molecular_id'])
+
     url = (__builtin__.environment_config[__builtin__.environment]['rule_endpoint']
            + __builtin__.environment_config[__builtin__.environment]['rule_path'])
 
-    url = url + dictionary['control_type'] + "/" + dictionary['ion_reporter_id'] + "/" + dictionary['molecular_id'] \
+    url = url + control_type + "/" + dictionary['ion_reporter_id'] + "/" + dictionary['molecular_id'] \
         + "/" + dictionary['analysis_id'] + "/" + tsv_file_name.split(".")[0] + "?format=tsv"
+
     try:
         headers = {'Content-type': 'application/json'}
         rule_response = requests.post(url, data=json.dumps([]), headers=headers)
@@ -218,7 +229,7 @@ def process_rule_by_tsv(dictionary, tsv_file_name):
         var_dict = json.loads(rule_response.text)
         # to get rid of unicode in rule response
         for key, value in var_dict.iteritems():
-            print key, value
+            #print key, value
             var_dict_new.update({str(key): str(value)})
         dictionary.update({'variant_report': str(var_dict_new)})
 

@@ -29,17 +29,12 @@ class Aliquot(Resource):
 
         if len(results) > 0:
             self.logger.info("Molecular id: " + str(molecular_id) + " found in sample control table")
-            item = results.copy()
-            item.update({'molecular_id_type': 'sample_control'})
-            return item
+            return results
         else:
             # check if molecular_id exists in patient table
             pt_results = PatientEcosystemConnector().verify_molecular_id(molecular_id)
             if 'message' not in pt_results:  # if patient molecular_id not exist, result is {u'message': u'Resource not found'}
-                print pt_results
-                item = pt_results.copy()
-                item.update({'molecular_id_type': 'patient'})
-                return item
+                return pt_results
             else:
                 AbortLogger.log_and_abort(404, self.logger.debug, str(molecular_id + " was not found"))
 
@@ -55,25 +50,15 @@ class Aliquot(Resource):
         self.logger.debug("args has values")
 
         # check if molecular_id exists in sample_controls table
-        molecular_id_type = 'sample_control'
         item = SampleControlAccessor().get_item({'molecular_id': molecular_id})
-        control_type = ""
         if len(item) == 0:
             # check if molecular_id exists in patient table
             pt_results = PatientEcosystemConnector().verify_molecular_id(molecular_id)
             print pt_results
-            if 'message' not in pt_results: # if patient molecular_id not exist, result is {u'message': u'Resource not found'}
-                molecular_id_type = 'patient'
-                # TODO: Qing a general rule of thumb is that when you find yourself having to code around something, then there is usually a better way.  You should be able to pass in a parameter seperatly to simplify this.
-                control_type = 'NA'
-            else:
+            if 'message' in pt_results: # if patient molecular_id not exist, result is {u'message': u'Resource not found'}
                 AbortLogger.log_and_abort(404, self.logger.debug, str(molecular_id + " was not found. Cannot update."))
-        else:
-            control_type = item['control_type']
 
         item_dictionary = args.copy()
-        item_dictionary.update({'molecular_id_type': molecular_id_type})
-        item_dictionary.update({'control_type': control_type})
         distinct_tasks_list = self.__get_distinct_tasks(item_dictionary, molecular_id)
         self.logger.debug("Distinct tasks created")
         if len(distinct_tasks_list) > 0:
@@ -110,13 +95,8 @@ class Aliquot(Resource):
     @staticmethod
     def __get_tasks_dictionary(item_dictionary, molecular_id, file_dict_key):
 
-        # TODO: Wny is molecular_id_type and control_type being passed? Not all tasks will have a control type. See explain below
-        # Explain: molecular_id_type and control_type are assigned internally at put(). They are needed in process_ir_file()
-        # in tasks.py. control_type is required to read Rule Engine for tsv for sample control.
         tasks_dictionary = {'molecular_id': molecular_id, 'analysis_id': item_dictionary['analysis_id'],
                             'ion_reporter_id': item_dictionary['ion_reporter_id'],
-                            'molecular_id_type': item_dictionary['molecular_id_type'],
-                            'control_type': item_dictionary['control_type'],
                             file_dict_key: item_dictionary[file_dict_key]}
 
         if 'site' in item_dictionary:
