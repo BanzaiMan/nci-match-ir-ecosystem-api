@@ -20,10 +20,6 @@ from resources.alignment_sequence_file import AlignmentGenericFile
 from resources.version import Version
 from resources.aliquot import Aliquot
 from resources.misc_file import MiscFile
-from resources.invalid_url_handler_file import InvalidURLHandlerFile
-from resources.invalid_url_handler_file_id import InvalidURLHandlerFileId
-from resources.invalid_url_handler_sequence_file import InvalidURLHandlerSequenceFile
-from resources.invalid_url_handler_sequence_file_id import InvalidURLHandlerSequenceFileId
 from common.environment_helper import EnvironmentHelper
 
 
