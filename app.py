@@ -63,11 +63,11 @@ api.add_resource(AlignmentGenericFile,
 # retrieve the record they want then once they see the attribute with the file name use that to make this call to
 # actually retrieve the file. The dynamodb attribute == file_name
 # TODO: Somebody and test this
-api.add_resource(MiscFile, '/api/v1/files/<string:molecular_id>/<string:file_name_key>')
+api.add_resource(MiscFile, '/api/v1/files/<string:molecular_id>/<string:file_name>')
 
 # TODO: still working on this but this will be used to authenticate a user to upload to S3
 api.add_resource(S3AuthenticationPolicy,
-                 '/api/v1/files/<string:molecular_id>/<string:analysis_id>/<string:file_name_key>')
+                 '/api/v1/files/<string:molecular_id>/<string:analysis_id>/<string:file_name>')
 
 # Path for Querying and Creating ion reporters
 # Delete and Put in batch must do those using specific IDs, not allowed here
