@@ -92,6 +92,6 @@ class Record(Resource):
             results = self.get(identifier)
         except Exception as e:
             #AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
-            AbortLogger.log_and_abort(500, self.logger.error, identifier + " does not exist: " + e.message)
+            AbortLogger.log_and_abort(404, self.logger.error, identifier + " does not exist. " + e.message)
         else:
             return len(results) > 0

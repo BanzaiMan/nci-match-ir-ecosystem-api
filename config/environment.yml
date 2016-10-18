@@ -24,7 +24,7 @@ test:
   rule_path: "/api/v1/rules/sample_control_report/"
   shipments_path: "/api/v1/patients/shipments/"
   bot_name: "pedmatchbot_test"
-  slack_channel_id: "C2NEK70F9"
+  slack_channel_id: "C2NE9M08N"
   region: "us-east-1"
   port: "10241"
   bucket: "pedmatch-int"
