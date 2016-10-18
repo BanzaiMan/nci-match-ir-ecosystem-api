@@ -67,11 +67,11 @@ api.add_resource(AlignmentGenericFile,
 # retrieve the record they want then once they see the attribute with the file name use that to make this call to
 # actually retrieve the file. The dynamodb attribute == file_name
 # TODO: Somebody and test this
-api.add_resource(MiscFile, '/api/v1/files/<string:molecular_id>/<string:file_name>')
+api.add_resource(MiscFile, '/api/v1/files/<string:molecular_id>/<string:file_name_key>')
 
 # TODO: still working on this but this will be used to authenticate a user to upload to S3
 api.add_resource(S3AuthenticationPolicy,
-                 '/api/v1/files/<string:molecular_id>/<string:analysis_id>/<string:file_name>')
+                 '/api/v1/files/<string:molecular_id>/<string:analysis_id>/<string:file_name_key>')
 
 # Path for Querying and Creating ion reporters
 # Delete and Put in batch must do those using specific IDs, not allowed here
@@ -90,12 +90,6 @@ api.add_resource(Version, '/api/v1/ion_reporters/version')
 # process them by pulling the files based on the path passed in, down from s3 and store the new files (TSV or BAI) to
 # s3 and these new paths to DynamoDB, based on  their molecular id, in either the patient or sample_control table.
 api.add_resource(Aliquot, '/api/v1/aliquot/<string:molecular_id>')
-
-# invalid url handle
-api.add_resource(InvalidURLHandlerSequenceFile, '/api/v1/sequence_files/')
-api.add_resource(InvalidURLHandlerSequenceFileId, '/api/v1/sequence_files/<string:molecular_id>/')
-api.add_resource(InvalidURLHandlerFile, '/api/v1/files/')
-api.add_resource(InvalidURLHandlerFileId, '/api/v1/files/<string:molecular_id>/')
 
 
 # For the most part, this is boilerplate code to start tornado server
