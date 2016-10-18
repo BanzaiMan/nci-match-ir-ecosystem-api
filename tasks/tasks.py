@@ -99,7 +99,7 @@ def process_ir_file(file_process_message):
         logger.error("Cannot process file because: " + ex.message + ", will attempt again in 3 hours.")
         logger.info("Attempting to process file again in 3 hours.")
         try:
-            updated_file_process_message = process_file_message.apply_async(args=[file_process_message],
+            updated_file_process_message = process_file_message.apply_async(args=[new_file_process_message],
                                                                             countdown = 10800)
         except:
             logger.error("Cannot process file because: " + ex.message + ", after second attempt.")
