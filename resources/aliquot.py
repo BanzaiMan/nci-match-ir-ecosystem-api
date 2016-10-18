@@ -33,10 +33,12 @@ class Aliquot(Resource):
         else:
             # check if molecular_id exists in patient table
             pt_results = PatientEcosystemConnector().verify_molecular_id(molecular_id)
+            print "=============-----=============================="
+            print
             if 'message' not in pt_results:  # if patient molecular_id not exist, result is {u'message': u'Resource not found'}
                 return pt_results
             else:
-                AbortLogger.log_and_abort(404, self.logger.debug, str(molecular_id + " was not found"))
+                AbortLogger.log_and_abort(404, self.logger.debug, str(molecular_id + " was not found. Invalid molecular_id or invalid projection key entered."))
 
     def put(self, molecular_id):
         self.logger.info("updating molecular_id: " + str(molecular_id))
