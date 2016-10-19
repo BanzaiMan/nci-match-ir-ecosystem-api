@@ -99,7 +99,6 @@ def process_ir_file(file_process_message):
         # process vcf, dna_bam, or cdna_bam file
         updated_file_process_message = process_file_message(new_file_process_message)
     except Exception as ex:
-        # TODO: Read time from envrionment.yml
         process_ir_file.apply_async(args=[new_file_process_message], countdown=requeue_countdown)
 
         try:
