@@ -10,10 +10,11 @@ class PedMatchBot(object):
     def send_message(channel_id, message):
 
         bot_name = (__builtin__.environment_config[__builtin__.environment]['bot_name'])
+        icon_emoji = (__builtin__.environment_config[__builtin__.environment]['icon_emoji'])
         slack_client.api_call(
             "chat.postMessage",
             channel=channel_id,
             text=message,
             username=bot_name,
-            icon_emoji=':face_with_head_bandage:'
+            icon_emoji=icon_emoji
         )
