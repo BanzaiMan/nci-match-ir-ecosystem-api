@@ -104,7 +104,7 @@ def process_ir_file(file_process_message):
         try:
             stack = inspect.stack()
             PedMatchBot().send_message(channel_id=slack_channel_id, message=("*IR ECOSYSTEM:::* Error processing: " + "*" +
-            str(file_process_message) + "*, will attempt again in *3 hours.*" + "\n" + TracebackError().traceback_error(stack)))
+                                                                             str(file_process_message) + "*, will attempt again in *3 hours.*" + "\n" + TracebackError().generate_traceback_message(stack)))
             logger.error("Cannot process file because: " + ex.message + ", will attempt again in 3 hours.")
         except Exception as e:
             logger.error("Ped Match Bot Failure.: " + e.message)
@@ -232,7 +232,7 @@ def post_tsv_info(dictionary, tsv_file_name):
                 PedMatchBot().send_message(channel_id=slack_channel_id,
                                            message=("*IR ECOSYSTEM:::* Error on posting tsv info to patient ecosystem: " + "*" +
                                                     str(dictionary) + "*, will attempt again in *3 hours.*" + "\n" +
-                                                    TracebackError().traceback_error(stack)))
+                                                    TracebackError().generate_traceback_message(stack)))
                 logger.error("Failed to post tsv file name to Patient Ecosystem for " + dictionary['molecular_id'] + ", because: " + r.text + ", will attempt again in 3 hours.")
             except Exception as e:
                 logger.error("Ped Match Bot Failure in sending re-post tsv info message: " + e.message)
