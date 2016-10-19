@@ -24,7 +24,7 @@ class AbortLogger(object):
                 PedMatchBot().send_message(channel_id=slack_channel_id,
                                            message=(
                                           "*IR ECOSYSTEM:::* Error code: *" + str(error_code) + "*" + "\n" + "Error message: *"  + message + "*" +
-                                          "\n" + TracebackError().traceback_error(stack)))
+                                          "\n" + TracebackError().generate_traceback_message(stack)))
 
 
         abort(error_code, message=message)

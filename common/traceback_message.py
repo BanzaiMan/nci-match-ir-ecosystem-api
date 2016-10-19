@@ -8,7 +8,7 @@ class TracebackError(object):
 
     # TODO: Method names should start with a verb.
     @staticmethod
-    def traceback_error(stack):
+    def generate_traceback_message(stack):
         calling_function = inspect.stack()[1][3]
         error_traceback = traceback.format_exc()
         class_called = str(stack[1][0].f_locals["self"].__class__)
