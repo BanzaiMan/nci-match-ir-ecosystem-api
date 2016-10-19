@@ -54,6 +54,7 @@ else:
     app.conf.CELERY_ENABLE_REMOTE_CONTROL = False
 
 slack_channel_id = (__builtin__.environment_config[__builtin__.environment]['slack_channel_id'])
+requeue_countdown = (__builtin__.environment_config[__builtin__.environment]['requeue_countdown'])
 
 
 # I don't think we will use this for sample control as our sample control creation of records are not done through
@@ -102,7 +103,7 @@ def process_ir_file(file_process_message):
         updated_file_process_message = process_file_message(new_file_process_message)
     except Exception as ex:
         # TODO: Read time from envrionment.yml
-        process_ir_file.apply_async(args=[new_file_process_message], countdown=10800)
+        process_ir_file.apply_async(args=[new_file_process_message], countdown=requeue_countdown)
 
         try:
             # TODO: Put in common?

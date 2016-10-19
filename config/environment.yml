@@ -8,6 +8,7 @@ development:
   bot_name: "pedmatchbot_dev"
   slack_channel_id: "C2NE9M08N"
   icon_emoji: ":face_with_head_bandage:"
+  requeue_countdown: 10800
   region: "us-east-1"
   port: "10241"
   bucket: "pedmatch-dev"
@@ -27,6 +28,7 @@ test:
   bot_name: "pedmatchbot_test"
   slack_channel_id: "C2NE9M08N"
   icon_emoji: ":face_with_head_bandage:"
+  requeue_countdown: 10800
   region: "us-east-1"
   port: "10241"
   bucket: "pedmatch-int"
@@ -47,6 +49,7 @@ uat:
   bot_name: "pedmatchbot_uat"
   slack_channel_id: "C2NEA2XQW"
   icon_emoji: ":face_with_head_bandage:"
+  requeue_countdown: 10800
   region: "us-east-1"
   port: "10241"
   bucket: "pedmatch-uat"
@@ -67,6 +70,7 @@ production:
   bot_name: "pedmatchbot_prod"
   slack_channel_id: "C2NEFKYN9"
   icon_emoji: ":face_with_head_bandage:"
+  requeue_countdown: 10800
   region: "us-east-1"
   port: "10241"
   bucket: "pedmatch"
