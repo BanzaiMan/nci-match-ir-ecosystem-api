@@ -6,9 +6,6 @@ import os
 import urllib
 import yaml
 import inspect
-import datetime
-import time
-import traceback
 from logging.config import fileConfig
 
 import requests
@@ -103,7 +100,7 @@ def process_ir_file(file_process_message):
         updated_file_process_message = process_file_message(new_file_process_message)
     except Exception as ex:
         # TODO: Read time from envrionment.yml
-        process_ir_file.apply_async(args=[new_file_process_message], countdown=10)
+        process_ir_file.apply_async(args=[new_file_process_message], countdown=requeue_countdown)
 
         try:
             stack = inspect.stack()
