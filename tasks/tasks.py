@@ -111,6 +111,8 @@ def process_ir_file(file_process_message):
     else:
         if new_file_process_message['molecular_id_type']  == 'sample_control':
             logger.info("Updating sample_controls table after processing file")
+            # remove assigned 'molecular_id_type' in updated_file_process_message dictionary
+            updated_file_process_message.pop('molecular_id_type', None)
             SampleControlAccessor().update(updated_file_process_message)
         else:
             logger.info("Passing processed file S3 path to patient ecosystem")
