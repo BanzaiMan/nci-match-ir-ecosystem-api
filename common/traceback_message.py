@@ -4,11 +4,9 @@ import time
 import traceback
 
 
+class TracebackError(object):
 
-
-
-class TracebackError:
-
+    # TODO: Method names should start with a verb.
     @staticmethod
     def traceback_error(stack):
         calling_function = inspect.stack()[1][3]
