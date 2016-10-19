@@ -225,8 +225,18 @@ def post_tsv_info(dictionary, tsv_file_name):
         if r.status_code == 200:
             logger.info("Successfully post tsv file name to Patient Ecosystem for " + dictionary['molecular_id'])
         else:
-            # TODO: Needs to goto bot
-            logger.error("Failed to post tsv file name to Patient Ecosystem for " + dictionary['molecular_id'] + ", because:" + r.text)
+            process_ir_file.apply_async(args=[dictionary], countdown=requeue_countdown)
+            #process_ir_file.apply_async(args=[dictionary], countdown=2)
+            try:
+                stack = inspect.stack()
+                PedMatchBot().send_message(channel_id=slack_channel_id,
+                                           message=("*IR ECOSYSTEM:::* Error on posting tsv info to patient ecosystem: " + "*" +
+                                                    str(dictionary) + "*, will attempt again in *3 hours.*" + "\n" +
+                                                    TracebackError().traceback_error(stack)))
+                logger.error("Failed to post tsv file name to Patient Ecosystem for " + dictionary['molecular_id'] + ", because: " + r.text + ", will attempt again in 3 hours.")
+            except Exception as e:
+                logger.error("Ped Match Bot Failure in sending re-post tsv info message: " + e.message)
+
 
 
 def process_rule_by_tsv(dictionary, tsv_file_name):
