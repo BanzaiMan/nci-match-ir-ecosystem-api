@@ -6,7 +6,7 @@ import yaml
 class EnvironmentHelper(object):
 
     @staticmethod
-    def set_environment(logger_function):
+    def set_environment(logger):
         __builtin__.environment = None
         __builtin__.slack_token = None
         try:
@@ -14,13 +14,15 @@ class EnvironmentHelper(object):
             __builtin__.slack_token = os.environ['SLACK_TOKEN']
 
         except KeyError as e:
-            logger_function("Must configure ENVIRONMENT variable and SLACK_TOKEN variable in your environment in order "
+            # TODO: Change to logger.error
+            logger.error("Must configure ENVIRONMENT variable and SLACK_TOKEN variable in your"
+                                  "environment in order "
                             "for application to start")
-            logger_function(e.message)
+            logger.error(e.message)
             exit()
         else:
-            logger_function("Environment set to: " + __builtin__.environment)
-            logger_function("Slack token set to: " + __builtin__.slack_token)
+            logger.info("Environment set to: " + __builtin__.environment)
+            logger.info("Slack token set to: " + __builtin__.slack_token)
 
             # Use the environment variable from above to read yaml config file and set
             # global variable to the loaded file so tier specific information may be retrieved

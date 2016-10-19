@@ -26,7 +26,7 @@ from common.sequence_file_processor import SequenceFileProcessor
 # Logging functionality
 fileConfig(os.path.abspath("config/logging_config.ini"))
 logger = logging.getLogger(__name__)
-EnvironmentHelper.set_environment(logger.info)
+EnvironmentHelper.set_environment(logger)
 
 # Setting up the Celery broker but making sure to ensure environment variables are in place
 try:
@@ -85,20 +85,27 @@ def process_ir_file(file_process_message):
 
     new_file_process_message = file_process_message.copy()
 
+    # TODO: What if we don't use SC_?
     if new_file_process_message['molecular_id'] .startswith('SC_'):
+        # TODO: Not sure why this is needed
         new_file_process_message.update({'molecular_id_type': 'sample_control'})
         logger.info("Updating sample_controls table before processing file" + str(new_file_process_message))
         # after running SampleControlAccessor().update(file_process_message), key 'molecular_id' will be
         # removed from file_process_message. See sample_control_access.py line37
         SampleControlAccessor().update(file_process_message)
     else:
+        # TODO: Not sure why this is needed
         new_file_process_message.update({'molecular_id_type': 'patient'})
-
+        # TODO: Should be updating Patient table too.
     try:
         # process vcf, dna_bam, or cdna_bam file
         updated_file_process_message = process_file_message(new_file_process_message)
     except Exception as ex:
+        # TODO: Read time from envrionment.yml
+        process_ir_file.apply_async(args=[new_file_process_message], countdown=10800)
+
         try:
+            # TODO: Put in common?
             calling_function = inspect.stack()[1][3]
             error_traceback = traceback.format_exc()
             stack = inspect.stack()
@@ -107,40 +114,36 @@ def process_ir_file(file_process_message):
             st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
             PedMatchBot().send_message(channel_id=slack_channel_id, message=
-            "*IR ECOSYSTEM:::* " + str(ex) + "  The class, *" +class_called + "* and method *"  + calling_function +
+            "*IR ECOSYSTEM:::* " + str(ex) + "  The class, *" + class_called + "* and method *" + calling_function +
             "* were called at *" + st + "* and produced a an error while processing: " + "*" +
-            str(file_process_message) + "*, will attempt again in 3 hours." + "\n"  +
+            str(file_process_message) + "*, will attempt again in 3 hours." + "\n" +
                                           "\n" + error_traceback)
             logger.error("Cannot process file because: " + ex.message + ", will attempt again in 3 hours.")
-        except:
-           logger.error("Ped Match Bot Failure.")
-        try:
-            # TODO: put countdown into variables
-            updated_file_process_message = process_ir_file.apply_async(args=[new_file_process_message],
-                                                                            countdown = 10800)
-        except Exception as ex:
-            logger.error("Cannot process file, error with apply_async celery method.")
+        except Exception as e:
+            logger.error("Ped Match Bot Failure.: " + e.message)
+
     else:
-        if new_file_process_message['molecular_id_type']  == 'sample_control':
+        # TODO: Not sure why this is needed.
+        if new_file_process_message['molecular_id_type'] == 'sample_control':
             logger.info("Updating sample_controls table after processing file")
             # remove assigned 'molecular_id_type' in updated_file_process_message dictionary
             updated_file_process_message.pop('molecular_id_type', None)
+            # TODO: This is needed.
             SampleControlAccessor().update(updated_file_process_message)
         else:
             logger.info("Passing processed file S3 path to patient ecosystem")
             logger.info("processed file for patient: " + str(updated_file_process_message))
 
-@app.task
+
 # process vcf, bam files based on message dictionary key: vcf_name, dna_bam_name, or cdna_bam_name
 def process_file_message(file_process_message):
     logger.debug("Processing file message in function process_file_message()" + str(file_process_message))
     unicode_free_dictionary = ast.literal_eval(json.dumps(file_process_message))
-    #unicode_free_dictionary = yaml.safe_load(file_process_message)
     logger.debug("After Removing unicode" + str(unicode_free_dictionary))
 
     try:
         if 'vcf_name' in unicode_free_dictionary and unicode_free_dictionary['vcf_name'] is not None:
-            new_file_path, key, downloaded_file_path =  process_vcf(unicode_free_dictionary)
+            new_file_path, key, downloaded_file_path = process_vcf(unicode_free_dictionary)
 
         elif 'dna_bam_name' in unicode_free_dictionary and unicode_free_dictionary['dna_bam_name'] is not None:
             new_file_path, key, downloaded_file_path = process_bam(unicode_free_dictionary, 'dna')
@@ -152,29 +155,31 @@ def process_file_message(file_process_message):
             logger.info("File does not require processing" + str(file_process_message))
             return unicode_free_dictionary
 
-    except Exception as e:
-        raise Exception(e.message)
+    except Exception:
+        raise
 
     else:
+        # TODO: Put in new method
         new_file_name = secure_filename(os.path.basename(new_file_path))
         new_file_s3_path = unicode_free_dictionary['ion_reporter_id'] + "/" + unicode_free_dictionary['molecular_id'] + \
                            "/" + unicode_free_dictionary['analysis_id'] + "/" + new_file_name
         try:
             S3Accessor().upload(downloaded_file_path, new_file_s3_path)
-        except Exception as e:
+        except Exception:
+            # TODO: Make more explicit
             raise Exception(str(new_file_s3_path))
         else:
             unicode_free_dictionary.update({key: new_file_s3_path})
             if key == 'tsv_name':
                 # post tsv name to patient ecosystem for patient only
-                if unicode_free_dictionary['molecular_id_type']=='patient':
+                if unicode_free_dictionary['molecular_id_type'] == 'patient':
                     post_tsv_info(unicode_free_dictionary, new_file_name)
                 else:
                     # process rule engine for tsv file for sample_control only
                     try:
                         unicode_free_dictionary = process_rule_by_tsv(unicode_free_dictionary, new_file_name)
                     except Exception as e:
-                        raise Exception("Failed to read Rule Engine for " + new_file_name+ " , because: " + e.message)
+                        raise Exception("Failed to read Rule Engine for " + new_file_name + " , because: " + e.message)
             return unicode_free_dictionary
 
 
@@ -209,6 +214,7 @@ def process_bam(dictionary, nucleic_acid_type):
             key = nucleic_acid_type + '_bai_name'
             return new_file_path, key, downloaded_file_path
 
+
 def post_tsv_info(dictionary, tsv_file_name):
 
     logger.info("Posting tsv file name to Patient Ecosystem for " + dictionary['molecular_id'])
@@ -226,16 +232,18 @@ def post_tsv_info(dictionary, tsv_file_name):
         raise Exception("Failed to post tsv file name to Patient Ecosystem for " + str(dictionary['molecular_id'])
                         + ", because: " + e.message)
     else:
-        if r.status_code ==200:
+        if r.status_code == 200:
             logger.info("Successfully post tsv file name to Patient Ecosystem for " + dictionary['molecular_id'])
         else:
-            logger.debug("Failed to post tsv file name to Patient Ecosystem for " + dictionary['molecular_id'] + ", because:" + r.text)
+            # TODO: Needs to goto bot
+            logger.error("Failed to post tsv file name to Patient Ecosystem for " + dictionary['molecular_id'] + ", because:" + r.text)
 
 
 def process_rule_by_tsv(dictionary, tsv_file_name):
 
+    # TODO: Don't we already know this?
     item = SampleControlAccessor().get_item({'molecular_id': dictionary['molecular_id']})
-    if len(item)>0:
+    if len(item) > 0:
         control_type = item['control_type']
     else:
         raise Exception("Cannot get control_type for "+ dictionary['molecular_id'])
@@ -250,7 +258,8 @@ def process_rule_by_tsv(dictionary, tsv_file_name):
         headers = {'Content-type': 'application/json'}
         rule_response = requests.post(url, data=json.dumps([]), headers=headers)
     except Exception as e:
-        raise Exception("Failed to get rule engine data for " + tsv_file_name + ", because: " + e.message + "URL = " + url)
+        raise Exception("Failed to get rule engine data for " + tsv_file_name + ", because: "
+                        + e.message + "URL = " + url)
     else:
         # to get rid of unicode in rule response
         var_dict = yaml.safe_load(rule_response.text)

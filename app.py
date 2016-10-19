@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 
 # Use this class to read the config file which contains the database connection and
 # tier (i.e., development, tests, uat, production) specific configuration information.
-EnvironmentHelper.set_environment(logger.info)
+EnvironmentHelper.set_environment(logger)
 
 # Notice that the class names are singular, but I choose to keep the routes all plural
 # this was following a pattern I found on a blog. Its really just a matter of opinion. The goal
