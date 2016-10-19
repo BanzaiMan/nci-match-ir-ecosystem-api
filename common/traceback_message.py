@@ -6,7 +6,6 @@ import traceback
 
 class TracebackError(object):
 
-    # TODO: Method names should start with a verb.
     @staticmethod
     def generate_traceback_message(stack):
         calling_function = inspect.stack()[1][3]
