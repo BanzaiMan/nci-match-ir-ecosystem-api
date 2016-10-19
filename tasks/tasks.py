@@ -146,10 +146,10 @@ def process_file_message(file_process_message):
         raise
 
     else:
-        return post_process_file(unicode_free_dictionary, new_file_path, key, downloaded_file_path)
+        return communicate_s3_patienteco_ruleengine(unicode_free_dictionary, new_file_path, key, downloaded_file_path)
 
-# TODO: Name methods for what they do not when they are called
-def post_process_file(file_process_dictionary, new_file_path, key, downloaded_file_path):
+
+def communicate_s3_patienteco_ruleengine(file_process_dictionary, new_file_path, key, downloaded_file_path):
 
     new_file_name = secure_filename(os.path.basename(new_file_path))
     new_file_s3_path = file_process_dictionary['ion_reporter_id'] + "/" + file_process_dictionary['molecular_id'] + \
