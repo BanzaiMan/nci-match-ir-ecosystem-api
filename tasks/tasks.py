@@ -93,20 +93,21 @@ def process_ir_file(file_process_message):
         # process vcf, dna_bam, or cdna_bam file
         updated_file_process_message = process_file_message(new_file_process_message)
     except Exception as ex:
-        PedMatchBot().send_message(channel_id=slack_channel_id, message=
-        "*IR ECOSYSTEM:::* " + str(ex) + "  Error processing: " + "*" +
-        str(file_process_message) + "*, will attempt again in 3 hours.")
-        logger.error("Cannot process file because: " + ex.message + ", will attempt again in 3 hours.")
-        logger.info("Attempting to process file again in 3 hours.")
         try:
-            updated_file_process_message = process_file_message.apply_async(args=[new_file_process_message],
-                                                                            countdown = 10800)
-        except:
-            logger.error("Cannot process file because: " + ex.message + ", after second attempt.")
-            logger.info("Cannot process file because: " + ex.message + ", after second attempt.")
             PedMatchBot().send_message(channel_id=slack_channel_id, message=
             "*IR ECOSYSTEM:::* " + str(ex) + "  Error processing: " + "*" +
-            str(file_process_message) + "*, SECOND attempt failed.")
+            str(file_process_message) + "*, will attempt again in 3 hours.")
+            logger.error("Cannot process file because: " + ex.message + ", will attempt again in 3 hours.")
+            logger.info("Attempting to process file again in 3 hours.")
+        except:
+           logger.error("Ped Match Bot Failure.")
+           logger.info("Ped Match Bot Failure.")
+        try:
+            updated_file_process_message = process_ir_file.apply_async(args=[new_file_process_message],
+                                                                            countdown = 10800)
+        except Exception as ex:
+            logger.error("Cannot process file, error with apply_async celery method.")
+            logger.info("Cannot process file because: " + ex.message + ", after second attempt.")
     else:
         if new_file_process_message['molecular_id_type']  == 'sample_control':
             logger.info("Updating sample_controls table after processing file")
