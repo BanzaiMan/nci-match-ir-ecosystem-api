@@ -11,7 +11,6 @@ import time
 import traceback
 from logging.config import fileConfig
 
-
 import requests
 from celery import Celery
 from werkzeug.utils import secure_filename
@@ -22,6 +21,7 @@ from accessors.sample_control_accessor import SampleControlAccessor
 from common.environment_helper import EnvironmentHelper
 from common.ped_match_bot import PedMatchBot
 from common.sequence_file_processor import SequenceFileProcessor
+from common.traceback_message import TracebackError
 
 # Logging functionality
 fileConfig(os.path.abspath("config/logging_config.ini"))
@@ -103,22 +103,12 @@ def process_ir_file(file_process_message):
         updated_file_process_message = process_file_message(new_file_process_message)
     except Exception as ex:
         # TODO: Read time from envrionment.yml
-        process_ir_file.apply_async(args=[new_file_process_message], countdown=requeue_countdown)
+        process_ir_file.apply_async(args=[new_file_process_message], countdown=10)
 
         try:
-            # TODO: Put in common?
-            calling_function = inspect.stack()[1][3]
-            error_traceback = traceback.format_exc()
             stack = inspect.stack()
-            class_called = str(stack[1][0].f_locals["self"].__class__)
-            ts = time.time()
-            st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-
-            PedMatchBot().send_message(channel_id=slack_channel_id, message=
-            "*IR ECOSYSTEM:::* " + str(ex) + "  The class, *" + class_called + "* and method *" + calling_function +
-            "* were called at *" + st + "* and produced a an error while processing: " + "*" +
-            str(file_process_message) + "*, will attempt again in 3 hours." + "\n" +
-                                          "\n" + error_traceback)
+            PedMatchBot().send_message(channel_id=slack_channel_id, message=("*IR ECOSYSTEM:::* Error processing: " + "*" +
+            str(file_process_message) + "*, will attempt again in *3 hours.*" + "\n" + TracebackError().traceback_error(stack)))
             logger.error("Cannot process file because: " + ex.message + ", will attempt again in 3 hours.")
         except Exception as e:
             logger.error("Ped Match Bot Failure.: " + e.message)
