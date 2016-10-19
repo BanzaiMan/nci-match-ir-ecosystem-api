@@ -5,7 +5,7 @@ import logging
 import os
 import urllib
 from logging.config import fileConfig
-
+import yaml
 
 import requests
 from celery import Celery
@@ -120,6 +120,7 @@ def process_ir_file(file_process_message):
 def process_file_message(file_process_message):
     logger.debug("Processing file message in function process_file_message()" + str(file_process_message))
     unicode_free_dictionary = ast.literal_eval(json.dumps(file_process_message))
+    #unicode_free_dictionary = yaml.safe_load(file_process_message)
     logger.debug("After Removing unicode" + str(unicode_free_dictionary))
 
     try:
@@ -236,13 +237,10 @@ def process_rule_by_tsv(dictionary, tsv_file_name):
     except Exception as e:
         raise Exception("Failed to get rule engine data for " + tsv_file_name + ", because: " + e.message + "URL = " + url)
     else:
-        var_dict_new = {}
-        var_dict = json.loads(rule_response.text)
         # to get rid of unicode in rule response
+        var_dict = yaml.safe_load(rule_response.text)
         for key, value in var_dict.iteritems():
-            #print key, value
-            var_dict_new.update({str(key): str(value)})
-        dictionary.update({'variant_report': str(var_dict_new)})
+                dictionary.update({key: value})
 
     return dictionary
 
