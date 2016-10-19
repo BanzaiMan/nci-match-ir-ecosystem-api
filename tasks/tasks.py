@@ -161,27 +161,52 @@ def process_file_message(file_process_message):
 
     else:
         # TODO: Put in new method
-        new_file_name = secure_filename(os.path.basename(new_file_path))
-        new_file_s3_path = unicode_free_dictionary['ion_reporter_id'] + "/" + unicode_free_dictionary['molecular_id'] + \
-                           "/" + unicode_free_dictionary['analysis_id'] + "/" + new_file_name
-        try:
-            S3Accessor().upload(downloaded_file_path, new_file_s3_path)
-        except Exception:
-            # TODO: Make more explicit
-            raise Exception(str(new_file_s3_path))
-        else:
-            unicode_free_dictionary.update({key: new_file_s3_path})
-            if key == 'tsv_name':
-                # post tsv name to patient ecosystem for patient only
-                if unicode_free_dictionary['molecular_id_type'] == 'patient':
-                    post_tsv_info(unicode_free_dictionary, new_file_name)
-                else:
-                    # process rule engine for tsv file for sample_control only
-                    try:
-                        unicode_free_dictionary = process_rule_by_tsv(unicode_free_dictionary, new_file_name)
-                    except Exception as e:
-                        raise Exception("Failed to read Rule Engine for " + new_file_name + " , because: " + e.message)
-            return unicode_free_dictionary
+        # new_file_name = secure_filename(os.path.basename(new_file_path))
+        # new_file_s3_path = unicode_free_dictionary['ion_reporter_id'] + "/" + unicode_free_dictionary['molecular_id'] + \
+        #                    "/" + unicode_free_dictionary['analysis_id'] + "/" + new_file_name
+        # try:
+        #     S3Accessor().upload(downloaded_file_path, new_file_s3_path)
+        # except Exception:
+        #     # TODO: Make more explicit
+        #     raise Exception(str(new_file_s3_path))
+        # else:
+        #     unicode_free_dictionary.update({key: new_file_s3_path})
+        #     if key == 'tsv_name':
+        #         # post tsv name to patient ecosystem for patient only
+        #         if unicode_free_dictionary['molecular_id_type'] == 'patient':
+        #             post_tsv_info(unicode_free_dictionary, new_file_name)
+        #         else:
+        #             # process rule engine for tsv file for sample_control only
+        #             try:
+        #                 unicode_free_dictionary = process_rule_by_tsv(unicode_free_dictionary, new_file_name)
+        #             except Exception as e:
+        #                 raise Exception("Failed to read Rule Engine for " + new_file_name + " , because: " + e.message)
+        #     return unicode_free_dictionary
+        return post_process_file(unicode_free_dictionary, new_file_path, key, downloaded_file_path)
+
+
+def post_process_file(file_process_dictionary, new_file_path, key, downloaded_file_path):
+
+    new_file_name = secure_filename(os.path.basename(new_file_path))
+    new_file_s3_path = file_process_dictionary['ion_reporter_id'] + "/" + file_process_dictionary['molecular_id'] + \
+                        "/" + file_process_dictionary['analysis_id'] + "/" + new_file_name
+    try:
+        S3Accessor().upload(downloaded_file_path, new_file_s3_path)
+    except Exception as e:
+        raise Exception("Failed to upload to S3 after processing file for " + str(new_file_s3_path) + ", because: " + e.message)
+    else:
+        file_process_dictionary.update({key: new_file_s3_path})
+        if key == 'tsv_name':
+            # post tsv name to patient ecosystem for patient only
+            if file_process_dictionary['molecular_id_type'] == 'patient':
+                post_tsv_info(file_process_dictionary, new_file_name)
+            else:
+                # process rule engine for tsv file for sample_control only
+                try:
+                    file_process_dictionary = process_rule_by_tsv(file_process_dictionary, new_file_name)
+                except Exception as e:
+                    raise Exception("Failed to read Rule Engine for " + new_file_name + " , because: " + e.message)
+        return file_process_dictionary
 
 
 def process_vcf(dictionary):
