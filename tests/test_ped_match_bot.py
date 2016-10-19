@@ -21,7 +21,6 @@ class TestPedMatchBot(TestCase):
     @unpack
     @patch('common.ped_match_bot.slack_client.api_call')
     def test_send_message(self, channel_id, message, mock_slack):
-        bot_name = (__builtin__.environment_config[__builtin__.environment]['bot_name'])
         mock_slack.return_value = True
         return_value = PedMatchBot.send_message(channel_id, message)
         print return_value
