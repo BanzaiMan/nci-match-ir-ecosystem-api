@@ -4,8 +4,13 @@ import json
 import logging
 import os
 import urllib
-from logging.config import fileConfig
 import yaml
+import inspect
+import datetime
+import time
+import traceback
+from logging.config import fileConfig
+
 
 import requests
 from celery import Celery
@@ -94,20 +99,27 @@ def process_ir_file(file_process_message):
         updated_file_process_message = process_file_message(new_file_process_message)
     except Exception as ex:
         try:
+            calling_function = inspect.stack()[1][3]
+            error_traceback = traceback.format_exc()
+            stack = inspect.stack()
+            class_called = str(stack[1][0].f_locals["self"].__class__)
+            ts = time.time()
+            st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+
             PedMatchBot().send_message(channel_id=slack_channel_id, message=
-            "*IR ECOSYSTEM:::* " + str(ex) + "  Error processing: " + "*" +
-            str(file_process_message) + "*, will attempt again in 3 hours.")
+            "*IR ECOSYSTEM:::* " + str(ex) + "  The class, *" +class_called + "* and method *"  + calling_function +
+            "* were called at *" + st + "* and produced a an error while processing: " + "*" +
+            str(file_process_message) + "*, will attempt again in 3 hours." + "\n"  +
+                                          "\n" + error_traceback)
             logger.error("Cannot process file because: " + ex.message + ", will attempt again in 3 hours.")
-            logger.info("Attempting to process file again in 3 hours.")
         except:
            logger.error("Ped Match Bot Failure.")
-           logger.info("Ped Match Bot Failure.")
         try:
+            # TODO: put countdown into variables
             updated_file_process_message = process_ir_file.apply_async(args=[new_file_process_message],
                                                                             countdown = 10800)
         except Exception as ex:
             logger.error("Cannot process file, error with apply_async celery method.")
-            logger.info("Cannot process file because: " + ex.message + ", after second attempt.")
     else:
         if new_file_process_message['molecular_id_type']  == 'sample_control':
             logger.info("Updating sample_controls table after processing file")
