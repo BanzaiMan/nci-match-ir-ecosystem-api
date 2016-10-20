@@ -12,6 +12,8 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 URL='http://localhost:5000'
+#URL='https://pedmatch-int.nci.nih.gov'
+#URL='https://pedmatch-uat.nci.nih.gov'
 
 echo -e "${CYAN}***********************************************${NC}"
 echo -e "${GREEN}VERSION CHECK${NC}"
@@ -141,7 +143,7 @@ echo -e "${CYAN}***********************************************${NC}"
 curl -X POST  "${URL}/api/v1/sample_controls?site=mocha&control_type=no_template"
 curl -X POST  "${URL}/api/v1/sample_controls?site=mocha&control_type=positive"
 curl -X POST  "${URL}/api/v1/sample_controls?site=mdacc&control_type=no_template"
-curl -X POST  "http://localhost:5000/api/v1/sample_controls?site=mocha&control_type=proficiency_competency"
+curl -X POST  "${URL}/api/v1/sample_controls?site=mocha&control_type=proficiency_competency"
 
 curl -X POST -H "Content-Type: application/json" -d '{ip_address:"143.333.85.66"}' "${URL}/api/v1/sample_controls?site=mocha&control_type=no_template"
 
@@ -188,7 +190,7 @@ curl -X GET "${URL}/api/v1/aliquot/SC_SA1CB"
 curl -X GET "${URL}/api/v1/aliquot/SC_SA1CB?projection=site&projection=molecular_id&projection=date_molecular_id_created"
 
 echo -e "${PURPLE}Get patient item. Need start patient ecosystem on server before testing ${NC}"
-#curl -X GET "http://localhost:5000/api/v1/aliquot/PT_SR10_BdVRRejected_BD_MOI1"
+#curl -X GET "${URL}/api/v1/aliquot/PT_SR10_BdVRRejected_BD_MOI1"
 
 echo -e "${CYAN}***********************************************${NC}"
 echo -e "${BLUE}PUT /api/v1/aliquot/{molecular_id}${NC}"
@@ -203,7 +205,7 @@ echo -e "${PURPLE}Process bam and vcf files for patient, send s3 path of process
 echo -e "${PURPLE}Get patient item. Need start patient ecosystem on server before testing ${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 
-curl -H 'Content-Type: application/json' -X PUT -d @./pt_update_data.json "http://localhost:5000/api/v1/aliquot/PT_SR10_BdVRRejected_BD_MOI1"
+curl -H 'Content-Type: application/json' -X PUT -d @./pt_update_data.json "${URL}/api/v1/aliquot/PT_SR10_BdVRRejected_BD_MOI1"
 
 echo -e "${CYAN}***********************************************${NC}"
 
