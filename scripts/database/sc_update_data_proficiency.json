@@ -1,0 +1,9 @@
+{
+  "ion_reporter_id": "IR_WAO85",
+  "analysis_id": "SC_FDK09_analysis_1",
+  "site": "mocha",
+  "vcf_name": "IR_WAO85/SC_FDK09/SC_FDK09_analysis_1/SC_FDK09_analysis_1.vcf",
+  "dna_bam_name": "IR_WAO85/SC_FDK09/SC_FDK09_analysis_1/SC_FDK09_analysis1_dna.bam",
+  "cdna_bam_name": "IR_WAO85/SC_FDK09/SC_FDK09_analysis_1/SC_FDK09_analysis_1_cdna.bam",
+  "qc_name": "IR_WAO85/SC_FDK09/SC_FDK09_analysis_1/SC_FDK09_analysis_1_QC.pdf"
+}
