@@ -61,10 +61,10 @@ class TestSequenceFile(unittest.TestCase):
         instance.get_item.return_value = item
 
         if nucleic_acid_type is None:
-            return_value = self.app.get('/api/v1/sequence_files/' + molecular_id + '/' + file_format)
+            return_value = self.app.get('/api/v1/sample_controls/sequence_files/' + molecular_id + '/' + file_format)
         else:
             return_value = self.app.get(
-                '/api/v1/sequence_files/' + molecular_id + '/' + file_format + '/' + nucleic_acid_type)
+                '/api/v1/sample_controls/sequence_files/' + molecular_id + '/' + file_format + '/' + nucleic_acid_type)
 
         assert (json.loads(return_value.data)["s3_download_file_url"] == expect_return)
 
@@ -78,10 +78,10 @@ class TestSequenceFile(unittest.TestCase):
         instance.get_item.side_effect = Exception('Testing get_item exception')
 
         if nucleic_acid_type is None:
-            return_value = self.app.get('/api/v1/sequence_files/' + molecular_id + '/' + file_format)
+            return_value = self.app.get('/api/v1/sample_controls/sequence_files/' + molecular_id + '/' + file_format)
         else:
             return_value = self.app.get(
-                '/api/v1/sequence_files/' + molecular_id + '/' + file_format + '/' + nucleic_acid_type)
+                '/api/v1/sample_controls/sequence_files/' + molecular_id + '/' + file_format + '/' + nucleic_acid_type)
 
         assert return_value.status_code == 500
         assert "Testing get_item exception" in return_value.data
@@ -114,10 +114,10 @@ class TestSequenceFile(unittest.TestCase):
         instance.get_item.return_value = item
 
         if nucleic_acid_type is None:
-            return_value = self.app.get('/api/v1/sequence_files/' + molecular_id + '/' + file_format)
+            return_value = self.app.get('/api/v1/sample_controls/sequence_files/' + molecular_id + '/' + file_format)
         else:
             return_value = self.app.get(
-                '/api/v1/sequence_files/' + molecular_id + '/' + file_format + '/' + nucleic_acid_type)
+                '/api/v1/sample_controls/sequence_files/' + molecular_id + '/' + file_format + '/' + nucleic_acid_type)
 
         assert return_value.status_code == 500
         assert "Testing get_download_url exception" in return_value.data
@@ -156,10 +156,10 @@ class TestSequenceFile(unittest.TestCase):
         instance.get_item.return_value = item
 
         if nucleic_acid_type is None:
-            return_value = self.app.get('/api/v1/sequence_files/' + molecular_id + '/' + file_format)
+            return_value = self.app.get('/api/v1/sample_controls/sequence_files/' + molecular_id + '/' + file_format)
         else:
             return_value = self.app.get(
-                '/api/v1/sequence_files/' + molecular_id + '/' + file_format + '/' + nucleic_acid_type)
+                '/api/v1/sample_controls/sequence_files/' + molecular_id + '/' + file_format + '/' + nucleic_acid_type)
 
         assert return_value.status_code == 404
         assert "Testing get_download_url s3 key" in return_value.data

@@ -124,7 +124,7 @@ class TestGenericFile(TestCase):
         sc_instance = mock_sc_accessor.return_value
         sc_instance.get_item.return_value = sc_item
 
-        return_value = self.app.get('/api/v1/files/' + molecular_id + '/' + file_type)
+        return_value = self.app.get('/api/v1/sample_controls/files/' + molecular_id + '/' + file_type)
         print return_value.status_code
         print return_message
         print str(json.loads(return_value.data))
@@ -159,7 +159,7 @@ class TestGenericFile(TestCase):
         sc_instance = mock_sc_accessor.return_value
         sc_instance.get_item.side_effect = Exception('Error')
 
-        return_value = self.app.get('/api/v1/files/' + molecular_id + '/' + file_type)
+        return_value = self.app.get('/api/v1/sample_controls/files/' + molecular_id + '/' + file_type)
         print return_value.status_code
         print return_message
         print str(json.loads(return_value.data))
@@ -193,7 +193,7 @@ class TestGenericFile(TestCase):
         sc_instance = mock_sc_accessor.return_value
         sc_instance.get_item.return_value = sc_item
 
-        return_value = self.app.get('/api/v1/files/' + molecular_id + '/' + file_type)
+        return_value = self.app.get('/api/v1/sample_controls/files/' + molecular_id + '/' + file_type)
         print return_value.status_code
         print return_message
         print str(json.loads(return_value.data))
