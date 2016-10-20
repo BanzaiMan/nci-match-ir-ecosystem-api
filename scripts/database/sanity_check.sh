@@ -198,6 +198,8 @@ echo -e "${PURPLE}Upload IR file names and this will update database, update s3 
 echo -e "${CYAN}***********************************************${NC}"
 
 curl -H 'Content-Type: application/json' -X PUT -d @./sc_update_data.json "${URL}/api/v1/aliquot/SC_SA1CB"
+curl -H 'Content-Type: application/json' -X PUT -d @./sc_update_data_positive.json "${URL}/api/v1/aliquot/SC_67VKV"
+curl -H 'Content-Type: application/json' -X PUT -d @./sc_update_data_proficiency.json "${URL}/api/v1/aliquot/SC_FDK09"
 
 echo -e "${CYAN}***********************************************${NC}"
 echo -e "${BLUE}PUT /api/v1/aliquot/{molecular_id}${NC}"
