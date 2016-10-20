@@ -122,18 +122,12 @@ def process_ir_file(file_process_message):
 
     new_file_process_message = file_process_message.copy()
 
-    # TODO: What if we don't use SC_?
     if new_file_process_message['molecular_id'] .startswith('SC_'):
-        # TODO: Not sure why this is needed
-        new_file_process_message.update({'molecular_id_type': 'sample_control'})
         logger.info("Updating sample_controls table before processing file" + str(new_file_process_message))
         # after running SampleControlAccessor().update(file_process_message), key 'molecular_id' will be
         # removed from file_process_message. See sample_control_access.py line37
         SampleControlAccessor().update(file_process_message)
-    else:
-        # TODO: Not sure why this is needed
-        new_file_process_message.update({'molecular_id_type': 'patient'})
-        # TODO: Should be updating Patient table too.
+
     try:
         # process vcf, dna_bam, or cdna_bam file
         updated_file_process_message = process_file_message(new_file_process_message)
@@ -151,12 +145,8 @@ def process_ir_file(file_process_message):
             logger.error("Ped Match Bot Failure.: " + e.message)
 
     else:
-        # TODO: Not sure why this is needed.
-        if new_file_process_message['molecular_id_type'] == 'sample_control':
+        if new_file_process_message['molecular_id'].startswith('SC_'):
             logger.info("Updating sample_controls table after processing file")
-            # remove assigned 'molecular_id_type' in updated_file_process_message dictionary
-            updated_file_process_message.pop('molecular_id_type', None)
-            # TODO: This is needed.
             SampleControlAccessor().update(updated_file_process_message)
         else:
             logger.info("Passing processed file S3 path to patient ecosystem")
@@ -203,15 +193,15 @@ def communicate_s3_patienteco_ruleengine(file_process_dictionary, new_file_path,
     else:
         file_process_dictionary.update({key: new_file_s3_path})
         if key == 'tsv_name':
-            # post tsv name to patient ecosystem for patient only
-            if file_process_dictionary['molecular_id_type'] == 'patient':
-                post_tsv_info(file_process_dictionary, new_file_name)
-            else:
+            if file_process_dictionary['molecular_id'].startswith('SC_'):
                 # process rule engine for tsv file for sample_control only
                 try:
                     file_process_dictionary = process_rule_by_tsv(file_process_dictionary, new_file_name)
                 except Exception as e:
                     raise Exception("Failed to read Rule Engine for " + new_file_name + " , because: " + e.message)
+            else:
+                # post tsv name to patient ecosystem for patient only
+                post_tsv_info(file_process_dictionary, new_file_name)
         return file_process_dictionary
 
 
@@ -285,6 +275,7 @@ def post_tsv_info(dictionary, tsv_file_name):
 def process_rule_by_tsv(dictionary, tsv_file_name):
 
     # TODO: Don't we already know this?
+    # explain: passed dictionary has no control_type, but rule engine path needs control_type
     item = SampleControlAccessor().get_item({'molecular_id': dictionary['molecular_id']})
     if len(item) > 0:
         control_type = item['control_type']

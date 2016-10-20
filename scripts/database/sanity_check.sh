@@ -211,6 +211,8 @@ curl -H 'Content-Type: application/json' -X PUT -d @./pt_update_data.json "${URL
 
 echo -e "${CYAN}***********************************************${NC}"
 
+sleep 10
+
 echo -e "${CYAN}***********************************************${NC}"
 echo -e "${BLUE}GET /api/v1/sample_controls/{molecular_id}/{format}${NC}"
 echo -e "${PURPLE}format = vcf|tsv in this case${NC}"
