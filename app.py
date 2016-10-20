@@ -52,10 +52,10 @@ api.add_resource(SampleControlTable, '/api/v1/sample_controls')
 api.add_resource(SampleControlRecord, '/api/v1/sample_controls/<string:identifier>')
 
 # Paths for downloading vcf or tsv file, file_format = vcf|tsv
-api.add_resource(VariantGenericFile, '/api/v1/sequence_files/<string:molecular_id>/<string:file_format>')
+api.add_resource(VariantGenericFile, '/api/v1/sample_controls/sequence_files/<string:molecular_id>/<string:file_format>')
 # Paths for downloading bam or bai file, file_format = bam|bai, nucleic_acid_type=cdna|dna
 api.add_resource(AlignmentGenericFile,
-                 '/api/v1/sequence_files/<string:molecular_id>/<string:file_format>/<string:nucleic_acid_type>')
+                 '/api/v1/sample_controls/sequence_files/<string:molecular_id>/<string:file_format>/<string:nucleic_acid_type>')
 
 # This is to download misc files associated with an aliquot such as the pdf or text files etc. The assumption is that
 # the user knows how the record is stored in dynamodb...so file_name must be equal to the dynamodb attribute that
@@ -63,11 +63,11 @@ api.add_resource(AlignmentGenericFile,
 # retrieve the record they want then once they see the attribute with the file name use that to make this call to
 # actually retrieve the file. The dynamodb attribute == file_name
 # TODO: Somebody and test this
-api.add_resource(MiscFile, '/api/v1/files/<string:molecular_id>/<string:file_name>')
+api.add_resource(MiscFile, '/api/v1/sample_controls/files/<string:molecular_id>/<string:file_name>')
 
 # TODO: still working on this but this will be used to authenticate a user to upload to S3
 api.add_resource(S3AuthenticationPolicy,
-                 '/api/v1/files/<string:molecular_id>/<string:analysis_id>/<string:file_name>')
+                 '/api/v1/sample_controls/files/<string:molecular_id>/<string:analysis_id>/<string:file_name>')
 
 # Path for Querying and Creating ion reporters
 # Delete and Put in batch must do those using specific IDs, not allowed here
