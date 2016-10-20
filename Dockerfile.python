@@ -19,7 +19,7 @@ RUN cd $INSTALL_PATH/oncomine-vcf-converter-1.4.3 && python setup.py install && 
 
 #Insert script to change localhost to docker-compose names
 ADD https://raw.githubusercontent.com/CBIIT/match-docker/master/docker-compose-env.sh .
-RUN chmod 755 docker-compose-env.sh && ./docker-compose-env.sh && ls -alt $INSTALL_PATH
+RUN chmod 755 docker-compose-env.sh && ls -alt $INSTALL_PATH
 
 # Default command 
-CMD python ./app.py
+CMD ./docker-compose-env.sh && python ./app.py
