@@ -274,8 +274,6 @@ def post_tsv_info(dictionary, tsv_file_name):
 
 def process_rule_by_tsv(dictionary, tsv_file_name):
 
-    # TODO: Don't we already know this?
-    # explain: passed dictionary has no control_type, but rule engine path needs control_type
     item = SampleControlAccessor().get_item({'molecular_id': dictionary['molecular_id']})
     if len(item) > 0:
         control_type = item['control_type']
