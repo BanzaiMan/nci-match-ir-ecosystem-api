@@ -214,9 +214,9 @@ echo -e "${BLUE}GET /api/v1/sample_controls/{molecular_id}/{format}${NC}"
 echo -e "${PURPLE}format = vcf|tsv in this case${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 
-curl -X GET "${URL}/api/v1/sequence_files/SC_SA1CB/vcf"
-curl -X GET "${URL}/api/v1/sequence_files/SC_SA1CB/tsv"
-curl -X GET "${URL}/api/v1/sequence_files/SC_SA1CB/qc"
+curl -X GET "${URL}/api/v1/sample_controls/sequence_files/SC_SA1CB/vcf"
+curl -X GET "${URL}/api/v1/sample_controls/sequence_files/SC_SA1CB/tsv"
+curl -X GET "${URL}/api/v1/sample_controls/sequence_files/SC_SA1CB/qc"
 
 echo -e "${CYAN}***********************************************${NC}"
 echo -e "${BLUE}GET /api/v1/sample_controls/{molecular_id}/{bam|bai}/{cdna|dna}${NC}"
@@ -224,10 +224,10 @@ echo -e "${PURPLE}format = bam|bai in this case and type = cdna|dna is required$
 echo -e "${PURPLE}These return back a link to download files for a specific sample control.${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 
-curl -X GET "${URL}/api/v1/sequence_files/SC_SA1CB/bam/dna"
-curl -X GET "${URL}/api/v1/sequence_files/SC_SA1CB/bai/dna"
-curl -X GET "${URL}/api/v1/sequence_files/SC_SA1CB/bam/cdna"
-curl -X GET "${URL}/api/v1/sequence_files/SC_SA1CB/bai/cdna"
+curl -X GET "${URL}/api/v1/sample_controls/sequence_files/SC_SA1CB/bam/dna"
+curl -X GET "${URL}/api/v1/sample_controls/sequence_files/SC_SA1CB/bai/dna"
+curl -X GET "${URL}/api/v1/sample_controls/sequence_files/SC_SA1CB/bam/cdna"
+curl -X GET "${URL}/api/v1/sample_controls/sequence_files/SC_SA1CB/bai/cdna"
 
 
 echo -e "${CYAN}***********************************************${NC}"
@@ -247,9 +247,11 @@ echo -e "${BLUE}GET /api/v1/files/<string:molecular_id>/<string:file_name>${NC}"
 echo -e "${PURPLE}Returns s3_download_file_url for molecular id if valid else 404${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 
-curl -X GET "${URL}/api/v1/files/SC_SA1CB/qc_name"
-curl -X GET "${URL}/api/v1/files/SC_SA1CB/dna_bam_name"
-curl -X GET "${URL}/api/v1/files/SC_SA1CB/dna_bai_name"
-curl -X GET "${URL}/api/v1/files/SC_SA1CB/cdna_bam_name"
-curl -X GET "${URL}/api/v1/files/SC_SA1CB/vcf_name"
-curl -X GET "${URL}/api/v1/files/SC_SA1CB/cdna_bai_name"
+curl -X GET "${URL}/api/v1/sample_controls/files/SC_SA1CB/qc_name"
+curl -X GET "${URL}/api/v1/sample_controls/files/SC_SA1CB/dna_bam_name"
+curl -X GET "${URL}/api/v1/sample_controls/files/SC_SA1CB/dna_bai_name"
+curl -X GET "${URL}/api/v1/sample_controls/files/SC_SA1CB/cdna_bam_name"
+curl -X GET "${URL}/api/v1/sample_controls/files/SC_SA1CB/vcf_name"
+curl -X GET "${URL}/api/v1/sample_controls/files/SC_SA1CB/cdna_bai_name"
+
+
