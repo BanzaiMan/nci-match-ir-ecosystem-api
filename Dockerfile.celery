@@ -14,9 +14,12 @@ RUN pip install -r requirements.txt
 # Add the app code 
 COPY . .
 
+# Install oncomine-vcf-converter
+RUN cd $INSTALL_PATH/oncomine-vcf-converter-1.4.3 && python setup.py install && which convert_vcf.py
+
 #Insert script to change localhost to docker-compose names
 ADD https://raw.githubusercontent.com/CBIIT/match-docker/master/docker-compose-env.sh .
-RUN chmod 755 docker-compose-env.sh && ls -alt $INSTALL_PATH
+RUN chmod 755 docker-compose-env.sh && ./docker-compose-env.sh && ls -alt $INSTALL_PATH
 
 # Default command 
-CMD cd $INSTALL_PATH && ./docker-compose-env.sh && celery -A tasks.tasks worker --loglevel=INFO --uid=nobody
+CMD celery -A tasks.tasks worker --loglevel=INFO --uid=nobody
