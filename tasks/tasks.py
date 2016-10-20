@@ -6,6 +6,7 @@ import os
 import urllib
 import yaml
 import inspect
+import datetime
 from logging.config import fileConfig
 
 import requests
@@ -308,6 +309,7 @@ def process_rule_by_tsv(dictionary, tsv_file_name):
         for key, value in var_dict.iteritems():
                 dictionary.update({key: value})
 
+        dictionary.update({'date_variant_received': str(datetime.datetime.utcnow())})
     return dictionary
 
 
