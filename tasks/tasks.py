@@ -100,12 +100,13 @@ def process_ir_file(file_process_message):
         updated_file_process_message = process_file_message(new_file_process_message)
     except Exception as ex:
         process_ir_file.apply_async(args=[new_file_process_message], countdown=requeue_countdown)
-
         try:
             stack = inspect.stack()
             fpm = ast.literal_eval(json.dumps(new_file_process_message))
-            PedMatchBot().send_message(channel_id=slack_channel_id, message=("*IR ECOSYSTEM:::* Error processing: " + "*" +
-                                                                             str(fpm) + "*, will attempt again in *3 hours.*" + "\n" + TracebackError().generate_traceback_message(stack)))
+            PedMatchBot().send_message(channel_id=slack_channel_id,
+                                       message=("*IR ECOSYSTEM:::* Error processing: " + "*" + str(fpm) +
+                                                "*, will attempt again in *3 hours.*" + "\n" +
+                                                TracebackError().generate_traceback_message(stack)))
             logger.error("Cannot process file because: " + ex.message + ", will attempt again in 3 hours.")
         except Exception as e:
             logger.error("Ped Match Bot Failure.: " + e.message)
@@ -158,7 +159,8 @@ def communicate_s3_patienteco_ruleengine(file_process_dictionary, new_file_path,
     try:
         S3Accessor().upload(downloaded_file_path, new_file_s3_path)
     except Exception as e:
-        raise Exception("Failed to upload to S3 after processing file for " + str(new_file_s3_path) + ", because: " + e.message)
+        raise Exception("Failed to upload to S3 after processing file for " + str(new_file_s3_path) + ", because: "
+                        + e.message)
     else:
         file_process_dictionary.update({key: new_file_s3_path})
         if key == 'tsv_name':
@@ -231,10 +233,11 @@ def post_tsv_info(dictionary, tsv_file_name):
             try:
                 stack = inspect.stack()
                 PedMatchBot().send_message(channel_id=slack_channel_id,
-                                           message=("*IR ECOSYSTEM:::* Error on posting tsv info to patient ecosystem: " + "*" +
-                                                    str(dictionary) + "*, will attempt again in *3 hours.*" + "\n" +
-                                                    TracebackError().generate_traceback_message(stack)))
-                logger.error("Failed to post tsv file name to Patient Ecosystem for " + dictionary['molecular_id'] + ", because: " + r.text + ", will attempt again in 3 hours.")
+                                           message=("*IR ECOSYSTEM:::* Error on posting tsv info to patient ecosystem: "
+                                                    + "*" + str(dictionary) + "*, will attempt again in *3 hours.*" +
+                                                    "\n" + TracebackError().generate_traceback_message(stack)))
+                logger.error("Failed to post tsv file name to Patient Ecosystem for " + dictionary['molecular_id'] +
+                             ", because: " + r.text + ", will attempt again in 3 hours.")
             except Exception as e:
                 logger.error("Ped Match Bot Failure in sending re-post tsv info message: " + e.message)
 
@@ -279,8 +282,19 @@ def delete(molecular_id):
 @app.task
 def delete_ir(ion_reporter_id):
     logger.info("Deleting ion reporter record with ion reporter id:" + str(ion_reporter_id))
-    IonReporterAccessor().delete_item(ion_reporter_id)
-
+    try:
+        IonReporterAccessor().delete_item(ion_reporter_id)
+    except Exception as e:
+        delete_ir.apply_async(args=[ion_reporter_id], countdown=requeue_countdown)
+        try:
+            stack = inspect.stack()
+            PedMatchBot().send_message(channel_id=slack_channel_id,
+                                       message=("*IR ECOSYSTEM:::* Error deleting: " + "*" + str(ion_reporter_id) +
+                                                "*, will attempt again in *3 hours.*" + "\n" + e.message + "\n" +
+                                                TracebackError().generate_traceback_message(stack)))
+            logger.error("Cannot Delete file because: " + e.message + ", will attempt again in 3 hours.")
+        except Exception as e:
+            logger.error("Ped Match Bot Failure.: " + e.message)
 
 @app.task
 def batch_delete(query_parameters):
