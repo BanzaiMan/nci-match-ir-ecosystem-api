@@ -59,20 +59,58 @@ requeue_countdown = (__builtin__.environment_config[__builtin__.environment]['re
 @app.task
 def put(put_message):
     logger.info("Creating item: " + str(put_message))
-    SampleControlAccessor().put_item(put_message)
+    try:
+        SampleControlAccessor().put_item(put_message)
+    except Exception as e:
+        put.apply_async(args=[put_message], countdown=requeue_countdown)
+        try:
+            stack = inspect.stack()
+            uni_free = ast.literal_eval(json.dumps(put_message))
+            PedMatchBot().send_message(channel_id=slack_channel_id,
+                                       message=("*IR ECOSYSTEM:::* Error putting: " + "*" + str(uni_free) +
+                                                "*, because *"  + e.message + "*will attempt again in *3 hours.*" + "\n" +
+                                                TracebackError().generate_traceback_message(stack)))
+            logger.error("Cannot put record because: " + e.message + ", will attempt again in 3 hours.")
+        except Exception as e:
+            logger.error("Ped Match Bot Failure.: " + e.message)
 
 
 # Use for just updating the data in a record in the table
 @app.task
 def update(update_message):
     logger.info("Updating item: " + str(update_message))
-    SampleControlAccessor().update(update_message)
-
+    try:
+        SampleControlAccessor().update(update_message)
+    except Exception as e:
+        update.apply_async(args=[update_message], countdown=requeue_countdown)
+        try:
+            stack = inspect.stack()
+            uni_free = ast.literal_eval(json.dumps(update_message))
+            PedMatchBot().send_message(channel_id=slack_channel_id,
+                                       message=("*IR ECOSYSTEM:::* Error updating: " + "*" + str(uni_free) +
+                                                "*, because *" + e.message + "*will attempt again in *3 hours.*" + "\n" +
+                                                TracebackError().generate_traceback_message(stack)))
+            logger.error("Cannot update record because: " + e.message + ", will attempt again in 3 hours.")
+        except Exception as e:
+            logger.error("Ped Match Bot Failure.: " + e.message)
 
 @app.task
 def update_ir(update_message):
     logger.info("Updating item: " + str(update_message))
-    IonReporterAccessor().update(update_message)
+    try:
+        IonReporterAccessor().update(update_message)
+    except Exception as e:
+        update_ir.apply_async(args=[update_message], countdown=requeue_countdown)
+        try:
+            stack = inspect.stack()
+            uni_free = ast.literal_eval(json.dumps(update_message))
+            PedMatchBot().send_message(channel_id=slack_channel_id,
+                                       message=("*IR ECOSYSTEM:::* Error updating: " + "*" + str(uni_free) +
+                                                "*, because *" + e.message + "*will attempt again in *3 hours.*" + "\n" +
+                                                TracebackError().generate_traceback_message(stack)))
+            logger.error("Cannot update record because: " + e.message + ", will attempt again in 3 hours.")
+        except Exception as e:
+            logger.error("Ped Match Bot Failure.: " + e.message)
 
 
 # this is a special update in that it updates the database, process files, and stores them in s3. So think of this
@@ -276,7 +314,20 @@ def process_rule_by_tsv(dictionary, tsv_file_name):
 @app.task
 def delete(molecular_id):
     logger.info("Deleting sample control record with molecular id:" + str(molecular_id))
-    SampleControlAccessor().delete_item(molecular_id)
+    try:
+        SampleControlAccessor().delete_item(molecular_id)
+    except Exception as e:
+        delete.apply_async(args=[molecular_id], countdown=requeue_countdown)
+        try:
+            stack = inspect.stack()
+            uni_free = ast.literal_eval(json.dumps(molecular_id))
+            PedMatchBot().send_message(channel_id=slack_channel_id,
+                                       message=("*IR ECOSYSTEM:::* Error deleting: " + "*" + str(uni_free) +
+                                                "*, because *"  + e.message + "*will attempt again in *3 hours.*" + "\n" +
+                                                TracebackError().generate_traceback_message(stack)))
+            logger.error("Cannot delete record because: " + e.message + ", will attempt again in 3 hours.")
+        except Exception as e:
+            logger.error("Ped Match Bot Failure.: " + e.message)
 
 
 @app.task
@@ -288,9 +339,10 @@ def delete_ir(ion_reporter_id):
         delete_ir.apply_async(args=[ion_reporter_id], countdown=requeue_countdown)
         try:
             stack = inspect.stack()
+            uni_free = ast.literal_eval(json.dumps(ion_reporter_id))
             PedMatchBot().send_message(channel_id=slack_channel_id,
-                                       message=("*IR ECOSYSTEM:::* Error deleting: " + "*" + str(ion_reporter_id) +
-                                                "*, will attempt again in *3 hours.*" + "\n" + e.message + "\n" +
+                                       message=("*IR ECOSYSTEM:::* Error deleting: " + "*" + str(uni_free) +
+                                                "*, because *"  + e.message + "*will attempt again in *3 hours.*" + "\n" +
                                                 TracebackError().generate_traceback_message(stack)))
             logger.error("Cannot Delete file because: " + e.message + ", will attempt again in 3 hours.")
         except Exception as e:
@@ -299,10 +351,36 @@ def delete_ir(ion_reporter_id):
 @app.task
 def batch_delete(query_parameters):
     logger.info("Deleting sample control records matching query:" + str(query_parameters))
-    SampleControlAccessor().batch_delete(query_parameters)
+    try:
+        SampleControlAccessor().batch_delete(query_parameters)
+    except Exception as e:
+        batch_delete.apply_async(args=[query_parameters], countdown=requeue_countdown)
+        try:
+            stack = inspect.stack()
+            uni_free_query_params = ast.literal_eval(json.dumps(query_parameters))
+            PedMatchBot().send_message(channel_id=slack_channel_id,
+                                       message=("*IR ECOSYSTEM:::* Error deleting sample control records matching query: "
+                                                + "*" + str(uni_free_query_params) + "*, because *"  + e.message +
+                                                "*will attempt again in *3 hours.*" + "\n" + TracebackError().generate_traceback_message(stack)))
+            logger.error("Cannot delete records because: " + e.message + ", will attempt again in 3 hours.")
+        except Exception as e:
+            logger.error("Ped Match Bot Failure.: " + e.message)
 
 
 @app.task
 def batch_delete_ir(query_parameters):
     logger.info("Deleting ion reporter records matching query:" + str(query_parameters))
-    IonReporterAccessor().batch_delete(query_parameters)
+    try:
+        IonReporterAccessor().batch_delete(query_parameters)
+    except Exception as e:
+        batch_delete_ir.apply_async(args=[query_parameters], countdown=requeue_countdown)
+        try:
+            stack = inspect.stack()
+            uni_free_query_params = ast.literal_eval(json.dumps(query_parameters))
+            PedMatchBot().send_message(channel_id=slack_channel_id,
+                                       message=("*IR ECOSYSTEM:::* Error deleting ion reporter records matching query: "
+                                                + "*" + str(uni_free_query_params) + "*, because *"  + e.message +
+                                                "*will attempt again in *3 hours.*" + "\n" + TracebackError().generate_traceback_message(stack)))
+            logger.error("Cannot delete records because: " + e.message + ", will attempt again in 3 hours.")
+        except Exception as e:
+            logger.error("Ped Match Bot Failure.: " + e.message)
