@@ -118,7 +118,6 @@ def update_ir(update_message):
 # this is a special update in that it updates the database, process files, and stores them in s3. So think of this
 # as updating both S3 and dynamodb.
 @app.task
-# molecular_id_type is 'sample_control' or 'patient'
 def process_ir_file(file_process_message):
 
     new_file_process_message = file_process_message.copy()
