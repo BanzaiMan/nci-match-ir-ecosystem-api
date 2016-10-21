@@ -61,6 +61,7 @@ class SampleControlTable(Table):
         if DictionaryHelper.keys_have_value(args, ['control_type', 'site']):
             self.logger.debug("Sample Control creation failed, because request molecular_id was passed in")
 
+            # TODO: This should not be here. The only thing post does is create a new sample control
             # if user pass keys other than 'site' and 'control_type' in arguments, will ignore
             new_item_dictionary = {}
             new_item_dictionary.update({'site': args['site']})
