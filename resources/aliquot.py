@@ -19,7 +19,7 @@ class Aliquot(Resource):
         self.logger = logging.getLogger(__name__)
 
     def get(self, molecular_id):
-        # 1, Check sample control tables by calling get
+        # check if molecular_id exists in sample control table
         self.logger.info("Checking if molecular id: " + str(molecular_id) + " is in sample control table")
         args = request.args
         self.logger.debug(str(args))
@@ -33,10 +33,8 @@ class Aliquot(Resource):
         else:
             # check if molecular_id exists in patient table
             pt_results = PatientEcosystemConnector().verify_molecular_id(molecular_id)
-            # TODO: This should just return whateverver we get to the front end.
-            # if we get a 200, then molecular id was in patient. If not found check for 404. Regardlesss we just return the result
-            if 'message' not in pt_results:  # if patient molecular_id not exist, result is {u'message': u'Resource not found'}
-                return pt_results
+            if pt_results.status_code==200:
+                return pt_results.json()
             else:
                 AbortLogger.log_and_abort(404, self.logger.debug, str(molecular_id + " was not found. Invalid molecular_id or invalid projection key entered."))
 
@@ -56,8 +54,7 @@ class Aliquot(Resource):
         if len(item) == 0:
             # check if molecular_id exists in patient table
             pt_results = PatientEcosystemConnector().verify_molecular_id(molecular_id)
-            print pt_results
-            if 'message' in pt_results: # if patient molecular_id not exist, result is {u'message': u'Resource not found'}
+            if pt_results.status_code != 200:
                 AbortLogger.log_and_abort(404, self.logger.debug, str(molecular_id + " was not found. Cannot update."))
 
         item_dictionary = args.copy()
