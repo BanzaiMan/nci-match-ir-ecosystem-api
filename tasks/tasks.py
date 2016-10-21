@@ -60,6 +60,7 @@ requeue_countdown = (__builtin__.environment_config[__builtin__.environment]['re
 @app.task
 def put(put_message):
     logger.info("Creating item: " + str(put_message))
+    # TODO: A lot of redudant code in the next few methods so make dry by making all this error handling into 1 function
     try:
         SampleControlAccessor().put_item(put_message)
     except Exception as e:
