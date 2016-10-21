@@ -96,6 +96,7 @@ def update(update_message):
         except Exception as e:
             logger.error("Ped Match Bot Failure.: " + e.message)
 
+
 @app.task
 def update_ir(update_message):
     logger.info("Updating item: " + str(update_message))
