@@ -37,6 +37,7 @@ LOCAL_URL="http://localhost:8000"
 
 # Comment out if you want to use script to setup table on amazon
 END_POINT="--endpoint-url $LOCAL_URL"
+#END_POINT="--endpoint-url  https://dynamodb.us-east-1.amazonaws.com"
 
 ATTRIBUTE='site'
 VALUE='mocha'
@@ -49,6 +50,8 @@ echo -e "${RED}DELETING TABLE IF IT EXIST${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 aws dynamodb delete-table --table-name $TABLE_NAME $END_POINT
 
+sleep 10
+
 echo -e "${CYAN}***********************************************${NC}"
 echo -e "${RED}BUILDING TABLE${NC}"
 echo -e "${CYAN}***********************************************${NC}"
@@ -58,6 +61,8 @@ echo -e "${CYAN}***********************************************${NC}"
 # the molecular_id should be the only key.
 # aws dynamodb create-table --table-name $TABLE_NAME --attribute-definitions AttributeName=site,AttributeType=S AttributeName=molecular_id,AttributeType=S --key-schema AttributeName=site,KeyType=HASH AttributeName=molecular_id,KeyType=RANGE --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 $END_POINT
 aws dynamodb create-table --table-name $TABLE_NAME --attribute-definitions AttributeName=ion_reporter_id,AttributeType=S --key-schema AttributeName=ion_reporter_id,KeyType=HASH --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 $END_POINT
+
+sleep 10
 
 echo -e "${CYAN}***********************************************${NC}"
 echo -e "${RED}WRITING SAMPLE DATA TO TABLE${NC}"

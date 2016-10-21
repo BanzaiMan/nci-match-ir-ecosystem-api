@@ -295,9 +295,9 @@ def process_rule_by_tsv(dictionary, tsv_file_name):
                         + e.message + "URL = " + url)
     else:
         # to get rid of unicode in rule response
-        var_dict = yaml.safe_load(rule_response.text)
+        var_dict = json.loads(json.dumps(yaml.safe_load(rule_response.text)))
         for key, value in var_dict.iteritems():
-                dictionary.update({key: value})
+            dictionary.update({key: value})
 
         dictionary.update({'date_variant_received': str(datetime.datetime.utcnow())})
     return dictionary
