@@ -70,8 +70,8 @@ def put(put_message):
             uni_free = ast.literal_eval(json.dumps(put_message))
             PedMatchBot().send_message(channel_id=slack_channel_id,
                                        message=("*IR ECOSYSTEM:::* Error putting: " + "*" + str(uni_free) +
-                                                "*, because *"  + e.message + "*will attempt again in *3 hours.*" + "\n" +
-                                                TracebackError().generate_traceback_message(stack)))
+                                                "*, because *" + e.message + "*will attempt again in *3 hours.*"
+                                                + "\n" + TracebackError().generate_traceback_message(stack)))
             logger.error("Cannot put record because: " + e.message + ", will attempt again in 3 hours.")
         except Exception as e:
             logger.error("Ped Match Bot Failure.: " + e.message)
@@ -95,6 +95,7 @@ def update(update_message):
             logger.error("Cannot update record because: " + e.message + ", will attempt again in 3 hours.")
         except Exception as e:
             logger.error("Ped Match Bot Failure.: " + e.message)
+
 
 @app.task
 def update_ir(update_message):
