@@ -4,7 +4,7 @@ import yaml
 
 
 class EnvironmentHelper(object):
-
+    """Method to set environment"""
     @staticmethod
     def set_environment(logger):
         logger.info("Checking if Environment and Slack Token variable loaded")
