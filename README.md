@@ -13,3 +13,16 @@ It can be started by typing in the application root directory:
 
 Main application is started as
 **python ./app.py**
+
+Environment variables must be setup in your .profile or .bash_profile
+
+**export AUTH0_CLIENT_ID=""
+export AUTH0_CLIENT_SECRET=""
+export AUTH0_DOMAIN_SECRET=""
+export SLACK_TOKEN=""
+export IR_QUEUE_NAME=""
+export ENVIRONMENT="development"
+export AWS_ACCESS_KEY_ID=""
+export AWS_SECRET_ACCESS_KEY=""**
+
+You should be able to get these values from your System administration team (i.e., Jeremy Pumphrey)
