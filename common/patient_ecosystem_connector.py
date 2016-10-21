@@ -15,9 +15,9 @@ class PatientEcosystemConnector(object):
         url = (__builtin__.environment_config[__builtin__.environment]['patient_endpoint']
                + __builtin__.environment_config[__builtin__.environment]['shipments_path'])
         try:
-            request_data = requests.get(url + molecular_id).json()
+            request = requests.get(url + molecular_id)
         except Exception as e:
             self.logger.error("Unable to connect to patient ecosystem: " + str(e))
             raise
         else:
-            return request_data
+            return request
