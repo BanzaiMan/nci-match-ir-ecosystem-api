@@ -33,6 +33,8 @@ class Aliquot(Resource):
         else:
             # check if molecular_id exists in patient table
             pt_results = PatientEcosystemConnector().verify_molecular_id(molecular_id)
+            # TODO: This should just return whateverver we get to the front end.
+            # if we get a 200, then molecular id was in patient. If not found check for 404. Regardlesss we just return the result
             if 'message' not in pt_results:  # if patient molecular_id not exist, result is {u'message': u'Resource not found'}
                 return pt_results
             else:
