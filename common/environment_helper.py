@@ -11,7 +11,7 @@ class EnvironmentHelper(object):
         try:
             __builtin__.environment
             __builtin__.slack_token
-        except Exception as e:
+        except Exception:
             logger.info("Environment and Slack Token variable not yet loaded, now attempting to load")
             try:
                 __builtin__.environment = os.environ['ENVIRONMENT']
