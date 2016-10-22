@@ -32,9 +32,9 @@ class Aliquot(Resource):
             return results
         else:
             # check if molecular_id exists in patient table
-            pt_results = PatientEcosystemConnector().verify_molecular_id(molecular_id)
-            if pt_results.status_code==200:
-                return pt_results.json()
+            (pt_statuscode, pt_data) = PatientEcosystemConnector().verify_molecular_id(molecular_id)
+            if pt_statuscode==200:
+                return pt_data
             else:
                 AbortLogger.log_and_abort(404, self.logger.debug, str(molecular_id + " was not found. Invalid molecular_id or invalid projection key entered."))
 
@@ -53,8 +53,8 @@ class Aliquot(Resource):
         item = SampleControlAccessor().get_item({'molecular_id': molecular_id})
         if len(item) == 0:
             # check if molecular_id exists in patient table
-            pt_results = PatientEcosystemConnector().verify_molecular_id(molecular_id)
-            if pt_results.status_code != 200:
+            (pt_statuscode, pt_data) = PatientEcosystemConnector().verify_molecular_id(molecular_id)
+            if pt_statuscode != 200:
                 AbortLogger.log_and_abort(404, self.logger.debug, str(molecular_id + " was not found. Cannot update."))
 
         item_dictionary = args.copy()
