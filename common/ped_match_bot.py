@@ -12,7 +12,8 @@ from logging.config import fileConfig
 from common.environment_helper import EnvironmentHelper
 
 slack_client = SlackClient(os.environ.get('SLACK_TOKEN'))
-# queue_name = os.environ.get('IR_QUEUE_NAME')
+
+
 
 fileConfig(os.path.abspath("config/logging_config.ini"))
 logger = logging.getLogger(__name__)
@@ -37,11 +38,18 @@ class PedMatchBot(object):
     @staticmethod
     def return_stack(message, error_message, stack):
         slack_channel_id = (__builtin__.environment_config[__builtin__.environment]['slack_channel_id'])
+
+        if os.environ.get('IR_QUEUE_NAME') == True:
+            queue_name = os.environ.get('IR_QUEUE_NAME')
+        else:
+            queue_name = (__builtin__.environment_config[__builtin__.environment]['ir_queue_name'])
+
+
         try:
             uni_free_message = ast.literal_eval(json.dumps(message))
             PedMatchBot().send_message(channel_id=slack_channel_id,
-                                       message=("*IR ECOSYSTEM:::* Error processing: " + "*" + str(uni_free_message) +
-                                                # "Queue Name: " + "*" + queue_name + "*" + "\n" +
+                                       message=("*IR ECOSYSTEM:::* Error processing: " + "*" + str(uni_free_message)
+                                                + "\n" + "Queue Name: " + "*" + queue_name + "*" + "\n" +
                                                 "*, will attempt again in *3 hours.*" + "\n" +
                                                 str(PedMatchBot.generate_traceback_message(stack))))
             logger.error("Cannot process file because: " + error_message + ", will attempt again in 3 hours.")
