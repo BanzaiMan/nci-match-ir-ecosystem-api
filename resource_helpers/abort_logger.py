@@ -24,7 +24,7 @@ class AbortLogger(object):
                                           "*IR ECOSYSTEM:::* Error code: *" + str(error_code) + "*" + "\n" +
                                           "Queue Name: " + "*" + queue_name + "*" + "\n" +
                                           "Error Message: *"  + message + "*" +
-                                          "\n" + PedMatchBot.generate_traceback_message(stack)))
+                                          "\n" + str(PedMatchBot.generate_traceback_message(stack))))
 
 
         abort(error_code, message=message)
