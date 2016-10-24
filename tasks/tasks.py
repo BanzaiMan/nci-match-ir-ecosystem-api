@@ -145,16 +145,16 @@ def process_file_message(file_process_message):
         raise
 
     else:
-        return communicate_s3_patienteco_ruleengine(unicode_free_dictionary, new_file_path, key, downloaded_file_path)
+        return communicate_s3_patienteco_ruleengine(unicode_free_dictionary, new_file_path, key)
 
 
-def communicate_s3_patienteco_ruleengine(file_process_dictionary, new_file_path, key, downloaded_file_path):
+def communicate_s3_patienteco_ruleengine(file_process_dictionary, new_file_path, key):
 
     new_file_name = secure_filename(os.path.basename(new_file_path))
     new_file_s3_path = file_process_dictionary['ion_reporter_id'] + "/" + file_process_dictionary['molecular_id'] + \
                         "/" + file_process_dictionary['analysis_id'] + "/" + new_file_name
     try:
-        S3Accessor().upload(downloaded_file_path, new_file_s3_path)
+        S3Accessor().upload(new_file_path, new_file_s3_path)
     except Exception as e:
         raise Exception("Failed to upload to S3 after processing file for " + str(new_file_s3_path) + ", because: "
                         + e.message)
@@ -209,7 +209,7 @@ def post_tsv_info(dictionary, tsv_file_name):
 
     logger.info("Posting tsv file name to Patient Ecosystem for " + dictionary['molecular_id'])
     patient_url = (__builtin__.environment_config[__builtin__.environment]['patient_endpoint']
-           + __builtin__.environment_config[__builtin__.environment]['patient_post_path'])
+           + __builtin__.environment_config[__builtin__.environment]['patient_post_path']+'test')
     headers = {'Content-type': 'application/json'}
     content = {'tsv_file_name': tsv_file_name,
                'ion_reporter_id': dictionary['ion_reporter_id'],
