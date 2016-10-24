@@ -134,16 +134,7 @@ def process_ir_file(file_process_message):
         updated_file_process_message = process_file_message(new_file_process_message)
     except Exception as ex:
         process_ir_file.apply_async(args=[new_file_process_message], countdown=requeue_countdown)
-        try:
-            stack = inspect.stack()
-            fpm = ast.literal_eval(json.dumps(new_file_process_message))
-            PedMatchBot().send_message(channel_id=slack_channel_id,
-                                       message=("*IR ECOSYSTEM:::* Error processing: " + "*" + str(fpm) +
-                                                "*, will attempt again in *3 hours.*" + "\n" +
-                                                TracebackError().generate_traceback_message(stack)))
-            logger.error("Cannot process file because: " + ex.message + ", will attempt again in 3 hours.")
-        except Exception as e:
-            logger.error("Ped Match Bot Failure.: " + e.message)
+        PedMatchBot.return_stack(new_file_process_message, ex)
 
     else:
         if new_file_process_message['molecular_id'].startswith('SC_'):
