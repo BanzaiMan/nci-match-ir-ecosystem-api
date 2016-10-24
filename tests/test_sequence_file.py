@@ -107,9 +107,11 @@ class TestSequenceFile(unittest.TestCase):
               'analysis_id': 'SC_YQ111_SC_YQ111_k123_v1'})
          )
     @unpack
+    @patch('common.ped_match_bot.PedMatchBot.send_message')
     @patch('resources.generic_file.S3Accessor')
     def test_get_file_url_exception(self, molecular_id, file_format, nucleic_acid_type, item,
-                                    mock_s3_accessor, mock_sc_accessor):
+                                    mock_s3_accessor, mock_sc_accessor, mock_log_abort):
+        mock_log_abort.return_value = True
         s3_instance = mock_s3_accessor.return_value
         s3_instance.get_download_url.side_effect = Exception('Testing get_download_url exception')
         instance = mock_sc_accessor.return_value
@@ -122,7 +124,7 @@ class TestSequenceFile(unittest.TestCase):
                 '/api/v1/sample_controls/sequence_files/' + molecular_id + '/' + file_format + '/' + nucleic_acid_type)
 
         assert return_value.status_code == 500
-        assert "Testing get_download_url exception" in return_value.data
+        assert "get_item failed" in return_value.data
 
     @data(
             ('SC_YQ111', 'tsv', None,

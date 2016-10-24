@@ -40,9 +40,11 @@ class TestIonReporterRecord(unittest.TestCase):
         else:
             assert return_value.data.find("message")
 
+    @patch('common.ped_match_bot.PedMatchBot.send_message')
     @patch('resources.ion_reporter_record.IonReporterAccessor')
-    def test_get_exception(self, mock_class):
+    def test_get_exception(self, mock_class, mock_log_abort):
         instance = mock_class.return_value
+        mock_log_abort.return_value = True
         instance.get_item.side_effect = Exception('testing throwing exception')
         return_value = self.app.get('/api/v1/ion_reporters/IR_WO3IA')
         assert return_value.status_code == 500
@@ -74,10 +76,13 @@ class TestIonReporterRecord(unittest.TestCase):
         ("No ABCMeta with id: IR_WO3IA found.", False, 404)
     )
     @unpack
+    @patch('common.ped_match_bot.PedMatchBot.send_message')
     @patch('resources.record.Record.record_exist')
     @patch('resources.ion_reporter_record.CeleryTaskAccessor')
-    def test_delete_exception(self, expected_results, record_exist_value, stat_code,  mock_class, mock_method):
+    def test_delete_exception(self, expected_results, record_exist_value, stat_code,  mock_class, mock_method,
+                              mock_log_abort):
         mock_method.return_value = record_exist_value
+        mock_log_abort.return_value = True
         instance = mock_class.return_value
         instance.delete_ion_reporter_record.side_effect = Exception('Celery Task Accessor blew up!')
         return_value = self.app.delete('/api/v1/ion_reporters/IR_WO3IA')
@@ -123,11 +128,14 @@ class TestIonReporterRecord(unittest.TestCase):
         ("No ABCMeta with id: IR_WO3IA found.", False, 404)
     )
     @unpack
+    @patch('common.ped_match_bot.PedMatchBot.send_message')
     @patch('resources.record.Record.record_exist')
     @patch('resources.ion_reporter_record.CeleryTaskAccessor')
-    def test_put_exception(self, expected_results, record_exist_value, stat_code, mock_class, mock_method):
+    def test_put_exception(self, expected_results, record_exist_value, stat_code, mock_class, mock_method,
+                           mock_log_abort):
         mock_method.return_value = record_exist_value
         instance = mock_class.return_value
+        mock_log_abort.return_value = True
         instance.update_ion_reporter_record.side_effect = Exception('Celery Failed')
         return_value = self.app.put('/api/v1/ion_reporters/IR_WO3IA',
                                     data='{"status":"Lost contact! Last heartbeat was sent 11355 minutes ago"}',

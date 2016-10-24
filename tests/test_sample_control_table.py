@@ -31,8 +31,10 @@ class TestSampleControlTable(unittest.TestCase):
         else:
             assert return_value.data.startswith('{"message": "No records meet the query parameters')
 
+    @patch('common.ped_match_bot.PedMatchBot.send_message')
     @patch('resources.sample_control_table.SampleControlAccessor')
-    def test_get_exception(self, mock_class):
+    def test_get_exception(self, mock_class, mock_log_abort):
+        mock_log_abort.return_value = True
         instance = mock_class.return_value
         instance.scan.side_effect = Exception('testing throwing exception')
         return_value = self.app.get('/api/v1/sample_controls')
@@ -51,8 +53,10 @@ class TestSampleControlTable(unittest.TestCase):
         return_value = self.app.delete('/api/v1/sample_controls' + parameters)
         assert expected_results in return_value.data
 
+    @patch('common.ped_match_bot.PedMatchBot.send_message')
     @patch('resources.sample_control_table.CeleryTaskAccessor')
-    def test_delete_exception(self, mock_class):
+    def test_delete_exception(self, mock_class, mock_log_abort):
+        mock_log_abort.return_value = True
         instance = mock_class.return_value
         instance.delete_items.side_effect = Exception('testing throwing exception')
         return_value = self.app.delete('/api/v1/sample_controls?site=mocha')
@@ -76,8 +80,10 @@ class TestSampleControlTable(unittest.TestCase):
         return_value = self.app.post('/api/v1/sample_controls' + parameters)
         assert expected_results in return_value.data
 
+    @patch('common.ped_match_bot.PedMatchBot.send_message')
     @patch('resources.sample_control_table.SampleControlAccessor')
-    def test_post_exception(self, mock_class):
+    def test_post_exception(self, mock_class, mock_log_abort):
+        mock_log_abort.return_value = True
         instance = mock_class.return_value
         instance.put_item.side_effect = Exception('Sample Control creation failed')
         return_value = self.app.post('/api/v1/sample_controls?site=mocha&control_type=no_template')

@@ -150,21 +150,23 @@ class TestGenericFile(TestCase):
          , 500),
     )
     @unpack
+    @patch('common.ped_match_bot.PedMatchBot.send_message')
     @patch('resources.generic_file.S3Accessor')
     def test_get_file_url_exception_1(self, molecular_id, file_type, return_message, sc_item, s3_item, returned_stat_code,
-                          mock_s3_accessor, mock_sc_accessor):
+                          mock_s3_accessor, mock_sc_accessor, mock_log_abort):
         s3_instance = mock_s3_accessor.return_value
         s3_instance.get_download_url.return_value = s3_item
-
+        mock_log_abort.return_value = True
         sc_instance = mock_sc_accessor.return_value
         sc_instance.get_item.side_effect = Exception('Error')
+
 
         return_value = self.app.get('/api/v1/sample_controls/files/' + molecular_id + '/' + file_type)
         print return_value.status_code
         print return_message
         print str(json.loads(return_value.data))
         assert return_value.status_code == returned_stat_code
-        assert 'Error' in return_value.data
+        assert 'get_item failed' in return_value.data
 
     @data(
         ('SC_SA1CB', 'qc_name', "u's3_download_file_url': u'https://pedmatch-dev.s3.amazonaws.com/IR_WAO85/"

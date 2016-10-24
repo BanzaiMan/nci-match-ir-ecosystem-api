@@ -31,8 +31,10 @@ class TestIonReporterTable(unittest.TestCase):
         else:
             assert return_value.data.startswith('{"message": "No records meet the query parameters')
 
+    @patch('common.ped_match_bot.PedMatchBot.send_message')
     @patch('resources.ion_reporter_table.IonReporterAccessor')
-    def test_get_exception(self, mock_class):
+    def test_get_exception(self, mock_class, mock_log_abort):
+        mock_log_abort.return_value = True
         instance = mock_class.return_value
         instance.scan.side_effect = Exception('testing throwing exception')
         return_value = self.app.get('/api/v1/ion_reporters')
@@ -49,8 +51,10 @@ class TestIonReporterTable(unittest.TestCase):
         return_value = self.app.delete('/api/v1/ion_reporters' + parameters)
         assert expected_results in return_value.data
 
+    @patch('common.ped_match_bot.PedMatchBot.send_message')
     @patch('resources.ion_reporter_table.CeleryTaskAccessor')
-    def test_delete_exception(self, mock_class):
+    def test_delete_exception(self, mock_class, mock_log_abort):
+        mock_log_abort.return_value = True
         instance = mock_class.return_value
         instance.delete_ir_items.side_effect = Exception('No items with query parameters')
         return_value = self.app.delete('/api/v1/ion_reporters?site=mocha')
@@ -72,8 +76,10 @@ class TestIonReporterTable(unittest.TestCase):
         print return_value.data
         assert expected_results in return_value.data
 
+    @patch('common.ped_match_bot.PedMatchBot.send_message')
     @patch('resources.ion_reporter_table.IonReporterAccessor')
-    def test_post_exception(self, mock_class):
+    def test_post_exception(self, mock_class, mock_log_abort):
+        mock_log_abort.return_value = True
         instance = mock_class.return_value
         instance.put_item.side_effect = Exception('Ion reporter creation failed')
         return_value = self.app.post('/api/v1/ion_reporters?site=mocha')

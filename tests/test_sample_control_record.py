@@ -35,8 +35,10 @@ class TestSampleControlRecord(unittest.TestCase):
             print return_value.data
             assert return_value.data.find("message")
 
+    @patch('common.ped_match_bot.PedMatchBot.send_message')
     @patch('resources.sample_control_record.SampleControlAccessor')
-    def test_get_exception(self, mock_sc_record_class):
+    def test_get_exception(self, mock_sc_record_class, mock_log_abort):
+        mock_log_abort.return_value = True
         instance = mock_sc_record_class.return_value
         instance.get_item.side_effect = Exception('Testing get_item exception')
         return_value = self.app.get('/api/v1/sample_controls/SC_5AMCC')
@@ -62,10 +64,12 @@ class TestSampleControlRecord(unittest.TestCase):
         ('SC_5AMCC', 'No ABCMeta with id', False, 404)
     )
     @unpack
+    @patch('common.ped_match_bot.PedMatchBot.send_message')
     @patch('resources.record.Record.record_exist')
     @patch('resources.sample_control_record.CeleryTaskAccessor')
     def test_delete_exception(self, molecular_id, expected_message, record_exist_return, status_code, mock_celery_class,
-                              mock_record_exist_method):
+                              mock_record_exist_method, mock_log_abort):
+        mock_log_abort.return_value = True
         mock_record_exist_method.return_value = record_exist_return
         instance = mock_celery_class.return_value
         instance.delete_sample_control_record.side_effect = Exception(expected_message)
@@ -103,11 +107,13 @@ class TestSampleControlRecord(unittest.TestCase):
           'molecular_id': 'SC_5AMCC', 'analysis_id': 'SC_5AMCC_SC_5AMCC_k123_v1'}, False, 404, 'No ABCMeta with id:')
     )
     @unpack
+    @patch('common.ped_match_bot.PedMatchBot.send_message')
     @patch('resources.record.Record.record_exist')
     @patch('resources.sample_control_record.CeleryTaskAccessor')
     def test_put_exception(self, molecular_id, update_dictionary, record_exist_return, status_code, expected_message,
-                           mock_celery_class, mock_record_exist_method):
+                           mock_celery_class, mock_record_exist_method, mock_log_abort):
         mock_record_exist_method.return_value = record_exist_return
+        mock_log_abort.return_value = True
         instance = mock_celery_class.return_value
         instance.update_sample_control_record.side_effect = Exception(expected_message)
         return_value = self.app.put('/api/v1/sample_controls/' + molecular_id,
