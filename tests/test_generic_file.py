@@ -184,11 +184,14 @@ class TestGenericFile(TestCase):
         # ('SC_SA1C', 'qc', "SC_SA1C was not found.", [], '', 404),
     )
     @unpack
+    @patch('common.ped_match_bot.PedMatchBot.send_message')
     @patch('resources.generic_file.S3Accessor')
     def test_get_file_url_exception_2(self, molecular_id, file_type, return_message, sc_item, s3_item, returned_stat_code,
-                                    mock_s3_accessor, mock_sc_accessor):
+                                    mock_s3_accessor, mock_sc_accessor, mock_log_abort):
         s3_instance = mock_s3_accessor.return_value
         s3_instance.get_download_url.side_effect = Exception('Error')
+
+        mock_log_abort.return_value = True
 
         sc_instance = mock_sc_accessor.return_value
         sc_instance.get_item.return_value = sc_item
@@ -198,5 +201,5 @@ class TestGenericFile(TestCase):
         print return_message
         print str(json.loads(return_value.data))
         assert return_value.status_code == returned_stat_code
-        assert 'Error' in return_value.data
+        assert 'get_item failed' in return_value.data
     #
