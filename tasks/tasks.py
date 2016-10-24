@@ -65,7 +65,7 @@ def put(put_message):
     except Exception as e:
         put.apply_async(args=[put_message], countdown=requeue_countdown)
         stack = inspect.stack()
-        PedMatchBot.return_stack(put_message, e, stack)
+        PedMatchBot.return_stack(put_message, e.message, stack)
 
 
 # Use for just updating the data in a record in the table
@@ -77,7 +77,7 @@ def update(update_message):
     except Exception as e:
         update.apply_async(args=[update_message], countdown=requeue_countdown)
         stack = inspect.stack()
-        PedMatchBot.return_stack(update_message, e, stack)
+        PedMatchBot.return_stack(update_message, e.message, stack)
 
 
 @app.task
@@ -88,7 +88,7 @@ def update_ir(update_message):
     except Exception as e:
         update_ir.apply_async(args=[update_message], countdown=requeue_countdown)
         stack = inspect.stack()
-        PedMatchBot.return_stack(update_message, e, stack)
+        PedMatchBot.return_stack(update_message, e.message, stack)
 
 
 # this is a special update in that it updates the database, process files, and stores them in s3. So think of this
@@ -110,7 +110,7 @@ def process_ir_file(file_process_message):
     except Exception as e:
         process_ir_file.apply_async(args=[new_file_process_message], countdown=requeue_countdown)
         stack = inspect.stack()
-        PedMatchBot.return_stack(new_file_process_message, e, stack)
+        PedMatchBot.return_stack(new_file_process_message, e.message, stack)
 
     else:
         if new_file_process_message['molecular_id'].startswith('SC_'):
@@ -227,7 +227,8 @@ def post_tsv_info(dictionary, tsv_file_name):
         else:
             process_ir_file.apply_async(args=[dictionary], countdown=requeue_countdown)
             stack = inspect.stack()
-            PedMatchBot.return_stack(dictionary, e, stack)
+            error_message = "Post TSV to patient ecosystem failed."
+            PedMatchBot.return_stack(dictionary, error_message, stack)
 
 
 def process_rule_by_tsv(dictionary, tsv_file_name):
@@ -268,7 +269,7 @@ def delete(molecular_id):
     except Exception as e:
         delete.apply_async(args=[molecular_id], countdown=requeue_countdown)
         stack = inspect.stack()
-        PedMatchBot.return_stack(molecular_id, e, stack)
+        PedMatchBot.return_stack(molecular_id, e.message, stack)
 
 
 @app.task
@@ -279,7 +280,7 @@ def delete_ir(ion_reporter_id):
     except Exception as e:
         delete_ir.apply_async(args=[ion_reporter_id], countdown=requeue_countdown)
         stack = inspect.stack()
-        PedMatchBot.return_stack(ion_reporter_id, e, stack)
+        PedMatchBot.return_stack(ion_reporter_id, e.message, stack)
 
 @app.task
 def batch_delete(query_parameters):
@@ -289,7 +290,7 @@ def batch_delete(query_parameters):
     except Exception as e:
         batch_delete.apply_async(args=[query_parameters], countdown=requeue_countdown)
         stack = inspect.stack()
-        PedMatchBot.return_stack(query_parameters, e, stack)
+        PedMatchBot.return_stack(query_parameters, e.message, stack)
 
 
 @app.task
@@ -300,4 +301,4 @@ def batch_delete_ir(query_parameters):
     except Exception as e:
         batch_delete_ir.apply_async(args=[query_parameters], countdown=requeue_countdown)
         stack = inspect.stack()
-        PedMatchBot.return_stack(query_parameters, e, stack)
+        PedMatchBot.return_stack(query_parameters, e.message, stack)

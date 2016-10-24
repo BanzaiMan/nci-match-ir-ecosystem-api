@@ -34,7 +34,7 @@ class PedMatchBot(object):
 
 
     @staticmethod
-    def return_stack(message, e, stack):
+    def return_stack(message, error_message, stack):
         slack_channel_id = (__builtin__.environment_config[__builtin__.environment]['slack_channel_id'])
         try:
             uni_free_message = ast.literal_eval(json.dumps(message))
@@ -42,7 +42,7 @@ class PedMatchBot(object):
                                        message=("*IR ECOSYSTEM:::* Error processing: " + "*" + str(uni_free_message) +
                                                 "*, will attempt again in *3 hours.*" + "\n" +
                                                 PedMatchBot.generate_traceback_message(stack)))
-            logger.error("Cannot process file because: " + e.message + ", will attempt again in 3 hours.")
+            logger.error("Cannot process file because: " + error_message + ", will attempt again in 3 hours.")
         except Exception as e:
             logger.error("Ped Match Bot Failure.: " + e.message)
 
