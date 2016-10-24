@@ -19,7 +19,6 @@ from accessors.sample_control_accessor import SampleControlAccessor
 from common.environment_helper import EnvironmentHelper
 from common.ped_match_bot import PedMatchBot
 from common.sequence_file_processor import SequenceFileProcessor
-from common.traceback_message import TracebackError
 
 # Logging functionality
 fileConfig(os.path.abspath("config/logging_config.ini"))
@@ -55,26 +54,18 @@ slack_channel_id = (__builtin__.environment_config[__builtin__.environment]['sla
 requeue_countdown = (__builtin__.environment_config[__builtin__.environment]['requeue_countdown'])
 
 
+
 # I don't think we will use this for sample control as our sample control creation of records are not done through
 # the queueing system but directly on the database. However, I'll leave this for now.
 @app.task
 def put(put_message):
     logger.info("Creating item: " + str(put_message))
-    # TODO: A lot of redudant code in the next few methods so make dry by making all this error handling into 1 function
     try:
         SampleControlAccessor().put_item(put_message)
     except Exception as e:
         put.apply_async(args=[put_message], countdown=requeue_countdown)
-        try:
-            stack = inspect.stack()
-            uni_free = ast.literal_eval(json.dumps(put_message))
-            PedMatchBot().send_message(channel_id=slack_channel_id,
-                                       message=("*IR ECOSYSTEM:::* Error putting: " + "*" + str(uni_free) +
-                                                "*, because *" + e.message + "*will attempt again in *3 hours.*"
-                                                + "\n" + TracebackError().generate_traceback_message(stack)))
-            logger.error("Cannot put record because: " + e.message + ", will attempt again in 3 hours.")
-        except Exception as e:
-            logger.error("Ped Match Bot Failure.: " + e.message)
+        stack = inspect.stack()
+        PedMatchBot.return_stack(put_message, e, stack)
 
 
 # Use for just updating the data in a record in the table
@@ -85,16 +76,8 @@ def update(update_message):
         SampleControlAccessor().update(update_message)
     except Exception as e:
         update.apply_async(args=[update_message], countdown=requeue_countdown)
-        try:
-            stack = inspect.stack()
-            uni_free = ast.literal_eval(json.dumps(update_message))
-            PedMatchBot().send_message(channel_id=slack_channel_id,
-                                       message=("*IR ECOSYSTEM:::* Error updating: " + "*" + str(uni_free) +
-                                                "*, because *" + e.message + "*will attempt again in *3 hours.*" + "\n" +
-                                                TracebackError().generate_traceback_message(stack)))
-            logger.error("Cannot update record because: " + e.message + ", will attempt again in 3 hours.")
-        except Exception as e:
-            logger.error("Ped Match Bot Failure.: " + e.message)
+        stack = inspect.stack()
+        PedMatchBot.return_stack(update_message, e, stack)
 
 
 @app.task
@@ -104,16 +87,8 @@ def update_ir(update_message):
         IonReporterAccessor().update(update_message)
     except Exception as e:
         update_ir.apply_async(args=[update_message], countdown=requeue_countdown)
-        try:
-            stack = inspect.stack()
-            uni_free = ast.literal_eval(json.dumps(update_message))
-            PedMatchBot().send_message(channel_id=slack_channel_id,
-                                       message=("*IR ECOSYSTEM:::* Error updating: " + "*" + str(uni_free) +
-                                                "*, because *" + e.message + "*will attempt again in *3 hours.*" + "\n" +
-                                                TracebackError().generate_traceback_message(stack)))
-            logger.error("Cannot update record because: " + e.message + ", will attempt again in 3 hours.")
-        except Exception as e:
-            logger.error("Ped Match Bot Failure.: " + e.message)
+        stack = inspect.stack()
+        PedMatchBot.return_stack(update_message, e, stack)
 
 
 # this is a special update in that it updates the database, process files, and stores them in s3. So think of this
@@ -132,9 +107,10 @@ def process_ir_file(file_process_message):
     try:
         # process vcf, dna_bam, or cdna_bam file
         updated_file_process_message = process_file_message(new_file_process_message)
-    except Exception as ex:
+    except Exception as e:
         process_ir_file.apply_async(args=[new_file_process_message], countdown=requeue_countdown)
-        PedMatchBot.return_stack(new_file_process_message, ex)
+        stack = inspect.stack()
+        PedMatchBot.return_stack(new_file_process_message, e, stack)
 
     else:
         if new_file_process_message['molecular_id'].startswith('SC_'):
@@ -250,18 +226,8 @@ def post_tsv_info(dictionary, tsv_file_name):
             logger.info("Successfully post tsv file name to Patient Ecosystem for " + dictionary['molecular_id'])
         else:
             process_ir_file.apply_async(args=[dictionary], countdown=requeue_countdown)
-            #process_ir_file.apply_async(args=[dictionary], countdown=2)
-            try:
-                stack = inspect.stack()
-                PedMatchBot().send_message(channel_id=slack_channel_id,
-                                           message=("*IR ECOSYSTEM:::* Error on posting tsv info to patient ecosystem: "
-                                                    + "*" + str(dictionary) + "*, will attempt again in *3 hours.*" +
-                                                    "\n" + TracebackError().generate_traceback_message(stack)))
-                logger.error("Failed to post tsv file name to Patient Ecosystem for " + dictionary['molecular_id'] +
-                             ", because: " + r.text + ", will attempt again in 3 hours.")
-            except Exception as e:
-                logger.error("Ped Match Bot Failure in sending re-post tsv info message: " + e.message)
-
+            stack = inspect.stack()
+            PedMatchBot.return_stack(dictionary, e, stack)
 
 
 def process_rule_by_tsv(dictionary, tsv_file_name):
@@ -301,16 +267,8 @@ def delete(molecular_id):
         SampleControlAccessor().delete_item(molecular_id)
     except Exception as e:
         delete.apply_async(args=[molecular_id], countdown=requeue_countdown)
-        try:
-            stack = inspect.stack()
-            uni_free = ast.literal_eval(json.dumps(molecular_id))
-            PedMatchBot().send_message(channel_id=slack_channel_id,
-                                       message=("*IR ECOSYSTEM:::* Error deleting: " + "*" + str(uni_free) +
-                                                "*, because *"  + e.message + "*will attempt again in *3 hours.*" + "\n" +
-                                                TracebackError().generate_traceback_message(stack)))
-            logger.error("Cannot delete record because: " + e.message + ", will attempt again in 3 hours.")
-        except Exception as e:
-            logger.error("Ped Match Bot Failure.: " + e.message)
+        stack = inspect.stack()
+        PedMatchBot.return_stack(molecular_id, e, stack)
 
 
 @app.task
@@ -320,16 +278,8 @@ def delete_ir(ion_reporter_id):
         IonReporterAccessor().delete_item(ion_reporter_id)
     except Exception as e:
         delete_ir.apply_async(args=[ion_reporter_id], countdown=requeue_countdown)
-        try:
-            stack = inspect.stack()
-            uni_free = ast.literal_eval(json.dumps(ion_reporter_id))
-            PedMatchBot().send_message(channel_id=slack_channel_id,
-                                       message=("*IR ECOSYSTEM:::* Error deleting: " + "*" + str(uni_free) +
-                                                "*, because *"  + e.message + "*will attempt again in *3 hours.*" + "\n" +
-                                                TracebackError().generate_traceback_message(stack)))
-            logger.error("Cannot Delete file because: " + e.message + ", will attempt again in 3 hours.")
-        except Exception as e:
-            logger.error("Ped Match Bot Failure.: " + e.message)
+        stack = inspect.stack()
+        PedMatchBot.return_stack(ion_reporter_id, e, stack)
 
 @app.task
 def batch_delete(query_parameters):
@@ -338,16 +288,8 @@ def batch_delete(query_parameters):
         SampleControlAccessor().batch_delete(query_parameters)
     except Exception as e:
         batch_delete.apply_async(args=[query_parameters], countdown=requeue_countdown)
-        try:
-            stack = inspect.stack()
-            uni_free_query_params = ast.literal_eval(json.dumps(query_parameters))
-            PedMatchBot().send_message(channel_id=slack_channel_id,
-                                       message=("*IR ECOSYSTEM:::* Error deleting sample control records matching query: "
-                                                + "*" + str(uni_free_query_params) + "*, because *"  + e.message +
-                                                "*will attempt again in *3 hours.*" + "\n" + TracebackError().generate_traceback_message(stack)))
-            logger.error("Cannot delete records because: " + e.message + ", will attempt again in 3 hours.")
-        except Exception as e:
-            logger.error("Ped Match Bot Failure.: " + e.message)
+        stack = inspect.stack()
+        PedMatchBot.return_stack(query_parameters, e, stack)
 
 
 @app.task
@@ -357,13 +299,5 @@ def batch_delete_ir(query_parameters):
         IonReporterAccessor().batch_delete(query_parameters)
     except Exception as e:
         batch_delete_ir.apply_async(args=[query_parameters], countdown=requeue_countdown)
-        try:
-            stack = inspect.stack()
-            uni_free_query_params = ast.literal_eval(json.dumps(query_parameters))
-            PedMatchBot().send_message(channel_id=slack_channel_id,
-                                       message=("*IR ECOSYSTEM:::* Error deleting ion reporter records matching query: "
-                                                + "*" + str(uni_free_query_params) + "*, because *"  + e.message +
-                                                "*will attempt again in *3 hours.*" + "\n" + TracebackError().generate_traceback_message(stack)))
-            logger.error("Cannot delete records because: " + e.message + ", will attempt again in 3 hours.")
-        except Exception as e:
-            logger.error("Ped Match Bot Failure.: " + e.message)
+        stack = inspect.stack()
+        PedMatchBot.return_stack(query_parameters, e, stack)

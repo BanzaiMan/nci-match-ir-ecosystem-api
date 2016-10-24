@@ -1,11 +1,8 @@
 import __builtin__
 import inspect
 
-
 from flask_restful import abort
-
 from common.ped_match_bot import PedMatchBot
-from common.traceback_message import  TracebackError
 
 class AbortLogger(object):
 
@@ -24,7 +21,7 @@ class AbortLogger(object):
                 PedMatchBot().send_message(channel_id=slack_channel_id,
                                            message=(
                                           "*IR ECOSYSTEM:::* Error code: *" + str(error_code) + "*" + "\n" + "Error message: *"  + message + "*" +
-                                          "\n" + TracebackError().generate_traceback_message(stack)))
+                                          "\n" + PedMatchBot.generate_traceback_message(stack)))
 
 
         abort(error_code, message=message)

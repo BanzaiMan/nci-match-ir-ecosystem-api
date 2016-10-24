@@ -1,12 +1,14 @@
 import __builtin__
 import os
 import inspect
+import datetime
+import time
 import ast
 import json
 import logging
+import traceback
 from slackclient import SlackClient
 from logging.config import fileConfig
-from common.traceback_message import TracebackError
 from common.environment_helper import EnvironmentHelper
 
 slack_client = SlackClient(os.environ.get('SLACK_TOKEN'))
@@ -32,15 +34,26 @@ class PedMatchBot(object):
 
 
     @staticmethod
-    def return_stack(message, ex):
+    def return_stack(message, e, stack):
         slack_channel_id = (__builtin__.environment_config[__builtin__.environment]['slack_channel_id'])
         try:
-            stack = inspect.stack()
             uni_free_message = ast.literal_eval(json.dumps(message))
             PedMatchBot().send_message(channel_id=slack_channel_id,
                                        message=("*IR ECOSYSTEM:::* Error processing: " + "*" + str(uni_free_message) +
                                                 "*, will attempt again in *3 hours.*" + "\n" +
-                                                TracebackError().generate_traceback_message(stack)))
-            logger.error("Cannot process file because: " + ex.message + ", will attempt again in 3 hours.")
+                                                PedMatchBot.generate_traceback_message(stack)))
+            logger.error("Cannot process file because: " + e.message + ", will attempt again in 3 hours.")
         except Exception as e:
             logger.error("Ped Match Bot Failure.: " + e.message)
+
+
+    @staticmethod
+    def generate_traceback_message(stack):
+        calling_function = inspect.stack()[1][3]
+        error_traceback = traceback.format_exc()
+        class_called = str(stack[1][0].f_locals["self"].__class__)
+        ts = time.time()
+        time_stamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+        return "  The class, *" + str(class_called) + "* and method *" + calling_function \
+               + "* were called at *" + time_stamp + "*" + "\n" + error_traceback
+
