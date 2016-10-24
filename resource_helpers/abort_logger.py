@@ -10,7 +10,7 @@ class AbortLogger(object):
     @staticmethod
     def log_and_abort(error_code, logger_level_function, message):
         slack_channel_id = (__builtin__.environment_config[__builtin__.environment]['slack_channel_id'])
-        queue_name = os.environ.get('IR_QUEUE_NAME')
+        # queue_name = os.environ.get('IR_QUEUE_NAME')
         try:
             calling_function = inspect.stack()[1][3]
         except Exception as e:
@@ -22,7 +22,7 @@ class AbortLogger(object):
                 PedMatchBot().send_message(channel_id=slack_channel_id,
                                            message=(
                                           "*IR ECOSYSTEM:::* Error code: *" + str(error_code) + "*" + "\n" +
-                                          "Queue Name: " + "*" + queue_name + "*" + "\n" +
+                                          # "Queue Name: " + "*" + queue_name + "*" + "\n" +
                                           "Error Message: *"  + message + "*" +
                                           "\n" + str(PedMatchBot.generate_traceback_message(stack))))
 
