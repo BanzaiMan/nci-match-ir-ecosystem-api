@@ -10,7 +10,7 @@ class AbortLogger(object):
     @staticmethod
     def log_and_abort(error_code, logger_level_function, message):
         slack_channel_id = (__builtin__.environment_config[__builtin__.environment]['slack_channel_id'])
-        if os.environ.get('IR_QUEUE_NAME') == True:
+        if os.environ.get('IR_QUEUE_NAME'):
             queue_name = os.environ.get('IR_QUEUE_NAME')
         else:
             queue_name = (__builtin__.environment_config[__builtin__.environment]['ir_queue_name'])
