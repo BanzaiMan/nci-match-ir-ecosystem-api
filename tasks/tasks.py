@@ -255,10 +255,24 @@ def process_rule_by_tsv(dictionary, tsv_file_name):
         # to get rid of unicode in rule response
         var_dict = json.loads(json.dumps(yaml.safe_load(rule_response.text)))
         for key, value in var_dict.iteritems():
+            value = convert(value)
+            # print key
+            # print value
             dictionary.update({key: value})
 
         dictionary.update({'date_variant_received': str(datetime.datetime.utcnow())})
     return dictionary
+
+
+def convert(input):
+    if isinstance(input, dict):
+        return {convert(key): convert(value) for key, value in input.iteritems()}
+    elif isinstance(input, list):
+        return [convert(element) for element in input]
+    elif isinstance(input, unicode):
+        return input.encode('utf-8')
+    else:
+        return input
 
 
 @app.task
