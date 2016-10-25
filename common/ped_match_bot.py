@@ -12,12 +12,10 @@ from logging.config import fileConfig
 from common.environment_helper import EnvironmentHelper
 
 slack_client = SlackClient(os.environ.get('SLACK_TOKEN'))
-
-
-
 fileConfig(os.path.abspath("config/logging_config.ini"))
 logger = logging.getLogger(__name__)
 EnvironmentHelper.set_environment(logger)
+
 
 class PedMatchBot(object):
 
@@ -34,7 +32,6 @@ class PedMatchBot(object):
             icon_emoji=icon_emoji
         )
 
-
     @staticmethod
     def return_stack(message, error_message, stack):
         slack_channel_id = (__builtin__.environment_config[__builtin__.environment]['slack_channel_id'])
@@ -43,8 +40,6 @@ class PedMatchBot(object):
             queue_name = os.environ.get('IR_QUEUE_NAME')
         else:
             queue_name = (__builtin__.environment_config[__builtin__.environment]['ir_queue_name'])
-
-
         try:
             uni_free_message = ast.literal_eval(json.dumps(message))
             PedMatchBot().send_message(channel_id=slack_channel_id,
@@ -55,7 +50,6 @@ class PedMatchBot(object):
             logger.error("Cannot process file because: " + error_message + ", will attempt again in 3 hours.")
         except Exception as e:
             logger.error("Ped Match Bot Failure.: " + e.message)
-
 
     @staticmethod
     def generate_traceback_message(stack):

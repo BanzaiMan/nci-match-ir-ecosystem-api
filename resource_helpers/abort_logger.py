@@ -5,6 +5,7 @@ import os
 from flask_restful import abort
 from common.ped_match_bot import PedMatchBot
 
+
 class AbortLogger(object):
 
     @staticmethod
@@ -24,11 +25,12 @@ class AbortLogger(object):
                 stack = inspect.stack()
                 PedMatchBot().send_message(channel_id=slack_channel_id,
                                            message=(
-                                          "*IR ECOSYSTEM:::* Error code: *" + str(error_code) + "*" + "\n" +
-                                          "Queue Name: " + "*" + queue_name + "*" + "\n" +
-                                          "Error Message: *"  + message + "*" +
-                                          "\n" + str(PedMatchBot.generate_traceback_message(stack))))
-
+                                               "*IR ECOSYSTEM:::* Error code: *" + str(error_code) + "*" + "\n" +
+                                               "Queue Name: " + "*" + queue_name + "*" + "\n" +
+                                               "Error Message: *" + message + "*" + "\n" +
+                                               str(PedMatchBot.generate_traceback_message(stack))
+                                           )
+                                           )
 
         abort(error_code, message=message)
 
