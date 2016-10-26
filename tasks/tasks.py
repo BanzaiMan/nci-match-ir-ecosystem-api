@@ -233,6 +233,8 @@ def post_tsv_info(dictionary, tsv_file_name):
 
 def process_rule_by_tsv(dictionary, tsv_file_name):
 
+    logger.info("Reading rule engine for " + dictionary['molecular_id'])
+
     item = SampleControlAccessor().get_item({'molecular_id': dictionary['molecular_id']})
     if len(item) > 0:
         control_type = item['control_type']
