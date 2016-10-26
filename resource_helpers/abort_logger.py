@@ -11,6 +11,8 @@ class AbortLogger(object):
     @staticmethod
     def log_and_abort(error_code, logger_level_function, message):
         slack_channel_id = (__builtin__.environment_config[__builtin__.environment]['slack_channel_id'])
+        # TODO: Waleed once you have read the queue name whne the application starts you don't need to continue to read it. Just set a variable once and use it from then on.
+        # this will keep you from having redudant code.
         if os.environ.get('IR_QUEUE_NAME'):
             queue_name = os.environ.get('IR_QUEUE_NAME')
         else:

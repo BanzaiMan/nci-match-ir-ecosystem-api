@@ -36,6 +36,7 @@ class PedMatchBot(object):
     def return_stack(message, error_message, stack):
         slack_channel_id = (__builtin__.environment_config[__builtin__.environment]['slack_channel_id'])
 
+        # TODO: This code is redudant
         if os.environ.get('IR_QUEUE_NAME'):
             queue_name = os.environ.get('IR_QUEUE_NAME')
         else:

@@ -61,12 +61,8 @@ class SampleControlTable(Table):
         if DictionaryHelper.keys_have_value(args, ['control_type', 'site']):
             self.logger.debug("Sample Control creation failed, because request molecular_id was passed in")
 
-            # TODO: This should not be here. The only thing post does is create a new sample control
-            # if user pass keys other than 'site' and 'control_type' in arguments, will ignore
-            new_item_dictionary = {}
-            new_item_dictionary.update({'site': args['site']})
-            new_item_dictionary.update({'control_type': args['control_type']})
-
+            # Yes this will store whatever is passed in with args when created..that is what we want.
+            new_item_dictionary = args.copy()
             new_item_dictionary.update({'molecular_id': self.get_unique_key(),
                                         'date_molecular_id_created': str(datetime.datetime.utcnow())})
 
