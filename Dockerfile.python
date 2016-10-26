@@ -14,6 +14,9 @@ RUN pip install -r requirements.txt
 # Add the app code 
 COPY . .
 
+# Install NewRelic APM
+RUN newrelic-admin generate-config c97423ed4d578895a3d214445863327c6db3d968 newrelic.ini
+
 # Install oncomine-vcf-converter
 RUN cd $INSTALL_PATH/oncomine-vcf-converter-1.4.3 && python setup.py install && which convert_vcf.py
 
@@ -22,4 +25,4 @@ ADD https://raw.githubusercontent.com/CBIIT/match-docker/master/docker-compose-e
 RUN chmod 755 docker-compose-env.sh && ls -alt $INSTALL_PATH
 
 # Default command 
-CMD ./docker-compose-env.sh && python ./app.py
+CMD ./docker-compose-env.sh && EW_RELIC_CONFIG_FILE=newrelic.ini newrelic-admin python ./app.py
