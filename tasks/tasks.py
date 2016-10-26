@@ -118,7 +118,7 @@ def process_ir_file(file_process_message):
             SampleControlAccessor().update(updated_file_process_message)
         else:
             logger.info("Passing processed file S3 path to patient ecosystem")
-            logger.info("processed file for patient: " + str(updated_file_process_message))
+            logger.info("Processed file for patient: " + str(updated_file_process_message))
 
 
 # process vcf, bam files based on message dictionary key: vcf_name, dna_bam_name, or cdna_bam_name
@@ -209,7 +209,8 @@ def post_tsv_info(dictionary, tsv_file_name):
 
     logger.info("Posting tsv file name to Patient Ecosystem for " + dictionary['molecular_id'])
     patient_url = (__builtin__.environment_config[__builtin__.environment]['patient_endpoint']
-           + __builtin__.environment_config[__builtin__.environment]['patient_post_path'])
+           + __builtin__.environment_config[__builtin__.environment]['patient_post_path'] + "/"
+                   + dictionary['molecular_id'])
     headers = {'Content-type': 'application/json'}
     content = {'tsv_file_name': tsv_file_name,
                'ion_reporter_id': dictionary['ion_reporter_id'],
