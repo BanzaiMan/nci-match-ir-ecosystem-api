@@ -25,4 +25,5 @@ ADD https://raw.githubusercontent.com/CBIIT/match-docker/master/docker-compose-e
 RUN chmod 755 docker-compose-env.sh && ls -alt $INSTALL_PATH
 
 # Default command 
-CMD ./docker-compose-env.sh && EW_RELIC_CONFIG_FILE=newrelic.ini newrelic-admin python ./app.py
+#CMD ./docker-compose-env.sh && EW_RELIC_CONFIG_FILE=newrelic.ini newrelic-admin python ./app.py
+CMD ./docker-compose-env.sh && python ./app.py
