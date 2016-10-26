@@ -209,7 +209,7 @@ def post_tsv_info(dictionary, tsv_file_name):
 
     logger.info("Posting tsv file name to Patient Ecosystem for " + dictionary['molecular_id'])
     patient_url = (__builtin__.environment_config[__builtin__.environment]['patient_endpoint']
-           + __builtin__.environment_config[__builtin__.environment]['patient_post_path']+'test')
+           + __builtin__.environment_config[__builtin__.environment]['patient_post_path'])
     headers = {'Content-type': 'application/json'}
     content = {'tsv_file_name': tsv_file_name,
                'ion_reporter_id': dictionary['ion_reporter_id'],
@@ -228,7 +228,7 @@ def post_tsv_info(dictionary, tsv_file_name):
             process_ir_file.apply_async(args=[dictionary], countdown=requeue_countdown)
             stack = inspect.stack()
             error_message = "Post TSV to patient ecosystem failed."
-            PedMatchBot.return_stack(dictionary, error_message, stack)
+            PedMatchBot.return_stack(str(dictionary), error_message, stack)
 
 
 def process_rule_by_tsv(dictionary, tsv_file_name):
