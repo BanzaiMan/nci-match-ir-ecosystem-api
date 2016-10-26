@@ -15,7 +15,7 @@ slack_client = SlackClient(os.environ.get('SLACK_TOKEN'))
 fileConfig(os.path.abspath("config/logging_config.ini"))
 logger = logging.getLogger(__name__)
 EnvironmentHelper.set_environment(logger)
-
+queue_name = os.environ['IR_QUEUE_NAME']
 
 class PedMatchBot(object):
 
@@ -35,12 +35,6 @@ class PedMatchBot(object):
     @staticmethod
     def return_stack(message, error_message, stack):
         slack_channel_id = (__builtin__.environment_config[__builtin__.environment]['slack_channel_id'])
-
-        # TODO: This code is redudant
-        if os.environ.get('IR_QUEUE_NAME'):
-            queue_name = os.environ.get('IR_QUEUE_NAME')
-        else:
-            queue_name = (__builtin__.environment_config[__builtin__.environment]['ir_queue_name'])
         try:
             uni_free_message = ast.literal_eval(json.dumps(message))
             PedMatchBot().send_message(channel_id=slack_channel_id,
