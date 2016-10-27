@@ -5,6 +5,8 @@
 [![Test Coverage](https://codeclimate.com/github/CBIIT/nci-match-ir-ecosystem-api/badges/coverage.svg)](https://codeclimate.com/github/CBIIT/nci-match-ir-ecosystem-api/coverage)
 
 pip install -r requirements.txt
+(try this command if any operation not permitted error on El Capiton:
+sudo -H pip install -r requirements.txt --upgrade --ignore-installed six)
 
 Celery must be started in order for updates to database to be processed. 
 After configuring AWS environment variables and installing celery. 
