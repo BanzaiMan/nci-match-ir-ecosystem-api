@@ -20,5 +20,7 @@ class PatientEcosystemConnector(object):
             self.logger.error("Unable to connect to patient ecosystem: " + str(e))
             raise
         else:
-            # return request
-            return request.status_code, request.json()
+            if request.status_code == 200:
+                return request.status_code, request.json()
+            else:
+                return request.status_code, {}
