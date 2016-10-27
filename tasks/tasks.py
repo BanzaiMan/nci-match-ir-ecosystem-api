@@ -230,7 +230,7 @@ def post_tsv_info(dictionary, tsv_file_name):
             process_ir_file.apply_async(args=[dictionary], countdown=requeue_countdown)
             stack = inspect.stack()
             error_message = "Post TSV to patient ecosystem failed."
-            logger.error("Post TSV to patient ecosystem failed for: " + dictionary['molecular_id'] + "because error code: " + r.status_code)
+            logger.error("Post TSV to patient ecosystem failed for: " + dictionary['molecular_id'] + "because error code: " + str(r.status_code))
             PedMatchBot.return_stack(queue_name, str(dictionary), error_message, stack)
 
 
