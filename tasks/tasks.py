@@ -157,8 +157,10 @@ def communicate_s3_patienteco_ruleengine(file_process_dictionary, new_file_path,
     try:
         S3Accessor().upload(new_file_path, new_file_s3_path)
     except Exception as e:
+        logger.error("Failed to upload to S3 after processing file for " + str(new_file_s3_path) + ", because: "
+                        + str(e.message))
         raise Exception("Failed to upload to S3 after processing file for " + str(new_file_s3_path) + ", because: "
-                        + e.message)
+                        + str(e.message))
     else:
         file_process_dictionary.update({key: new_file_s3_path})
         if key == 'tsv_name':
@@ -167,7 +169,8 @@ def communicate_s3_patienteco_ruleengine(file_process_dictionary, new_file_path,
                 try:
                     file_process_dictionary = process_rule_by_tsv(file_process_dictionary, new_file_name)
                 except Exception as e:
-                    raise Exception("Failed to read Rule Engine for " + new_file_name + " , because: " + e.message)
+                    logger.error("Failed to read Rule Engine for " + new_file_name + " , because: " + str(e.message))
+                    raise Exception("Failed to read Rule Engine for " + new_file_name + " , because: " + str(e.message))
             else:
                 # post tsv name to patient ecosystem for patient only
                 post_tsv_info(file_process_dictionary, new_file_name)
@@ -179,12 +182,13 @@ def process_vcf(dictionary):
     try:
         downloaded_file_path = S3Accessor().download(dictionary['vcf_name'])
     except Exception as e:
-        raise Exception("Failed to download vcf file from S3, because: " + e.message)
+        raise Exception("Failed to download vcf file from S3, because: " + str(e.message))
     else:
         try:
             new_file_path = SequenceFileProcessor().vcf_to_tsv(downloaded_file_path)
         except Exception as e:
-            raise Exception("VCF creation failed because: " + e.message)
+            logger.error("VCF creation failed because: " + str(e.message))
+            raise Exception("VCF creation failed because: " + str(e.message))
         else:
             key = 'tsv_name'
             return new_file_path, key, downloaded_file_path
@@ -200,7 +204,8 @@ def process_bam(dictionary, nucleic_acid_type):
         try:
             new_file_path = SequenceFileProcessor().bam_to_bai(downloaded_file_path)
         except Exception as e:
-            raise Exception("BAI creation failed because: " + e.message)
+            logger.error("BAI creation failed because: " + str(e.message))
+            raise Exception("BAI creation failed because: " + str(e.message))
         else:
             key = nucleic_acid_type + '_bai_name'
             return new_file_path, key, downloaded_file_path
@@ -221,16 +226,19 @@ def post_tsv_info(dictionary, tsv_file_name):
     try:
         r = requests.post(patient_url, data=json.dumps(content), headers=headers)
     except Exception as e:
+        logger.error("Failed to post tsv file name to Patient Ecosystem for " + str(dictionary['molecular_id'])
+                        + ", because: " + str(e.message))
         raise Exception("Failed to post tsv file name to Patient Ecosystem for " + str(dictionary['molecular_id'])
-                        + ", because: " + e.message)
+                        + ", because: " + str(e.message))
     else:
         if r.status_code == 200:
             logger.info("Successfully post tsv file name to Patient Ecosystem for " + dictionary['molecular_id'])
         else:
             process_ir_file.apply_async(args=[dictionary], countdown=requeue_countdown)
             stack = inspect.stack()
-            error_message = "Post TSV to patient ecosystem failed."
-            logger.error("Post TSV to patient ecosystem failed for: " + dictionary['molecular_id'] + "because error code: " + str(r.status_code))
+            error_message = "Post TSV to patient ecosystem failed for " + dictionary['molecular_id']
+            logger.error("Post TSV to patient ecosystem failed for: " + dictionary['molecular_id'] +
+                         " because error code: " + str(r.status_code))
             PedMatchBot.return_stack(queue_name, str(dictionary), error_message, stack)
 
 
@@ -254,18 +262,27 @@ def process_rule_by_tsv(dictionary, tsv_file_name):
         headers = {'Content-type': 'application/json'}
         rule_response = requests.post(url, data=json.dumps([]), headers=headers)
     except Exception as e:
+        logger.error("Failed to get rule engine data for " + tsv_file_name + ", because: "
+                        + str(e.message) + "URL = " + url)
         raise Exception("Failed to get rule engine data for " + tsv_file_name + ", because: "
-                        + e.message + "URL = " + url)
+                        + str(e.message) + "URL = " + url)
     else:
-        # to get rid of unicode in rule response
-        var_dict = json.loads(json.dumps(yaml.safe_load(rule_response.text)))
-        for key, value in var_dict.iteritems():
-            value = convert(value)
-            # print key
-            # print value
-            dictionary.update({key: value})
-
-        dictionary.update({'date_variant_received': str(datetime.datetime.utcnow())})
+        if (rule_response.status_code ==200):
+            # to get rid of unicode in rule response
+            var_dict = json.loads(json.dumps(yaml.safe_load(rule_response.text)))
+            for key, value in var_dict.iteritems():
+                value = convert(value)
+                # print key
+                # print value
+                dictionary.update({key: value})
+            dictionary.update({'date_variant_received': str(datetime.datetime.utcnow())})
+        else:
+            process_ir_file.apply_async(args=[dictionary], countdown=requeue_countdown)
+            stack = inspect.stack()
+            error_message = "Failed to get rule engine data for: " + dictionary['molecular_id']
+            logger.error("Failed to get rule engine data for: " + dictionary['molecular_id'] +
+                         " because error status code: " + str(rule_response.status_code))
+            PedMatchBot.return_stack(queue_name, str(dictionary), error_message, stack)
     return dictionary
 
 
