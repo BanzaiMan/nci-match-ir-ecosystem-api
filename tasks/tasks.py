@@ -94,7 +94,7 @@ def update_ir(update_message):
 
 # this is a special update in that it updates the database, process files, and stores them in s3. So think of this
 # as updating both S3 and dynamodb.
-@app.task
+@app.task(max_retries=3)
 def process_ir_file(file_process_message):
 
     new_file_process_message = file_process_message.copy()
@@ -109,9 +109,11 @@ def process_ir_file(file_process_message):
         # process vcf, dna_bam, or cdna_bam file
         updated_file_process_message = process_file_message(new_file_process_message)
     except Exception as e:
-        process_ir_file.apply_async(args=[new_file_process_message], countdown=requeue_countdown)
         stack = inspect.stack()
+        details = process_ir_file.request
+        logger.error(str(details))
         PedMatchBot.return_stack(queue_name, new_file_process_message, e.message, stack)
+        raise process_ir_file.retry(args=[new_file_process_message], countdown=requeue_countdown)
 
     else:
         if new_file_process_message['molecular_id'].startswith('SC_'):
