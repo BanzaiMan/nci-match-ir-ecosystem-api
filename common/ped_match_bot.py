@@ -41,8 +41,8 @@ class PedMatchBot(object):
                                        message=("*IR ECOSYSTEM:::* Error processing: " + "*" + str(uni_free_message)
                                                 + "\n" + "Queue Name: " + "*" + queue_name + "*" + "\n" +
                                                 "Re-queueing to attempt again in *3 hours.*" + "\n" +
+                                                "Error: " + error_message + "\n" +
                                                 str(PedMatchBot.generate_traceback_message(stack))))
-            logger.error("Cannot process file because: " + error_message + ", will attempt again in 3 hours.")
         except Exception as e:
             logger.error("Ped Match Bot Failure.: " + e.message)
 

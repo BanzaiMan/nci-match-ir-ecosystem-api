@@ -67,7 +67,17 @@ def put(put_message):
     except Exception as e:
         put.apply_async(args=[put_message], countdown=requeue_countdown)
         stack = inspect.stack()
+        details = put.request
+        logger.error(str(details))
         PedMatchBot.return_stack(queue_name, put_message, e.message, stack)
+        try:
+            put.retry(args=[put_message], countdown=requeue_countdown)
+        except MaxRetriesExceededError:
+            dlx_queue = (queue_name + "_dlx")
+            error = ("Maximum retries reached moving task to " + dlx_queue)
+            logger.error(error)
+            PedMatchBot.return_stack(queue_name, put_message, error, stack)
+            put.apply_async(args=[put_message], queue=dlx_queue)
 
 
 # Use for just updating the data in a record in the table
@@ -79,7 +89,17 @@ def update(update_message):
     except Exception as e:
         update.apply_async(args=[update_message], countdown=requeue_countdown)
         stack = inspect.stack()
+        details = update.request
+        logger.error(str(details))
         PedMatchBot.return_stack(queue_name, update_message, e.message, stack)
+        try:
+            update.retry(args=[update_message], countdown=requeue_countdown)
+        except MaxRetriesExceededError:
+            dlx_queue = (queue_name + "_dlx")
+            error = ("Maximum retries reached moving task to " + dlx_queue)
+            logger.error(error)
+            PedMatchBot.return_stack(queue_name, update_message, error, stack)
+            update.apply_async(args=[update_message], queue=dlx_queue)
 
 
 @app.task
@@ -90,12 +110,22 @@ def update_ir(update_message):
     except Exception as e:
         update_ir.apply_async(args=[update_message], countdown=requeue_countdown)
         stack = inspect.stack()
+        details = update_ir.request
+        logger.error(str(details))
         PedMatchBot.return_stack(queue_name, update_message, e.message, stack)
+        try:
+            update_ir.retry(args=[update_message], countdown=requeue_countdown)
+        except MaxRetriesExceededError:
+            dlx_queue = (queue_name + "_dlx")
+            error = ("Maximum retries reached moving task to " + dlx_queue)
+            logger.error(error)
+            PedMatchBot.return_stack(queue_name, update_message, error, stack)
+            update_ir.apply_async(args=[update_message], queue=dlx_queue)
 
 
 # this is a special update in that it updates the database, process files, and stores them in s3. So think of this
 # as updating both S3 and dynamodb.
-@app.task(max_retries=3)
+@app.task
 def process_ir_file(file_process_message):
 
     new_file_process_message = file_process_message.copy()
@@ -118,7 +148,6 @@ def process_ir_file(file_process_message):
         try:
             process_ir_file.retry(args=[new_file_process_message], countdown=requeue_countdown)
         except MaxRetriesExceededError:
-            stack = inspect.stack()
             dlx_queue = (queue_name + "_dlx")
             error = ("Maximum retries reached moving task to " + dlx_queue)
             logger.error(error)
@@ -316,7 +345,17 @@ def delete(molecular_id):
     except Exception as e:
         delete.apply_async(args=[molecular_id], countdown=requeue_countdown)
         stack = inspect.stack()
+        details = delete.request
+        logger.error(str(details))
         PedMatchBot.return_stack(queue_name, molecular_id, e.message, stack)
+        try:
+            delete.retry(args=[molecular_id], countdown=requeue_countdown)
+        except MaxRetriesExceededError:
+            dlx_queue = (queue_name + "_dlx")
+            error = ("Maximum retries reached moving task to " + dlx_queue)
+            logger.error(error)
+            PedMatchBot.return_stack(queue_name, molecular_id, error, stack)
+            delete.apply_async(args=[molecular_id], queue=dlx_queue)
 
 
 @app.task
@@ -327,7 +366,17 @@ def delete_ir(ion_reporter_id):
     except Exception as e:
         delete_ir.apply_async(args=[ion_reporter_id], countdown=requeue_countdown)
         stack = inspect.stack()
+        details = delete_ir.request
+        logger.error(str(details))
         PedMatchBot.return_stack(queue_name, ion_reporter_id, e.message, stack)
+        try:
+            delete_ir.retry(args=[ion_reporter_id], countdown=requeue_countdown)
+        except MaxRetriesExceededError:
+            dlx_queue = (queue_name + "_dlx")
+            error = ("Maximum retries reached moving task to " + dlx_queue)
+            logger.error(error)
+            PedMatchBot.return_stack(queue_name, ion_reporter_id, error, stack)
+            delete_ir.apply_async(args=[ion_reporter_id], queue=dlx_queue)
 
 @app.task
 def batch_delete(query_parameters):
@@ -337,7 +386,17 @@ def batch_delete(query_parameters):
     except Exception as e:
         batch_delete.apply_async(args=[query_parameters], countdown=requeue_countdown)
         stack = inspect.stack()
+        details = batch_delete.request
+        logger.error(str(details))
         PedMatchBot.return_stack(queue_name, query_parameters, e.message, stack)
+        try:
+            batch_delete.retry(args=[query_parameters], countdown=requeue_countdown)
+        except MaxRetriesExceededError:
+            dlx_queue = (queue_name + "_dlx")
+            error = ("Maximum retries reached moving task to " + dlx_queue)
+            logger.error(error)
+            PedMatchBot.return_stack(queue_name, query_parameters, error, stack)
+            batch_delete.apply_async(args=[query_parameters], queue=dlx_queue)
 
 
 @app.task
@@ -348,4 +407,14 @@ def batch_delete_ir(query_parameters):
     except Exception as e:
         batch_delete_ir.apply_async(args=[query_parameters], countdown=requeue_countdown)
         stack = inspect.stack()
+        details = batch_delete_ir.request
+        logger.error(str(details))
         PedMatchBot.return_stack(queue_name, query_parameters, e.message, stack)
+        try:
+            batch_delete_ir.retry(args=[query_parameters], countdown=requeue_countdown)
+        except MaxRetriesExceededError:
+            dlx_queue = (queue_name + "_dlx")
+            error = ("Maximum retries reached moving task to " + dlx_queue)
+            logger.error(error)
+            PedMatchBot.return_stack(queue_name, query_parameters, error, stack)
+            batch_delete_ir.apply_async(args=[query_parameters], queue=dlx_queue)
