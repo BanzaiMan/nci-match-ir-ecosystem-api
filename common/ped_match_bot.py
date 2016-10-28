@@ -40,7 +40,7 @@ class PedMatchBot(object):
             PedMatchBot().send_message(channel_id=slack_channel_id,
                                        message=("*IR ECOSYSTEM:::* Error processing: " + "*" + str(uni_free_message)
                                                 + "\n" + "Queue Name: " + "*" + queue_name + "*" + "\n" +
-                                                "*, will attempt again in *3 hours.*" + "\n" +
+                                                "Re-queueing to attempt again in *3 hours.*" + "\n" +
                                                 str(PedMatchBot.generate_traceback_message(stack))))
             logger.error("Cannot process file because: " + error_message + ", will attempt again in 3 hours.")
         except Exception as e:
