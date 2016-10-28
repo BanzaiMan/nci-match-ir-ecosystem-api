@@ -11,6 +11,7 @@ from logging.config import fileConfig
 
 import requests
 from celery import Celery
+from celery.exceptions import MaxRetriesExceededError
 from werkzeug.utils import secure_filename
 
 from accessors.ion_reporter_accessor import IonReporterAccessor
@@ -108,13 +109,21 @@ def process_ir_file(file_process_message):
     try:
         # process vcf, dna_bam, or cdna_bam file
         updated_file_process_message = process_file_message(new_file_process_message)
+
     except Exception as e:
         stack = inspect.stack()
         details = process_ir_file.request
         logger.error(str(details))
         PedMatchBot.return_stack(queue_name, new_file_process_message, e.message, stack)
-        raise process_ir_file.retry(args=[new_file_process_message], countdown=requeue_countdown)
-
+        try:
+            process_ir_file.retry(args=[new_file_process_message], countdown=requeue_countdown)
+        except MaxRetriesExceededError:
+            stack = inspect.stack()
+            dlx_queue = (queue_name + "_dlx")
+            error = ("Maximum retries reached moving task to " + dlx_queue)
+            logger.error(error)
+            PedMatchBot.return_stack(queue_name, new_file_process_message, error, stack)
+            process_ir_file.apply_async(args=[new_file_process_message],queue=dlx_queue)
     else:
         if new_file_process_message['molecular_id'].startswith('SC_'):
             logger.info("Updating sample_controls table after processing file")

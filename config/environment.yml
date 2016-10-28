@@ -37,6 +37,7 @@ test:
   read_capacity: 5
   write_capacity: 5
   ir_queue_name: "ion_reporter_queue"
+  ir_queue_name: "ion_reporter_dlx_queue"
   aws_download_time_limit: 600
 
 uat:
@@ -58,6 +59,7 @@ uat:
   read_capacity: 5
   write_capacity: 5
   ir_queue_name: "ion_reporter_queue"
+  ir_queue_name: "ion_reporter_dlx_queue"
   aws_download_time_limit: 600
 
 production:
@@ -79,4 +81,5 @@ production:
   read_capacity: 10
   write_capacity: 10
   ir_queue_name: "ion_reporter_queue"
+  ir_queue_name: "ion_reporter_dlx_queue"
   aws_download_time_limit: 600
