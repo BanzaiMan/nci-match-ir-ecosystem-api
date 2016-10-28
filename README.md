@@ -30,8 +30,7 @@ You should be able to get these values from your System administration team (i.e
 Celery must be started in order for updates to database to be processed. 
 After configuring AWS environment variables and installing celery. 
 It can be started by typing in the application root directory:
-**celery -A tasks.tasks worker --loglevel=INFO**
-
+**celery -A tasks.tasks worker --concurrency=1 --loglevel=INFO**
 
 Main application is started as
 **python ./app.py**
