@@ -4,7 +4,7 @@ from flask_restful import request, Resource
 from common.dictionary_helper import DictionaryHelper
 from resource_helpers.abort_logger import AbortLogger
 import json
-import re
+import simplejson
 
 MESSAGE_500 = Template("Server Error contact help: $error")
 MESSAGE_404 = Template("No $class_name with id: $key_value found")
@@ -26,23 +26,15 @@ class Record(Resource):
         try:
             results = self.database_accessor().get_item({self.key_name: identifier}, ','.join(projection_list))
         except Exception as e:
-            AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
+            #AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
+            AbortLogger.log_and_abort(500, self.logger.error,
+                                      "Failed to get " + identifier + ", because : " + e.message)
         else:
             if len(results) > 0:
                 self.logger.debug("Found: " + str(results))
-                #return results
-                # this is a temporary solution to convert json string to real json format
-                # variants are stored in Dynamodb as string. Should store them as list of dictionary
-                convert_results = {}
-                for key, value in results.iteritems():
-                    value = value.replace("None", "null")
-                    value = value.replace("True", "true")
-                    value = value.replace("False", "false")
-                    value = value.replace("'", '"')
-                    if re.search("\":", value):
-                        value = json.loads(value)
-                    convert_results.update({key: value})
-                return convert_results
+                # use simplejson to serialize a Decimal object
+                results = json.loads(simplejson.dumps(results, use_decimal=True))
+                return results
 
             AbortLogger.log_and_abort(404, self.logger.debug,
                                       MESSAGE_404.substitute(class_name=self.database_accessor.__class__.__name__,
