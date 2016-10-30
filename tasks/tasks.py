@@ -50,9 +50,11 @@ else:
 
     app.conf.CELERY_ENABLE_REMOTE_CONTROL = False
     queue_name = app.conf.CELERY_DEFAULT_QUEUE
+    dlx_queue = (queue_name + "_dlx")
 
 slack_channel_id = (__builtin__.environment_config[__builtin__.environment]['slack_channel_id'])
 requeue_countdown = (__builtin__.environment_config[__builtin__.environment]['requeue_countdown'])
+
 
 
 
@@ -72,7 +74,6 @@ def put(put_message):
         try:
             put.retry(args=[put_message], countdown=requeue_countdown)
         except MaxRetriesExceededError:
-            dlx_queue = (queue_name + "_dlx")
             error = ("Maximum retries reached moving task to " + dlx_queue)
             logger.error(error)
             PedMatchBot.return_stack(queue_name, put_message, error, stack)
@@ -94,7 +95,6 @@ def update(update_message):
         try:
             update.retry(args=[update_message], countdown=requeue_countdown)
         except MaxRetriesExceededError:
-            dlx_queue = (queue_name + "_dlx")
             error = ("Maximum retries reached moving task to " + dlx_queue)
             logger.error(error)
             PedMatchBot.return_stack(queue_name, update_message, error, stack)
@@ -115,7 +115,6 @@ def update_ir(update_message):
         try:
             update_ir.retry(args=[update_message], countdown=requeue_countdown)
         except MaxRetriesExceededError:
-            dlx_queue = (queue_name + "_dlx")
             error = ("Maximum retries reached moving task to " + dlx_queue)
             logger.error(error)
             PedMatchBot.return_stack(queue_name, update_message, error, stack)
@@ -147,7 +146,6 @@ def process_ir_file(file_process_message):
         try:
             process_ir_file.retry(args=[new_file_process_message], countdown=requeue_countdown)
         except MaxRetriesExceededError:
-            dlx_queue = (queue_name + "_dlx")
             error = ("Maximum retries reached moving task to " + dlx_queue)
             logger.error(error)
             PedMatchBot.return_stack(queue_name, new_file_process_message, error, stack)
@@ -208,8 +206,8 @@ def communicate_s3_patienteco_ruleengine(file_process_dictionary, new_file_path,
                 try:
                     file_process_dictionary = process_rule_by_tsv(file_process_dictionary, new_file_name)
                 except Exception as e:
-                    logger.error("Failed to read Rule Engine for " + new_file_name + " , because: " + str(e.message))
-                    raise Exception("Failed to read Rule Engine for " + new_file_name + " , because: " + str(e.message))
+                    logger.error("Failed to read Rule Engine for " + new_file_name + ", because: " + str(e.message))
+                    raise Exception("Failed to read Rule Engine for " + new_file_name + ", because: " + str(e.message))
             else:
                 # post tsv name to patient ecosystem for patient only
                 post_tsv_info(file_process_dictionary, new_file_name)
@@ -271,14 +269,14 @@ def post_tsv_info(dictionary, tsv_file_name):
                         + ", because: " + str(e.message))
     else:
         if r.status_code == 200:
-            logger.info("Successfully post tsv file name to Patient Ecosystem for " + dictionary['molecular_id'])
+            logger.info("Successfully posted TSV file name to Patient Ecosystem for " + dictionary['molecular_id'])
         else:
-            process_ir_file.apply_async(args=[dictionary], countdown=requeue_countdown)
             stack = inspect.stack()
-            error_message = "Post TSV to patient ecosystem failed for " + dictionary['molecular_id']
-            logger.error("Post TSV to patient ecosystem failed for: " + dictionary['molecular_id'] +
+            error_message = "Posting of TSV to patient ecosystem failed for " + dictionary['molecular_id']
+            logger.error("Posting of TSV to patient ecosystem failed for: " + dictionary['molecular_id'] +
                          " because error code: " + str(r.status_code))
-            PedMatchBot.return_stack(queue_name, str(dictionary), error_message, stack)
+            PedMatchBot.return_stack(queue_name, dictionary, error_message, stack)
+            raise Exception(error_message)
 
 
 def process_rule_by_tsv(dictionary, tsv_file_name):
@@ -306,18 +304,18 @@ def process_rule_by_tsv(dictionary, tsv_file_name):
         raise Exception("Failed to get rule engine data for " + tsv_file_name + ", because: "
                         + str(e.message) + "URL = " + url)
     else:
-        if (rule_response.status_code ==200):
+        if rule_response.status_code ==200:
             var_dict = rule_response.json()
             for key, value in var_dict.iteritems():
                 dictionary.update({key: value})
             dictionary.update({'date_variant_received': str(datetime.datetime.utcnow())})
         else:
-            process_ir_file.apply_async(args=[dictionary], countdown=requeue_countdown)
-            stack = inspect.stack()
-            error_message = "Failed to get rule engine data for: " + dictionary['molecular_id']
-            logger.error("Failed to get rule engine data for: " + dictionary['molecular_id'] +
+            error_msg = ("Failed to get rule engine data for: " + dictionary['molecular_id'] +
                          " because error status code: " + str(rule_response.status_code))
-            PedMatchBot.return_stack(queue_name, str(dictionary), error_message, stack)
+            logger.error(error_msg)
+            stack = inspect.stack()
+            PedMatchBot.return_stack(queue_name, dictionary, error_msg, stack)
+            raise Exception(error_msg)
     return dictionary
 
 
@@ -335,7 +333,6 @@ def delete(molecular_id):
         try:
             delete.retry(args=[molecular_id], countdown=requeue_countdown)
         except MaxRetriesExceededError:
-            dlx_queue = (queue_name + "_dlx")
             error = ("Maximum retries reached moving task to " + dlx_queue)
             logger.error(error)
             PedMatchBot.return_stack(queue_name, molecular_id, error, stack)
@@ -356,7 +353,6 @@ def delete_ir(ion_reporter_id):
         try:
             delete_ir.retry(args=[ion_reporter_id], countdown=requeue_countdown)
         except MaxRetriesExceededError:
-            dlx_queue = (queue_name + "_dlx")
             error = ("Maximum retries reached moving task to " + dlx_queue)
             logger.error(error)
             PedMatchBot.return_stack(queue_name, ion_reporter_id, error, stack)
@@ -376,7 +372,6 @@ def batch_delete(query_parameters):
         try:
             batch_delete.retry(args=[query_parameters], countdown=requeue_countdown)
         except MaxRetriesExceededError:
-            dlx_queue = (queue_name + "_dlx")
             error = ("Maximum retries reached moving task to " + dlx_queue)
             logger.error(error)
             PedMatchBot.return_stack(queue_name, query_parameters, error, stack)
@@ -397,7 +392,7 @@ def batch_delete_ir(query_parameters):
         try:
             batch_delete_ir.retry(args=[query_parameters], countdown=requeue_countdown)
         except MaxRetriesExceededError:
-            dlx_queue = (queue_name + "_dlx")
+
             error = ("Maximum retries reached moving task to " + dlx_queue)
             logger.error(error)
             PedMatchBot.return_stack(queue_name, query_parameters, error, stack)
