@@ -47,13 +47,29 @@ class QueryHelper(object):
         logger.debug("Update expression and attribute values being created")
         logger.debug(str(multidict_query))
 
-        update_expression = "set " + (', '.join(str(key) + " =:" + str(key) for key, value in multidict_query.iteritems()))
-        update_expression_attribute_values = (', '.join("\":" + str(key) + "\": \"" + str(value) + "\""
-                                                        for key, value in multidict_query.iteritems()))
+        # update_expression = "set " + (', '.join(str(key) + " =:" + str(key) for key, value in multidict_query.iteritems()))
+        # update_expression_attribute_values = (', '.join("\":" + str(key) + "\": \"" + str(value) + "\""
+        #                                                 for key, value in multidict_query.iteritems()))
+
+        update_expression = "set "
+        update_expression_attribute_values = ""
+        update_expression_attribute_dict = {}
+        count = 0
+        for key, value in multidict_query.iteritems():
+            update_expression = update_expression + str(key) + " =:" + str(key)
+            update_expression_attribute_dict.update({":" + str(key): value})
+
+            count = count + 1
+            if count < len(multidict_query):
+                update_expression = update_expression + ', '
 
         logger.debug("Update expression created: " + str(update_expression))
-        logger.debug("Update expression attribute values created: " + str(update_expression_attribute_values))
+        #logger.debug("Update expression attribute values created: " + str(update_expression_attribute_values))
+        logger.debug("Update expression attribute dictionary created: " + str(update_expression_attribute_dict))
         logger.debug(str(update_expression_attribute_values))
         # JSON Loads takes a string that is in proper json format and 'loads' it to a dictionary. That is why
         # the {} have to be added, as this makes the string into proper looking JSON.
-        return update_expression, json.loads('{'+update_expression_attribute_values+'}')
+        #return update_expression, json.loads('{'+update_expression_attribute_values+'}')
+
+        # use dictionary as update_expression_attribute to handle list of maps in attribute value
+        return update_expression, update_expression_attribute_dict
