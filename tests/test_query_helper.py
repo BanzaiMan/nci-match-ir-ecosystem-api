@@ -40,22 +40,22 @@ class TestQueryHelper(unittest.TestCase):
             print e
             assert (e.message == return_result)
 
-    @data(
-        ({'ion_reporter_id': u'IR_AIO78'}, "'set ion_reporter_id =:ion_reporter_id', {u':ion_reporter_id': u'IR_AIO78'}"),
-        ({'ion_reporter_id': None}, "'set ion_reporter_id =:ion_reporter_id', {u':ion_reporter_id': u'None'}"),
-        ({None: u'IR_AIO78'}, "'set None =:None', {u':None': u'IR_AIO78'}"),
-        ({None: None}, "'set None =:None', {u':None': u'None'}"),
-        (None, "'NoneType' object has no attribute 'iteritems'")
-    )
-    @unpack
-    def test_create_update_expression(self, multidict_query, return_result):
-        try:
-            return_value = QueryHelper.create_update_expression(multidict_query)
-            print "return data=" + str(return_value)
-            assert return_result in str(return_value)
-        except Exception, e:
-            print e
-            assert str(e) == return_result
+    # @data(
+    #     ({'ion_reporter_id': u'IR_AIO78'}, "'set ion_reporter_id =:ion_reporter_id', {u':ion_reporter_id': u'IR_AIO78'}"),
+    #     ({'ion_reporter_id': None}, "'set ion_reporter_id =:ion_reporter_id', {u':ion_reporter_id': u'None'}"),
+    #     ({None: u'IR_AIO78'}, "'set None =:None', {u':None': u'IR_AIO78'}"),
+    #     ({None: None}, "'set None =:None', {u':None': u'None'}"),
+    #     (None, "'NoneType' object has no attribute 'iteritems'")
+    # )
+    # @unpack
+    # def test_create_update_expression(self, multidict_query, return_result):
+    #     try:
+    #         return_value = QueryHelper.create_update_expression(multidict_query)
+    #         print "return data=" + str(return_value)
+    #         assert return_result in str(return_value)
+    #     except Exception, e:
+    #         print e
+    #         assert str(e) == return_result
 
 # if __name__ == '__main__':
 #     unittest.main()
