@@ -1,8 +1,8 @@
 import logging
-import json
 from boto3.dynamodb.conditions import Attr
 from werkzeug.datastructures import ImmutableMultiDict
 from common.dictionary_helper import DictionaryHelper
+from common.float_to_decimal_helper import sanitize
 
 
 class QueryHelper(object):
@@ -57,7 +57,7 @@ class QueryHelper(object):
         count = 0
         for key, value in multidict_query.iteritems():
             update_expression = update_expression + str(key) + " =:" + str(key)
-            update_expression_attribute_dict.update({":" + str(key): value})
+            update_expression_attribute_dict.update({":" + str(key): sanitize(value)})
 
             count = count + 1
             if count < len(multidict_query):
