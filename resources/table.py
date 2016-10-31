@@ -1,4 +1,6 @@
 import logging
+import json
+import simplejson
 from flask_restful import request, Resource
 from common.dictionary_helper import DictionaryHelper
 from resource_helpers.abort_logger import AbortLogger
@@ -30,6 +32,7 @@ class Table(Resource):
             if records is None or len(records) < 1:
                 AbortLogger.log_and_abort(404, self.logger.debug, "No records meet the query parameters")
 
+            records = json.loads(simplejson.dumps(records, use_decimal=True))
             return records
 
     def get_unique_key(self):
