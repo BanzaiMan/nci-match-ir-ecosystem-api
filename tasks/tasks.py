@@ -146,16 +146,16 @@ def process_ir_file(file_process_message):
         try:
             process_ir_file.retry(args=[new_file_process_message], countdown=requeue_countdown)
         except MaxRetriesExceededError:
-            error = ("Maximum retries reached moving task to " + dlx_queue)
+            error = ("Maximum retries reached for " + new_file_process_message + "moving task to " + dlx_queue)
             logger.error(error)
             PedMatchBot.return_stack(queue_name, new_file_process_message, error, stack)
             process_ir_file.apply_async(args=[new_file_process_message],queue=dlx_queue)
     else:
         if new_file_process_message['molecular_id'].startswith('SC_'):
-            logger.info("Updating sample_controls table after processing file")
+            logger.info("Updating sample_controls table after processing file.")
             SampleControlAccessor().update(updated_file_process_message)
         else:
-            logger.info("Passing processed file S3 path to patient ecosystem")
+            logger.info("Passing processed file S3 path to patient ecosystem.")
             logger.info("Processed file for patient: " + str(updated_file_process_message))
 
 
@@ -215,7 +215,7 @@ def communicate_s3_patienteco_ruleengine(file_process_dictionary, new_file_path,
 
 
 def process_vcf(dictionary):
-    logger.info("Processing VCF ")
+    logger.info("Processing VCF.")
     try:
         downloaded_file_path = S3Accessor().download(dictionary['vcf_name'])
     except Exception as e:
@@ -224,8 +224,8 @@ def process_vcf(dictionary):
         try:
             new_file_path = SequenceFileProcessor().vcf_to_tsv(downloaded_file_path)
         except Exception as e:
-            logger.error("VCF creation failed because: " + str(e.message))
-            raise Exception("VCF creation failed because: " + str(e.message))
+            logger.error("TSV creation failed because: " + str(e.message))
+            raise Exception("TSV creation failed because: " + str(e.message))
         else:
             key = 'tsv_name'
             return new_file_path, key, downloaded_file_path
@@ -263,9 +263,9 @@ def post_tsv_info(dictionary, tsv_file_name):
     try:
         r = requests.post(patient_url, data=json.dumps(content), headers=headers)
     except Exception as e:
-        logger.error("Failed to post tsv file name to Patient Ecosystem for " + str(dictionary['molecular_id'])
+        logger.error("Failed to post TSV file name to Patient Ecosystem for " + str(dictionary['molecular_id'])
                         + ", because: " + str(e.message))
-        raise Exception("Failed to post tsv file name to Patient Ecosystem for " + str(dictionary['molecular_id'])
+        raise Exception("Failed to post TSV file name to Patient Ecosystem for " + str(dictionary['molecular_id'])
                         + ", because: " + str(e.message))
     else:
         if r.status_code == 200:
@@ -281,7 +281,7 @@ def post_tsv_info(dictionary, tsv_file_name):
 
 def process_rule_by_tsv(dictionary, tsv_file_name):
 
-    logger.info("Reading rule engine for " + dictionary['molecular_id'])
+    logger.info("Reading rules engine for " + dictionary['molecular_id'])
 
     item = SampleControlAccessor().get_item({'molecular_id': dictionary['molecular_id']})
     if len(item) > 0:
@@ -299,9 +299,9 @@ def process_rule_by_tsv(dictionary, tsv_file_name):
         headers = {'Content-type': 'application/json'}
         rule_response = requests.post(url, data=json.dumps([]), headers=headers)
     except Exception as e:
-        logger.error("Failed to get rule engine data for " + tsv_file_name + ", because: "
+        logger.error("Failed to get rules engine data for " + tsv_file_name + ", because: "
                         + str(e.message) + "URL = " + url)
-        raise Exception("Failed to get rule engine data for " + tsv_file_name + ", because: "
+        raise Exception("Failed to get rules engine data for " + tsv_file_name + ", because: "
                         + str(e.message) + "URL = " + url)
     else:
         if rule_response.status_code ==200:
@@ -310,7 +310,7 @@ def process_rule_by_tsv(dictionary, tsv_file_name):
                 dictionary.update({key: value})
             dictionary.update({'date_variant_received': str(datetime.datetime.utcnow())})
         else:
-            error_msg = ("Failed to get rule engine data for: " + dictionary['molecular_id'] +
+            error_msg = ("Failed to get rules engine data for: " + dictionary['molecular_id'] +
                          " because error status code: " + str(rule_response.status_code))
             logger.error(error_msg)
             stack = inspect.stack()
