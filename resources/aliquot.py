@@ -1,6 +1,6 @@
 import logging
-import re
-import os
+import json
+import simplejson
 from flask_restful import request, Resource, reqparse
 from accessors.sample_control_accessor import SampleControlAccessor
 from common.dictionary_helper import DictionaryHelper
@@ -29,6 +29,7 @@ class Aliquot(Resource):
 
         if len(results) > 0:
             self.logger.info("Molecular id: " + str(molecular_id) + " found in sample control table")
+            results = json.loads(simplejson.dumps(results, use_decimal=True))
             return results
         else:
             # check if molecular_id exists in patient table
