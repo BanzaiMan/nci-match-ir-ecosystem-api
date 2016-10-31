@@ -1,0 +1,8 @@
+{
+  "ion_reporter_id": "IR_WAO85",
+  "analysis_id": "SC_5AMCC_analysis_1",
+  "site": "mocha",
+  "vcf_name": "IR_WAO85/SC_5AMCC/SC_5AMCC_analysis_1/SC_5AMCC_MoCha_25_v1_positive_passed.vcf",
+  "dna_bam_name": "IR_WAO85/SC_5AMCC/SC_5AMCC_analysis_1/SC_5AMCC_Mocha_25_v1_positive_passed_DNA.bam",
+  "cdna_bam_name": "IR_WAO85/SC_5AMCC/SC_5AMCC_analysis_1/SC_5AMCC_Mocha_25_v1_positive_passed_RNA.bam"
+}

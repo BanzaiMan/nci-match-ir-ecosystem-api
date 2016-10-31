@@ -25,9 +25,31 @@
     {
       "PutRequest": {
         "Item": {
+          "date_molecular_id_created": {"S": "2016-10-28 12:56:19.566"},
+          "control_type": {"S": "no_template"},
+          "molecular_id": {"S": "SC_KGPVI"},
+          "ion_reporter_id": {"S": "IR_WAO85"},
+          "site": {"S": "mocha"}
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
           "date_molecular_id_created": {"S": "2016-08-18 20:09:45.667"},
           "control_type": {"S": "positive"},
           "molecular_id": {"S": "SC_67VKV"},
+          "ion_reporter_id": {"S": "IR_WAO85"},
+          "site": {"S": "mocha"}
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "date_molecular_id_created": {"S": "2016-10-30 20:04:45.667"},
+          "control_type": {"S": "positive"},
+          "molecular_id": {"S": "SC_PALFC"},
           "ion_reporter_id": {"S": "IR_WAO85"},
           "site": {"S": "mocha"}
         }
@@ -51,6 +73,30 @@
           "control_type": {"S": "positive"},
           "site_ip_address": {"S": "129.43.127.133"},
           "molecular_id": {"S": "SC_VEME6"},
+          "ion_reporter_id": {"S": "IR_AIO78"},
+          "site": {"S": "mdacc"}
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "date_molecular_id_created": {"S": "2016-10-30 21:12:26.123"},
+          "control_type": {"S": "proficiency_competency"},
+          "site_ip_address": {"S": "129.43.127.133"},
+          "molecular_id": {"S": "SC_LGU30"},
+          "ion_reporter_id": {"S": "IR_AIO78"},
+          "site": {"S": "mdacc"}
+        }
+      }
+    },
+    {
+      "PutRequest": {
+        "Item": {
+          "date_molecular_id_created": {"S": "2016-10-20 21:10:26.183"},
+          "control_type": {"S": "proficiency_competency"},
+          "site_ip_address": {"S": "129.43.127.133"},
+          "molecular_id": {"S": "SC_BAXXY"},
           "ion_reporter_id": {"S": "IR_AIO78"},
           "site": {"S": "mdacc"}
         }

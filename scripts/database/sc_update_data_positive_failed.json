@@ -1,0 +1,9 @@
+{
+  "ion_reporter_id": "IR_WAO85",
+  "analysis_id": "SC_67VKV_analysis_2",
+  "site": "mocha",
+  "vcf_name": "IR_WAO85/SC_67VKV/SC_67VKV_analysis_2/SC_67VKV_analysis_2.vcf",
+  "dna_bam_name": "IR_WAO85/SC_67VKV/SC_67VKV_analysis_2/SC_67VKV_analysis_2_dna.bam",
+  "cdna_bam_name": "IR_WAO85/SC_67VKV/SC_67VKV_analysis_2/SC_67VKV_analysis_2_cdna.bam",
+  "qc_name": "IR_WAO85/SC_67VKV/SC_67VKV_analysis_2/SC_67VKV_analysis_2_QC.pdf"
+}

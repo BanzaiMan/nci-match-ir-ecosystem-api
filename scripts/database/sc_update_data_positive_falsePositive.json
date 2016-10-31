@@ -1,0 +1,8 @@
+{
+  "ion_reporter_id": "IR_WAO85",
+  "analysis_id": "SC_PALFC_analysis_1",
+  "site": "mocha",
+  "vcf_name": "IR_WAO85/SC_PALFC/SC_PALFC_analysis_1/SC_PALFC_MoCha_66_RNA_v1_falsePositive.vcf",
+  "dna_bam_name": "IR_WAO85/SC_PALFC/SC_PALFC_analysis_1/SC_PALFC_Mocha_66_v1_falsePositive_DNA.bam",
+  "cdna_bam_name": "IR_WAO85/SC_PALFC/SC_PALFC_analysis_1/SC_PALFC_Mocha_66_v1_falsePositive_RNA.bam"
+}
