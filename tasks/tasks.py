@@ -39,6 +39,7 @@ else:
     app = Celery('tasks', broker=BROKER__URL, broker_transport_options=BROKER_TRANSPORT_OPTIONS)
     app.conf.CELERY_ACCEPT_CONTENT = ['json']
     app.conf.CELERY_TASK_SERIALIZER = 'json'
+    app.conf.CELERY_ACKS_LATE = True
     try:
         app.conf.CELERY_DEFAULT_QUEUE = os.environ['IR_QUEUE_NAME']
     except KeyError as e:
@@ -66,10 +67,9 @@ def put(put_message):
     try:
         SampleControlAccessor().put_item(put_message)
     except Exception as e:
-        put.apply_async(args=[put_message], countdown=requeue_countdown)
         stack = inspect.stack()
         details = put.request
-        logger.error(str(details))
+        logger.error("Put item failed, details: " +str(details))
         PedMatchBot.return_stack(queue_name, put_message, e.message, stack)
         try:
             put.retry(args=[put_message], countdown=requeue_countdown)
@@ -87,10 +87,9 @@ def update(update_message):
     try:
         SampleControlAccessor().update(update_message)
     except Exception as e:
-        update.apply_async(args=[update_message], countdown=requeue_countdown)
         stack = inspect.stack()
         details = update.request
-        logger.error(str(details))
+        logger.error("Updating item failed, details: " +str(details))
         PedMatchBot.return_stack(queue_name, update_message, e.message, stack)
         try:
             update.retry(args=[update_message], countdown=requeue_countdown)
@@ -107,10 +106,9 @@ def update_ir(update_message):
     try:
         IonReporterAccessor().update(update_message)
     except Exception as e:
-        update_ir.apply_async(args=[update_message], countdown=requeue_countdown)
         stack = inspect.stack()
         details = update_ir.request
-        logger.error(str(details))
+        logger.error("Updating item failed, details: " +str(details))
         PedMatchBot.return_stack(queue_name, update_message, e.message, stack)
         try:
             update_ir.retry(args=[update_message], countdown=requeue_countdown)
@@ -141,12 +139,12 @@ def process_ir_file(file_process_message):
     except Exception as e:
         stack = inspect.stack()
         details = process_ir_file.request
-        logger.error(str(details))
+        logger.error("Process file message failed, details: " +str(details))
         PedMatchBot.return_stack(queue_name, new_file_process_message, e.message, stack)
         try:
             process_ir_file.retry(args=[new_file_process_message], countdown=requeue_countdown)
         except MaxRetriesExceededError:
-            error = ("Maximum retries reached for " + new_file_process_message + "moving task to " + dlx_queue)
+            error = ("Maximum retries reached for " + str(new_file_process_message) + "moving task to " + dlx_queue)
             logger.error(error)
             PedMatchBot.return_stack(queue_name, new_file_process_message, error, stack)
             process_ir_file.apply_async(args=[new_file_process_message],queue=dlx_queue)
@@ -206,8 +204,8 @@ def communicate_s3_patienteco_ruleengine(file_process_dictionary, new_file_path,
                 try:
                     file_process_dictionary = process_rule_by_tsv(file_process_dictionary, new_file_name)
                 except Exception as e:
-                    logger.error("Failed to read Rule Engine for " + new_file_name + ", because: " + str(e.message))
-                    raise Exception("Failed to read Rule Engine for " + new_file_name + ", because: " + str(e.message))
+                    logger.error("Failed to read Rules Engine for " + new_file_name + ", because: " + str(e.message))
+                    raise Exception("Failed to read Rules Engine for " + new_file_name + ", because: " + str(e.message))
             else:
                 # post tsv name to patient ecosystem for patient only
                 post_tsv_info(file_process_dictionary, new_file_name)
@@ -325,10 +323,9 @@ def delete(molecular_id):
     try:
         SampleControlAccessor().delete_item(molecular_id)
     except Exception as e:
-        delete.apply_async(args=[molecular_id], countdown=requeue_countdown)
         stack = inspect.stack()
         details = delete.request
-        logger.error(str(details))
+        logger.error("Deleting sample control record failed, details:" +str(details))
         PedMatchBot.return_stack(queue_name, molecular_id, e.message, stack)
         try:
             delete.retry(args=[molecular_id], countdown=requeue_countdown)
@@ -345,10 +342,9 @@ def delete_ir(ion_reporter_id):
     try:
         IonReporterAccessor().delete_item(ion_reporter_id)
     except Exception as e:
-        delete_ir.apply_async(args=[ion_reporter_id], countdown=requeue_countdown)
         stack = inspect.stack()
         details = delete_ir.request
-        logger.error(str(details))
+        logger.error("Deleting ion reporter record failed, details:" +str(details))
         PedMatchBot.return_stack(queue_name, ion_reporter_id, e.message, stack)
         try:
             delete_ir.retry(args=[ion_reporter_id], countdown=requeue_countdown)
@@ -364,10 +360,9 @@ def batch_delete(query_parameters):
     try:
         SampleControlAccessor().batch_delete(query_parameters)
     except Exception as e:
-        batch_delete.apply_async(args=[query_parameters], countdown=requeue_countdown)
         stack = inspect.stack()
         details = batch_delete.request
-        logger.error(str(details))
+        logger.error("Deleting sample control record failed, details:" +str(details))
         PedMatchBot.return_stack(queue_name, query_parameters, e.message, stack)
         try:
             batch_delete.retry(args=[query_parameters], countdown=requeue_countdown)
@@ -384,15 +379,13 @@ def batch_delete_ir(query_parameters):
     try:
         IonReporterAccessor().batch_delete(query_parameters)
     except Exception as e:
-        batch_delete_ir.apply_async(args=[query_parameters], countdown=requeue_countdown)
         stack = inspect.stack()
         details = batch_delete_ir.request
-        logger.error(str(details))
+        logger.error("Deleting ion reporter record failed, details:" +str(details))
         PedMatchBot.return_stack(queue_name, query_parameters, e.message, stack)
         try:
             batch_delete_ir.retry(args=[query_parameters], countdown=requeue_countdown)
         except MaxRetriesExceededError:
-
             error = ("Maximum retries reached moving task to " + dlx_queue)
             logger.error(error)
             PedMatchBot.return_stack(queue_name, query_parameters, error, stack)
