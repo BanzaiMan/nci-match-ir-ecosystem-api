@@ -40,6 +40,7 @@ else:
     app.conf.CELERY_ACCEPT_CONTENT = ['json']
     app.conf.CELERY_TASK_SERIALIZER = 'json'
     app.conf.CELERY_ACKS_LATE = False
+    app.conf.CELERYD_PREFETCH_MULTIPLIER = 1
     try:
         app.conf.CELERY_DEFAULT_QUEUE = os.environ['IR_QUEUE_NAME']
     except KeyError as e:
