@@ -141,13 +141,13 @@ def process_ir_file(file_process_message):
         details = process_ir_file.request
         logger.error("Process file message failed, details: " +str(details))
         PedMatchBot.return_stack(queue_name, new_file_process_message, e.message, stack)
-        try:
-            process_ir_file.retry(args=[new_file_process_message], countdown=120)
-        except MaxRetriesExceededError:
-            error = ("Maximum retries reached for " + str(new_file_process_message) + "moving task to " + dlx_queue)
-            logger.error(error)
-            PedMatchBot.return_stack(queue_name, new_file_process_message, error, stack)
-            process_ir_file.apply_async(args=[new_file_process_message],queue=dlx_queue)
+        # try:
+        #     process_ir_file.retry(args=[new_file_process_message], countdown=requeue_countdown)
+        # except MaxRetriesExceededError:
+        #     error = ("Maximum retries reached for " + str(new_file_process_message) + "moving task to " + dlx_queue)
+        #     logger.error(error)
+        #     PedMatchBot.return_stack(queue_name, new_file_process_message, error, stack)
+        #     process_ir_file.apply_async(args=[new_file_process_message],queue=dlx_queue)
     else:
         if new_file_process_message['molecular_id'].startswith('SC_'):
             logger.info("Updating sample_controls table after processing file.")
