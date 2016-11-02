@@ -19,8 +19,8 @@ class TestAliquot(unittest.TestCase):
              "ion_reporter_id": "IR_WAO85",
              "site": "mocha"
          },
-         'SC_YQ111', 404, {}, 200),
-        ({}, 'SC_YQ999', 404, {}, 404),
+         'SC_YQ111', 404, {}, 200, "sample_control"),
+        ({}, 'SC_YQ999', 404, {}, 404, None),
         ({},
          'PT_SR10_BdVRRejected_BD_MOI1',
          200,
@@ -38,13 +38,13 @@ class TestAliquot(unittest.TestCase):
              "dna_concentration_ng_per_ul": "25.0",
              "cdna_volume_ul": "10.0"
          },
-         200)
+         200, "patient")
     )
     @unpack
     @patch('resources.aliquot.PatientEcosystemConnector')
     @patch('resources.aliquot.SampleControlAccessor')
     def test_get(self, item, molecular_id, verify_pt_status_code, pt_item,
-                 expected_results, mock_SC_class,  mock_pt_connector_class):
+                 expected_results, expected_molecular_id_type, mock_SC_class,  mock_pt_connector_class):
         instance = mock_SC_class.return_value
         instance.get_item.return_value = item
         instance_pt = mock_pt_connector_class.return_value
@@ -52,7 +52,9 @@ class TestAliquot(unittest.TestCase):
         return_value = self.app.get('/api/v1/aliquot/' + molecular_id)
         print "==============" + str(return_value.status_code)
         assert return_value.status_code == expected_results
-
+        if return_value.status_code == 200:
+            print json.loads(return_value.data)['molecular_id_type']
+            assert json.loads(return_value.data)['molecular_id_type'] == expected_molecular_id_type
 
     @data(
         ('SC_5AMCC',
