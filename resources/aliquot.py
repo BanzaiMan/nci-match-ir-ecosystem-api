@@ -30,12 +30,16 @@ class Aliquot(Resource):
         if len(results) > 0:
             self.logger.info("Molecular id: " + str(molecular_id) + " found in sample control table")
             results = json.loads(simplejson.dumps(results, use_decimal=True))
-            return results
+            item = results.copy()
+            item.update({"molecular_id_type": "sample_control"})
+            return item
         else:
             # check if molecular_id exists in patient table
             (pt_statuscode, pt_data) = PatientEcosystemConnector().verify_molecular_id(molecular_id)
             if pt_statuscode==200:
-                return pt_data
+                item = pt_data.copy()
+                item.update({"molecular_id_type": "patient"})
+                return item
             else:
                 AbortLogger.log_and_abort(404, self.logger.debug, str(molecular_id + " was not found. Invalid molecular_id or invalid projection key entered."))
 
