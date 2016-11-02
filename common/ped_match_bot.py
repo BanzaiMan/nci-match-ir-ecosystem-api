@@ -1,35 +1,24 @@
 import __builtin__
-import os
 import inspect
 import datetime
 import time
 import ast
 import json
-import logging
 import traceback
+import logging
 from slackclient import SlackClient
-from logging.config import fileConfig
-from common.environment_helper import EnvironmentHelper
-
-slack_client = SlackClient(os.environ.get('SLACK_TOKEN'))
-fileConfig(os.path.abspath("config/logging_config.ini"))
-logger = logging.getLogger(__name__)
-EnvironmentHelper.set_environment(logger)
 
 
 class PedMatchBot(object):
 
     @staticmethod
     def send_message(channel_id, message):
-
-        bot_name = (__builtin__.environment_config[__builtin__.environment]['bot_name'])
-        icon_emoji = (__builtin__.environment_config[__builtin__.environment]['icon_emoji'])
-        slack_client.api_call(
+        SlackClient(__builtin__.slack_token).api_call(
             "chat.postMessage",
             channel=channel_id,
             text=message,
-            username=bot_name,
-            icon_emoji=icon_emoji
+            username=__builtin__.environment_config[__builtin__.environment]['bot_name'],
+            icon_emoji=__builtin__.environment_config[__builtin__.environment]['icon_emoji']
         )
 
     @staticmethod
@@ -44,7 +33,7 @@ class PedMatchBot(object):
                                                 "Error: " + error_message + "\n" +
                                                 str(PedMatchBot.generate_traceback_message(stack))))
         except Exception as e:
-            logger.error("Ped Match Bot Failure.: " + e.message)
+            logging.getLogger(__name__).error("Ped Match Bot Failure.: " + e.message)
 
     @staticmethod
     def generate_traceback_message(stack):

@@ -60,8 +60,7 @@ requeue_countdown = (__builtin__.environment_config[__builtin__.environment]['re
 
 
 
-# I don't think we will use this for sample control as our sample control creation of records are not done through
-# the queueing system but directly on the database. However, I'll leave this for now.
+#TODO: Waleed look at lines 76 through 80 and then 96-100 etc. Notice the redudancy. Any time you see a pattern this is an indication that there is new method and/or class that is needed.
 @app.task
 def put(put_message):
     logger.info("Creating item: " + str(put_message))
