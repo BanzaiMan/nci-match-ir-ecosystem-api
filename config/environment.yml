@@ -8,7 +8,7 @@ development:
   bot_name: "pedmatchbot_dev"
   slack_channel_id: "C2NE9M08N"
   icon_emoji: ":face_with_head_bandage:"
-  requeue_countdown: 10800
+  requeue_countdown: 60
   region: "us-east-1"
   port: "10241"
   bucket: "pedmatch-dev"
@@ -28,7 +28,7 @@ test:
   bot_name: "pedmatchbot_test"
   slack_channel_id: "C2NEK70F9"
   icon_emoji: ":face_with_head_bandage:"
-  requeue_countdown: 10800
+  requeue_countdown: 60
   region: "us-east-1"
   port: "10241"
   bucket: "pedmatch-int"
