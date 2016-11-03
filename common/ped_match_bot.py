@@ -25,13 +25,23 @@ class PedMatchBot(object):
         slack_channel_id = (__builtin__.environment_config[__builtin__.environment]['slack_channel_id'])
         requeue_countdown = (__builtin__.environment_config[__builtin__.environment]['requeue_countdown'])
         details = task.request
+        message_output = json.dumps(message, indent=4, sort_keys=True)
+        message_details = (
+            "\n" + str(message_output)
+            + "\n" + "Queue Name: " + "*" + queue_name + "*" + "\n" +
+            "Task name: " + "*" + str(details.task) + "*" + "\n" +
+            "Task ID: " + "*" + str(details.id) + "*" + "\n" +
+            "Message headers: " + "*" + str(details.headers) + "*" + "\n" +
+            "Retry number: " + "*" + str(details.retries) + "*" + "\n" +
+            "Host name: " + "*" + str(details.hostname) + "*" + "\n" +
+            "Estimated time of arrival: " + "*" + str(details.eta) + "*" + "\n" +
+            "Error: *" + error_message + "*" + "\n" )
         try:
             logger.error(str(details.task) + " has failed, details: " + str(details))
             PedMatchBot().send_message(channel_id=slack_channel_id,
                                        message=("*IR ECOSYSTEM:::* Error processing: " + "\n" +
-                                                str(PedMatchBot.generate_traceback_message(queue_name, message,
-                                                                                           error_message, stack, task,
-                                                                                           logger, dlx_queue))
+                                                message_details +
+                                                str(PedMatchBot.generate_traceback_message(stack))
                                                 + "Re-queueing to attempt after: " + "*" + str(requeue_countdown) +
                                                 " seconds." + "*"
                                                 ))
@@ -44,33 +54,21 @@ class PedMatchBot(object):
                          " details: " + str(details))
             PedMatchBot().send_message(channel_id=slack_channel_id,
                                        message=("*IR ECOSYSTEM:::* Maximum retries reached for: " + "\n" +
-                                                PedMatchBot.generate_traceback_message(queue_name, message,
-                                                                                           error_message, stack, task,
-                                                                                           logger, dlx_queue)))
+                                                message_details +
+                                                PedMatchBot.generate_traceback_message(stack)))
             try:
                 task.apply_async(args=[message], queue=dlx_queue)
             except Exception as e:
                 logger.error("Unable to post to dead letter queue: " + e.message)
 
     @staticmethod
-    def generate_traceback_message(queue_name, message, error_message, stack, task, logger, dlx_queue):
+    def generate_traceback_message(stack):
         calling_function = inspect.stack()[1][3]
         error_traceback = traceback.format_exc()
         class_called = str(stack[1][0].f_locals["self"].__class__)
         ts = time.time()
         time_stamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-        message_output = json.dumps(message, indent=4, sort_keys=True)
-        details = task.request
         message_details = (
-            "\n" + str(message_output)
-            + "\n" + "Queue Name: " + "*" + queue_name + "*" + "\n" +
-            "Task name: " + "*" + str(details.task) + "*" + "\n" +
-            "Task ID: " + "*" + str(details.id) + "*" + "\n" +
-            "Message headers: " + "*" + str(details.headers) + "*" + "\n" +
-            "Retry number: " + "*" + str(details.retries) + "*" + "\n" +
-            "Host name: " + "*" + str(details.hostname) + "*" + "\n" +
-            "Estimated time of arrival: " + "*" + str(details.eta) + "*" + "\n" +
-            "Error: *" + error_message + "*" + "\n" +
             "  The class, *" + str(class_called) + "* and method *" + calling_function
                + "* were called at *" + time_stamp + "*" + "\n" + error_traceback
 
