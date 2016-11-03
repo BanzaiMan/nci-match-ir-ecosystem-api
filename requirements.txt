@@ -1,15 +1,15 @@
-boto==2.42.0
 boto3==1.4.1
-botocore==1.4.60
+botocore==1.4.69
 celery==3.1.24
 ddbmock==1.0.3
 ddt==1.1.1
 Flask==0.11.1
-Flask-Cors==3.0.2
+Flask_Cors==3.0.2
 Flask_RESTful==0.3.5
 mock==2.0.0
 pysam==0.9.1.4
 requests==2.11.1
+simplejson==3.10.0
 slackclient==1.0.2
 tornado==4.4.2
 PyVCF==0.6.8
@@ -18,4 +18,3 @@ PyJWT==1.4.2
 PyYAML==3.12
 codeclimate-test-reporter
 newrelic
-simplejson
