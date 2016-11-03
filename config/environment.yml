@@ -9,6 +9,7 @@ development:
   slack_channel_id: "C2NE9M08N"
   icon_emoji: ":face_with_head_bandage:"
   requeue_countdown: 10800
+  visibility_timeout: 36000
   region: "us-east-1"
   port: "10241"
   bucket: "pedmatch-dev"
@@ -29,6 +30,7 @@ test:
   slack_channel_id: "C2NEK70F9"
   icon_emoji: ":face_with_head_bandage:"
   requeue_countdown: 10800
+  visibility_timeout: 36000
   region: "us-east-1"
   port: "10241"
   bucket: "pedmatch-int"
@@ -50,6 +52,7 @@ uat:
   slack_channel_id: "C2NEA2XQW"
   icon_emoji: ":face_with_head_bandage:"
   requeue_countdown: 10800
+  visibility_timeout: 36000
   region: "us-east-1"
   port: "10241"
   bucket: "pedmatch-uat"
@@ -71,6 +74,7 @@ production:
   slack_channel_id: "C2NEFKYN9"
   icon_emoji: ":face_with_head_bandage:"
   requeue_countdown: 10800
+  visibility_timeout: 36000
   region: "us-east-1"
   port: "10241"
   bucket: "pedmatch"
