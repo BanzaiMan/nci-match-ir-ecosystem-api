@@ -31,7 +31,6 @@ class PedMatchBot(object):
             + "\n" + "Queue Name: " + "*" + queue_name + "*" + "\n" +
             "Task name: " + "*" + str(details.task) + "*" + "\n" +
             "Task ID: " + "*" + str(details.id) + "*" + "\n" +
-            "Message headers: " + "*" + str(details.headers) + "*" + "\n" +
             "Retry number: " + "*" + str(details.retries) + "*" + "\n" +
             "Host name: " + "*" + str(details.hostname) + "*" + "\n" +
             "Estimated time of arrival: " + "*" + str(details.eta) + "*" + "\n" +
@@ -55,7 +54,9 @@ class PedMatchBot(object):
             PedMatchBot().send_message(channel_id=slack_channel_id,
                                        message=("*IR ECOSYSTEM:::* Maximum retries reached for: " + "\n" +
                                                 message_details +
-                                                PedMatchBot.generate_traceback_message(stack)))
+                                                PedMatchBot.generate_traceback_message(stack))
+                                               + "Moving to queue: " + "*" + queue_name + "_dlx." + "*"
+                                       )
             try:
                 task.apply_async(args=[message], queue=dlx_queue)
             except Exception as e:
