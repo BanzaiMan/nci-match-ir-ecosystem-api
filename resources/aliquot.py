@@ -36,7 +36,7 @@ class Aliquot(Resource):
         else:
             # check if molecular_id exists in patient table
             (pt_statuscode, pt_data) = PatientEcosystemConnector().verify_molecular_id(molecular_id)
-            if pt_statuscode==200:
+            if pt_statuscode == 200:
                 item = pt_data.copy()
                 item.update({"molecular_id_type": "patient"})
                 return item
