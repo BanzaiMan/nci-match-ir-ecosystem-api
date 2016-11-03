@@ -34,7 +34,8 @@ except KeyError as e:
     exit()
 else:
     BROKER_TRANSPORT_OPTIONS = {
-        'polling_interval': __builtin__.environment_config[__builtin__.environment]['polling_interval']
+        'polling_interval': __builtin__.environment_config[__builtin__.environment]['polling_interval'],
+        'visibility_timeout': 18000
     }
     app = Celery('tasks', broker=BROKER__URL, broker_transport_options=BROKER_TRANSPORT_OPTIONS)
     app.conf.CELERY_ACCEPT_CONTENT = ['json']
