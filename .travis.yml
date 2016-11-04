@@ -10,6 +10,7 @@ install: pip install -r requirements.txt
 script:
 - coverage run -m unittest discover tests
 after_success:
+- codeclimate-test-reporter
 - docker build -f ./Dockerfile.python -t matchbox/nci-match-ir-ecosystem-api:latest .
 - docker build -f ./Dockerfile.celery -t matchbox/nci-match-ir-ecosystem-processor:latest .
 - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
@@ -25,7 +26,10 @@ after_success:
   -i matchbox/nci-match-ir-ecosystem-processor:latest
 #Trigger Travis bdd tests
 - curl -s -X POST -H "Content-Type:application/json" -H "Accept:application/json" -H "Travis-API-Version:3" -H "Authorization:token $TRAVIS_TOKEN" -d "{\"request\":{\"message\":\"Triggered by nci-match-ir-ecosystem-api $TRAVIS_COMMIT\", \"branch\":\"master\", \"config\":{\"env\":{\"matrix\":[\"TRIGGER_REPO=nci-match-ir-ecosystem-api;CUC_TAG=@ion_reporter\"]}}}}" https://api.travis-ci.org/repo/CBIIT%2Fnci-uMatch-bddtests/requests
-- codeclimate-test-reporter
+
 notifications:
   slack:
     secure: r045LoZka/VTe2uUCvOLR4xh/3qT/RgX2PKa7Oe7SBM3RYs80DymmyYTUXJEn2U2ZzErR6z/vwdo6qtCTBxkpMpRXkkTyi8CIOF6vkEAAyJjsJPDUy2S2FFhN3bayRXN974oOxi9y/0svTabfZm6u1L03yIPbsKxxNnZz7cE7PW84zxn09xg1gatuzZpx6yK4ZW5UoWZFIKM8z0ota46BqaL5bqA+HgkmfmrsZ5gYd+8SCHrtCEz0uPcSbMVN1Ab71yl0Pgw/820/RQDqiLrIxJGtKkjeKvxe1KtYVR+8jUpJCAZPsH+TMb68HJBUML9AWlxnTwtIejsKktCqK/ZvJc9t+5IMNXnrBebVqdpVbEG4AxMbIAvU+Tl07NQ9sMs87JFTbbfl9dEPPj4s3yCHglT4GEF83sRksO8yYMwcqX5mjVbBqVqbWar7nZW/x52IVWPkvWFGzN0Yjgv+eXyHUuUVAT5zUvVbAceuHTWfmpF08XZZUnvqd0ZGHnNoFEiQZ4quCfnosVGk0tuow2SA+zqf+zSyGw6rqMA8OYPai/jZmquUQcrSsGiGkVf7q6TNhFzvwjYgQwI0leX9u2R5zDVMYwxk2EwabSDHLBObBgODgFSK+JMRMhsOzc+hnTqjHr32ZeWNX/0dQIOb6DnZ0alNZwCeyCoPiRIpVktWFg=
+addons:
+  code_climate:
+    repo_token: c6aead72aeb55c6a1fb9498b248a736bb297185ca3ba09e908ec0bad84c78a9c
