@@ -54,6 +54,7 @@ else:
     dlx_queue = (queue_name + "_dlx")
 
 
+# TODO: Waleed...closer but still a lot of redundant code... see if you can simplify further.
 @app.task
 def put(put_message):
     logger.info("Creating item: " + str(put_message))
