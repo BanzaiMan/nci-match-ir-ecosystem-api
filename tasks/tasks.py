@@ -54,64 +54,85 @@ else:
     dlx_queue = (queue_name + "_dlx")
 
 
-# TODO: Waleed...closer but still a lot of redundant code... see if you can simplify further.
+def accessor_task(message, action, task, stack):
+    logger.info(str(action) + " initiated for: " + str(message))
+    try:
+        action(message)
+    except Exception as e:
+        PedMatchBot.return_slack_message_and_retry(queue_name, message, e.message, stack, task, logger, dlx_queue)
+
+
 @app.task
 def put(put_message):
-    logger.info("Creating item: " + str(put_message))
-    try:
-        SampleControlAccessor().put_item(put_message)
-    except Exception as e:
-        stack = inspect.stack()
-        PedMatchBot.return_slack_message_and_retry(queue_name, put_message, e.message, stack, put, logger, dlx_queue)
+    stack = inspect.stack()
+    action = SampleControlAccessor().put_item
+    accessor_task(put_message, action, put, stack)
 
 # Use for just updating the data in a record in the table
 @app.task
 def update(update_message):
-    logger.info("Updating item: " + str(update_message))
-    try:
-        SampleControlAccessor().update(update_message)
-    except Exception as e:
-        stack = inspect.stack()
-        PedMatchBot.return_slack_message_and_retry(queue_name, update_message, e.message, stack, update, logger, dlx_queue)
+    stack = inspect.stack()
+    action = SampleControlAccessor().update
+    accessor_task(update_message, action, update, stack)
 
 @app.task
 def update_ir(update_message):
-    logger.info("Updating item: " + str(update_message))
-    try:
-        IonReporterAccessor().update(update_message)
-    except Exception as e:
-        stack = inspect.stack()
-        PedMatchBot.return_slack_message_and_retry(queue_name, update_message, e.message, stack, update_ir,
-                                                   logger, dlx_queue)
+    stack = inspect.stack()
+    action = IonReporterAccessor().update
+    accessor_task(update_message, action, update_ir, stack)
+
+
+@app.task
+def delete(molecular_id):
+    stack = inspect.stack()
+    action = SampleControlAccessor().delete_item
+    accessor_task(molecular_id, action, delete, stack)
+
+
+@app.task
+def delete_ir(ion_reporter_id):
+    stack = inspect.stack()
+    action = IonReporterAccessor().delete_item
+    accessor_task(ion_reporter_id, action, delete_ir, stack)
+
+
+@app.task
+def batch_delete(query_parameters):
+    stack = inspect.stack()
+    action = SampleControlAccessor().batch_delete
+    accessor_task(query_parameters, action, batch_delete, stack)
+
+
+@app.task
+def batch_delete_ir(query_parameters):
+    stack = inspect.stack()
+    action = IonReporterAccessor().batch_delete
+    accessor_task(query_parameters, action, batch_delete_ir, stack)
 
 # this is a special update in that it updates the database, process files, and stores them in s3. So think of this
 # as updating both S3 and dynamodb.
 @app.task
 def process_ir_file(file_process_message):
-
+    stack = inspect.stack()
     new_file_process_message = file_process_message.copy()
 
     if new_file_process_message['molecular_id'] .startswith('SC_'):
         logger.info("Updating sample_controls table before processing file" + str(new_file_process_message))
         # after running SampleControlAccessor().update(file_process_message), key 'molecular_id' will be
         # removed from file_process_message. See sample_control_access.py line37
-        SampleControlAccessor().update(file_process_message)
+        action = SampleControlAccessor().update
+        accessor_task(file_process_message, action, process_ir_file, stack)
 
-    try:
-        # process vcf, dna_bam, or cdna_bam file
-        updated_file_process_message = process_file_message(new_file_process_message)
+        action2 = process_file_message
+        accessor_task(new_file_process_message, action2, process_ir_file, stack)
 
-    except Exception as e:
-        stack = inspect.stack()
-        PedMatchBot.return_slack_message_and_retry(queue_name, new_file_process_message, e.message, stack,
-                                                   process_ir_file, logger, dlx_queue)
     else:
         if new_file_process_message['molecular_id'].startswith('SC_'):
             logger.info("Updating sample_controls table after processing file.")
-            SampleControlAccessor().update(updated_file_process_message)
+            SampleControlAccessor().update(new_file_process_message)
         else:
             logger.info("Passing processed file S3 path to patient ecosystem.")
-            logger.info("Processed file for patient: " + str(updated_file_process_message))
+            logger.info("Processed file for patient: " + str(new_file_process_message))
 
 
 # process vcf, bam files based on message dictionary key: vcf_name, dna_bam_name, or cdna_bam_name
@@ -270,41 +291,3 @@ def process_rule_by_tsv(dictionary, tsv_file_name):
     return dictionary
 
 
-@app.task
-def delete(molecular_id):
-    logger.info("Deleting sample control record with molecular id:" + str(molecular_id))
-    try:
-        SampleControlAccessor().delete_item(molecular_id)
-    except Exception as e:
-        stack = inspect.stack()
-        PedMatchBot.return_slack_message_and_retry(queue_name, molecular_id, e.message, stack, delete,logger, dlx_queue)
-
-@app.task
-def delete_ir(ion_reporter_id):
-    logger.info("Deleting ion reporter record with ion reporter id:" + str(ion_reporter_id))
-    try:
-        IonReporterAccessor().delete_item(ion_reporter_id)
-    except Exception as e:
-        stack = inspect.stack()
-        PedMatchBot.return_slack_message_and_retry(queue_name, ion_reporter_id, e.message, stack, delete_ir,
-                                                   logger, dlx_queue)
-
-@app.task
-def batch_delete(query_parameters):
-    logger.info("Deleting sample control records matching query:" + str(query_parameters))
-    try:
-        SampleControlAccessor().batch_delete(query_parameters)
-    except Exception as e:
-        stack = inspect.stack()
-        PedMatchBot.return_slack_message_and_retry(queue_name, query_parameters, e.message, stack, batch_delete, logger,
-                                                   dlx_queue)
-
-
-@app.task
-def batch_delete_ir(query_parameters):
-    try:
-        IonReporterAccessor().batch_delete(query_parameters)
-    except Exception as e:
-        stack = inspect.stack()
-        PedMatchBot.return_slack_message_and_retry(queue_name, query_parameters, e.message, stack, batch_delete_ir,
-                                                   logger, dlx_queue)
