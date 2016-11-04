@@ -17,9 +17,8 @@ class AbortLogger(object):
                 stack = inspect.stack()
                 PedMatchBot().send_message(
                                            message=(
-                                               "*IR ECOSYSTEM:::* Error code: *" + str(error_code) + "*" + "\n" +
-                                               "Error Message: *" + message + "*" + "\n" +
-                                               str(PedMatchBot.generate_traceback_message(stack))
+                                               "*IR ECOSYSTEM:::* Error code: *%s* \n Error Message: *%s* \n %s"
+                                               %(error_code, message, PedMatchBot.generate_traceback_message(stack))
                                            )
                                            )
 

@@ -225,11 +225,9 @@ def post_tsv_info(dictionary, tsv_file_name):
         if r.status_code == 200:
             logger.info("Successfully posted TSV file name to Patient Ecosystem for " + dictionary['molecular_id'])
         else:
-            stack = inspect.stack()
             error_message = "Posting of TSV to patient ecosystem failed for " + dictionary['molecular_id']
             logger.error("Posting of TSV to patient ecosystem failed for: " + dictionary['molecular_id'] +
                          " because error code: " + str(r.status_code))
-            PedMatchBot.return_slack_message_and_retry(queue_name, dictionary, error_message, stack)
             raise Exception(error_message)
 
 
@@ -267,8 +265,6 @@ def process_rule_by_tsv(dictionary, tsv_file_name):
             error_msg = ("Failed to get rules engine data for: " + dictionary['molecular_id'] +
                          " because error status code: " + str(rule_response.status_code))
             logger.error(error_msg)
-            stack = inspect.stack()
-            PedMatchBot.return_slack_message_and_retry(queue_name, dictionary, error_msg, stack)
             raise Exception(error_msg)
     return dictionary
 
