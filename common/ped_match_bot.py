@@ -11,10 +11,10 @@ from celery.exceptions import MaxRetriesExceededError
 class PedMatchBot(object):
 
     @staticmethod
-    def send_message(channel_id, message):
+    def send_message(message):
         SlackClient(__builtin__.slack_token).api_call(
             "chat.postMessage",
-            channel=channel_id,
+            channel=(__builtin__.environment_config[__builtin__.environment]['slack_channel_id']),
             text=message,
             username=__builtin__.environment_config[__builtin__.environment]['bot_name'],
             icon_emoji=__builtin__.environment_config[__builtin__.environment]['icon_emoji']
@@ -37,7 +37,7 @@ class PedMatchBot(object):
             "Error: *" + error_message + "*" + "\n" )
         try:
             logger.error(str(details.task) + " has failed, details: " + str(details))
-            PedMatchBot().send_message(channel_id=slack_channel_id,
+            PedMatchBot().send_message(
                                        message=("*IR ECOSYSTEM:::* Error processing: " + "\n" +
                                                 message_details +
                                                 str(PedMatchBot.generate_traceback_message(stack))
@@ -51,7 +51,7 @@ class PedMatchBot(object):
         except MaxRetriesExceededError:
             logger.error("Maximum retries reached for " + str(details.task) + " moving task to " + dlx_queue +
                          " details: " + str(details))
-            PedMatchBot().send_message(channel_id=slack_channel_id,
+            PedMatchBot().send_message(
                                        message=("*IR ECOSYSTEM:::* Maximum retries reached for: " + "\n" +
                                                 message_details +
                                                 PedMatchBot.generate_traceback_message(stack))
