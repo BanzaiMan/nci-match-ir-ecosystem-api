@@ -33,7 +33,7 @@ class PedMatchBot(object):
         try:
             logger.error(str(details.task) + " has failed, details: " + str(details))
             PedMatchBot().send_message(
-                                       message=("*IR ECOSYSTEM:::* Error processing: \n %s \n %s Re-queueing to attempt after: *%s seconds.*"
+                                       message=("*IR ECOSYSTEM:::* Error processing: %s \n %s Re-queueing to attempt after: *%s seconds.*"
                                                 % (message_details, PedMatchBot.generate_traceback_message(stack), requeue_countdown)
                                                 ))
         except Exception as e:
