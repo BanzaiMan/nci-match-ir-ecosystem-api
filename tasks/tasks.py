@@ -113,26 +113,29 @@ def batch_delete_ir(query_parameters):
 # as updating both S3 and dynamodb.
 @app.task
 def process_ir_file(file_process_message):
-    stack = inspect.stack()
     new_file_process_message = file_process_message.copy()
 
     if new_file_process_message['molecular_id'] .startswith('SC_'):
         logger.info("Updating sample_controls table before processing file" + str(new_file_process_message))
         # after running SampleControlAccessor().update(file_process_message), key 'molecular_id' will be
         # removed from file_process_message. See sample_control_access.py line37
-        action = SampleControlAccessor().update
-        accessor_task(file_process_message, action, process_ir_file, stack)
+        SampleControlAccessor().update(file_process_message)
 
-        action2 = process_file_message
-        accessor_task(new_file_process_message, action2, process_ir_file, stack)
+    try:
+        # process vcf, dna_bam, or cdna_bam file
+        updated_file_process_message = process_file_message(new_file_process_message)
 
+    except Exception as e:
+        stack = inspect.stack()
+        PedMatchBot.return_slack_message_and_retry(queue_name, new_file_process_message, e.message, stack,
+                                                   process_ir_file, logger, dlx_queue)
     else:
         if new_file_process_message['molecular_id'].startswith('SC_'):
             logger.info("Updating sample_controls table after processing file.")
-            SampleControlAccessor().update(new_file_process_message)
+            SampleControlAccessor().update(updated_file_process_message)
         else:
             logger.info("Passing processed file S3 path to patient ecosystem.")
-            logger.info("Processed file for patient: " + str(new_file_process_message))
+            logger.info("Processed file for patient: " + str(updated_file_process_message))
 
 
 # process vcf, bam files based on message dictionary key: vcf_name, dna_bam_name, or cdna_bam_name
