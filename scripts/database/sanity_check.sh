@@ -145,13 +145,13 @@ curl -X POST  "${URL}/api/v1/sample_controls?site=mocha&control_type=positive"
 curl -X POST  "${URL}/api/v1/sample_controls?site=mdacc&control_type=no_template"
 curl -X POST  "${URL}/api/v1/sample_controls?site=mocha&control_type=proficiency_competency"
 
-curl -X POST -H "Content-Type: application/json" -d '{ip_address:"143.333.85.66"}' "${URL}/api/v1/sample_controls?site=mocha&control_type=no_template"
+curl -X POST "${URL}/api/v1/sample_controls?site=mocha&control_type=no_template"
 
-curl -X POST -H "Content-Type: application/json" -d '{ip_address:"143.333.85.66"}' "${URL}/api/v1/sample_controls"
+curl -X POST "${URL}/api/v1/sample_controls"
 
-curl -X POST -H "Content-Type: application/json" -d '{ip_address:"143.333.85.66"}' "${URL}/api/v1/sample_controls?site=mocha"
+curl -X POST "${URL}/api/v1/sample_controls?site=mocha"
 
-curl -X POST -H "Content-Type: application/json" -d '{ip_address:"143.333.85.66"}' "${URL}/api/v1/sample_controls?control_type=no_template"
+curl -X POST "${URL}/api/v1/sample_controls?control_type=no_template"
 
 
 echo -e "${CYAN}***********************************************${NC}"
