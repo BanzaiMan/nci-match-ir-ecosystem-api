@@ -37,7 +37,7 @@ echo -e "${BLUE}GET /api/v1/ion_reporters/{ion_reporter_id}${NC}"
 echo -e "${PURPLE}To call resources.ion_reporter_table GET for Ion Reporter with ID IR_AIO78 and return ALL values${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 
-curl -X GET "${URL}/api/v1/ion_reporters/IR_AIO78"
+curl -X GET "${URL}/api/v1/ion_reporters/IR_JT3E6"
 
 echo -e "${CYAN}***********************************************${NC}"
 echo -e "${BLUE}GET /api/v1/ion_reporters/{ion_reporter_id}${NC}"
@@ -55,18 +55,18 @@ curl -X GET "${URL}/api/v1/ion_reporters?site=mocha"
 
 echo -e "${CYAN}***********************************************${NC}"
 echo -e "${BLUE}POST /v1/ion_reporters?site=xxx${NC}"
-echo -e "${PURPLE}To create a new ion reporter with ip_address of 143.33.85.66. Pass data in json -d. Must contain site name in query${NC}"
+echo -e "${PURPLE}To create a new ion reporter. Must contain site name in query${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 
-curl -X POST -H "Content-Type: application/json" -d '{ip_address:"143.333.85.66"}' "${URL}/api/v1/ion_reporters?site=mocha"
+curl -X POST "${URL}/api/v1/ion_reporters?site=mocha"
 
 echo -e "${CYAN}***********************************************${NC}"
 echo -e "${BLUE}POST /v1/ion_reporters?site=xxx${NC}"
-echo -e "${PURPLE}To create a new ion reporter. Pass data in json -d. without site in query will return message: Must send in a site...${NC}"
+echo -e "${PURPLE}To create a new ion reporter, without site in query will return message: Must send in a site...${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 
-curl -X POST -H "Content-Type: application/json" -d '{ip_address:"143.333.85.66"}' "${URL}/api/v1/ion_reporters"
-
+curl -v -X POST "${URL}/api/v1/ion_reporters"
+#
 echo -e "${CYAN}***********************************************${NC}"
 echo -e "${BLUE}DELETE /v1/ion_reporters?...${NC}"
 echo -e "${PURPLE}Batch deletion request placed on queue to be processed${NC}"
@@ -79,7 +79,7 @@ echo -e "${BLUE}PUT /v1/ion_reporters/{ion_reporter_id}${NC}"
 echo -e "${PURPLE}The body of this service contains the json message that will notify the PED-MATCH system that the IR Uploader is communicating properly.${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 
-curl -X PUT -H 'Content-Type: application/json' -d '{"ir_status":"Lost contact! Last heartbeat was sent 11355 minutes ago"}' "${URL}/api/v1/ion_reporters/IR_WO3IA"
+curl -X PUT -H 'Content-Type: application/json' -d '{"ir_status":"Lost contact! Last heartbeat was sent 11355 minutes ago"}' "${URL}/api/v1/ion_reporters/IR_AIO78"
 
 curl -X PUT -H 'Content-Type: application/json' -d @./ir_item.json "${URL}/api/v1/ion_reporters/IR_WO3IA"
 
