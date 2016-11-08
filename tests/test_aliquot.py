@@ -20,25 +20,25 @@ class TestAliquot(unittest.TestCase):
              "site": "mocha"
          },
          'SC_YQ111', 404, {}, 200, "sample_control"),
-        ({}, 'SC_YQ999', 404, {}, 404, None),
-        ({},
-         'PT_SR10_BdVRRejected_BD_MOI1',
-         200,
-         {
-             "uuid": "69cf6ae8-d95b-463a-be4e-1ba2b7ebdf04",
-             "shipped_date": "2016-05-01T19:42:13+00:00",
-             "patient_id": "PT_SR10_BdVRRejected",
-             "molecular_id": "PT_SR10_BdVRRejected_BD_MOI1",
-             "study_id": "APEC1621",
-             "type": "BLOOD_DNA",
-             "carrier": "Federal Express",
-             "tracking_id": "7956 4568 1235",
-             "destination": "MDA",
-             "dna_volume_ul": "10.0",
-             "dna_concentration_ng_per_ul": "25.0",
-             "cdna_volume_ul": "10.0"
-         },
-         200, "patient")
+        ({}, 'SC_YQ999', 404, {}, 404, None)
+        # ({},
+        #  'PT_SR10_BdVRRejected_BD_MOI1',
+        #  200,
+        #  {
+        #      "uuid": "69cf6ae8-d95b-463a-be4e-1ba2b7ebdf04",
+        #      "shipped_date": "2016-05-01T19:42:13+00:00",
+        #      "patient_id": "PT_SR10_BdVRRejected",
+        #      "molecular_id": "PT_SR10_BdVRRejected_BD_MOI1",
+        #      "study_id": "APEC1621",
+        #      "type": "BLOOD_DNA",
+        #      "carrier": "Federal Express",
+        #      "tracking_id": "7956 4568 1235",
+        #      "destination": "MDA",
+        #      "dna_volume_ul": "10.0",
+        #      "dna_concentration_ng_per_ul": "25.0",
+        #      "cdna_volume_ul": "10.0"
+        #  },
+        #  200, "patient")
     )
     @unpack
     @patch('resources.aliquot.PatientEcosystemConnector')
