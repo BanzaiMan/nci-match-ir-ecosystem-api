@@ -59,7 +59,7 @@ class SequenceFileProcessor(object):
         else:
             if not os.path.isfile(tsv_full_path):
                 logger.error("Failed to generate tsv file from : " + str(vcf_full_path))
-                raise Exception("Failed to generate tsv file from : " + str(vcf_full_path))
+                raise Exception("failure to generate tsv file from: " + str(vcf_full_path))
 
             logger.info("Generated tsv file: " + str(tsv_full_path))
             return tsv_full_path

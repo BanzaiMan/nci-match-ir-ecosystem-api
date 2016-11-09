@@ -204,7 +204,7 @@ def process_vcf(dictionary):
             new_file_path = SequenceFileProcessor().vcf_to_tsv(downloaded_file_path)
         except Exception as e:
             logger.error("TSV creation failed because: " + str(e.message))
-            raise Exception("TSV creation failed because: " + str(e.message))
+            raise Exception("TSV creation has failed due to " + str(e.message))
         else:
             key = 'tsv_name'
             return new_file_path, key, downloaded_file_path
