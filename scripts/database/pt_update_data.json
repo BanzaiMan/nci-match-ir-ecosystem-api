@@ -2,8 +2,8 @@
   "ion_reporter_id": "IR_WAO85",
   "analysis_id": "job2",
   "site": "mocha",
-  "vcf_name": "IR_WAO85/PT_SR10_BdVRRejected_BD_MOI1/job2/3366.vcf",
-  "dna_bam_name": "IR_WAO85/PT_SR10_BdVRRejected_BD_MOI1/job2/dna.bam",
-  "cdna_bam_name": "IR_WAO85/PT_SR10_BdVRRejected_BD_MOI1/job2/cdna.bam",
-  "qc_name": "IR_WAO85/PT_SR10_BdVRRejected_BD_MOI1/job2/qc.pdf"
+  "vcf_name": "IR_WAO85/PT_SS26_TsShipped_MOI1/job2/3366.vcf",
+  "dna_bam_name": "IR_WAO85/PT_SS26_TsShipped_MOI1/job2/dna.bam",
+  "cdna_bam_name": "IR_WAO85/PT_SS26_TsShipped_MOI1/job2/cdna.bam",
+  "qc_name": "IR_WAO85/PT_SS26_TsShipped_MOI1/job2/qc.pdf"
 }
