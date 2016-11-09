@@ -5,7 +5,7 @@ development:
   patient_post_path: "/api/v1/patients/variant_report"
   rule_path: "/api/v1/rules/sample_control_report/"
   shipments_path: "/api/v1/patients/shipments/"
-  bot_name: "pedmatchbot_dev"
+  bot_name: "ir_ecosystem_bot"
   slack_channel_id: "C2NE9M08N"
   icon_emoji: ":face_with_head_bandage:"
   requeue_countdown: 10800
@@ -26,7 +26,7 @@ test:
   patient_post_path: "/api/v1/patients/variant_report"
   rule_path: "/api/v1/rules/sample_control_report/"
   shipments_path: "/api/v1/patients/shipments/"
-  bot_name: "pedmatchbot_test"
+  bot_name: "ir_ecosystem_bot"
   slack_channel_id: "C2NEK70F9"
   icon_emoji: ":face_with_head_bandage:"
   requeue_countdown: 10800
@@ -48,7 +48,7 @@ uat:
   patient_post_path: "/api/v1/patients/variant_report"
   rule_path: "/api/v1/rules/sample_control_report/"
   shipments_path: "/api/v1/patients/shipments/"
-  bot_name: "pedmatchbot_uat"
+  bot_name: "ir_ecosystem_bot"
   slack_channel_id: "C2NEA2XQW"
   icon_emoji: ":face_with_head_bandage:"
   requeue_countdown: 10800
@@ -70,7 +70,7 @@ production:
   patient_post_path: "/api/v1/patients/variant_report"
   rule_path: "/api/v1/rules/sample_control_report/"
   shipments_path: "/api/v1/patients/shipments/"
-  bot_name: "pedmatchbot_prod"
+  bot_name: "ir_ecosystem_bot"
   slack_channel_id: "C2NEFKYN9"
   icon_emoji: ":face_with_head_bandage:"
   requeue_countdown: 10800
