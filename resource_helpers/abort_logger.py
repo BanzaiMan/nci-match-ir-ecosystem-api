@@ -16,10 +16,30 @@ class AbortLogger(object):
             if error_code >= 500:
                 stack = inspect.stack()
                 PedMatchBot().send_message(
-                                           message=(
-                                               "*IR ECOSYSTEM:::* Error code: *%s* \n Error Message: *%s* \n %s"
-                                               %(error_code, message, PedMatchBot.generate_traceback_message(stack))
-                                           )
+                    attachments=
+                    [
+                        {
+                            "fallback": " HTTP Code Error",
+                            "color": "#ff0000",
+                            "pretext": message,
+                            "title": "Loggly",
+                            "title_link": "https://match.loggly.com/search#terms="+ message,
+                            "fields": [
+                                {
+                                    "title": "Project",
+                                    "value": "IR Ecosystem",
+                                    "short": "true"
+                                },
+                                {
+                                    "title": "Method Called",
+                                    "value": calling_function,
+                                    "short": "true"
+                                }
+                            ],
+
+                            "footer": "HTTP Status Code: " + str(error_code),
+                        }
+                    ]
                                            )
 
         abort(error_code, message=message)
