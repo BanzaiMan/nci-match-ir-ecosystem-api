@@ -40,7 +40,7 @@ class PedMatchBot(object):
         pattern = '%Y-%m-%d %H:%M:%S'
         time_stamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
         epoch = int(time.mktime(time.strptime(time_stamp, pattern)))
-        upload_file = PedMatchBot.upload_to_slack(message_output)
+
 
 
         attachments = [
@@ -79,7 +79,20 @@ class PedMatchBot(object):
             }
         ]
 
-        retry_attachments = [
+
+
+        try:
+            logger.error(str(details.task) + " has failed, details: " + str(details))
+            PedMatchBot().send_message(attachments= attachments)
+        except Exception as e:
+            logger.error("Ped Match Bot Failure.: " + e.message)
+        try:
+
+            task.retry(args=[message], countdown=requeue_countdown)
+        except MaxRetriesExceededError:
+            logger.error("MAXIMUM RETRIES reached for %s moving task to %s details: %s" % (details.task, dlx_queue, details))
+            upload_file = PedMatchBot.upload_to_slack(message_output)
+            PedMatchBot().send_message(attachments = [
             {
                 "fallback": error_message + " - : https://match.loggly.com/search#terms=",
                 "color": "#ff0000",
@@ -113,18 +126,7 @@ class PedMatchBot(object):
                 "footer": "Host: " + str(details.hostname),
                 "ts": epoch
             }
-        ]
-
-        try:
-            logger.error(str(details.task) + " has failed, details: " + str(details))
-            PedMatchBot().send_message(attachments= attachments)
-        except Exception as e:
-            logger.error("Ped Match Bot Failure.: " + e.message)
-        try:
-            task.retry(args=[message], countdown=requeue_countdown)
-        except MaxRetriesExceededError:
-            logger.error("MAXIMUM RETRIES reached for %s moving task to %s details: %s" % (details.task, dlx_queue, details))
-            PedMatchBot().send_message(attachments=retry_attachments)
+        ])
             try:
                 task.apply_async(args=[message], queue=dlx_queue)
             except Exception as e:
