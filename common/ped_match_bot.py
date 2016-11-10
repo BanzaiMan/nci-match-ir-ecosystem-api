@@ -14,6 +14,7 @@ class PedMatchBot(object):
     def send_message(attachments):
         SlackClient(__builtin__.slack_token).api_call(
             "chat.postMessage",
+            token= (__builtin__.slack_token),
             channel=(__builtin__.environment_config[__builtin__.environment]['slack_channel_id']),
 
             username=__builtin__.environment_config[__builtin__.environment]['bot_name'],
@@ -22,14 +23,16 @@ class PedMatchBot(object):
         )
 
     @staticmethod
-    def upload_to_slack(message):
-        SlackClient(__builtin__.slack_token).api_call(
+    def upload_to_slack(message, id):
+        task_id = str(id)
+        upload_object = SlackClient(__builtin__.slack_token).api_call(
             "files.upload",
             as_user = "true",
-            filename="error_message",
+            filename= task_id[:5]+ "_error_message",
+            filetype="javascript",
             content= message,
-            channels= (__builtin__.environment_config[__builtin__.environment]['slack_channel_id'])
         )
+        return upload_object
 
     @staticmethod
     def return_slack_message_and_retry(queue_name, message, error_message, stack, task, logger, dlx_queue):
@@ -41,16 +44,21 @@ class PedMatchBot(object):
         time_stamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
         epoch = int(time.mktime(time.strptime(time_stamp, pattern)))
 
+        upload_json = PedMatchBot.upload_to_slack(message_output, details.id)
+        json_url = upload_json["file"]["edit_link"]
+
+        upload_stack = PedMatchBot.upload_to_slack(PedMatchBot.generate_traceback_message(stack), details.id)
+        stack_url = upload_stack["file"]["edit_link"]
 
 
         attachments = [
             {
-                "fallback": error_message + " - : https://match.loggly.com/search#terms=",
-                "color": "#ff0000",
+                "fallback": error_message,
+                "color": "#F35A00",
                 "pretext": error_message + "; \n Will attempt re-queue in " + str(requeue_countdown) + " seconds.",
-                "title": "StackTrace and Message",
+                "title": "Loggly Reference",
                 "title_link": "https://match.loggly.com/search#terms=" + str(details.id),
-                "text": "<https://match.loggly.com/search#terms=" + str(details.id) + "|ReferenceError> - Loggly",
+                "text": "<"+ str(stack_url) + "|Traceback Download> and <" + str(json_url) + "|JSON Download>",
                 "fields": [
                     {
                         "title": "Project",
@@ -79,27 +87,14 @@ class PedMatchBot(object):
             }
         ]
 
-
-
-        try:
-            logger.error(str(details.task) + " has failed, details: " + str(details))
-            PedMatchBot().send_message(attachments= attachments)
-        except Exception as e:
-            logger.error("Ped Match Bot Failure.: " + e.message)
-        try:
-
-            task.retry(args=[message], countdown=requeue_countdown)
-        except MaxRetriesExceededError:
-            logger.error("MAXIMUM RETRIES reached for %s moving task to %s details: %s" % (details.task, dlx_queue, details))
-            upload_file = PedMatchBot.upload_to_slack(message_output)
-            PedMatchBot().send_message(attachments = [
+        retry_attachments = [
             {
-                "fallback": error_message + " - : https://match.loggly.com/search#terms=",
+                "fallback": error_message,
                 "color": "#ff0000",
                 "pretext": error_message + "; \n Maximum retries reached, moving to to: " + queue_name + "_dlx.",
-                "title": "StackTrace and Message",
-                "title_link": upload_file,
-                "text": "<https://match.loggly.com/search#terms=" + str(details.id) + "|ReferenceError> - Loggly",
+                "title": "Loggly Reference",
+                "title_link": "https://match.loggly.com/search#terms=" + str(details.id),
+                "text": "<" + str(stack_url) + "|Traceback Download> and <" + str(json_url) + "|JSON Download>",
                 "fields": [
                     {
                         "title": "Project",
@@ -126,7 +121,18 @@ class PedMatchBot(object):
                 "footer": "Host: " + str(details.hostname),
                 "ts": epoch
             }
-        ])
+        ]
+
+        try:
+            logger.error(str(details.task) + " has failed, details: " + str(details))
+            PedMatchBot().send_message(attachments= attachments)
+        except Exception as e:
+            logger.error("Ped Match Bot Failure.: " + e.message)
+        try:
+            task.retry(args=[message], countdown=requeue_countdown)
+        except MaxRetriesExceededError:
+            logger.error("MAXIMUM RETRIES reached for %s moving task to %s details: %s" % (details.task, dlx_queue, details))
+            PedMatchBot().send_message(retry_attachments)
             try:
                 task.apply_async(args=[message], queue=dlx_queue)
             except Exception as e:
