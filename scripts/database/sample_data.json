@@ -54,6 +54,17 @@
           "site": {"S": "mocha"}
         }
       }
+    },cd
+    {
+      "PutRequest": {
+        "Item": {
+          "date_molecular_id_created": {"S": "2016-10-30 20:04:26.668"},
+          "control_type": {"S": "positive"},
+          "molecular_id": {"S": "SC_5AMCC"},
+          "ion_reporter_id": {"S": "IR_WAO85"},
+          "site": {"S": "mocha"}
+        }
+      }
     },
     {
       "PutRequest": {

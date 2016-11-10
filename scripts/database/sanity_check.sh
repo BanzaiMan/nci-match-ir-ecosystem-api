@@ -145,12 +145,12 @@ curl -X POST  "${URL}/api/v1/sample_controls?site=mocha&control_type=positive"
 curl -X POST  "${URL}/api/v1/sample_controls?site=mdacc&control_type=no_template"
 curl -X POST  "${URL}/api/v1/sample_controls?site=mocha&control_type=proficiency_competency"
 
-curl -X POST "${URL}/api/v1/sample_controls?site=mocha&control_type=no_template"
+echo -e "${CYAN}***********************************************${NC}"
+echo -e "${PURPLE}Show error message when creating a new molecular id in a wrong way.${NC}"
+echo -e "${CYAN}***********************************************${NC}"
 
 curl -X POST "${URL}/api/v1/sample_controls"
-
 curl -X POST "${URL}/api/v1/sample_controls?site=mocha"
-
 curl -X POST "${URL}/api/v1/sample_controls?control_type=no_template"
 
 
@@ -166,7 +166,7 @@ echo -e "${BLUE}DELETE /api/v1/sample_controls/{molecular_id}${NC}"
 echo -e "${PURPLE}Delete a specific sample control record.${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 
-curl -X DELETE "${URL}/api/v1/sample_controls/SC_5AMCC"
+curl -X DELETE "${URL}/api/v1/sample_controls/SC_VEME6"
 
 echo -e "${CYAN}***********************************************${NC}"
 echo -e "${BLUE}PUT /api/v1/sample_controls/{molecular_id}${NC}"
