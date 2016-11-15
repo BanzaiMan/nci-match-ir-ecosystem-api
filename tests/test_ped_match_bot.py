@@ -44,7 +44,11 @@ class TestPedMatchBot(unittest.TestCase):
         self.assertTrue(mock_slack.return_value)
 
     @patch('common.ped_match_bot.inspect')
-    def test_generate_traceback_message(self, mock_inspection, mock_slack):
+    @patch('common.ped_match_bot.time')
+    def test_generate_traceback_message(self, mock_time, mock_inspection, mock_slack):
+        time_instance = mock_time.return_value
+        time_instance.time.return_value = 9979221686.65
+
         instance = mock_slack.return_value
         instance.api_call.return_value = True
 
@@ -93,7 +97,6 @@ class TestPedMatchBot(unittest.TestCase):
 
         print return_value
 
-        # self.assertTrue(mock_inspection.called)
         self.assertTrue(mock_inspection.return_value)
         self.assertTrue(mock_slack.return_value)
 
