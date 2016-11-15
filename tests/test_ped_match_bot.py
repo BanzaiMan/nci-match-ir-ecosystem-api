@@ -1,31 +1,64 @@
 import unittest
-from unittest import TestCase
 from mock import patch
 from ddt import ddt, data, unpack
 from common.ped_match_bot import PedMatchBot
-from mock import patch
 import __builtin__
+import app
 
 
-# @ddt
-# class TestPedMatchBot(TestCase):
-#
-#     def setUp(self):
-#
-#         self.ped_match_bot = PedMatchBot()
-#         pass
-#
-#     @data(
-#         ('C2NEK70F9', 'Your message here.')
-#     )
-#     @unpack
-#     @patch('common.ped_match_bot.slack_client.api_call')
-    # def test_send_message(self, channel_id, message, mock_slack):
-        # mock_slack.return_value = True
-        # return_value = PedMatchBot.send_message(channel_id, message)
-        # print return_value
-        #
-        # self.assertTrue(mock_slack.called)
+@ddt
+@patch('common.ped_match_bot.SlackClient')
+class TestPedMatchBot(unittest.TestCase):
+    def setUp(self):
+        # Starting flask server
+        self.app = app.app.test_client()
 
-    # if __name__ == "__main__":
-    #     unittest.main()
+    @data(
+        ('generated_json_message'),
+        ('')
+    )
+    def test_send_message(self, attachments, mock_slack):
+        instance = mock_slack.return_value
+        instance.api_call.return_value = True
+
+        return_value = PedMatchBot.send_message(attachments)
+
+        print return_value
+
+        self.assertTrue(mock_slack.called)
+
+    @data(
+        ('generated_json_message', 'task_id'),
+        ('', 'task_id2')
+    )
+    @unpack
+    def test_upload_to_slack(self, message, id, mock_slack):
+        instance = mock_slack.return_value
+        instance.api_call.return_value = True
+
+        return_value = PedMatchBot.upload_to_slack(message, id)
+
+        print return_value
+
+        self.assertTrue(mock_slack.called)
+        self.assertTrue(mock_slack.return_value)
+
+    @patch('common.ped_match_bot.inspect')
+    def test_generate_traceback_message(self, mock_inspection, mock_slack):
+        instance = mock_slack.return_value
+        instance.api_call.return_value = True
+
+        instance2 = mock_inspection.return_value
+        instance.f_locals.return_value = True
+
+        stack = instance2
+
+        return_value = PedMatchBot.generate_traceback_message(stack)
+
+        print return_value
+
+        self.assertTrue(mock_inspection.return_value)
+
+
+    if __name__ == "__main__":
+        unittest.main()
