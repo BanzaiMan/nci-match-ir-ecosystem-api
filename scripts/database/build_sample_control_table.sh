@@ -115,17 +115,17 @@ echo -e "${RED}PUT AN NEW ITEM INTO TABLE: NEED AN ITEM JSON FILE           ${NC
 echo -e "${CYAN}************************************************************${NC}"
 aws dynamodb put-item --table-name $TABLE_NAME --item file://item.json --return-consumed-capacity TOTAL $END_POINT
 
-# DELETE: Delete an item from the database
-echo -e "${CYAN}************************************************************${NC}"
-echo -e "${RED}DELETE A ITEM FROM TABLE: NEED A KEY JSON FILE               ${NC}"
-echo -e "${CYAN}************************************************************${NC}"
-aws dynamodb delete-item --table-name $TABLE_NAME --key file://key.json --return-consumed-capacity TOTAL $END_POINT
-
-# UPDATE: update an item
-echo -e "${CYAN}*************************************************************************************************************${NC}"
-echo -e "${RED}DELETE A ITEM FROM TABLE: NEED A KEY JSON FILE, UPDATE EXPRESSION, ATTRIBUTE NAMES JSON, ATTRIBUTE VALUE JSON ${NC}"
-echo -e "${CYAN}*************************************************************************************************************${NC}"
-aws dynamodb update-item --table-name $TABLE_NAME --key file://key.json --update-expression "SET #CT = :c, #SIA = :s" \
- --expression-attribute-names file://update-expression-attribute-names.json\
- --expression-attribute-values file://update-expression-attribute-values.json\
- --return-values ALL_NEW $END_POINT
+## DELETE: Delete an item from the database
+#echo -e "${CYAN}************************************************************${NC}"
+#echo -e "${RED}DELETE A ITEM FROM TABLE: NEED A KEY JSON FILE               ${NC}"
+#echo -e "${CYAN}************************************************************${NC}"
+#aws dynamodb delete-item --table-name $TABLE_NAME --key file://key.json --return-consumed-capacity TOTAL $END_POINT
+#
+## UPDATE: update an item
+#echo -e "${CYAN}*************************************************************************************************************${NC}"
+#echo -e "${RED}DELETE A ITEM FROM TABLE: NEED A KEY JSON FILE, UPDATE EXPRESSION, ATTRIBUTE NAMES JSON, ATTRIBUTE VALUE JSON ${NC}"
+#echo -e "${CYAN}*************************************************************************************************************${NC}"
+#aws dynamodb update-item --table-name $TABLE_NAME --key file://key.json --update-expression "SET #CT = :c, #SIA = :s" \
+# --expression-attribute-names file://update-expression-attribute-names.json\
+# --expression-attribute-values file://update-expression-attribute-values.json\
+# --return-values ALL_NEW $END_POINT

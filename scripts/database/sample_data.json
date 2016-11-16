@@ -54,7 +54,7 @@
           "site": {"S": "mocha"}
         }
       }
-    },cd
+    },
     {
       "PutRequest": {
         "Item": {
