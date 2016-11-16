@@ -57,7 +57,7 @@ class PedMatchBot(object):
                 "color": "#F35A00",
                 "pretext": error_message + "; \n Will attempt re-queue in " + str(requeue_countdown) + " seconds.",
                 "title": "Loggly Reference",
-                "title_link": "https://match.loggly.com/search#terms=" + str(details.id),
+                "title_link": "https://match.loggly.com/search#terms=%22" + str(details.id) + '%22&from=-1d&until=now',
                 "text": "<"+ str(stack_url) + "|Traceback Download> and <" + str(json_url) + "|JSON Download>",
                 "fields": [
                     {
