@@ -94,6 +94,9 @@ class Aliquot(Resource):
         if 'qc_name' in item_dictionary and 'analysis_id' and 'ion_reporter_id' in item_dictionary:
             distinct_tasks_list.append(Aliquot.__get_tasks_dictionary(item_dictionary, molecular_id, 'qc_name'))
 
+        if 'confirmed' in item_dictionary and 'analysis_id' and 'ion_reporter_id' in item_dictionary:
+            distinct_tasks_list.append(Aliquot.__get_tasks_dictionary(item_dictionary, molecular_id, 'confirmed'))
+
         return distinct_tasks_list
 
     @staticmethod

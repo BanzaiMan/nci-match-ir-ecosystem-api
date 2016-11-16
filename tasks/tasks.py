@@ -121,21 +121,22 @@ def process_ir_file(file_process_message):
         # removed from file_process_message. See sample_control_access.py line37
         SampleControlAccessor().update(file_process_message)
 
-    try:
-        # process vcf, dna_bam, or cdna_bam file
-        updated_file_process_message = process_file_message(new_file_process_message)
+    if any(key in new_file_process_message for key in ('vcf_name', 'dna_bam_name', 'cdna_bam_name','qc_name')):
+        try:
+            # process vcf, dna_bam, or cdna_bam file
+            updated_file_process_message = process_file_message(new_file_process_message)
 
-    except Exception as e:
-        stack = inspect.stack()
-        PedMatchBot.return_slack_message_and_retry(queue_name, new_file_process_message, e.message, stack,
-                                                   process_ir_file, logger, dlx_queue)
-    else:
-        if new_file_process_message['molecular_id'].startswith('SC_'):
-            logger.info("Updating sample_controls table after processing file.")
-            SampleControlAccessor().update(updated_file_process_message)
+        except Exception as e:
+            stack = inspect.stack()
+            PedMatchBot.return_slack_message_and_retry(queue_name, new_file_process_message, e.message, stack,
+                                                       process_ir_file, logger, dlx_queue)
         else:
-            logger.info("Passing processed file S3 path to patient ecosystem.")
-            logger.info("Processed file for patient: " + str(updated_file_process_message))
+            if new_file_process_message['molecular_id'].startswith('SC_'):
+                logger.info("Updating sample_controls table after processing file.")
+                SampleControlAccessor().update(updated_file_process_message)
+            else:
+                logger.info("Passing processed file S3 path to patient ecosystem.")
+                logger.info("Processed file for patient: " + str(updated_file_process_message))
 
 
 # process vcf, bam files based on message dictionary key: vcf_name, dna_bam_name, or cdna_bam_name
