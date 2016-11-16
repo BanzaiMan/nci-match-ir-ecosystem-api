@@ -9,23 +9,29 @@ python: 2.7.12
 install: pip install -r requirements.txt
 script:
 - coverage run -m unittest discover tests
+  #Build Docker image
+- export DATE=`TZ=America/New_York date "+%m-%d-%y-%H%M"`
+- export DOCKER_IMAGE1="matchbox/nci-match-ir-ecosystem-api"
+- export DOCKER_IMAGE2="matchbox/nci-match-ir-ecosystem-processor"
+- docker build -f ./Dockerfile.python -t $DOCKER_IMAGE1:$DATE -t $DOCKER_IMAGE1:latest .
+- docker build -f ./Dockerfile.celery -t $DOCKER_IMAGE2:$DATE -t $DOCKER_IMAGE2:latest .
+- docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+- docker push $DOCKER_IMAGE1 # Pushes both date and latest
+- docker push $DOCKER_IMAGE2 # Pushes both date and latest
 after_success:
 - codeclimate-test-reporter
-- docker build -f ./Dockerfile.python -t matchbox/nci-match-ir-ecosystem-api:latest .
-- docker build -f ./Dockerfile.celery -t matchbox/nci-match-ir-ecosystem-processor:latest .
-- docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
 - docker images
-- docker push matchbox/nci-match-ir-ecosystem-api:latest
-- docker push matchbox/nci-match-ir-ecosystem-processor:latest
 #Deploy both services to AWS IntTest
-- docker run -it --rm -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION=us-east-1 silintl/ecs-deploy 
+- docker run -it --rm -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
+  -e AWS_DEFAULT_REGION=us-east-1 silintl/ecs-deploy 
   --cluster PedMatch-IntTest-Backend2  --service-name PedMatch-nci-match-ir-ecosystem-api-INTTEST 
-  -i matchbox/nci-match-ir-ecosystem-api:latest
-- docker run -it --rm -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION=us-east-1 silintl/ecs-deploy 
+  -i $DOCKER_IMAGE1:$DATE
+- docker run -it --rm -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
+  -e AWS_DEFAULT_REGION=us-east-1 silintl/ecs-deploy 
   --cluster PedMatch-IntTest-Backend2  --service-name PedMatch-nci-match-ir-ecosystem-processor-INTTEST 
-  -i matchbox/nci-match-ir-ecosystem-processor:latest
+  -i $DOCKER_IMAGE2:$DATE
 #Trigger Travis bdd tests
-- curl -s -X POST -H "Content-Type:application/json" -H "Accept:application/json" -H "Travis-API-Version:3" -H "Authorization:token $TRAVIS_TOKEN" -d "{\"request\":{\"message\":\"Triggered by nci-match-ir-ecosystem-api $TRAVIS_COMMIT\", \"branch\":\"master\", \"config\":{\"env\":{\"matrix\":[\"TRIGGER_REPO=nci-match-ir-ecosystem-api;CUC_TAG=@ion_reporter\"]}}}}" https://api.travis-ci.org/repo/CBIIT%2Fnci-uMatch-bddtests/requests
+- curl -s -X POST -H "Content-Type:application/json" -H "Accept:application/json" -H "Travis-API-Version:3" -H "Authorization:token $TRAVIS_TOKEN" -d "{\"request\":{\"message\":\"Triggered by nci-match-ir-ecosystem-api $TRAVIS_COMMIT\", \"branch\":\"master\", \"config\":{\"env\":{\"matrix\":[\"TRIGGER_REPO=nci-match-ir-ecosystem-api;TRIGGER_VER=$DATE;CUC_TAG=@ion_reporter\"]}}}}" https://api.travis-ci.org/repo/CBIIT%2Fnci-uMatch-bddtests/requests
 notifications:
   slack: clinicalbiomed:gRp5LqKElNOjUUMPLlq4qC1j
 addons:
