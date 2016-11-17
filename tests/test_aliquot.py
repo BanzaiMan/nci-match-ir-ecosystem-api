@@ -72,6 +72,28 @@ class TestAliquot(unittest.TestCase):
           "molecular_id": "SC_5AMCC"},
          404, {}, 'Item updated'
         ),
+        ('SC_5AMCC',
+         {"pass_flag": True,
+          "molecular_id": "SC_5AMCC",
+          "ion_reporter_id": "IR_WAO85",
+          "analysis_id": "SC_5AMCC_SC_5AMCC_k123_v1"
+          },
+         True,
+         {"molecular_id_type": "sample_control", "site_ip_address": "129.43.127.134", "control_type": "positive",
+          "molecular_id": "SC_5AMCC"},
+         404, {}, 'Item updated'
+         ),
+        ('SC_5AMCC',
+         {"confirmed": False,
+          "molecular_id": "SC_5AMCC",
+          "ion_reporter_id": "IR_WAO85",
+          "analysis_id": "SC_5AMCC_SC_5AMCC_k123_v1"
+          },
+         True,
+         {"molecular_id_type": "sample_control", "site_ip_address": "129.43.127.134", "control_type": "positive",
+          "molecular_id": "SC_5AMCC"},
+         404, {}, 'Item updated'
+         ),
         ( 'PT_SR10_BdVRRejected_BD_MOI1',
           {
             "ion_reporter_id": "IR_WAO85",
