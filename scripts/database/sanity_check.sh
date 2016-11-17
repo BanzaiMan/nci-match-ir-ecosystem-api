@@ -218,6 +218,18 @@ curl -H 'Content-Type: application/json' -X PUT -d @./sc_update_data_proficiency
 
 echo -e "${CYAN}***********************************************${NC}"
 echo -e "${BLUE}PUT /api/v1/aliquot/{molecular_id}${NC}"
+echo -e "${PURPLE}Update confirmed attribute in sample_controls table${NC}"
+echo -e "${CYAN}***********************************************${NC}"
+curl -H 'Content-Type: application/json' -X PUT -d @./sc_update_confirmed_SA1CB.json "${URL}/api/v1/aliquot/SC_SA1CB"
+
+echo -e "${CYAN}***********************************************${NC}"
+echo -e "${BLUE}PUT /api/v1/aliquot/{molecular_id}${NC}"
+echo -e "${PURPLE}Update report_status attribute in sample_controls table${NC}"
+echo -e "${CYAN}***********************************************${NC}"
+curl -H 'Content-Type: application/json' -X PUT -d @./sc_update_report_status_SA1CB.json "${URL}/api/v1/aliquot/SC_SA1CB"
+
+echo -e "${CYAN}***********************************************${NC}"
+echo -e "${BLUE}PUT /api/v1/aliquot/{molecular_id}${NC}"
 echo -e "${PURPLE}Process bam and vcf files for patient, send s3 path of processed files (bai and tsv) to patient ecosystem${NC}"
 echo -e "${PURPLE}Get patient item. Need start patient ecosystem on server before testing ${NC}"
 echo -e "${CYAN}***********************************************${NC}"
