@@ -186,8 +186,10 @@ def communicate_s3_patienteco_ruleengine(file_process_dictionary, new_file_path,
                 try:
                     file_process_dictionary = process_rule_by_tsv(file_process_dictionary, new_file_name)
                 except Exception as e:
-                    logger.error("Failed to read Rules Engine for " + new_file_name + ", because: " + str(e.message))
-                    raise Exception("Failed to read Rules Engine for " + new_file_name + ", because: " + str(e.message))
+                    logger.error("Failed to read Rules Engine for " + new_file_name + "at  " + str(new_file_s3_path) +
+                                 ", because: " + str(e.message))
+                    raise Exception("Failed to read Rules Engine for " + new_file_name + " at  " + str(new_file_s3_path)
+                                    + ", because: " + str(e.message))
             else:
                 # post tsv name to patient ecosystem for patient only
                 post_tsv_info(file_process_dictionary, new_file_name)
@@ -199,13 +201,14 @@ def process_vcf(dictionary):
     try:
         downloaded_file_path = S3Accessor().download(dictionary['vcf_name'])
     except Exception as e:
-        raise Exception("Failed to download vcf file from S3, because: " + str(e.message))
+        raise Exception("Failed to download vcf file from " + str(dictionary['vcf_name']) + " because: "
+                        + str(e.message))
     else:
         try:
             new_file_path = SequenceFileProcessor().vcf_to_tsv(downloaded_file_path)
         except Exception as e:
-            logger.error("TSV creation failed because: " + str(e.message))
-            raise Exception("TSV creation has failed due to " + str(e.message))
+            logger.error("TSV creation failed from: " + str(downloaded_file_path) + " due to: " + str(e.message))
+            raise Exception("TSV creation failed from: " + str(downloaded_file_path) + " due to: " + str(e.message))
         else:
             key = 'tsv_name'
             return new_file_path, key, downloaded_file_path
@@ -216,13 +219,14 @@ def process_bam(dictionary, nucleic_acid_type):
     try:
         downloaded_file_path = S3Accessor().download(dictionary[nucleic_acid_type + '_bam_name'])
     except Exception as e:
-        raise Exception("Failed to download " + nucleic_acid_type + " BAM file from S3, because: " + e.message)
+        raise Exception("Failed to download " + nucleic_acid_type + " BAM file from " +
+                        str(dictionary[nucleic_acid_type + '_bam_name']) + ", because: " + e.message)
     else:
         try:
             new_file_path = SequenceFileProcessor().bam_to_bai(downloaded_file_path)
         except Exception as e:
-            logger.error("BAI creation failed because: " + str(e.message))
-            raise Exception("BAI creation failed because: " + str(e.message))
+            logger.error("BAI creation failed from " + str(downloaded_file_path) + "; " + str(e.message))
+            raise Exception("BAI creation failed from " + str(downloaded_file_path) + "; " + str(e.message))
         else:
             key = nucleic_acid_type + '_bai_name'
             return new_file_path, key, downloaded_file_path
