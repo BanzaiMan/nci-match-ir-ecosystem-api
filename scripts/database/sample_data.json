@@ -7,6 +7,7 @@
           "control_type": {"S": "no_template"},
           "molecular_id": {"S": "SC_SA1CB"},
           "ion_reporter_id": {"S": "IR_WAO85"},
+          "confirmed": {"BOOL": false},
           "site": {"S": "mocha"}
         }
       }
@@ -18,6 +19,7 @@
           "control_type": {"S": "no_template"},
           "molecular_id": {"S": "SC_YQ111"},
           "ion_reporter_id": {"S": "IR_WAO85"},
+          "confirmed": {"BOOL": false},
           "site": {"S": "mocha"}
         }
       }
@@ -29,6 +31,7 @@
           "control_type": {"S": "no_template"},
           "molecular_id": {"S": "SC_KGPVI"},
           "ion_reporter_id": {"S": "IR_WAO85"},
+          "confirmed": {"BOOL": false},
           "site": {"S": "mocha"}
         }
       }
@@ -40,6 +43,7 @@
           "control_type": {"S": "positive"},
           "molecular_id": {"S": "SC_67VKV"},
           "ion_reporter_id": {"S": "IR_WAO85"},
+          "confirmed": {"BOOL": false},
           "site": {"S": "mocha"}
         }
       }
@@ -51,6 +55,7 @@
           "control_type": {"S": "positive"},
           "molecular_id": {"S": "SC_PALFC"},
           "ion_reporter_id": {"S": "IR_WAO85"},
+          "confirmed": {"BOOL": false},
           "site": {"S": "mocha"}
         }
       }
@@ -62,6 +67,7 @@
           "control_type": {"S": "positive"},
           "molecular_id": {"S": "SC_5AMCC"},
           "ion_reporter_id": {"S": "IR_WAO85"},
+          "confirmed": {"BOOL": false},
           "site": {"S": "mocha"}
         }
       }
@@ -73,6 +79,7 @@
           "control_type": {"S": "no_template"},
           "molecular_id": {"S": "SC_VNTE5"},
           "ion_reporter_id": {"S": "IR_AIO78"},
+          "confirmed": {"BOOL": false},
           "site": {"S": "mdacc"}
         }
       }
@@ -85,6 +92,7 @@
           "site_ip_address": {"S": "129.43.127.133"},
           "molecular_id": {"S": "SC_VEME6"},
           "ion_reporter_id": {"S": "IR_AIO78"},
+          "confirmed": {"BOOL": false},
           "site": {"S": "mdacc"}
         }
       }
@@ -97,6 +105,7 @@
           "site_ip_address": {"S": "129.43.127.133"},
           "molecular_id": {"S": "SC_LGU30"},
           "ion_reporter_id": {"S": "IR_AIO78"},
+          "confirmed": {"BOOL": false},
           "site": {"S": "mdacc"}
         }
       }
@@ -109,6 +118,7 @@
           "site_ip_address": {"S": "129.43.127.133"},
           "molecular_id": {"S": "SC_BAXXY"},
           "ion_reporter_id": {"S": "IR_AIO78"},
+          "confirmed": {"BOOL": false},
           "site": {"S": "mdacc"}
         }
       }
@@ -121,6 +131,7 @@
           "site_ip_address": {"S": "129.43.127.133"},
           "molecular_id": {"S": "SC_FDK09"},
           "ion_reporter_id": {"S": "IR_AIO78"},
+          "confirmed": {"BOOL": false},
           "site": {"S": "mdacc"}
         }
       }
