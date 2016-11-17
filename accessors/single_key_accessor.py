@@ -34,8 +34,12 @@ class SingleKeyAccessor(DynamoDBAccessor):
         return self.handle_table_creation(table_name)
 
     def update(self, item_dictionary):
-        table_key = str(item_dictionary.pop(self.key_name))
-        self.logger.debug(table_key)
+        try:
+            table_key = str(item_dictionary.pop(self.key_name))
+            self.logger.debug(table_key)
+        except Exception as e:
+            self.logger.error("Failed to create table key for " + str(item_dictionary) + " because: " + str(e.message))
+            raise
         try:
             return self.update_item(item_dictionary, {self.key_name: table_key})
         except Exception as e:
