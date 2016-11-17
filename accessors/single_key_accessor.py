@@ -39,7 +39,7 @@ class SingleKeyAccessor(DynamoDBAccessor):
             self.logger.debug(table_key)
         except Exception as e:
             self.logger.error("Failed to create table key for " + str(item_dictionary) + " because: " + str(e.message))
-            raise
+            raise Exception("Failed to create table key for " + str(item_dictionary) + " because: " + str(e.message))
         try:
             return self.update_item(item_dictionary, {self.key_name: table_key})
         except Exception as e:
