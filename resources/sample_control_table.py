@@ -65,6 +65,7 @@ class SampleControlTable(Table):
             new_item_dictionary = args.copy()
             new_item_dictionary.update({'molecular_id': self.get_unique_key(),
                                         'confirmed': True,
+                                        'pass_flag': False,
                                         'date_molecular_id_created': str(datetime.datetime.utcnow())})
 
             self.logger.debug("Attempting to write: " + str(new_item_dictionary))
