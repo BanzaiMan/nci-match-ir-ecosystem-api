@@ -24,8 +24,8 @@ class SequenceFileProcessor(object):
         try:
             pysam.index(bam_full_path, bai_full_path)
         except Exception as e:
-            logger.error("Failed to generate bai file, because : " + e.message)
-            raise Exception("Failed to generate bai file, because : " + e.message)
+            logger.error("Pysam falure: " + e.message)
+            raise Exception("Pysam falure: " + e.message)
 
         logger.info("Generated bai file success!")
         return bai_full_path

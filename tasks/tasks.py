@@ -6,9 +6,10 @@ import os
 import urllib
 import inspect
 import datetime
-from logging.config import fileConfig
-
 import requests
+
+from logging.config import fileConfig
+from string import Template
 from celery import Celery
 from werkzeug.utils import secure_filename
 
@@ -53,6 +54,10 @@ else:
     queue_name = app.conf.CELERY_DEFAULT_QUEUE
     dlx_queue = (queue_name + "_dlx")
 
+MESSAGE_SERVICE_FAILURE = Template("Failure reaching: $service_name; \n File Name: $file_name \n Path: $path \n Error "
+                                   "Message: $message")
+MESSAGE_CONVERSION_FAILURE = Template("Failure converting: $conversion_type; \n File Name: $file_name \n Path: $path \n"
+                                      "Error Message: $message")
 
 def accessor_task(message, action, task, stack):
     logger.info(str(action) + " initiated for: " + str(message))
@@ -174,10 +179,13 @@ def communicate_s3_patienteco_ruleengine(file_process_dictionary, new_file_path,
     try:
         S3Accessor().upload(new_file_path, new_file_s3_path)
     except Exception as e:
-        logger.error("Failed to upload to S3 after processing file for " + str(new_file_s3_path) + ", because: "
-                        + str(e.message))
-        raise Exception("Failed to upload to S3 after processing file for " + str(new_file_s3_path) + ", because: "
-                        + str(e.message))
+        logger.error(MESSAGE_SERVICE_FAILURE.substitute(service_name='S3', file_name= new_file_name,
+                                                        path= new_file_s3_path, message=e.message))
+
+
+
+        raise Exception(MESSAGE_SERVICE_FAILURE.substitute(service_name='S3', file_name= new_file_name,
+                                                           path= new_file_s3_path, message=e.message))
     else:
         file_process_dictionary.update({key: new_file_s3_path})
         if key == 'tsv_name':
@@ -186,10 +194,13 @@ def communicate_s3_patienteco_ruleengine(file_process_dictionary, new_file_path,
                 try:
                     file_process_dictionary = process_rule_by_tsv(file_process_dictionary, new_file_name)
                 except Exception as e:
-                    logger.error("Failed to read Rules Engine for " + new_file_name + "at  " + str(new_file_s3_path) +
-                                 ", because: " + str(e.message))
-                    raise Exception("Failed to read Rules Engine for " + new_file_name + " at  " + str(new_file_s3_path)
-                                    + ", because: " + str(e.message))
+                    logger.error(MESSAGE_SERVICE_FAILURE.substitute(service_name='Rules Engine',
+                                                                    file_name= new_file_name, path= new_file_s3_path,
+                                                                    message=e.message))
+
+                    raise Exception(MESSAGE_SERVICE_FAILURE.substitute(service_name='Rules Engine',
+                                                                       file_name= new_file_name, path= new_file_s3_path,
+                                                                       message=e.message))
             else:
                 # post tsv name to patient ecosystem for patient only
                 post_tsv_info(file_process_dictionary, new_file_name)
@@ -205,13 +216,18 @@ def process_vcf(dictionary):
     try:
         downloaded_file_path = S3Accessor().download(dictionary['vcf_name'])
     except Exception as e:
-        raise Exception("Failed to download vcf file " + str(dictionary) + ": " + str(e.message))
+        raise Exception(MESSAGE_SERVICE_FAILURE.substitute(service_name='S3', file_name= dictionary['vcf_name'],
+                                                           path= 'Path generation failed', message=e.message))
     else:
         try:
             new_file_path = SequenceFileProcessor().vcf_to_tsv(downloaded_file_path)
         except Exception as e:
-            logger.error("TSV creation failed from: " + str(downloaded_file_path) + " due to: " + str(e.message))
-            raise Exception("TSV creation failed from: " + str(downloaded_file_path) + " due to: " + str(e.message))
+            logger.error(MESSAGE_CONVERSION_FAILURE.substitute(conversion_type='VCF to TSV',
+                                                               file_name= dictionary['vcf_name'],
+                                                               path= downloaded_file_path, message=e.message))
+            raise Exception(MESSAGE_CONVERSION_FAILURE.substitute(conversion_type='VCF to TSV',
+                                                                  file_name= dictionary['vcf_name'],
+                                                                  path= downloaded_file_path, message=e.message))
         else:
             key = 'tsv_name'
             return new_file_path, key, downloaded_file_path
@@ -222,14 +238,19 @@ def process_bam(dictionary, nucleic_acid_type):
     try:
         downloaded_file_path = S3Accessor().download(dictionary[nucleic_acid_type + '_bam_name'])
     except Exception as e:
-        raise Exception("Failed to download " + nucleic_acid_type + " BAM file from " +
-                        str(dictionary[nucleic_acid_type + '_bam_name']) + ", because: " + e.message)
+        raise Exception(MESSAGE_SERVICE_FAILURE.substitute(service_name='S3',
+                                                           file_name=dictionary[nucleic_acid_type + '_bam_name'],
+                                                           path='Path generation failed', message=e.message))
     else:
         try:
             new_file_path = SequenceFileProcessor().bam_to_bai(downloaded_file_path)
         except Exception as e:
-            logger.error("BAI creation failed from " + str(downloaded_file_path) + "; " + str(e.message))
-            raise Exception("BAI creation failed from " + str(downloaded_file_path) + "; " + str(e.message))
+            logger.error(MESSAGE_CONVERSION_FAILURE.substitute(conversion_type='BAM to BAI',
+                                                               file_name=dictionary[nucleic_acid_type + '_bam_name'],
+                                                               path= downloaded_file_path, message=e.message))
+            raise Exception(MESSAGE_CONVERSION_FAILURE.substitute(conversion_type='BAM to BAI',
+                                                                  file_name=dictionary[nucleic_acid_type + '_bam_name'],
+                                                                  path= downloaded_file_path, message=e.message))
         else:
             key = nucleic_acid_type + '_bai_name'
             return new_file_path, key, downloaded_file_path
@@ -250,17 +271,22 @@ def post_tsv_info(dictionary, tsv_file_name):
     try:
         r = requests.post(patient_url, data=json.dumps(content), headers=headers)
     except Exception as e:
-        logger.error("Failed to post TSV file name to Patient Ecosystem for " + str(dictionary['molecular_id'])
-                        + ", because: " + str(e.message))
-        raise Exception("Failed to post TSV file name to Patient Ecosystem for " + str(dictionary['molecular_id'])
-                        + ", because: " + str(e.message))
+        logger.error(MESSAGE_SERVICE_FAILURE.substitute(service_name='Patient Ecosystem',
+                                                           file_name=dictionary['molecular_id'],
+                                                           path=patient_url, message=e.message))
+        raise Exception(MESSAGE_SERVICE_FAILURE.substitute(service_name='Patient Ecosystem',
+                                                           file_name=dictionary['molecular_id'],
+                                                           path=patient_url, message=e.message))
     else:
         if r.status_code == 200:
             logger.info("Successfully posted TSV file name to Patient Ecosystem for " + dictionary['molecular_id'])
         else:
-            error_message = "Posting of "+ str(tsv_file_name) + " to patient ecosystem failed for " + dictionary['molecular_id'] + " because error code: " + str(r.status_code)
-            logger.error(error_message)
-            raise Exception(error_message)
+            logger.error(MESSAGE_SERVICE_FAILURE.substitute(service_name='Patient Ecosystem',
+                                                           file_name=dictionary['molecular_id'],
+                                                           path=patient_url, message=r.status_code))
+            raise Exception(MESSAGE_SERVICE_FAILURE.substitute(service_name='Patient Ecosystem',
+                                                           file_name=dictionary['molecular_id'],
+                                                           path=patient_url, message=r.status_code))
 
 
 def process_rule_by_tsv(dictionary, tsv_file_name):
@@ -283,10 +309,11 @@ def process_rule_by_tsv(dictionary, tsv_file_name):
         headers = {'Content-type': 'application/json'}
         rule_response = requests.post(url, data=json.dumps([]), headers=headers)
     except Exception as e:
-        logger.error("Failed to get rules engine data for " + tsv_file_name + ", because: "
-                        + str(e.message) + "URL = " + url)
-        raise Exception("Failed to get rules engine data for " + tsv_file_name + ", because: "
-                        + str(e.message) + "URL = " + url)
+        logger.error(MESSAGE_SERVICE_FAILURE.substitute(service_name='Rules Engine', file_name=tsv_file_name,
+                                                        path=url, message=e.message))
+
+        raise Exception(MESSAGE_SERVICE_FAILURE.substitute(service_name='Rules Engine', file_name=tsv_file_name,
+                                                        path=url, message=e.message))
     else:
         if rule_response.status_code ==200:
             var_dict = rule_response.json()
@@ -294,10 +321,12 @@ def process_rule_by_tsv(dictionary, tsv_file_name):
                 dictionary.update({key: value})
             dictionary.update({'date_variant_received': str(datetime.datetime.utcnow())})
         else:
-            error_msg = ("Failed to get rules engine data for: " + dictionary['molecular_id'] +
-                         "; Error status code: " + str(rule_response.status_code))
-            logger.error(error_msg)
-            raise Exception(error_msg)
+            logger.error(MESSAGE_SERVICE_FAILURE.substitute(service_name='Rules Engine',
+                                                            file_name=dictionary['molecular_id'],
+                                                            path=url, message=rule_response.status_code))
+            raise Exception(MESSAGE_SERVICE_FAILURE.substitute(service_name='Rules Engine',
+                                                            file_name=dictionary['molecular_id'],
+                                                            path=url, message=rule_response.status_code))
     return dictionary
 
 
