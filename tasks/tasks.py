@@ -54,8 +54,10 @@ else:
     queue_name = app.conf.CELERY_DEFAULT_QUEUE
     dlx_queue = (queue_name + "_dlx")
 
-MESSAGE_SERVICE_FAILURE = Template("Failure reaching: $service_name; \n File Name: $file_name \n Path: $path \n Error Message: $message")
-MESSAGE_CONVERSION_FAILURE = Template("Failure converting: $conversion_type; \n File Name: $file_name \n Path: $path \n Error Message: $message")
+MESSAGE_SERVICE_FAILURE = Template("Failure reaching: $service_name; \n File Name: $file_name \n Path: $path \n Error "
+                                   "Message: $message")
+MESSAGE_CONVERSION_FAILURE = Template("Failure converting: $conversion_type; \n File Name: $file_name \n Path: $path \n"
+                                      "Error Message: $message")
 
 def accessor_task(message, action, task, stack):
     logger.info(str(action) + " initiated for: " + str(message))
@@ -177,11 +179,13 @@ def communicate_s3_patienteco_ruleengine(file_process_dictionary, new_file_path,
     try:
         S3Accessor().upload(new_file_path, new_file_s3_path)
     except Exception as e:
-        logger.error(MESSAGE_SERVICE_FAILURE.substitute(service_name='S3', file_name= new_file_name, path= new_file_s3_path, message=e.message))
+        logger.error(MESSAGE_SERVICE_FAILURE.substitute(service_name='S3', file_name= new_file_name,
+                                                        path= new_file_s3_path, message=e.message))
 
 
 
-        raise Exception(MESSAGE_SERVICE_FAILURE.substitute(service_name='S3', file_name= new_file_name, path= new_file_s3_path, message=e.message))
+        raise Exception(MESSAGE_SERVICE_FAILURE.substitute(service_name='S3', file_name= new_file_name,
+                                                           path= new_file_s3_path, message=e.message))
     else:
         file_process_dictionary.update({key: new_file_s3_path})
         if key == 'tsv_name':
@@ -190,9 +194,13 @@ def communicate_s3_patienteco_ruleengine(file_process_dictionary, new_file_path,
                 try:
                     file_process_dictionary = process_rule_by_tsv(file_process_dictionary, new_file_name)
                 except Exception as e:
-                    logger.error(MESSAGE_SERVICE_FAILURE.substitute(service_name='Rules Engine', file_name= new_file_name, path= new_file_s3_path, message=e.message))
+                    logger.error(MESSAGE_SERVICE_FAILURE.substitute(service_name='Rules Engine',
+                                                                    file_name= new_file_name, path= new_file_s3_path,
+                                                                    message=e.message))
 
-                    raise Exception(MESSAGE_SERVICE_FAILURE.substitute(service_name='Rules Engine', file_name= new_file_name, path= new_file_s3_path, message=e.message))
+                    raise Exception(MESSAGE_SERVICE_FAILURE.substitute(service_name='Rules Engine',
+                                                                       file_name= new_file_name, path= new_file_s3_path,
+                                                                       message=e.message))
             else:
                 # post tsv name to patient ecosystem for patient only
                 post_tsv_info(file_process_dictionary, new_file_name)
@@ -309,12 +317,12 @@ def process_rule_by_tsv(dictionary, tsv_file_name):
                 dictionary.update({key: value})
             dictionary.update({'date_variant_received': str(datetime.datetime.utcnow())})
         else:
-            error_msg = ("Failed to get rules engine data for: " + dictionary['molecular_id'] +
-                         "; Error status code: " + str(rule_response.status_code))
             logger.error(MESSAGE_SERVICE_FAILURE.substitute(service_name='Rules Engine',
                                                             file_name=dictionary['molecular_id'],
                                                             path=url, message=rule_response.status_code))
-            raise Exception(error_msg)
+            raise Exception(MESSAGE_SERVICE_FAILURE.substitute(service_name='Rules Engine',
+                                                            file_name=dictionary['molecular_id'],
+                                                            path=url, message=rule_response.status_code))
     return dictionary
 
 
