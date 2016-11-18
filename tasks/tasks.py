@@ -201,8 +201,7 @@ def process_vcf(dictionary):
     try:
         downloaded_file_path = S3Accessor().download(dictionary['vcf_name'])
     except Exception as e:
-        raise Exception("Failed to download vcf file from " + str(dictionary['vcf_name']) + " because: "
-                        + str(e.message))
+        raise Exception("Failed to download vcf file " + str(dictionary) + ": " + str(e.message))
     else:
         try:
             new_file_path = SequenceFileProcessor().vcf_to_tsv(downloaded_file_path)
@@ -255,9 +254,8 @@ def post_tsv_info(dictionary, tsv_file_name):
         if r.status_code == 200:
             logger.info("Successfully posted TSV file name to Patient Ecosystem for " + dictionary['molecular_id'])
         else:
-            error_message = "Posting of TSV to patient ecosystem failed for " + dictionary['molecular_id']
-            logger.error("Posting of TSV to patient ecosystem failed for: " + dictionary['molecular_id'] +
-                         " because error code: " + str(r.status_code))
+            error_message = "Posting of "+ str(tsv_file_name) + " to patient ecosystem failed for " + dictionary['molecular_id'] + " because error code: " + str(r.status_code)
+            logger.error(error_message)
             raise Exception(error_message)
 
 
@@ -293,7 +291,7 @@ def process_rule_by_tsv(dictionary, tsv_file_name):
             dictionary.update({'date_variant_received': str(datetime.datetime.utcnow())})
         else:
             error_msg = ("Failed to get rules engine data for: " + dictionary['molecular_id'] +
-                         " because error status code: " + str(rule_response.status_code))
+                         "; Error status code: " + str(rule_response.status_code))
             logger.error(error_msg)
             raise Exception(error_msg)
     return dictionary
