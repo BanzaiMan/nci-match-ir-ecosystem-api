@@ -193,6 +193,10 @@ def communicate_s3_patienteco_ruleengine(file_process_dictionary, new_file_path,
             else:
                 # post tsv name to patient ecosystem for patient only
                 post_tsv_info(file_process_dictionary, new_file_name)
+
+        # remove converted tsv or bai file from local machine
+        if os.path.exists(new_file_path):
+            os.remove(new_file_path)
         return file_process_dictionary
 
 
