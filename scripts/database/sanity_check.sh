@@ -225,6 +225,7 @@ curl -H 'Content-Type: application/json' -X PUT -d @./sc_update_confirmed_SA1CB.
 echo -e "${CYAN}***********************************************${NC}"
 echo -e "${BLUE}PUT /api/v1/aliquot/{molecular_id}${NC}"
 echo -e "${PURPLE}Update pass_flag attribute in sample_controls table${NC}"
+echo -e "${PURPLE}pass_flag has 3 possible values: undefined, pass or reject. Default is undefined ${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 curl -H 'Content-Type: application/json' -X PUT -d @./sc_update_pass_flag_SA1CB.json "${URL}/api/v1/aliquot/SC_SA1CB"
 
@@ -286,3 +287,13 @@ curl -X GET "${URL}/api/v1/sample_controls/files/SC_SA1CB/vcf_name"
 curl -X GET "${URL}/api/v1/sample_controls/files/SC_SA1CB/cdna_bai_name"
 
 
+echo -e "${YELLOW}------------------------------------------------------------------------------------------------------------------------${NC}"
+
+echo -e "${CYAN}***********************************************${NC}"
+echo -e "${GREEN}GET Rule Engine Output QC.json File Content${NC}"
+echo -e "${CYAN}***********************************************${NC}"
+echo -e "${BLUE}GET /api/v1/quality_control/<string:molecular_id>${NC}"
+echo -e "${PURPLE}Download QC.json file from s3, returns QC.json File Content in json format${NC}"
+echo -e "${CYAN}***********************************************${NC}"
+
+curl -X GET "${URL}/api/v1/quality_control/SC_SA1CB"
