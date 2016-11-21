@@ -20,6 +20,7 @@ from resources.alignment_sequence_file import AlignmentGenericFile
 from resources.version import Version
 from resources.aliquot import Aliquot
 from resources.misc_file import MiscFile
+from resources.quality_control import QualityControl
 from common.environment_helper import EnvironmentHelper
 
 
@@ -86,6 +87,8 @@ api.add_resource(Version, '/api/v1/ion_reporters/version')
 # process them by pulling the files based on the path passed in, down from s3 and store the new files (TSV or BAI) to
 # s3 and these new paths to DynamoDB, based on  their molecular id, in either the patient or sample_control table.
 api.add_resource(Aliquot, '/api/v1/aliquot/<string:molecular_id>')
+
+api.add_resource(QualityControl, '/api/v1/quality_control/<string:molecular_id>')
 
 
 # For the most part, this is boilerplate code to start tornado server
