@@ -40,14 +40,52 @@ class TestQualityControl(unittest.TestCase):
         print json.loads(return_value.data)['molecular_id']
         assert json.loads(return_value.data)['molecular_id'] == molecular_id
 
+    @data(
+        ({},
+         "SC_SA1CB",
+         "was not found", 404
+        )
+    )
+    @unpack
+    @patch('resources.quality_control.SampleControlAccessor')
+    def test_get_exception_item_not_found(self, item, molecular_id, exception_message,
+                                          expected_results, mock_SC_class):
+        instance = mock_SC_class.return_value
+        instance.get_item.return_value = item
+        return_value = self.app.get('/api/v1/quality_control/' + molecular_id)
+        print "==============" + str(return_value.status_code)
+        assert return_value.status_code == expected_results
+        print return_value.data
+        assert exception_message in return_value.data
 
-
-
-
-
-
-
-
+    @data(
+        ({
+             "control_type": "no_template",
+             "date_molecular_id_created": "2016-08-28 16:56:29.333",
+             "site_ip_address": "129.43.127.133",
+             "molecular_id": "SC_SA1CB",
+             "ion_reporter_id": "IR_WAO85",
+             "site": "mocha"
+         },
+         "SC_SA1CB",
+        "../scripts/database/SC_SA1CB_SC_SA1CB_analysis888_v1.json",
+         "tsv file s3 path does not exist", 404
+        )
+    )
+    @unpack
+    @patch('resources.quality_control.S3Accessor')
+    @patch('resources.quality_control.SampleControlAccessor')
+    def test_get_exception_tsv_not_found(self, item, molecular_id, downloaded_file_path, exception_message,
+                                          expected_results, mock_SC_class, mock_S3_class):
+        instance = mock_SC_class.return_value
+        instance.get_item.return_value = item
+        instance_s3 = mock_S3_class.return_value
+        instance_s3.download.return_value = downloaded_file_path
+        return_value = self.app.get('/api/v1/quality_control/' + molecular_id)
+        print "==============" + str(return_value.status_code)
+        assert return_value.status_code == expected_results
+        print return_value.data
+        assert exception_message in return_value.data
 
 # if __name__ == '__main__':
 #     unittest.main()
