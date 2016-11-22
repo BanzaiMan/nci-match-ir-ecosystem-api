@@ -56,7 +56,7 @@ else:
 
 MESSAGE_SERVICE_FAILURE = Template("Failure reaching: $service_name; \n S3 Path: $s3_path \n Service URL: $path \n Error "
                                    "Message: $message")
-MESSAGE_CONVERSION_FAILURE = Template("Failure converting: $conversion_type; \n File S3 Path: $s3_path \n Local Path: $path \n"
+MESSAGE_CONVERSION_FAILURE = Template("Failure creating $conversion_type; \n File S3 Path: $s3_path \n Local Path: $path \n"
                                       "Error Message: $message")
 
 def accessor_task(message, action, task, stack):
@@ -216,10 +216,10 @@ def process_vcf(dictionary):
         try:
             new_file_path = SequenceFileProcessor().vcf_to_tsv(downloaded_file_path)
         except Exception as e:
-            logger.error(MESSAGE_CONVERSION_FAILURE.substitute(conversion_type='VCF to TSV',
+            logger.error(MESSAGE_CONVERSION_FAILURE.substitute(conversion_type='TSV from VCF',
                                                                s3_path= dictionary['vcf_name'],
                                                                path= downloaded_file_path, message=e.message))
-            raise Exception(MESSAGE_CONVERSION_FAILURE.substitute(conversion_type='VCF to TSV',
+            raise Exception(MESSAGE_CONVERSION_FAILURE.substitute(conversion_type='TSV from VCF',
                                                                   s3_path= dictionary['vcf_name'],
                                                                   path= downloaded_file_path, message=e.message))
         else:
@@ -239,10 +239,10 @@ def process_bam(dictionary, nucleic_acid_type):
         try:
             new_file_path = SequenceFileProcessor().bam_to_bai(downloaded_file_path)
         except Exception as e:
-            logger.error(MESSAGE_CONVERSION_FAILURE.substitute(conversion_type='BAM to BAI',
+            logger.error(MESSAGE_CONVERSION_FAILURE.substitute(conversion_type='BAI from BAM',
                                                                s3_path=dictionary[nucleic_acid_type + '_bam_name'],
                                                                path= downloaded_file_path, message=e.message))
-            raise Exception(MESSAGE_CONVERSION_FAILURE.substitute(conversion_type='BAM to BAI',
+            raise Exception(MESSAGE_CONVERSION_FAILURE.substitute(conversion_type='BAI from BAM',
                                                                   s3_path=dictionary[nucleic_acid_type + '_bam_name'],
                                                                   path= downloaded_file_path, message=e.message))
         else:
