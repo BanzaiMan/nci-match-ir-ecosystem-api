@@ -97,8 +97,11 @@ class Aliquot(Resource):
         if 'confirmed' in item_dictionary and 'analysis_id' and 'ion_reporter_id' in item_dictionary:
             distinct_tasks_list.append(Aliquot.__get_tasks_dictionary(item_dictionary, molecular_id, 'confirmed'))
 
-        if 'pass_flag' in item_dictionary and 'analysis_id' and 'ion_reporter_id' in item_dictionary:
-            distinct_tasks_list.append(Aliquot.__get_tasks_dictionary(item_dictionary, molecular_id, 'pass_flag'))
+        if 'report_status' in item_dictionary and 'analysis_id' and 'ion_reporter_id' in item_dictionary:
+            distinct_tasks_list.append(Aliquot.__get_tasks_dictionary(item_dictionary, molecular_id, 'report_status'))
+
+        if 'comments' in item_dictionary and 'analysis_id' and 'ion_reporter_id' in item_dictionary:
+            distinct_tasks_list.append(Aliquot.__get_tasks_dictionary(item_dictionary, molecular_id, 'comments'))
 
         return distinct_tasks_list
 

@@ -73,7 +73,7 @@ class TestAliquot(unittest.TestCase):
          404, {}, 'Item updated'
         ),
         ('SC_5AMCC',
-         {"pass_flag": True,
+         {"report_status": "PASS",
           "molecular_id": "SC_5AMCC",
           "ion_reporter_id": "IR_WAO85",
           "analysis_id": "SC_5AMCC_SC_5AMCC_k123_v1"
