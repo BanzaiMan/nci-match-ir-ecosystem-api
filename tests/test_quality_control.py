@@ -1,9 +1,9 @@
 import unittest
-import json
 from ddt import ddt, data, unpack
 from mock import patch
 import app
 import json
+import mock
 
 
 @ddt
@@ -22,18 +22,25 @@ class TestQualityControl(unittest.TestCase):
              "tsv_name": "IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1.tsv"
          },
          "SC_SA1CB",
-        "../scripts/database/SC_SA1CB_SC_SA1CB_analysis888_v1.json", 200
+        "../scripts/database/SC_SA1CB_SC_SA1CB_analysis888_v1.json", 200,
+        "{\"ion_reporter_id\":\"IR_WAO85\",\"molecular_id\":\"SC_SA1CB\",\"analysis_id\":\"SC_SA1CB_SC_SA1CB_a888_v1\",\"filename\":\"SC_SA1CB_SC_SA1CB_analysis888_v1\",\"total_variants\":4684}"
         )
     )
     @unpack
+    @mock.patch("codecs.open", create=True)
     @patch('resources.quality_control.S3Accessor')
     @patch('resources.quality_control.SampleControlAccessor')
     def test_get(self, item, molecular_id, downloaded_file_path,
-                 expected_results, mock_SC_class, mock_S3_class):
+                 expected_results, json_data, mock_SC_class, mock_S3_class, mock_open):
         instance = mock_SC_class.return_value
         instance.get_item.return_value = item
         instance_s3 = mock_S3_class.return_value
         instance_s3.download.return_value = downloaded_file_path
+        mock_open.side_effect = [
+            mock.mock_open(read_data=json_data).return_value
+        ]
+
+
         return_value = self.app.get('/api/v1/quality_control/' + molecular_id)
         print "==============" + str(return_value.status_code)
         assert return_value.status_code == expected_results
