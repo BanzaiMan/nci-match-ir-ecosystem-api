@@ -37,8 +37,8 @@ LOCAL_URL="http://localhost:8000"
 # END_POINT=""
 
 # Comment out if you want to use script to setup table on amazon
-END_POINT="--endpoint-url $LOCAL_URL"
-#END_POINT="--endpoint-url  https://dynamodb.us-east-1.amazonaws.com"
+#END_POINT="--endpoint-url $LOCAL_URL"
+END_POINT="--endpoint-url  https://dynamodb.us-east-1.amazonaws.com"
 
 ATTRIBUTE='site'
 VALUE='mocha'
