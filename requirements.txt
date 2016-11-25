@@ -19,4 +19,4 @@ PyJWT==1.4.2
 PyYAML==3.12
 codeclimate-test-reporter
 newrelic
-jq==jq-1.5
+jq
