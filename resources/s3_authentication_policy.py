@@ -35,7 +35,7 @@ class S3AuthenticationPolicy(Resource):
     # Method creates encrypted policy signature
     @staticmethod
     def __sign_policy(policy):
-        return b64encode(hmac.new(os.environ['AWS_SECRET_ACCESS_KEY'], policy, hashlib).digest())
+        return b64encode(hmac.new(os.environ['AWS_SECRET_ACCESS_KEY'], policy, hashlib.sha1).digest())
 
     # method builds JSON policy according to AWS standards
     @staticmethod
@@ -54,13 +54,13 @@ class S3AuthenticationPolicy(Resource):
     # Method simply queries database based on molecular_id to find the site that is authorized to use the molecular_id
     def __get_site(self, molecular_id):
         try:
-            results = SampleControlAccessor().scan({'molecular_id': molecular_id})
+            results = SampleControlAccessor().scan({'molecular_id': molecular_id}, '')
         except Exception as e:
             AbortLogger.log_and_abort(500, self.logger.error, "Get failed because: " + e.message)
         else:
             if len(results) > 0:
-                if 'site' in results:
-                    return results['site']
+                if 'site' in results[0]:
+                    return results[0]['site']
                 else:
                     AbortLogger.log_and_abort(500, self.logger.error,
                                               "Get failed because molecular id was found but there was no "
