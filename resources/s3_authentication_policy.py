@@ -35,7 +35,7 @@ class S3AuthenticationPolicy(Resource):
     # Method creates encrypted policy signature
     @staticmethod
     def __sign_policy(policy):
-        return b64encode(hmac.new(os.environ['AWS_SECRET_ACCESS_KEY'], policy, hashlib.sha1).digest())
+        return b64encode(hmac.new(os.environ['AWS_SECRET_ACCESS_KEY'], policy, hashlib.sha256).digest())
 
     # method builds JSON policy according to AWS standards
     @staticmethod
