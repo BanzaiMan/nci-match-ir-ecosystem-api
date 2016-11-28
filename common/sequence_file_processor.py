@@ -26,7 +26,7 @@ class SequenceFileProcessor(object):
             logger.error("Pysam falure: " + e.message)
             raise Exception("Pysam falure: " + e.message)
 
-        logger.info("Generated bai file success!")
+        logger.info("Generated bai file successfully!")
         return bai_full_path
 
     @staticmethod
