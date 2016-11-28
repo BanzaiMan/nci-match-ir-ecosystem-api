@@ -1,7 +1,9 @@
 import inspect
+from tasks.tasks import app
 from flask_restful import abort
 from common.ped_match_bot import PedMatchBot
 
+queue_name = app.conf.CELERY_DEFAULT_QUEUE
 
 class AbortLogger(object):
 
@@ -15,14 +17,15 @@ class AbortLogger(object):
             logger_level_function("Calling Method: " + calling_function + " :: Log message: " + message)
             if error_code >= 500:
                 stack = inspect.stack()
+                class_called = str(stack[1][0].f_locals["self"].__class__)
                 PedMatchBot().send_message(
                     attachments=
                     [
                         {
                             "fallback": " HTTP Code Error",
                             "color": "#ff0000",
-                            "pretext": message,
-                            "title": "Loggly",
+                            "pretext": 'Abortlogger error: ' + message,
+                            "title": "Loggly Reference",
                             "title_link": "https://match.loggly.com/search#terms="+ message,
                             "fields": [
                                 {
@@ -31,8 +34,18 @@ class AbortLogger(object):
                                     "short": "true"
                                 },
                                 {
-                                    "title": "Method Called",
+                                    "title": "Queue Name",
+                                    "value": queue_name,
+                                    "short": "true"
+                                },
+                                {
+                                    "title": "Function",
                                     "value": calling_function,
+                                    "short": "true"
+                                },
+                                {
+                                    "title": "Class",
+                                    "value": class_called,
                                     "short": "true"
                                 }
                             ],
