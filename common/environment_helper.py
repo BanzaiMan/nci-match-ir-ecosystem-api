@@ -19,7 +19,7 @@ class EnvironmentHelper(object):
 
             except KeyError as e:
                 logger.error("Must configure ENVIRONMENT variable and SLACK_TOKEN variable in your"
-                             "environment in order for application to start")
+                             " environment in order for application to start")
                 logger.error(e.message)
                 exit()
             else:
