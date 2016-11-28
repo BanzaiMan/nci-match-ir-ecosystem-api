@@ -2,7 +2,6 @@ import os.path
 import logging
 import re
 import pysam
-from resource_helpers.abort_logger import AbortLogger
 
 
 class SequenceFileProcessor(object):
