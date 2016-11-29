@@ -10,6 +10,7 @@ development:
   icon_emoji: ":face_with_head_bandage:"
   requeue_countdown: 10800
   visibility_timeout: 36000
+  s3_auth_policy_exp: 24
   region: "us-east-1"
   port: "10241"
   bucket: "pedmatch-dev"
@@ -30,6 +31,7 @@ test:
   icon_emoji: ":face_with_head_bandage:"
   requeue_countdown: 10800
   visibility_timeout: 36000
+  s3_auth_policy_exp: 24
   region: "us-east-1"
   port: "10241"
   bucket: "pedmatch-int"
