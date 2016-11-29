@@ -41,7 +41,8 @@ class S3AuthenticationPolicy(Resource):
     @staticmethod
     def __make_policy(key):
         policy_object = {
-            "expiration": (datetime.now() + timedelta(hours=24)).strftime('%Y-%m-%dT%H:%M:%S.000Z'),
+            "expiration": (datetime.now() + timedelta(
+                hours= __builtin__.environment_config[__builtin__.environment]['s3_auth_policy_exp'])).strftime('%Y-%m-%dT%H:%M:%S.000Z'),
             "conditions": [
                 {"bucket": __builtin__.environment_config[__builtin__.environment]['bucket']},
                 {"acl": "public-read"},
