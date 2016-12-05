@@ -15,27 +15,16 @@ class S3AuthenticationPolicy(Resource):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
+    # Method returns a json with url and fields required to upload to s3
+
     def get(self, molecular_id, analysis_id, file_name):
 
         key = UPLOAD_DIR.substitute(site=self.__get_site(molecular_id), molecular_id=molecular_id,
                                     analysis_id=analysis_id)
 
-        expiration = __builtin__.environment_config[__builtin__.environment]['s3_auth_policy_exp']
         key2 = (key + '/' + file_name)
-        url = s3Client.generate_presigned_url('get_object', Params={'Bucket': bucket, 'Key': key2}, ExpiresIn=expiration)
-
-        return {
-            'key': key,
-            "url": url
-        }
-
-    def post(self, molecular_id, analysis_id, file_name):
-
-        key = UPLOAD_DIR.substitute(site=self.__get_site(molecular_id), molecular_id=molecular_id,
-                                    analysis_id=analysis_id)
-
-        key2 = (key + '/' + file_name)
-        post = s3Client.generate_presigned_post(Bucket = bucket, Key = key2)
+        post = s3Client.generate_presigned_post(Bucket = bucket, Key = key2, ExpiresIn = __builtin__.environment_config
+                                                        [__builtin__.environment]['aws_upload_time_limit'])
 
         return post
 

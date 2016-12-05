@@ -10,7 +10,6 @@ development:
   icon_emoji: ":face_with_head_bandage:"
   requeue_countdown: 10800
   visibility_timeout: 36000
-  s3_auth_policy_exp: 24
   region: "us-east-1"
   port: "10241"
   bucket: "pedmatch-dev"
@@ -19,6 +18,7 @@ development:
   read_capacity: 5
   write_capacity: 5
   aws_download_time_limit: 600
+  aws_upload_time_limit: 600
 
 test:
   dynamo_endpoint: "https://dynamodb.us-east-1.amazonaws.com"
@@ -31,7 +31,6 @@ test:
   icon_emoji: ":face_with_head_bandage:"
   requeue_countdown: 10800
   visibility_timeout: 36000
-  s3_auth_policy_exp: 24
   region: "us-east-1"
   port: "10241"
   bucket: "pedmatch-int"
@@ -41,3 +40,4 @@ test:
   write_capacity: 5
   ir_queue_name: "ion_reporter_queue"
   aws_download_time_limit: 600
+  aws_upload_time_limit: 600
