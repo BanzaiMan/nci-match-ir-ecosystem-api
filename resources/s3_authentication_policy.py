@@ -3,6 +3,7 @@ import boto3
 import __builtin__
 from flask_restful import Resource
 from string import Template
+from resource_helpers.abort_logger import AbortLogger
 
 UPLOAD_DIR = Template("$ion_reporter_id/$molecular_id/$analysis_id")
 s3Client = boto3.client('s3')
