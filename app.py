@@ -68,7 +68,7 @@ api.add_resource(MiscFile, '/api/v1/sample_controls/files/<string:molecular_id>/
 
 # TODO: still working on this but this will be used to authenticate a user to upload to S3
 api.add_resource(S3AuthenticationPolicy,
-                 '/api/v1/sample_controls/files/<string:molecular_id>/<string:analysis_id>/<string:file_name>')
+                 '/api/v1/sample_controls/files/<string:ion_reporter_id>/<string:molecular_id>/<string:analysis_id>/<string:file_name>')
 
 # Path for Querying and Creating ion reporters
 # Delete and Put in batch must do those using specific IDs, not allowed here
