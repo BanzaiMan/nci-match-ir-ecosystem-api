@@ -277,10 +277,10 @@ def post_tsv_info(dictionary, tsv_file_name):
         else:
             logger.error(MESSAGE_SERVICE_FAILURE.substitute(service_name='Patient Ecosystem',
                                                             s3_path=dictionary['tsv_name'],
-                                                           path='None', message=r.status_code))
+                                                           path='None', message=str(r.status_code) + r.content))
             raise Exception(MESSAGE_SERVICE_FAILURE.substitute(service_name='Patient Ecosystem',
                                                                s3_path=dictionary['tsv_name'],
-                                                               path=patient_url, message=r.status_code))
+                                                               path=patient_url, message=str(r.status_code) + r.content))
 
 
 def process_rule_by_tsv(dictionary, tsv_file_name):
