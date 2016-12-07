@@ -255,7 +255,7 @@ def post_tsv_info(dictionary, tsv_file_name):
     logger.info("Posting tsv file name to Patient Ecosystem for " + dictionary['molecular_id'])
     patient_url = (__builtin__.environment_config[__builtin__.environment]['patient_endpoint']
            + __builtin__.environment_config[__builtin__.environment]['patient_post_path'] + "/"
-                   + dictionary['analysis_id'])
+                   + dictionary['molecular_id'])
     headers = {'Content-type': 'application/json'}
     content = {'tsv_file_name': tsv_file_name,
                'ion_reporter_id': dictionary['ion_reporter_id'],
