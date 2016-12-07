@@ -22,7 +22,10 @@ class S3AuthenticationPolicy(Resource):
                                     analysis_id=analysis_id)
 
         key2 = (key + '/' + file_name)
-        post = s3Client.generate_presigned_post(Bucket = bucket, Key = key2, ExpiresIn = __builtin__.environment_config
+        try:
+            post = s3Client.generate_presigned_post(Bucket = bucket, Key = key2, ExpiresIn = __builtin__.environment_config
                                                         [__builtin__.environment]['aws_upload_time_limit'])
+        except Exception as e:
+            AbortLogger.log_and_abort(503, self.logger.debug, str(" s3Client failed to generate presigned post." + e.message))
 
         return post
