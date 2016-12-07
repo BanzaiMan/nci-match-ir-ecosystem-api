@@ -272,7 +272,7 @@ def post_tsv_info(dictionary, tsv_file_name):
                                                            s3_path=dictionary['tsv_name'],
                                                            path=patient_url, message=e.message))
     else:
-        if r.status_code == 200:
+        if str(r.status_code).startswith('20'):
             logger.info("Successfully posted TSV file name to Patient Ecosystem for " + dictionary['molecular_id'])
         else:
             logger.error(MESSAGE_SERVICE_FAILURE.substitute(service_name='Patient Ecosystem',
