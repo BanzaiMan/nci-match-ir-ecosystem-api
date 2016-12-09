@@ -6,29 +6,33 @@ services:
 - docker
 language: python
 python: 2.7.12
+before_install:
+  - export AUTHOR=`git --no-pager show -s --format='%an <%ae>'`
+  - export DATE=`TZ=America/New_York date "+%m-%d-%y-%H%M"`
+  - export DOCKER_IMAGE1="matchbox/nci-match-ir-ecosystem-api"
+  - export DOCKER_IMAGE2="matchbox/nci-match-ir-ecosystem-processor"
 install: pip install -r requirements.txt
 script:
 - coverage run -m unittest discover tests
   #Build Docker image
-- export DATE=`TZ=America/New_York date "+%m-%d-%y-%H%M"`
-- export DOCKER_IMAGE1="matchbox/nci-match-ir-ecosystem-api"
-- export DOCKER_IMAGE2="matchbox/nci-match-ir-ecosystem-processor"
 - docker build -f ./Dockerfile.python -t $DOCKER_IMAGE1:$DATE -t $DOCKER_IMAGE1:latest .
 - docker build -f ./Dockerfile.celery -t $DOCKER_IMAGE2:$DATE -t $DOCKER_IMAGE2:latest .
 - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-- docker push $DOCKER_IMAGE1 # Pushes both date and latest
-- docker push $DOCKER_IMAGE2 # Pushes both date and latest
+  # - docker run -it --rm -e "RAILS_ENV=test" $DOCKER_IMAGE:$DATE 
+  #     bundle exec rspec spec/
 after_success:
 - codeclimate-test-reporter
 - docker images
+- docker push $DOCKER_IMAGE1 # Pushes both date and latest
+- docker push $DOCKER_IMAGE2 # Pushes both date and latest
 #Deploy both services to AWS IntTest
 - docker run -it --rm -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
   -e AWS_DEFAULT_REGION=us-east-1 silintl/ecs-deploy 
-  --cluster PedMatch-IntTest-Backend2  --service-name PedMatch-nci-match-ir-ecosystem-api-INTTEST 
+  --cluster PedMatch-IntTest-Backend  --service-name PedMatch-nci-match-ir-ecosystem-api-INTTEST 
   -i $DOCKER_IMAGE1:$DATE
 - docker run -it --rm -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY 
   -e AWS_DEFAULT_REGION=us-east-1 silintl/ecs-deploy 
-  --cluster PedMatch-IntTest-Backend2  --service-name PedMatch-nci-match-ir-ecosystem-processor-INTTEST 
+  --cluster PedMatch-IntTest-Backend  --service-name PedMatch-nci-match-ir-ecosystem-processor-INTTEST 
   -i $DOCKER_IMAGE2:$DATE
 #Trigger Travis bdd tests
 - curl -s -X POST -H "Content-Type:application/json" -H "Accept:application/json" -H "Travis-API-Version:3" -H "Authorization:token $TRAVIS_TOKEN" -d "{\"request\":{\"message\":\"Triggered by nci-match-ir-ecosystem-api $TRAVIS_COMMIT\", \"branch\":\"master\", \"config\":{\"env\":{\"matrix\":[\"TRIGGER_REPO=nci-match-ir-ecosystem-api;TRIGGER_VER=$DATE;CUC_TAG=@ion_reporter\"]}}}}" https://api.travis-ci.org/repo/CBIIT%2Fnci-uMatch-bddtests/requests
