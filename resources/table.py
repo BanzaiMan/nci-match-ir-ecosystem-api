@@ -19,8 +19,8 @@ class Table(Resource):
         self.accessor = accessor
         self.logger = logging.getLogger(__name__)
 
-    @cross_origin(headers=['Content-Type', 'Authorization'])
-    @requires_auth
+    # @cross_origin(headers=['Content-Type', 'Authorization'])
+    # @requires_auth
     def get(self):
         self.logger.info("GET called for accessor: " + self.accessor.__class__.__name__)
         args = request.args

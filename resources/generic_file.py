@@ -12,8 +12,8 @@ class GenericFile(Resource):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
-    @cross_origin(headers=['Content-Type', 'Authorization'])
-    @requires_auth
+    # @cross_origin(headers=['Content-Type', 'Authorization'])
+    # @requires_auth
     def get_file_url(self, molecular_id, file_name):
         self.logger.info("Downloading sample control with id: " + str(molecular_id) + ", name: " +
                          str(file_name))

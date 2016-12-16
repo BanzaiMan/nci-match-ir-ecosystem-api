@@ -39,7 +39,7 @@ class TestAliquot(unittest.TestCase):
              "dna_concentration_ng_per_ul": "25.0",
              "cdna_volume_ul": "10.0"
          },
-         500, "patient")
+         200, "patient")
     )
     @unpack
     @patch('resources.aliquot.PatientEcosystemConnector')

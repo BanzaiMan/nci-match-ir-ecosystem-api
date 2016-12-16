@@ -8,8 +8,8 @@ valid_file_formats = ['vcf', 'tsv']
 
 class VariantGenericFile(GenericFile):
 
-    @cross_origin(headers=['Content-Type', 'Authorization'])
-    @requires_auth
+    # @cross_origin(headers=['Content-Type', 'Authorization'])
+    # @requires_auth
     def get(self, molecular_id, file_format):
 
         if file_format.lower() in valid_file_formats:

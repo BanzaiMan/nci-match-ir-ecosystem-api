@@ -19,8 +19,8 @@ class SequenceData(Resource):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
-    @cross_origin(headers=['Content-Type', 'Authorization'])
-    @requires_auth
+    # @cross_origin(headers=['Content-Type', 'Authorization'])
+    # @requires_auth
     def get(self, ion_reporter_id, sequence_data):
         self.logger.info("Getting sequence data for ion reporter with id: " + str(ion_reporter_id) + " sequence_data: "
                          + sequence_data)
