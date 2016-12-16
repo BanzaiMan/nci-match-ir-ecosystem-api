@@ -7,6 +7,9 @@ from common.dictionary_helper import DictionaryHelper
 from common.patient_ecosystem_connector import PatientEcosystemConnector
 from accessors.celery_task_accessor import CeleryTaskAccessor
 from resource_helpers.abort_logger import AbortLogger
+from flask.ext.cors import cross_origin
+from resources.auth0_resource import requires_auth
+from flask.json import jsonify
 
 
 class Aliquot(Resource):
@@ -18,6 +21,8 @@ class Aliquot(Resource):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
+    @cross_origin(headers=['Content-Type', 'Authorization'])
+    @requires_auth
     def get(self, molecular_id):
         # check if molecular_id exists in sample control table
         self.logger.info("Checking if molecular id: " + str(molecular_id) + " is in sample control table")
@@ -25,24 +30,39 @@ class Aliquot(Resource):
         self.logger.debug(str(args))
         projection_list, args = DictionaryHelper.get_projection(args)
 
-        results = SampleControlAccessor().get_item({'molecular_id': molecular_id}, ','.join(projection_list))
+        try:
+            results = SampleControlAccessor().get_item({'molecular_id': molecular_id}, ','.join(projection_list))
+        except Exception as e:
+
+            AbortLogger.log_and_abort(500, self.logger.error,
+                                      "Failed to get " + molecular_id + ", because : " + e.message)
+
+        # results = SampleControlAccessor().get_item({'molecular_id': molecular_id}, ','.join(projection_list))
 
         if len(results) > 0:
             self.logger.info("Molecular id: " + str(molecular_id) + " found in sample control table")
             results = json.loads(simplejson.dumps(results, use_decimal=True))
             item = results.copy()
             item.update({"molecular_id_type": "sample_control"})
-            return item
+            return jsonify(item)
         else:
             # check if molecular_id exists in patient table
-            (pt_statuscode, pt_data) = PatientEcosystemConnector().verify_molecular_id(molecular_id)
+            try:
+                (pt_statuscode, pt_data) = PatientEcosystemConnector().verify_molecular_id(molecular_id)
+            except Exception as e:
+                AbortLogger.log_and_abort(503, self.logger.error,
+                                          "Failed to reach patient ecosystem to get " + molecular_id + ", because : " + str(e.message))
+            # (pt_statuscode, pt_data) = PatientEcosystemConnector().verify_molecular_id(molecular_id)
             if pt_statuscode == 200:
                 item = pt_data.copy()
                 item.update({"molecular_id_type": "patient"})
                 return item
             else:
-                AbortLogger.log_and_abort(404, self.logger.debug, str(molecular_id + " was not found. Invalid molecular_id or invalid projection key entered."))
+                AbortLogger.log_and_abort(404, self.logger.debug, str(
+                    molecular_id + " was not found. Invalid molecular_id or invalid projection key entered."))
 
+    @cross_origin(headers=['Content-Type', 'Authorization'])
+    @requires_auth
     def put(self, molecular_id):
         self.logger.info("updating molecular_id: " + str(molecular_id))
         args = request.json
@@ -55,10 +75,22 @@ class Aliquot(Resource):
         self.logger.debug("args has values")
 
         # check if molecular_id exists in sample_controls table
-        item = SampleControlAccessor().get_item({'molecular_id': molecular_id})
+        try:
+            item = SampleControlAccessor().get_item({'molecular_id': molecular_id})
+        except Exception as e:
+            AbortLogger.log_and_abort(500, self.logger.error,
+                                      "Failed to get " + molecular_id + ", because : " + str(e.message))
+        # item = SampleControlAccessor().get_item({'molecular_id': molecular_id})
         if len(item) == 0:
             # check if molecular_id exists in patient table
-            (pt_statuscode, pt_data) = PatientEcosystemConnector().verify_molecular_id(molecular_id)
+            try:
+                (pt_statuscode, pt_data) = PatientEcosystemConnector().verify_molecular_id(molecular_id)
+            except Exception as e:
+                AbortLogger.log_and_abort(503, self.logger.error,
+                                          "Failed to reach patient ecosystem to get " + molecular_id + ", because : " + str(
+                                              e.message))
+            # (pt_statuscode, pt_data) = PatientEcosystemConnector().verify_molecular_id(molecular_id)
+
             if pt_statuscode != 200:
                 AbortLogger.log_and_abort(404, self.logger.debug, str(molecular_id + " was not found. Cannot update."))
 
@@ -76,7 +108,7 @@ class Aliquot(Resource):
         else:
             AbortLogger.log_and_abort(400, self.logger.debug, "No distinct tasks where found in message")
 
-        return {"message": "Item updated", "molecular_id": molecular_id}
+        return jsonify({"message": "Item updated", "molecular_id": molecular_id})
 
     @staticmethod
     def __get_distinct_tasks(item_dictionary, molecular_id):

@@ -1,12 +1,14 @@
 import logging
 import datetime
 from flask_restful import request
-
+from flask.ext.cors import cross_origin
+from resources.auth0_resource import requires_auth
 from accessors.celery_task_accessor import CeleryTaskAccessor
 from accessors.sample_control_accessor import SampleControlAccessor
 from common.dictionary_helper import DictionaryHelper
 from resource_helpers.abort_logger import AbortLogger
 from table import Table
+from flask.json import jsonify
 
 MOLECULAR_ID_LENGTH = 5
 
@@ -24,6 +26,8 @@ class SampleControlTable(Table):
         self.logger = logging.getLogger(__name__)
         Table.__init__(self, SampleControlAccessor, 'molecular_id', MOLECULAR_ID_LENGTH, 'SC_')
 
+    @cross_origin(headers=['Content-Type', 'Authorization'])
+    @requires_auth
     def delete(self):
         self.logger.info("Sample control Batch Delete called")
         args = request.args
@@ -38,7 +42,7 @@ class SampleControlTable(Table):
         except Exception as e:
             AbortLogger.log_and_abort(500, self.logger.error, "Batch delete failed because: " + e.message)
 
-        return {"result": "Batch deletion request placed on queue to be processed"}
+        return jsonify({"result": "Batch deletion request placed on queue to be processed"})
 
     # This is the method is not being perfectly consistent with standards.
     # all things considered this seems best for now unless a non verbose way can be thought up.
@@ -49,6 +53,8 @@ class SampleControlTable(Table):
     # control_type and site are essential for POST, all other parameters are ignored on post except molecular_id
     # which, if passed in will cause a failure. The proper order is to first POST to get a molecular_id then to PUT
     # the files using the molecular_id in the URI. From there other fields can be updated if needed.
+    @cross_origin(headers=['Content-Type', 'Authorization'])
+    @requires_auth
     def post(self):
         self.logger.info("POST Request to create a new sample control")
         args = request.args
@@ -75,7 +81,7 @@ class SampleControlTable(Table):
                 # updates and POST for creation, typically. Granted in rest a put could be a creation also...but not in
                 # our case.
                 SampleControlAccessor().put_item(new_item_dictionary)
-                return {"result": "New sample control created", "molecular_id": new_item_dictionary['molecular_id']}
+                return jsonify({"result": "New sample control created", "molecular_id": new_item_dictionary['molecular_id']})
             except Exception as e:
                 AbortLogger.log_and_abort(500, self.logger.error, "Could not put_item because " + e.message)
 

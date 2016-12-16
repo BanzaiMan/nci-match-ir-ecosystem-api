@@ -1,8 +1,11 @@
 import logging
 from string import Template
+from flask.json import jsonify
 from flask_restful import request, Resource
 from common.dictionary_helper import DictionaryHelper
 from resource_helpers.abort_logger import AbortLogger
+from flask.ext.cors import cross_origin
+from resources.auth0_resource import requires_auth
 import json
 import simplejson
 
@@ -18,6 +21,8 @@ class Record(Resource):
         self.key_name = key_name
         self.logger = logging.getLogger(__name__)
 
+    @cross_origin(headers=['Content-Type', 'Authorization'])
+    @requires_auth
     def get(self, identifier):
         self.logger.info("Getting " + self.database_accessor.__class__.__name__ + " with id: " + str(identifier))
 
@@ -34,12 +39,14 @@ class Record(Resource):
                 self.logger.debug("Found: " + str(results))
                 # use simplejson to serialize a Decimal object
                 results = json.loads(simplejson.dumps(results, use_decimal=True))
-                return results
+                return jsonify(results)
 
             AbortLogger.log_and_abort(404, self.logger.debug,
                                       MESSAGE_404.substitute(class_name=self.database_accessor.__class__.__name__,
                                                              key_value=identifier))
 
+    @cross_origin(headers=['Content-Type', 'Authorization'])
+    @requires_auth
     def put(self, identifier):
         self.logger.info("updating " + self.database_accessor.__class__.__name__ +
                          " with id: " + str(identifier))
@@ -68,12 +75,14 @@ class Record(Resource):
                 #AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
                 AbortLogger.log_and_abort(500, self.logger.error, "Failed to update " + identifier + ", because : " + e.message)
             else:
-                return {"message": self.database_accessor.__class__.__name__ + " with id: " + identifier + " updated"}
+                return jsonify({"message": self.database_accessor.__class__.__name__ + " with id: " + identifier + " updated"})
         else:
             AbortLogger.log_and_abort(404, self.logger.error,
                                       MESSAGE_404.substitute(class_name=self.database_accessor.__class__.__name__,
                                                              key_value=identifier))
 
+    @cross_origin(headers=['Content-Type', 'Authorization'])
+    @requires_auth
     def delete(self, identifier):
         self.logger.info("Deleting " + self.database_accessor.__class__.__name__ +
                          " with id: " + str(identifier))
@@ -87,7 +96,7 @@ class Record(Resource):
                 #AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
                 AbortLogger.log_and_abort(500, self.logger.error, "Failed to delete " + identifier + ", because : " + e.message)
             else:
-                return {"message": "Item deleted", self.key_name: identifier}
+                return jsonify({"message": "Item deleted", self.key_name: identifier})
         else:
             AbortLogger.log_and_abort(404, self.logger.error,
                                       MESSAGE_404.substitute(class_name=self.database_accessor.__class__.__name__,
@@ -100,4 +109,5 @@ class Record(Resource):
             #AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
             AbortLogger.log_and_abort(404, self.logger.error, identifier + " does not exist. " + e.message)
         else:
-            return len(results) > 0
+            # return str(dir(results))
+            return len(results.response) > 0

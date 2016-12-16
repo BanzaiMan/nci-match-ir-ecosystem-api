@@ -4,6 +4,10 @@ from flask_restful import request, Resource, reqparse
 from accessors.sample_control_accessor import SampleControlAccessor
 from resource_helpers.abort_logger import AbortLogger
 from common.dictionary_helper import DictionaryHelper
+from flask.ext.cors import cross_origin
+from resources.auth0_resource import requires_auth
+from flask.json import jsonify
+
 
 MESSAGE_501 = Template("Finding patients sequenced with IR: $ion_reporter_id not yet implemented.")
 MESSAGE_500 = Template("Server Error contact help: $error")
@@ -15,6 +19,8 @@ class SequenceData(Resource):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
+    @cross_origin(headers=['Content-Type', 'Authorization'])
+    @requires_auth
     def get(self, ion_reporter_id, sequence_data):
         self.logger.info("Getting sequence data for ion reporter with id: " + str(ion_reporter_id) + " sequence_data: "
                          + sequence_data)
@@ -32,7 +38,7 @@ class SequenceData(Resource):
                 AbortLogger.log_and_abort(500, self.logger.error, MESSAGE_500.substitute(error=e.message))
             else:
                 if len(sample_controls) > 0:
-                    return sample_controls
+                    return jsonify(sample_controls)
 
                 AbortLogger.log_and_abort(404, self.logger.error,
                                           MESSAGE_404.substitute(ion_reporter_id=ion_reporter_id))

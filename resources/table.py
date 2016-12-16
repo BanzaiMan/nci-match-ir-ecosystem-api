@@ -1,11 +1,14 @@
 import logging
 import json
 import simplejson
+
+from flask.json import jsonify
 from flask_restful import request, Resource
 from common.dictionary_helper import DictionaryHelper
 from resource_helpers.abort_logger import AbortLogger
 from common.string_helper import StringHelper
-
+from flask.ext.cors import cross_origin
+from resources.auth0_resource import requires_auth
 
 class Table(Resource):
 
@@ -16,6 +19,8 @@ class Table(Resource):
         self.accessor = accessor
         self.logger = logging.getLogger(__name__)
 
+    @cross_origin(headers=['Content-Type', 'Authorization'])
+    @requires_auth
     def get(self):
         self.logger.info("GET called for accessor: " + self.accessor.__class__.__name__)
         args = request.args
@@ -33,7 +38,7 @@ class Table(Resource):
                 AbortLogger.log_and_abort(404, self.logger.debug, "No records meet the query parameters")
 
             records = json.loads(simplejson.dumps(records, use_decimal=True))
-            return records
+            return jsonify(records)
 
     def get_unique_key(self):
         new_record_id = ""

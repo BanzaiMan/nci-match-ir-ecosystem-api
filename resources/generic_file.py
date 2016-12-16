@@ -3,13 +3,17 @@ from flask_restful import Resource
 from accessors.s3_accessor import S3Accessor
 from accessors.sample_control_accessor import SampleControlAccessor
 from resource_helpers.abort_logger import AbortLogger
-
+from flask.ext.cors import cross_origin
+from resources.auth0_resource import requires_auth
+from flask.json import jsonify
 
 class GenericFile(Resource):
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
+    @cross_origin(headers=['Content-Type', 'Authorization'])
+    @requires_auth
     def get_file_url(self, molecular_id, file_name):
         self.logger.info("Downloading sample control with id: " + str(molecular_id) + ", name: " +
                          str(file_name))
@@ -31,6 +35,6 @@ class GenericFile(Resource):
                 except Exception as e:
                     AbortLogger.log_and_abort(500, self.logger.error, "Failed to get download url because " + e.message)
                 else:
-                    return {'s3_download_file_url': s3_url}
+                    return jsonify({'s3_download_file_url': s3_url})
 
             AbortLogger.log_and_abort(404, self.logger.debug, str(molecular_id + " was not found"))
