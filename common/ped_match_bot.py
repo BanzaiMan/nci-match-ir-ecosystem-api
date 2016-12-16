@@ -50,7 +50,7 @@ class PedMatchBot(object):
         upload_stack = PedMatchBot.upload_to_slack(PedMatchBot.generate_traceback_message(stack), details.id)
         stack_url = upload_stack["file"]["edit_link"]
 
-
+        # TODO: Waleed trying using a string template and maybe reading template from a file so this isn't hard coded
         attachments = [
             {
                 "fallback": error_message,

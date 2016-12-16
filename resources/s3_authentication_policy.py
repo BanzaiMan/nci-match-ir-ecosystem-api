@@ -9,6 +9,7 @@ UPLOAD_DIR = Template("$ion_reporter_id/$molecular_id/$analysis_id")
 s3Client = boto3.client('s3')
 bucket = __builtin__.environment_config[__builtin__.environment]['bucket']
 
+
 class S3AuthenticationPolicy(Resource):
 
     def __init__(self):
@@ -23,9 +24,11 @@ class S3AuthenticationPolicy(Resource):
 
         key2 = (key + '/' + file_name)
         try:
-            post = s3Client.generate_presigned_post(Bucket = bucket, Key = key2, ExpiresIn = __builtin__.environment_config
-                                                        [__builtin__.environment]['aws_upload_time_limit'])
+            post = s3Client.generate_presigned_post(Bucket=bucket,
+                                                    Key=key2,
+                                                    ExpiresIn=__builtin__.environment_config[__builtin__.environment]
+                                                    ['aws_upload_time_limit'])
         except Exception as e:
             AbortLogger.log_and_abort(503, self.logger.debug, str(" s3Client failed to generate presigned post." + e.message))
-
-        return post
+        else:
+            return post
