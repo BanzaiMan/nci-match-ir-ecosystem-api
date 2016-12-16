@@ -3,7 +3,6 @@
 # import json
 # from ddt import ddt, data, unpack
 # from mock import patch
-# TODO: Fix failing test
 #
 #
 # @ddt
