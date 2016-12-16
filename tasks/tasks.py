@@ -161,7 +161,8 @@ def process_file_message(file_process_message):
             new_file_path, key, downloaded_file_path = process_bam(unicode_free_dictionary, 'cdna')
 
         else:
-            logger.info("File does not require processing" + str(file_process_message))
+            logger.info("File does not require processing" + "\n Message: " + str(file_process_message) + "\n" +
+                        str(unicode_free_dictionary))
             return unicode_free_dictionary
 
     except Exception:
@@ -252,7 +253,7 @@ def process_bam(dictionary, nucleic_acid_type):
 
 def post_tsv_info(dictionary, tsv_file_name):
 
-    logger.info("Posting tsv file name to Patient Ecosystem for " + dictionary['molecular_id'])
+
     patient_url = (__builtin__.environment_config[__builtin__.environment]['patient_endpoint']
            + __builtin__.environment_config[__builtin__.environment]['patient_post_path'] + "/"
                    + dictionary['molecular_id'])
@@ -261,7 +262,7 @@ def post_tsv_info(dictionary, tsv_file_name):
                'ion_reporter_id': dictionary['ion_reporter_id'],
                 'molecular_id': dictionary['molecular_id'],
                 'analysis_id': dictionary['analysis_id']}
-
+    logger.info("Posting tsv file name to Patient Ecosystem for " + dictionary['molecular_id'] + "\n" + str(content))
     try:
         r = requests.post(patient_url, data=json.dumps(content), headers=headers)
     except Exception as e:
@@ -277,10 +278,12 @@ def post_tsv_info(dictionary, tsv_file_name):
         else:
             logger.error(MESSAGE_SERVICE_FAILURE.substitute(service_name='Patient Ecosystem',
                                                             s3_path=dictionary['tsv_name'],
-                                                           path='None', message=str(r.status_code) + r.content))
+                                                           path=patient_url, message=str(r.status_code) + r.content)
+                                                            + "\n" + str(content))
             raise Exception(MESSAGE_SERVICE_FAILURE.substitute(service_name='Patient Ecosystem',
                                                                s3_path=dictionary['tsv_name'],
-                                                               path=patient_url, message=str(r.status_code) + r.content))
+                                                               path=patient_url, message=str(r.status_code) + r.content)
+                                                                + "\n" + str(content))
 
 
 def process_rule_by_tsv(dictionary, tsv_file_name):
