@@ -63,10 +63,9 @@ api.add_resource(AlignmentGenericFile,
 # contains the full path and name of the file to be downloaded. The user can query the aliquot by doing a get to
 # retrieve the record they want then once they see the attribute with the file name use that to make this call to
 # actually retrieve the file. The dynamodb attribute == file_name
-# TODO: Somebody and test this
 api.add_resource(MiscFile, '/api/v1/sample_controls/files/<string:molecular_id>/<string:file_name>')
 
-# TODO: still working on this but this will be used to authenticate a user to upload to S3
+# Used to authenticate a user to upload to S3
 api.add_resource(S3AuthenticationPolicy,
                  '/api/v1/sample_controls/files/<string:ion_reporter_id>/<string:molecular_id>/<string:analysis_id>/<string:file_name>')
 
