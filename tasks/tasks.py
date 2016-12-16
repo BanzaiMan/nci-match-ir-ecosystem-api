@@ -267,10 +267,10 @@ def post_tsv_info(dictionary, tsv_file_name):
     except Exception as e:
         logger.error(MESSAGE_SERVICE_FAILURE.substitute(service_name='Patient Ecosystem',
                                                         s3_path=dictionary['tsv_name'],
-                                                        path='None', message=e.message))
+                                                        path=patient_url, message=e.message + str(content)))
         raise Exception(MESSAGE_SERVICE_FAILURE.substitute(service_name='Patient Ecosystem',
                                                            s3_path=dictionary['tsv_name'],
-                                                           path=patient_url, message=e.message))
+                                                           path=patient_url, message= e.message + str(content)))
     else:
         if str(r.status_code).startswith('20'):
             logger.info("Successfully posted TSV file name to Patient Ecosystem for " + dictionary['molecular_id'])
