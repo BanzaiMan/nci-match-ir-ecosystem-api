@@ -87,7 +87,7 @@ api.add_resource(Version, '/api/v1/ion_reporters/version')
 # s3 and these new paths to DynamoDB, based on  their molecular id, in either the patient or sample_control table.
 api.add_resource(Aliquot, '/api/v1/aliquot/<string:molecular_id>')
 
-api.add_resource(QualityControl, '/api/v1/quality_control/<string:molecular_id>')
+api.add_resource(QualityControl, '/api/v1/sample_controls/quality_control/<string:molecular_id>')
 
 
 # For the most part, this is boilerplate code to start tornado server

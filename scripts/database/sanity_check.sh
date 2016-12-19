@@ -296,4 +296,4 @@ echo -e "${BLUE}GET /api/v1/quality_control/<string:molecular_id>${NC}"
 echo -e "${PURPLE}Download QC.json file from s3, returns QC.json File Content in json format${NC}"
 echo -e "${CYAN}***********************************************${NC}"
 
-curl -X GET "${URL}/api/v1/quality_control/SC_SA1CB"
+curl -X GET "${URL}/api/v1/sample_controls/quality_control/SC_SA1CB"
