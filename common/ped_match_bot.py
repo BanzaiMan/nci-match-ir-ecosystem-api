@@ -64,42 +64,6 @@ class PedMatchBot(object):
         attachments = src.substitute(d)
         attachments = json.loads(attachments, strict=False)
 
-        retry_attachments = [
-            {
-                "fallback": error_message,
-                "color": "#ff0000",
-                "pretext": error_message + "; \n Maximum retries reached, moving to to: " + queue_name + "_dlx.",
-                "title": "Loggly Reference",
-                "title_link": "https://match.loggly.com/search#terms=" + str(details.id),
-                "text": "<" + str(stack_url) + "|Traceback Download> and <" + str(json_url) + "|JSON Download>",
-                "fields": [
-                    {
-                        "title": "Project",
-                        "value": "IR Ecosystem",
-                        "short": "true"
-                    },
-                    {
-                        "title": "Queue Name",
-                        "value": queue_name,
-                        "short": "true"
-                    },
-                    {
-                        "title": "Task ID",
-                        "value": str(details.id),
-                        "short": "true"
-                    },
-                    {
-                        "title": "Estimated Time of Arrival",
-                        "value": str(details.eta),
-                        "short": "true"
-                    }
-                ],
-
-                "footer": "Host: " + str(details.hostname),
-                "ts": int_timestamp
-            }
-        ]
-
         try:
             logger.error(str(details.task) + " has failed, details: " + str(details))
             PedMatchBot().send_message(attachments= attachments)
@@ -109,7 +73,7 @@ class PedMatchBot(object):
             task.retry(args=[message], countdown=requeue_countdown)
         except MaxRetriesExceededError:
             logger.error("MAXIMUM RETRIES reached for %s moving task to %s details: %s" % (details.task, dlx_queue, details))
-            PedMatchBot().send_message(retry_attachments)
+            PedMatchBot().send_message(attachments)
             try:
                 task.apply_async(args=[message], queue=dlx_queue)
             except Exception as e:
