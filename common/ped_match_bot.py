@@ -3,7 +3,9 @@ import inspect
 import datetime
 import time
 import json
+import os
 import traceback
+from string import Template
 from slackclient import SlackClient
 from celery.exceptions import MaxRetriesExceededError
 
@@ -42,7 +44,7 @@ class PedMatchBot(object):
         ts = time.time()
         pattern = '%Y-%m-%d %H:%M:%S'
         time_stamp = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-        epoch = int(time.mktime(time.strptime(time_stamp, pattern)))
+        int_timestamp = int(time.mktime(time.strptime(time_stamp, pattern)))
 
         upload_json = PedMatchBot.upload_to_slack(message_output, details.id)
         json_url = upload_json["file"]["edit_link"]
@@ -50,42 +52,17 @@ class PedMatchBot(object):
         upload_stack = PedMatchBot.upload_to_slack(PedMatchBot.generate_traceback_message(stack), details.id)
         stack_url = upload_stack["file"]["edit_link"]
 
-        # TODO: Waleed trying using a string template and maybe reading template from a file so this isn't hard coded
-        attachments = [
-            {
-                "fallback": error_message,
-                "color": "#F35A00",
-                "pretext": error_message + "; \n Will attempt re-queue in " + str(requeue_countdown) + " seconds.",
-                "title": "Loggly Reference",
-                "title_link": "https://match.loggly.com/search#terms=%22" + str(details.id) + '%22&from=-1d&until=now',
-                "text": "<"+ str(stack_url) + "|Traceback Download> and <" + str(json_url) + "|JSON Download>",
-                "fields": [
-                    {
-                        "title": "Project",
-                        "value": "IR Ecosystem",
-                        "short": "true"
-                    },
-                    {
-                        "title": "Queue Name",
-                        "value": queue_name,
-                        "short": "true"
-                    },
-                    {
-                        "title": "Task ID",
-                        "value": str(details.id),
-                        "short": "true"
-                    },
-                    {
-                        "title": "Retry number",
-                        "value": str(details.retries),
-                        "short": "true"
-                    }
-                ],
 
-                "footer": "Host: " + str(details.hostname),
-                "ts": epoch
-            }
-        ]
+        filein = open(os.path.abspath("config/ped_match_bot_message.txt"))
+        src = Template(filein.read())
+        d = {'error_message': error_message, 'requeue_countdown': requeue_countdown, 'task_id': details.id,
+             'stack_url': stack_url, 'json_url': json_url, 'queue_name': queue_name,
+             'task_retries': details.retries,
+             'task_hostname': details.hostname, 'time_stamp': int_timestamp
+             }
+
+        attachments = src.substitute(d)
+        attachments = json.loads(attachments, strict=False)
 
         retry_attachments = [
             {
@@ -119,7 +96,7 @@ class PedMatchBot(object):
                 ],
 
                 "footer": "Host: " + str(details.hostname),
-                "ts": epoch
+                "ts": int_timestamp
             }
         ]
 
