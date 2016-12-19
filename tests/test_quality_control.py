@@ -41,7 +41,7 @@ class TestQualityControl(unittest.TestCase):
         ]
 
 
-        return_value = self.app.get('/api/v1/quality_control/' + molecular_id)
+        return_value = self.app.get('/api/v1/sample_controls/quality_control/' + molecular_id)
         print "==============" + str(return_value.status_code)
         assert return_value.status_code == expected_results
         print json.loads(return_value.data)['molecular_id']
@@ -59,7 +59,7 @@ class TestQualityControl(unittest.TestCase):
                                           expected_results, mock_SC_class):
         instance = mock_SC_class.return_value
         instance.get_item.return_value = item
-        return_value = self.app.get('/api/v1/quality_control/' + molecular_id)
+        return_value = self.app.get('/api/v1/sample_controls/quality_control/' + molecular_id)
         print "==============" + str(return_value.status_code)
         assert return_value.status_code == expected_results
         print return_value.data
@@ -88,7 +88,7 @@ class TestQualityControl(unittest.TestCase):
         instance.get_item.return_value = item
         instance_s3 = mock_S3_class.return_value
         instance_s3.download.return_value = downloaded_file_path
-        return_value = self.app.get('/api/v1/quality_control/' + molecular_id)
+        return_value = self.app.get('/api/v1/sample_controls/quality_control/' + molecular_id)
         print "==============" + str(return_value.status_code)
         assert return_value.status_code == expected_results
         print return_value.data
