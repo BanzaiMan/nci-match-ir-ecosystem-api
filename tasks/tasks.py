@@ -196,7 +196,7 @@ def communicate_s3_patienteco_ruleengine(file_process_dictionary, new_file_path,
                                                                     s3_path= new_file_s3_path, path='None',
                                                                     message=e.message))
                     raise Exception('Failure to process tsv using rules engine for: \n ' +str(file_process_dictionary) +
-                                    'due to: ' + str(e) + e.message)
+                                    'due to: ' + e.message)
             else:
                 # post tsv name to patient ecosystem for patient only
                 post_tsv_info(file_process_dictionary, new_file_name)
