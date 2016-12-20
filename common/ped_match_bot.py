@@ -55,14 +55,25 @@ class PedMatchBot(object):
 
         filein = open(os.path.abspath("config/ped_match_bot_message.txt"))
         src = Template(filein.read())
-        d = {'error_message': error_message, 'requeue_countdown': requeue_countdown, 'task_id': details.id,
+        d1 = {'error_message': error_message, 'requeue_countdown': requeue_countdown, 'task_id': details.id,
              'stack_url': stack_url, 'json_url': json_url, 'queue_name': queue_name,
              'task_retries': details.retries,
              'task_hostname': details.hostname, 'time_stamp': int_timestamp
              }
 
-        attachments = src.substitute(d)
+        attachments = src.substitute(d1)
         attachments = json.loads(attachments, strict=False)
+
+        filein2 = open(os.path.abspath("config/ped_match_bot_message.txt"))
+        src2 = Template(filein2.read())
+        d2 = {'error_message': error_message, 'requeue_countdown': 'None', 'task_id': details.id,
+             'stack_url': stack_url, 'json_url': json_url, 'queue_name': queue_name + "_dlx",
+             'task_retries': '*MAX RETRIES REACHED*',
+             'task_hostname': details.hostname, 'time_stamp': int_timestamp
+             }
+
+        max_retry_attachments = src2.substitute(d2)
+        max_retry_attachments = json.loads(max_retry_attachments, strict=False)
 
         try:
             logger.error(str(details.task) + " has failed, details: " + str(details))
@@ -73,7 +84,7 @@ class PedMatchBot(object):
             task.retry(args=[message], countdown=requeue_countdown)
         except MaxRetriesExceededError:
             logger.error("MAXIMUM RETRIES reached for %s moving task to %s details: %s" % (details.task, dlx_queue, details))
-            PedMatchBot().send_message(attachments)
+            PedMatchBot().send_message(max_retry_attachments)
             try:
                 task.apply_async(args=[message], queue=dlx_queue)
             except Exception as e:
