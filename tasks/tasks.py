@@ -320,7 +320,8 @@ def process_rule_by_tsv(dictionary, tsv_file_name):
             logger.error(MESSAGE_SERVICE_FAILURE.substitute(service_name='Rules Engine',
                                                             s3_path=dictionary['tsv_name'],
                                                             path=url, message=rule_response.status_code))
-            raise Exception('Error Code: ' + str(rule_response.status_code))
+            raise Exception('Encountered Error Code: ' + str(rule_response.status_code) +
+                            ' while connecting to Rules Engine.')
     return dictionary
 
 
