@@ -47,6 +47,7 @@ class Aliquot(Resource):
             return jsonify(item)
         else:
             # check if molecular_id exists in patient table
+            self.logger.info("Checking if molecular id: " + str(molecular_id) + " is in patient table")
             try:
                 (pt_statuscode, pt_data) = PatientEcosystemConnector().verify_molecular_id(molecular_id)
             except Exception as e:
@@ -56,7 +57,7 @@ class Aliquot(Resource):
             if pt_statuscode == 200:
                 item = pt_data.copy()
                 item.update({"molecular_id_type": "patient"})
-                return item
+                return jsonify(item)
             else:
                 AbortLogger.log_and_abort(404, self.logger.debug, str(
                     molecular_id + " was not found. Invalid molecular_id or invalid projection key entered."))
