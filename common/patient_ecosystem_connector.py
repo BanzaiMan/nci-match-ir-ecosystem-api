@@ -1,6 +1,7 @@
 import requests
 import logging
 import __builtin__
+from common.auth0_authenticate import Auth0Authenticate
 
 
 class PatientEcosystemConnector(object):
@@ -12,10 +13,16 @@ class PatientEcosystemConnector(object):
 
     def verify_molecular_id(self, molecular_id):
         self.logger.debug("Checking if molecular id: " + str(molecular_id) + " is in patient ecosystem")
+        self.logger.debug("Retrieving ID token.")
+
+        id_token = Auth0Authenticate.get_id_token()
+        headers = {'authorization': "Bearer " + id_token}
+
         url = (__builtin__.environment_config[__builtin__.environment]['patient_endpoint']
                + __builtin__.environment_config[__builtin__.environment]['shipments_path'])
+
         try:
-            request = requests.get(url + molecular_id)
+            request = requests.get(url + molecular_id, headers=headers)
         except Exception as e:
             self.logger.error("Unable to connect to patient ecosystem: " + str(e))
             raise

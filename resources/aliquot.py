@@ -59,7 +59,7 @@ class Aliquot(Resource):
                 item.update({"molecular_id_type": "patient"})
                 return jsonify(item)
             else:
-                AbortLogger.log_and_abort(404, self.logger.debug, str(
+                AbortLogger.log_and_abort(pt_statuscode, self.logger.debug, str(
                     molecular_id + " was not found. Invalid molecular_id or invalid projection key entered."))
 
     # @cross_origin(headers=['Content-Type', 'Authorization'])
