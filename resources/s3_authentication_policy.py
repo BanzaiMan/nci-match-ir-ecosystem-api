@@ -52,7 +52,7 @@ class S3AuthenticationPolicy(Resource):
         elif results['molecular_id_type'] == 'patient':
             # TODO: Change to status when parameter is created
 
-            if results['uuid'] == 0:
+            if results['uuid']:
                 try:
                     post = s3Client.generate_presigned_post(Bucket=bucket,
                                                             Key=key2,
