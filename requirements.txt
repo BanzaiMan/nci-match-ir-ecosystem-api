@@ -18,5 +18,6 @@ Werkzeug==0.11.11
 PyJWT==1.4.2
 PyYAML==3.12
 codeclimate-test-reporter
+codacy-coverage
 newrelic
 jq

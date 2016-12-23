@@ -14,6 +14,7 @@ before_install:
 install: pip install -r requirements.txt
 script:
 - coverage run -m unittest discover tests
+- coverage xml
   #Build Docker image
 - docker build -f ./Dockerfile.python -t $DOCKER_IMAGE1:$DATE -t $DOCKER_IMAGE1:latest .
 - docker build -f ./Dockerfile.celery -t $DOCKER_IMAGE2:$DATE -t $DOCKER_IMAGE2:latest .
@@ -22,6 +23,7 @@ script:
   #     bundle exec rspec spec/
 after_success:
 - codeclimate-test-reporter
+- python-codacy-coverage -r coverage.xml
 - docker images
 - docker push $DOCKER_IMAGE1 # Pushes both date and latest
 - docker push $DOCKER_IMAGE2 # Pushes both date and latest
