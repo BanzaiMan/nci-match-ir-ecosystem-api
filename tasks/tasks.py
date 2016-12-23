@@ -18,6 +18,7 @@ from accessors.s3_accessor import S3Accessor
 from accessors.sample_control_accessor import SampleControlAccessor
 from common.environment_helper import EnvironmentHelper
 from common.ped_match_bot import PedMatchBot
+from common.auth0_authenticate import Auth0Authenticate
 from common.sequence_file_processor import SequenceFileProcessor
 
 # Logging functionality
@@ -54,10 +55,12 @@ else:
     queue_name = app.conf.CELERY_DEFAULT_QUEUE
     dlx_queue = (queue_name + "_dlx")
 
+
 MESSAGE_SERVICE_FAILURE = Template("Failure reaching: $service_name; \n S3 Path: $s3_path \n Service URL: $path \n Error "
                                    "Message: $message")
 MESSAGE_CONVERSION_FAILURE = Template("Failure creating $conversion_type; \n File S3 Path: $s3_path \n Local Path: $path \n"
                                       "Error Message: $message")
+
 
 def accessor_task(message, action, task, stack):
     logger.info(str(action) + " initiated for: " + str(message))
@@ -253,19 +256,19 @@ def process_bam(dictionary, nucleic_acid_type):
 
 
 def post_tsv_info(dictionary, tsv_file_name):
-
+    id_token = Auth0Authenticate.get_id_token()
 
     patient_url = (__builtin__.environment_config[__builtin__.environment]['patient_endpoint']
            + __builtin__.environment_config[__builtin__.environment]['patient_post_path'] + "/"
                    + dictionary['molecular_id'])
-    headers = {'Content-type': 'application/json'}
+    headers = {'authorization': "Bearer " + id_token}
     content = {'tsv_file_name': tsv_file_name,
                'ion_reporter_id': dictionary['ion_reporter_id'],
                 'molecular_id': dictionary['molecular_id'],
                 'analysis_id': dictionary['analysis_id']}
     logger.info("Posting tsv file name to Patient Ecosystem for " + dictionary['molecular_id'] + "\n" + str(content))
     try:
-        r = requests.post(patient_url, data=json.dumps(content), headers=headers)
+        r = requests.post(patient_url, json=json.dumps(content), headers=headers)
     except Exception as e:
         logger.error(MESSAGE_SERVICE_FAILURE.substitute(service_name='Patient Ecosystem',
                                                         s3_path=dictionary['tsv_name'],
@@ -288,7 +291,7 @@ def post_tsv_info(dictionary, tsv_file_name):
 
 
 def process_rule_by_tsv(dictionary, tsv_file_name):
-
+    id_token = Auth0Authenticate.get_id_token()
     logger.info("Reading rules engine for " + dictionary['molecular_id'])
 
     item = SampleControlAccessor().get_item({'molecular_id': dictionary['molecular_id']})
@@ -304,8 +307,8 @@ def process_rule_by_tsv(dictionary, tsv_file_name):
         + "/" + dictionary['analysis_id'] + "/" + tsv_file_name.split(".")[0] + "?format=tsv"
 
     try:
-        headers = {'Content-type': 'application/json'}
-        rule_response = requests.post(url, data=json.dumps([]), headers=headers)
+        headers = {'authorization': "Bearer " + id_token}
+        rule_response = requests.post(url, json=json.dumps([]), headers=headers)
     except Exception as e:
         logger.error(MESSAGE_SERVICE_FAILURE.substitute(service_name='Rules Engine', s3_path=dictionary['tsv_name'],
                                                         path=url, message=e.message))
