@@ -28,9 +28,6 @@ class Auth0Authenticate(object):
 
 
         r = requests.post(auth0_url, data=json.dumps(content), headers=headers)
-        print str(r)
-        print str(r.status_code)
-        print str(r.content)
         r_dict = json.loads(r.content)
         id_token = r_dict["id_token"]
 
