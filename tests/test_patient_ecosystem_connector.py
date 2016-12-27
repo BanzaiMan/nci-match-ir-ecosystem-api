@@ -28,8 +28,9 @@ class TestPatientEcosystemConnector(TestCase):
                                           "dna_concentration_ng_per_ul":"25.0","cdna_volume_ul":"10.0"}),
     )
     @unpack
+    @patch('common.auth0_authenticate.Auth0Authenticate.get_id_token')
     @patch('common.patient_ecosystem_connector.requests.get')
-    def test_verify_molecular_id(self, molecular_id, expected_statuscode, expected_result, mock_get):
+    def test_verify_molecular_id(self, molecular_id, expected_statuscode, expected_result, mock_get, mock_token):
         """
                 Test getting a 200 OK response and 404 from the open_url method of PatientEcosystemConnector.
                 """
@@ -42,6 +43,10 @@ class TestPatientEcosystemConnector(TestCase):
 
         # Assign our mock response as the result of our patched function
         mock_get.return_value = mock_response
+
+        instance = mock_token.return_value
+        instance.return_value = True
+
 
         url = (__builtin__.environment_config[__builtin__.environment]['patient_endpoint']
                + __builtin__.environment_config[__builtin__.environment]['shipments_path'] + molecular_id)
@@ -61,9 +66,11 @@ class TestPatientEcosystemConnector(TestCase):
 
     @data('PT_VU16_BdVRUploaded_BD_MOI1')
     @patch('common.patient_ecosystem_connector.requests')
-    def test_get_exception(self, molecular_id, mock_class):
+    @patch('common.auth0_authenticate.Auth0Authenticate.get_id_token')
+    def test_get_exception(self, molecular_id, mock_token, mock_class):
         # Testing exception
-
+        instance = mock_token.return_value
+        instance.return_value = True
         #instance = mock_class.return_value
         mock_class.get.side_effect = Exception('testing throwing exception')
         try:
