@@ -1,0 +1,30 @@
+[{
+	"fallback": "$error_message",
+	"color": "#F35A00",
+	"pretext": "$error_message; Will attempt re-queue in $requeue_countdown seconds.",
+	"title": "Loggly Reference",
+	"title_link": "https://match.loggly.com/search#terms=%22$task_id%22&from=-1d&until=now",
+	"text": "<$stack_url | Traceback Download> and <$json_url | JSON Download> ",
+	"fields": [{
+		"title": "Project",
+		"value": "IR Ecosystem",
+		"short": "true"
+	}, {
+		"title": "Queue Name",
+		"value": "$queue_name",
+		"short": "true"
+	}, {
+		"title": "Task ID",
+		"value": "$task_id",
+		"short": "true"
+	}, {
+		"title": "Retry number",
+		"value": "$task_retries",
+		"short": "true"
+	}],
+
+	"footer": "Host: $task_hostname",
+	"ts": "$time_stamp"
+}]
+
+

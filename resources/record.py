@@ -45,8 +45,8 @@ class Record(Resource):
                                       MESSAGE_404.substitute(class_name=self.database_accessor.__class__.__name__,
                                                              key_value=identifier))
 
-    @cross_origin(headers=['Content-Type', 'Authorization'])
-    @requires_auth
+    # @cross_origin(headers=['Content-Type', 'Authorization'])
+    # @requires_auth
     def put(self, identifier):
         self.logger.info("updating " + self.database_accessor.__class__.__name__ +
                          " with id: " + str(identifier))
