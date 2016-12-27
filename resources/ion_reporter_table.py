@@ -18,8 +18,8 @@ class IonReporterTable(Table):
         self.logger = logging.getLogger(__name__)
         Table.__init__(self, IonReporterAccessor, 'ion_reporter_id', ION_REPORTER_ID_LENGTH, 'IR_')
 
-    # @cross_origin(headers=['Content-Type', 'Authorization'])
-    # @requires_auth
+    @cross_origin(headers=['Content-Type', 'Authorization'])
+    @requires_auth
     def post(self):
         self.logger.info("POST Request to create a new ion reporter")
         args = request.args
@@ -54,8 +54,8 @@ class IonReporterTable(Table):
             AbortLogger.log_and_abort(400, self.logger.debug,
                                       "Ion reporter creation failed, because site was not passed in.")
 
-    # @cross_origin(headers=['Content-Type', 'Authorization'])
-    # @requires_auth
+    @cross_origin(headers=['Content-Type', 'Authorization'])
+    @requires_auth
     def delete(self):
         self.logger.info("Ion Reporter Batch Delete called")
         args = request.args

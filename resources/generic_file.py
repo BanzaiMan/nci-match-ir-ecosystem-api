@@ -3,8 +3,6 @@ from flask_restful import Resource
 from accessors.s3_accessor import S3Accessor
 from accessors.sample_control_accessor import SampleControlAccessor
 from resource_helpers.abort_logger import AbortLogger
-from flask.ext.cors import cross_origin
-from resources.auth0_resource import requires_auth
 from flask.json import jsonify
 
 class GenericFile(Resource):
@@ -12,8 +10,6 @@ class GenericFile(Resource):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
-    @cross_origin(headers=['Content-Type', 'Authorization'])
-    @requires_auth
     def get_file_url(self, molecular_id, file_name):
         self.logger.info("Downloading sample control with id: " + str(molecular_id) + ", name: " +
                          str(file_name))

@@ -21,8 +21,8 @@ class Record(Resource):
         self.key_name = key_name
         self.logger = logging.getLogger(__name__)
 
-    @cross_origin(headers=['Content-Type', 'Authorization'])
-    @requires_auth
+    # @cross_origin(headers=['Content-Type', 'Authorization'])
+    # @requires_auth
     def get(self, identifier):
         self.logger.info("Getting " + self.database_accessor.__class__.__name__ + " with id: " + str(identifier))
 
