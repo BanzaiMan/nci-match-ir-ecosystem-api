@@ -13,26 +13,25 @@ class TestS3AuthenticationPolicy(TestCase):
         pass
 #TODO: add passing 200
     @data(
-        ('IR_WAO85','SC_SA1CB', 'SC_SA1CB_SC_SA1CB_a888_v1', 'SC_SA1CB_SC_SA1CB_analysis888_v1_QC.pdf', ('fields', 'policy', 'AWSAccessKeyId', 'signature'), 409),
-        ('', 'SC_SA1CB', 'SC_SA1CB_SC_SA1CB_a888_v1', 'SC_SA1CB_SC_SA1CB_analysis888_v1_QC.pdf', ('fields', 'policy', 'AWSAccessKeyId', 'signature'), 404),
+        ('IR_WAO85','SC_SA1CB', 'SC_SA1CB_SC_SA1CB_a888_v1', 'SC_SA1CB_SC_SA1CB_analysis888_v1_QC.pdf', ('fields', 'policy', 'AWSAccessKeyId', 'signature'), u'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1_QC.pdf', 409),
+        ('IR_WAO85', 'SC_SA1CB', 'SC_SA1CB_SC_SA1CB_a888_v1', 'SC_SA1CB_SC_SA1CB_analysis888_v1_QC.pdf',
+         ('fields', 'policy', 'AWSAccessKeyId', 'signature'),
+         u'IR_WAO86/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1_QC.pdf', 500),
+        ('', 'SC_SA1CB', 'SC_SA1CB_SC_SA1CB_a888_v1', 'SC_SA1CB_SC_SA1CB_analysis888_v1_QC.pdf', ('fields', 'policy', 'AWSAccessKeyId', 'signature'), u'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1_QC.pdf', 404),
         ('', '', 'SC_SA1CB_SC_SA1CB_a888_v1', 'SC_SA1CB_SC_SA1CB_analysis888_v1_QC.pdf',
-         ('fields', 'policy', '', 'signature'), 404),
+         ('fields', 'policy', '', 'signature'), u'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1_QC.pdf', 404),
         ('', 'SC_SA1CB', 'SC_SA1CB_SC_SA1CB_a888_v1', 'SC_SA1CB_SC_SA1CB_analysis888_v1_QC.pdf',
-         ('fields', 'policy', '', 'signature'), 404),
+         ('fields', 'policy', '', 'signature'), u'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1_QC.pdf', 404),
         ('', 'SC_SA1CB', 'SC_SA1CB_SC_SA1CB_a888_v1', 'SC_SA1CB_SC_SA1CB_analysis888_v1_QC.pdf',
-         ('fields', 'policy', 'AWSAccessKeyId', ''), 404)
+         ('fields', 'policy', 'AWSAccessKeyId', ''), u'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1_QC.pdf', 404)
 
     )
     @unpack
-    # @patch('resources.s3_authentication_policy.s3_resource')
     @patch('resources.s3_authentication_policy.bucket2')
-    def test_get(self, ion_reporter_id, molecular_id, analysis_id, file_name, list, status_code, mock_resource):
-    # def test_get(self, ion_reporter_id, molecular_id, analysis_id, file_name, list, status_code):
-        # s3_instance = mock_s3_resource.return_value
-        # s3_instance.ObjectSummary.return_value = True
+    def test_get(self, ion_reporter_id, molecular_id, analysis_id, file_name, list, key, status_code, mock_resource):
 
         s3_instance = mock_resource.objects.filter
-        s3_instance.return_value = [s3_resource.ObjectSummary(bucket_name='pedmatch-dev', key=u'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1_QC.pdf')]
+        s3_instance.return_value = [s3_resource.ObjectSummary(bucket_name='pedmatch-dev', key=key)]
 
         return_value = self.app.get('/api/v1/sample_controls/files/' + ion_reporter_id + '/' + molecular_id+ '/' + analysis_id+ '/' + file_name)
 
@@ -65,8 +64,8 @@ class TestS3AuthenticationPolicy(TestCase):
         s3_instance2.return_value = [s3_resource.ObjectSummary(bucket_name='pedmatch-dev',
                                                               key=u'IR_WAO85/SC_SA1CB/SC_SA1CB_SC_SA1CB_a888_v1/SC_SA1CB_SC_SA1CB_analysis888_v1_QC.pdf')]
 
-        s3_instance = s3_mock.return_value
-        s3_instance.generate_presigned_post.return_value = False
+        s3_instance = s3_mock.generate_presigned_post
+        s3_instance.side_effect = Exception
 
         return_value = self.app.get('/api/v1/sample_controls/files/' + ion_reporter_id + '/' + molecular_id+ '/' + analysis_id+ '/' + file_name)
 
