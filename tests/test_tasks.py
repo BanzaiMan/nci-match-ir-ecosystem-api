@@ -89,13 +89,14 @@ class TestTasks(unittest.TestCase):
          )
     )
     @unpack
+    @patch('common.auth0_authenticate.Auth0Authenticate.get_id_token')
     @patch('tasks.tasks.process_rule_by_tsv')
     @patch('tasks.tasks.post_tsv_info')
     @patch('tasks.tasks.S3Accessor')
     @patch('tasks.tasks.SequenceFileProcessor')
     def test_process_file_message(self, file_process_message, new_file_path, expected_return,
                                   mock_sf_accessor_class, mock_s3_accessor_class,
-                                  mock_post_tsv_function, mock_process_rule_function):
+                                  mock_post_tsv_function, mock_process_rule_function, mock_token):
 
         s3_instance = mock_s3_accessor_class.return_value
         s3_instance.download.return_value = True
@@ -105,6 +106,9 @@ class TestTasks(unittest.TestCase):
         sf_instance.bam_to_bai.return_value = new_file_path
         mock_post_tsv_function.return_value = True
         mock_process_rule_function.return_value = expected_return
+
+        instance = mock_token.return_value
+        instance.return_value = True
 
         return_value = tasks.process_file_message(file_process_message)
         print "===================" + str(return_value)
@@ -135,17 +139,21 @@ class TestTasks(unittest.TestCase):
          )
     )
     @unpack
+    @patch('common.auth0_authenticate.Auth0Authenticate.get_id_token')
     @patch('tasks.tasks.S3Accessor')
     @patch('tasks.tasks.SequenceFileProcessor')
     def test_process_file_message_no_process_exception(self, file_process_message, exception_message,
                                                        mock_sf_accessor_class,
-                                                       mock_s3_accessor_class):
+                                                       mock_s3_accessor_class, mock_token):
         s3_instance = mock_s3_accessor_class.return_value
         s3_instance.download.side_effect = Exception(exception_message)
         s3_instance.upload.return_value = True
         sf_instance = mock_sf_accessor_class.return_value
         sf_instance.vcf_to_tsv.return_value = True
         sf_instance.bam_to_bai.return_value = True
+
+        instance = mock_token.return_value
+        instance.return_value = True
 
         try:
             tasks.process_file_message(file_process_message)
@@ -167,11 +175,15 @@ class TestTasks(unittest.TestCase):
          )
     )
     @unpack
+    @patch('common.auth0_authenticate.Auth0Authenticate.get_id_token')
     @patch('tasks.tasks.S3Accessor')
     @patch('tasks.tasks.SequenceFileProcessor')
     def test_process_file_message_vcf2tsv_exception(self, file_process_message, exception_message,
                                                     mock_sf_accessor_class,
-                                                    mock_s3_accessor_class):
+                                                    mock_s3_accessor_class, mock_token):
+        instance = mock_token.return_value
+        instance.return_value = True
+
         s3_instance = mock_s3_accessor_class.return_value
         s3_instance.download.return_value = True
         s3_instance.upload.return_value = True
@@ -199,11 +211,15 @@ class TestTasks(unittest.TestCase):
          )
     )
     @unpack
+    @patch('common.auth0_authenticate.Auth0Authenticate.get_id_token')
     @patch('tasks.tasks.S3Accessor')
     @patch('tasks.tasks.SequenceFileProcessor')
     def test_process_file_message_bam2bai_exception(self, file_process_message, exception_message,
                                                     mock_sf_accessor_class,
-                                                    mock_s3_accessor_class):
+                                                    mock_s3_accessor_class, mock_token):
+        instance = mock_token.return_value
+        instance.return_value = True
+
         s3_instance = mock_s3_accessor_class.return_value
         s3_instance.download.return_value = True
         s3_instance.upload.return_value = True
