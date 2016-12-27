@@ -2,12 +2,12 @@ import logging
 import boto3
 import __builtin__
 import json
-import requests
-import botocore
 from flask_restful import Resource, request
 from string import Template
 from resources.aliquot import Aliquot
 from resource_helpers.abort_logger import AbortLogger
+from flask.ext.cors import cross_origin
+from resources.auth0_resource import requires_auth
 
 UPLOAD_DIR = Template("$ion_reporter_id/$molecular_id/$analysis_id")
 s3Client = boto3.client('s3')
@@ -21,9 +21,9 @@ class S3AuthenticationPolicy(Resource):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
-    # Method returns url for file upload
-    # @cross_origin(headers=['Content-Type', 'Authorization'])
-    # @requires_auth
+    # Method returns json with content to generate url for file upload
+    @cross_origin(headers=['Content-Type', 'Authorization'])
+    @requires_auth
     def get(self, ion_reporter_id, molecular_id, analysis_id, file_name):
 
         response = Aliquot()
@@ -50,7 +50,7 @@ class S3AuthenticationPolicy(Resource):
                     AbortLogger.log_and_abort(503, self.logger.debug,
                                               str(" s3Client failed to generate presigned post." + e.message))
         elif results['molecular_id_type'] == 'patient':
-            # TODO: Change to status when parameter is created
+            # TODO: Change to status when parameter is created by patient ecosystem
 
             if results['uuid']:
                 try:
@@ -64,7 +64,7 @@ class S3AuthenticationPolicy(Resource):
                     AbortLogger.log_and_abort(503, self.logger.debug,
                                               str(" s3Client failed to generate presigned post." + e.message))
             else:
-                # TODO: Change to status when parameter is created
+                # TODO: Change to status when parameter is created by patient ecosystem
                 AbortLogger.log_and_abort(409, self.logger.debug,
                                           str("Cannot upload, patient variant report status: " + results['uuid']))
 

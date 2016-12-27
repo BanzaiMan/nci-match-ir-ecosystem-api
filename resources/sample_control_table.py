@@ -26,8 +26,8 @@ class SampleControlTable(Table):
         self.logger = logging.getLogger(__name__)
         Table.__init__(self, SampleControlAccessor, 'molecular_id', MOLECULAR_ID_LENGTH, 'SC_')
 
-    # @cross_origin(headers=['Content-Type', 'Authorization'])
-    # @requires_auth
+    @cross_origin(headers=['Content-Type', 'Authorization'])
+    @requires_auth
     def delete(self):
         self.logger.info("Sample control Batch Delete called")
         args = request.args
@@ -53,8 +53,8 @@ class SampleControlTable(Table):
     # control_type and site are essential for POST, all other parameters are ignored on post except molecular_id
     # which, if passed in will cause a failure. The proper order is to first POST to get a molecular_id then to PUT
     # the files using the molecular_id in the URI. From there other fields can be updated if needed.
-    # @cross_origin(headers=['Content-Type', 'Authorization'])
-    # @requires_auth
+    @cross_origin(headers=['Content-Type', 'Authorization'])
+    @requires_auth
     def post(self):
         self.logger.info("POST Request to create a new sample control")
         args = request.args

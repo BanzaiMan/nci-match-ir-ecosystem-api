@@ -17,8 +17,8 @@ class QualityControl(Resource):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
-    # @cross_origin(headers=['Content-Type', 'Authorization'])
-    # @requires_auth
+    @cross_origin(headers=['Content-Type', 'Authorization'])
+    @requires_auth
     def get(self, molecular_id):
         # check if molecular_id exists in sample control table
         self.logger.info("Checking if molecular id: " + str(molecular_id) + " is in sample control table")
