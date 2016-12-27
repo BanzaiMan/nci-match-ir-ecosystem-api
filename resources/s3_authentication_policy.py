@@ -22,8 +22,8 @@ class S3AuthenticationPolicy(Resource):
         self.logger = logging.getLogger(__name__)
 
     # Method returns json with content to generate url for file upload
-    @cross_origin(headers=['Content-Type', 'Authorization'])
-    @requires_auth
+    # @cross_origin(headers=['Content-Type', 'Authorization'])
+    # @requires_auth
     def get(self, ion_reporter_id, molecular_id, analysis_id, file_name):
 
         response = Aliquot()

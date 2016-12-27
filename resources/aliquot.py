@@ -21,8 +21,8 @@ class Aliquot(Resource):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
-    @cross_origin(headers=['Content-Type', 'Authorization'])
-    @requires_auth
+    # @cross_origin(headers=['Content-Type', 'Authorization'])
+    # @requires_auth
     def get(self, molecular_id):
         # check if molecular_id exists in sample control table
         self.logger.info("Checking if molecular id: " + str(molecular_id) + " is in sample control table")
@@ -62,8 +62,8 @@ class Aliquot(Resource):
                 AbortLogger.log_and_abort(pt_statuscode, self.logger.debug, str(
                     molecular_id + " was not found. Invalid molecular_id or invalid projection key entered."))
 
-    @cross_origin(headers=['Content-Type', 'Authorization'])
-    @requires_auth
+    # @cross_origin(headers=['Content-Type', 'Authorization'])
+    # @requires_auth
     def put(self, molecular_id):
         self.logger.info("updating molecular_id: " + str(molecular_id))
         args = request.json
