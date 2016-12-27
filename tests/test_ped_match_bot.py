@@ -3,6 +3,7 @@ from mock import patch
 from ddt import ddt, data, unpack
 from common.ped_match_bot import PedMatchBot
 import __builtin__
+from celery.exceptions import MaxRetriesExceededError
 import app
 
 
@@ -81,6 +82,43 @@ class TestPedMatchBot(unittest.TestCase):
 
         task = mock_task.celery
         task.request.id = True
+
+        logger = mock_logger.logger
+        logger.error = Exception
+
+        instance = mock_slack.return_value
+        instance.api_call.return_value = True
+
+        instance2 = mock_inspection.return_value
+        instance.f_locals.return_value = True
+
+        stack = instance2
+
+        return_value = PedMatchBot.return_slack_message_and_retry(queue_name, message, error_message, stack, task, logger, dlx_queue)
+
+        print return_value
+
+        self.assertTrue(mock_inspection.return_value)
+        self.assertTrue(mock_slack.return_value)
+
+    @data(
+        ('wao_queue', 'Your message here', 'your error here', 'wao_queue_dlx'),
+        ('', '', '', '')
+    )
+    @unpack
+    @patch('common.ped_match_bot.PedMatchBot.return_slack_message_and_retry')
+    @patch('common.ped_match_bot.inspect')
+    @patch('tasks.tasks')
+    @patch('common.ped_match_bot.PedMatchBot')
+    def test_return_slack_message_and_retry_exception(self, queue_name, message, error_message, dlx_queue, mock_send_message, mock_task, mock_inspection, mock_slack, mock_logger):
+
+
+        instance0 = mock_send_message.return_value
+        instance0.upload_to_slack.return_value = True
+
+        task = mock_task.celery
+        task.request.id = True
+        task.retry.side_effect = MaxRetriesExceededError
 
         logger = mock_logger.logger
         logger.error = Exception
