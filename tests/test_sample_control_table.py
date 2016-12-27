@@ -3,6 +3,7 @@ import app
 import json
 from ddt import ddt, data, unpack
 from mock import patch
+patch('resources.auth0_resource.requires_auth', lambda x: x).start()
 
 
 @ddt
