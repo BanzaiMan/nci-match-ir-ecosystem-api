@@ -19,6 +19,7 @@ Environment variables must be setup in your .profile or .bash_profile:
 export AUTH0_CLIENT_ID=""
 export AUTH0_CLIENT_SECRET=""
 export AUTH0_DOMAIN=""
+export AUTH0_DATABASE=""
 export SLACK_TOKEN=""
 export IR_QUEUE_NAME=""
 export ENVIRONMENT="development"

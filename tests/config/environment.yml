@@ -19,6 +19,8 @@ development:
   write_capacity: 5
   aws_download_time_limit: 600
   aws_upload_time_limit: 600
+  auth0_database_url: "https://ncimatch.auth0.com/oauth/ro"
+  auth0_username: "ped-matchbox-dev@mail.nih.gov"
 
 test:
   dynamo_endpoint: "https://dynamodb.us-east-1.amazonaws.com"
@@ -41,3 +43,5 @@ test:
   ir_queue_name: "ion_reporter_queue"
   aws_download_time_limit: 600
   aws_upload_time_limit: 600
+  auth0_database_url: "https://ncimatch.auth0.com/oauth/ro"
+  auth0_username: "ped-matchbox-dev@mail.nih.gov"
