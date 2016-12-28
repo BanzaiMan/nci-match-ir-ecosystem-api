@@ -307,8 +307,8 @@ def process_rule_by_tsv(dictionary, tsv_file_name):
         + "/" + dictionary['analysis_id'] + "/" + tsv_file_name.split(".")[0] + "?format=tsv"
 
     try:
-        headers = {'authorization': "Bearer " + id_token}
-        rule_response = requests.post(url, json=json.dumps([]), headers=headers)
+        headers = {'Content-type': 'application/json', 'authorization': "Bearer " + id_token}
+        rule_response = requests.post(url, data=json.dumps([]), headers=headers)
     except Exception as e:
         logger.error(MESSAGE_SERVICE_FAILURE.substitute(service_name='Rules Engine', s3_path=dictionary['tsv_name'],
                                                         path=url, message=e.message))
