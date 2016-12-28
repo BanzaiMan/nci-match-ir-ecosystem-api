@@ -1,7 +1,6 @@
 import unittest
 from mock import patch
 import string
-
 from common.string_helper import StringHelper
 from ddt import ddt, data, unpack
 

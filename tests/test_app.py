@@ -1,5 +1,4 @@
 import unittest
-
 from ddt import ddt, data, unpack
 from mock import patch
 from common.datetime_helper import DateTimeHelper

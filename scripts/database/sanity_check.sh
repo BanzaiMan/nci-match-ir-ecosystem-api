@@ -22,15 +22,15 @@ URL='http://localhost:5000'
 #curl -X GET "${URL}/api/v1/ion_reporters/version"
 #
 #echo -e "${YELLOW}------------------------------------------------------------------------------------------------------------------------${NC}"
-#
-#echo -e "${CYAN}***********************************************${NC}"
-#echo -e "${GREEN}ION REPORTER TABLE and RECORD RESOURCES${NC}"
-#echo -e "${CYAN}***********************************************${NC}"
-#echo -e "${BLUE}GET /api/v1/ion_reporters${NC}"
-#echo -e "${PURPLE}To return ALL ion reporters in ion reporter table${NC}"
-#echo -e "${CYAN}***********************************************${NC}"
-#
-#curl -X GET "${URL}/api/v1/ion_reporters"
+
+echo -e "${CYAN}***********************************************${NC}"
+echo -e "${GREEN}ION REPORTER TABLE and RECORD RESOURCES${NC}"
+echo -e "${CYAN}***********************************************${NC}"
+echo -e "${BLUE}GET /api/v1/ion_reporters${NC}"
+echo -e "${PURPLE}To return ALL ion reporters in ion reporter table${NC}"
+echo -e "${CYAN}***********************************************${NC}"
+
+#curl -v -X GET "${URL}/api/v1/ion_reporters"
 #
 #echo -e "${CYAN}***********************************************${NC}"
 #echo -e "${BLUE}GET /api/v1/ion_reporters/{ion_reporter_id}${NC}"
@@ -186,11 +186,11 @@ URL='http://localhost:5000'
 #echo -e "${PURPLE}Returns data for molecular id if valid else 404${NC}"
 #echo -e "${CYAN}***********************************************${NC}"
 #
-#curl -X GET "${URL}/api/v1/aliquot/SC_SA1CB"
+curl -X GET "${URL}/api/v1/aliquot/SC_SA1CB"
 #curl -X GET "${URL}/api/v1/aliquot/SC_SA1CB?projection=site&projection=molecular_id&projection=date_molecular_id_created"
 #
 #echo -e "${PURPLE}Get patient item. Need start patient ecosystem on server before testing ${NC}"
-curl -X GET "${URL}/api/v1/aliquot/PT_SS26_TsShipped_MOI1"
+#curl -X GET "${URL}/api/v1/aliquot/PT_SS26_TsShipped_MOI1"
 #
 #echo -e "${CYAN}***********************************************${NC}"
 #echo -e "${BLUE}PUT /api/v1/aliquot/{molecular_id}${NC}"
