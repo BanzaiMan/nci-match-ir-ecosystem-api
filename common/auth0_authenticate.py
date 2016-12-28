@@ -20,7 +20,7 @@ class Auth0Authenticate(object):
                   "token_type": "bearer",
                   "username": os.environ['AUTH0_USERNAME'],
                   "password": os.environ['AUTH0_PASSWORD'],
-                  "connection": "MATCH-Development",
+                  "connection": os.environ['AUTH0_DATABASE'],
                   "grant_type": "password",
                   "scope": "openid",
                   "client_id": os.environ['AUTH0_CLIENT_ID']
