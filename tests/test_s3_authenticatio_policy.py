@@ -32,7 +32,7 @@ class TestS3AuthenticationPolicy(TestCase):
         s3_instance = mock_resource.objects.filter
         s3_instance.return_value = [s3_resource.ObjectSummary(bucket_name='pedmatch-dev', key=key)]
 
-        return_value = self.app.get('/api/v1/sample_controls/files/' + ion_reporter_id + '/' + molecular_id+ '/' + analysis_id+ '/' + file_name)
+        return_value = self.app.get('/api/v1/sample_controls/files/' + ion_reporter_id + '/' + molecular_id+ '/' + analysis_id+ '/' + file_name, headers={'authorization': "Bearer " + 'Fake ID_TOKEN'})
 
         # print return_value
         print return_value.status_code
@@ -66,7 +66,7 @@ class TestS3AuthenticationPolicy(TestCase):
         s3_instance = s3_mock.generate_presigned_post
         s3_instance.side_effect = Exception
 
-        return_value = self.app.get('/api/v1/sample_controls/files/' + ion_reporter_id + '/' + molecular_id+ '/' + analysis_id+ '/' + file_name)
+        return_value = self.app.get('/api/v1/sample_controls/files/' + ion_reporter_id + '/' + molecular_id+ '/' + analysis_id+ '/' + file_name, headers={'authorization': "Bearer " + 'Fake ID_TOKEN'})
 
         # print return_value
         print return_value.status_code

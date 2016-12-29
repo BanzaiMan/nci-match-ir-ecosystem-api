@@ -18,7 +18,6 @@ from accessors.s3_accessor import S3Accessor
 from accessors.sample_control_accessor import SampleControlAccessor
 from common.environment_helper import EnvironmentHelper
 from common.ped_match_bot import PedMatchBot
-from common.auth0_authenticate import Auth0Authenticate
 from common.sequence_file_processor import SequenceFileProcessor
 
 # Logging functionality
@@ -121,8 +120,11 @@ def batch_delete_ir(query_parameters):
 # as updating both S3 and dynamodb.
 @app.task
 def process_ir_file(file_process_message):
-    new_file_process_message = file_process_message.copy()
 
+    id_token = file_process_message['auth_token']
+    file_process_message.pop('auth_token')
+    new_file_process_message = file_process_message.copy()
+    
     if new_file_process_message['molecular_id'] .startswith('SC_'):
         logger.info("Updating sample_controls table before processing file" + str(new_file_process_message))
         # after running SampleControlAccessor().update(file_process_message), key 'molecular_id' will be
@@ -132,7 +134,7 @@ def process_ir_file(file_process_message):
     if any(key in new_file_process_message for key in ('vcf_name', 'dna_bam_name', 'cdna_bam_name','qc_name')):
         try:
             # process vcf, dna_bam, or cdna_bam file
-            updated_file_process_message = process_file_message(new_file_process_message)
+            updated_file_process_message = process_file_message(new_file_process_message, id_token)
 
         except Exception as e:
             stack = inspect.stack()
@@ -148,7 +150,7 @@ def process_ir_file(file_process_message):
 
 
 # process vcf, bam files based on message dictionary key: vcf_name, dna_bam_name, or cdna_bam_name
-def process_file_message(file_process_message):
+def process_file_message(file_process_message, id_token):
     logger.debug("Processing file message in function process_file_message()" + str(file_process_message))
     unicode_free_dictionary = ast.literal_eval(json.dumps(file_process_message))
     logger.debug("After Removing unicode" + str(unicode_free_dictionary))
@@ -172,10 +174,10 @@ def process_file_message(file_process_message):
         raise
 
     else:
-        return communicate_s3_patienteco_ruleengine(unicode_free_dictionary, new_file_path, key)
+        return communicate_s3_patienteco_ruleengine(unicode_free_dictionary, new_file_path, key, id_token)
 
 
-def communicate_s3_patienteco_ruleengine(file_process_dictionary, new_file_path, key):
+def communicate_s3_patienteco_ruleengine(file_process_dictionary, new_file_path, key, id_token):
 
     new_file_name = secure_filename(os.path.basename(new_file_path))
     new_file_s3_path = file_process_dictionary['ion_reporter_id'] + "/" + file_process_dictionary['molecular_id'] + \
@@ -193,7 +195,7 @@ def communicate_s3_patienteco_ruleengine(file_process_dictionary, new_file_path,
             if file_process_dictionary['molecular_id'].startswith('SC_'):
                 # process rule engine for tsv file for sample_control only
                 try:
-                    file_process_dictionary = process_rule_by_tsv(file_process_dictionary, new_file_name)
+                    file_process_dictionary = process_rule_by_tsv(file_process_dictionary, new_file_name, id_token)
                 except Exception as e:
                     logger.error(MESSAGE_SERVICE_FAILURE.substitute(service_name='Rules Engine',
                                                                     s3_path= new_file_s3_path, path='None',
@@ -202,7 +204,8 @@ def communicate_s3_patienteco_ruleengine(file_process_dictionary, new_file_path,
                                     'due to: ' + e.message)
             else:
                 # post tsv name to patient ecosystem for patient only
-                post_tsv_info(file_process_dictionary, new_file_name)
+
+                post_tsv_info(file_process_dictionary, new_file_name, id_token)
 
         # remove converted tsv or bai file from local machine
         if os.path.exists(new_file_path):
@@ -255,9 +258,7 @@ def process_bam(dictionary, nucleic_acid_type):
             return new_file_path, key, downloaded_file_path
 
 
-def post_tsv_info(dictionary, tsv_file_name):
-    id_token = Auth0Authenticate.get_id_token()
-
+def post_tsv_info(dictionary, tsv_file_name, id_token):
     patient_url = (__builtin__.environment_config[__builtin__.environment]['patient_endpoint']
            + __builtin__.environment_config[__builtin__.environment]['patient_post_path'] + "/"
                    + dictionary['molecular_id'])
@@ -272,26 +273,25 @@ def post_tsv_info(dictionary, tsv_file_name):
     except Exception as e:
         logger.error(MESSAGE_SERVICE_FAILURE.substitute(service_name='Patient Ecosystem',
                                                         s3_path=dictionary['tsv_name'],
-                                                        path=patient_url, message=e.message + str(content)))
+                                                        path=patient_url, message=e.message ))
         raise Exception(MESSAGE_SERVICE_FAILURE.substitute(service_name='Patient Ecosystem',
                                                            s3_path=dictionary['tsv_name'],
-                                                           path=patient_url, message= e.message + str(content)))
+                                                           path=patient_url, message= e.message ))
     else:
         if str(r.status_code).startswith('20'):
             logger.info("Successfully posted TSV file name to Patient Ecosystem for " + dictionary['molecular_id'])
         else:
             logger.error(MESSAGE_SERVICE_FAILURE.substitute(service_name='Patient Ecosystem',
                                                             s3_path=dictionary['tsv_name'],
-                                                           path=patient_url, message=str(r.status_code) + r.content)
-                                                            + "\n" + str(content))
+                                                           path=patient_url, message="Error Code: " + str(r.status_code))
+                                                            )
             raise Exception(MESSAGE_SERVICE_FAILURE.substitute(service_name='Patient Ecosystem',
                                                                s3_path=dictionary['tsv_name'],
-                                                               path=patient_url, message=str(r.status_code) + r.content)
-                                                                + "\n" + str(content))
+                                                               path=patient_url, message="Error Code: " + str(r.status_code))
+                                                                )
 
 
-def process_rule_by_tsv(dictionary, tsv_file_name):
-    id_token = Auth0Authenticate.get_id_token()
+def process_rule_by_tsv(dictionary, tsv_file_name, id_token):
     logger.info("Reading rules engine for " + dictionary['molecular_id'])
 
     item = SampleControlAccessor().get_item({'molecular_id': dictionary['molecular_id']})

@@ -51,7 +51,7 @@ class TestPatientEcosystemConnector(TestCase):
         url = (__builtin__.environment_config[__builtin__.environment]['patient_endpoint']
                + __builtin__.environment_config[__builtin__.environment]['shipments_path'] + molecular_id)
 
-        (response_status, response_data) = self.patient_ecosystem_connector.verify_molecular_id(molecular_id=molecular_id)
+        (response_status, response_data) = self.patient_ecosystem_connector.verify_molecular_id(molecular_id=molecular_id, auth_token='auth_token')
 
         # Check that our function made the expected internal calls
         # mock_get.assert_called_once_with(url)
@@ -74,7 +74,7 @@ class TestPatientEcosystemConnector(TestCase):
         #instance = mock_class.return_value
         mock_class.get.side_effect = Exception('testing throwing exception')
         try:
-            (response_status, response_data) = PatientEcosystemConnector().verify_molecular_id(molecular_id)
+            (response_status, response_data) = PatientEcosystemConnector().verify_molecular_id(molecular_id, auth_token='auth_token')
         except Exception as e:
             assert "testing throwing exception" in e.message
         else:

@@ -27,6 +27,8 @@ class Aliquot(Resource):
         # check if molecular_id exists in sample control table
         self.logger.info("Checking if molecular id: " + str(molecular_id) + " is in sample control table")
         args = request.args
+        auth_token = request.headers.get('authorization')
+        auth_token = auth_token[7:]
         self.logger.debug(str(args))
         projection_list, args = DictionaryHelper.get_projection(args)
 
@@ -49,7 +51,7 @@ class Aliquot(Resource):
             # check if molecular_id exists in patient table
             self.logger.info("Checking if molecular id: " + str(molecular_id) + " is in patient table")
             try:
-                (pt_statuscode, pt_data) = PatientEcosystemConnector().verify_molecular_id(molecular_id)
+                (pt_statuscode, pt_data) = PatientEcosystemConnector().verify_molecular_id(molecular_id, auth_token)
             except Exception as e:
                 AbortLogger.log_and_abort(503, self.logger.error,
                                           "Failed to reach patient ecosystem to get " + molecular_id + ", because : " + str(e.message))
@@ -67,6 +69,8 @@ class Aliquot(Resource):
     def put(self, molecular_id):
         self.logger.info("updating molecular_id: " + str(molecular_id))
         args = request.json
+        auth_token = request.headers.get('authorization')
+        auth_token = auth_token[7:]
         self.logger.debug(str(args))
 
         if not DictionaryHelper.has_values(args):
@@ -85,7 +89,7 @@ class Aliquot(Resource):
         if len(item) == 0:
             # check if molecular_id exists in patient table
             try:
-                (pt_statuscode, pt_data) = PatientEcosystemConnector().verify_molecular_id(molecular_id)
+                (pt_statuscode, pt_data) = PatientEcosystemConnector().verify_molecular_id(molecular_id, auth_token)
             except Exception as e:
                 AbortLogger.log_and_abort(503, self.logger.error,
                                           "Failed to reach patient ecosystem to get " + molecular_id + ", because : " + str(
@@ -96,12 +100,15 @@ class Aliquot(Resource):
                 AbortLogger.log_and_abort(404, self.logger.debug, str(molecular_id + " was not found. Cannot update."))
 
         item_dictionary = args.copy()
+
         distinct_tasks_list = self.__get_distinct_tasks(item_dictionary, molecular_id)
+
         self.logger.debug("Distinct tasks created")
         if len(distinct_tasks_list) > 0:
 
             try:
                 for distinct_task in distinct_tasks_list:
+                    distinct_task.update({"auth_token": auth_token})
                     self.logger.debug("Adding task to queue: " + str(distinct_task))
                     CeleryTaskAccessor().process_file(distinct_task)
             except Exception as e:

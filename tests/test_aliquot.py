@@ -49,7 +49,7 @@ class TestAliquot(unittest.TestCase):
         instance.get_item.return_value = item
         instance_pt = mock_pt_connector_class.return_value
         instance_pt.verify_molecular_id.return_value = (verify_pt_status_code, pt_item)
-        return_value = self.app.get('/api/v1/aliquot/' + molecular_id)
+        return_value = self.app.get('/api/v1/aliquot/' + molecular_id, headers={'authorization': "Bearer " + 'Fake ID_TOKEN'})
         print "==============" + str(return_value.status_code)
         assert return_value.status_code == expected_results
         if return_value.status_code == 200:
@@ -139,7 +139,7 @@ class TestAliquot(unittest.TestCase):
 
         return_value = self.app.put('/api/v1/aliquot/' + molecular_id,
                                     data=json.dumps(update_dictionary),
-                                    content_type='application/json')
+                                    content_type='application/json', headers={'authorization': "Bearer " + 'Fake ID_TOKEN'})
         print return_value.status_code
         print "=====================?" + str(return_value.data)
         assert expected_results in return_value.data
@@ -174,7 +174,7 @@ class TestAliquot(unittest.TestCase):
 
         return_value = self.app.put('/api/v1/aliquot/' + molecular_id,
                                     data=json.dumps(update_dictionary),
-                                    content_type='application/json')
+                                    content_type='application/json', headers={'authorization': "Bearer " + 'Fake ID_TOKEN'})
         print return_value.status_code
         print return_value.data
         assert return_value.status_code == 404
@@ -208,7 +208,7 @@ class TestAliquot(unittest.TestCase):
 
         return_value = self.app.put('/api/v1/aliquot/' + molecular_id,
                                     data=json.dumps(update_dictionary),
-                                    content_type='application/json')
+                                    content_type='application/json', headers={'authorization': "Bearer " + 'Fake ID_TOKEN'})
         print "-----------------" + str(return_value.status_code)
         print return_value.data
         print return_value.status_code
@@ -241,7 +241,7 @@ class TestAliquot(unittest.TestCase):
 
         return_value = self.app.put('/api/v1/aliquot/' + molecular_id,
                                     data=json.dumps(update_dictionary),
-                                    content_type='application/json')
+                                    content_type='application/json', headers={'authorization': "Bearer " + 'Fake ID_TOKEN'})
 
         print "-----------------" + str(return_value.status_code)
         print return_value.data
