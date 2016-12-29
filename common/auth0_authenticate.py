@@ -12,12 +12,11 @@ class Auth0Authenticate(object):
         headers = {'Content-type': 'application/json'}
         content = {
                   "token_type": "bearer",
-            #TODO: Remove username and add to environment variables
-                  "username": (__builtin__.environment_config[__builtin__.environment]['auth0_username']),
+                  "username": os.environ['AUTH0_USERNAME'],
                   "password": os.environ['AUTH0_PASSWORD'],
                   "connection": os.environ['AUTH0_DATABASE'],
                   "grant_type": "password",
-                  "scope": "openid",
+                  "scope": "openid roles",
                   "client_id": os.environ['AUTH0_CLIENT_ID']
                 }
 
