@@ -2,6 +2,7 @@ import logging
 import boto3
 import __builtin__
 import json
+from flask import jsonify
 from flask_restful import Resource, request
 from string import Template
 from resources.aliquot import Aliquot
@@ -45,7 +46,7 @@ class S3AuthenticationPolicy(Resource):
                                                         ExpiresIn=
                                                         __builtin__.environment_config[__builtin__.environment]
                                                         ['aws_upload_time_limit'])
-                return post
+                return jsonify(post)
             except Exception as e:
                     AbortLogger.log_and_abort(503, self.logger.debug,
                                               str(" s3Client failed to generate presigned post." + e.message))
@@ -59,7 +60,7 @@ class S3AuthenticationPolicy(Resource):
                                                             ExpiresIn=
                                                             __builtin__.environment_config[__builtin__.environment]
                                                             ['aws_upload_time_limit'])
-                    return post
+                    return jsonify(post)
                 except Exception as e:
                     AbortLogger.log_and_abort(503, self.logger.debug,
                                               str(" s3Client failed to generate presigned post." + e.message))
