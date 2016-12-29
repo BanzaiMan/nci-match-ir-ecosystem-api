@@ -12,7 +12,7 @@ from logging.config import fileConfig
 from string import Template
 from celery import Celery
 from werkzeug.utils import secure_filename
-
+from common.auth0_authenticate import Auth0Authenticate
 from accessors.ion_reporter_accessor import IonReporterAccessor
 from accessors.s3_accessor import S3Accessor
 from accessors.sample_control_accessor import SampleControlAccessor
@@ -195,7 +195,7 @@ def communicate_s3_patienteco_ruleengine(file_process_dictionary, new_file_path,
             if file_process_dictionary['molecular_id'].startswith('SC_'):
                 # process rule engine for tsv file for sample_control only
                 try:
-                    file_process_dictionary = process_rule_by_tsv(file_process_dictionary, new_file_name, id_token)
+                    file_process_dictionary = process_rule_by_tsv(file_process_dictionary, new_file_name)
                 except Exception as e:
                     logger.error(MESSAGE_SERVICE_FAILURE.substitute(service_name='Rules Engine',
                                                                     s3_path= new_file_s3_path, path='None',
@@ -259,6 +259,7 @@ def process_bam(dictionary, nucleic_acid_type):
 
 
 def post_tsv_info(dictionary, tsv_file_name, id_token):
+
     patient_url = (__builtin__.environment_config[__builtin__.environment]['patient_endpoint']
            + __builtin__.environment_config[__builtin__.environment]['patient_post_path'] + "/"
                    + dictionary['molecular_id'])
@@ -291,7 +292,8 @@ def post_tsv_info(dictionary, tsv_file_name, id_token):
                                                                 )
 
 
-def process_rule_by_tsv(dictionary, tsv_file_name, id_token):
+def process_rule_by_tsv(dictionary, tsv_file_name):
+    id_token = Auth0Authenticate.get_id_token()
     logger.info("Reading rules engine for " + dictionary['molecular_id'])
 
     item = SampleControlAccessor().get_item({'molecular_id': dictionary['molecular_id']})
@@ -325,7 +327,7 @@ def process_rule_by_tsv(dictionary, tsv_file_name, id_token):
                                                             s3_path=dictionary['tsv_name'],
                                                             path=url, message=rule_response.status_code))
             raise Exception('Encountered Error Code: ' + str(rule_response.status_code) +
-                            ' while connecting to Rules Engine.')
+                            ' while connecting to Rules Engine.@: ' + url)
     return dictionary
 
 
