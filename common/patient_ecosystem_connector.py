@@ -12,7 +12,7 @@ class PatientEcosystemConnector(object):
 
     def verify_molecular_id(self, molecular_id, auth_token):
         self.logger.debug("Checking if molecular id: " + str(molecular_id) + " is in patient ecosystem")
-        self.logger.debug("Retrieving ID token." + str(auth_token))
+        self.logger.debug("Retrieving ID token.")
 
         # id_token = Auth0Authenticate.get_id_token()
         headers = {'authorization': auth_token}
