@@ -20,6 +20,9 @@ RUN newrelic-admin generate-config c97423ed4d578895a3d214445863327c6db3d968 newr
 # Install oncomine-vcf-converter
 RUN cd $INSTALL_PATH/oncomine-vcf-converter-1.4.3 && python setup.py install && which convert_vcf.py
 
+#Add a file with build number and date for /version to use
+RUN cat $INSTALL_PATH/build_number.html
+
 #Insert script to change localhost to docker-compose names
 ADD https://raw.githubusercontent.com/CBIIT/match-docker/master/docker-compose-env.sh .
 RUN chmod 755 docker-compose-env.sh && ls -alt $INSTALL_PATH
