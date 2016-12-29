@@ -11,12 +11,12 @@ before_install:
   - export DATE=`TZ=America/New_York date "+%m-%d-%y-%H%M"`
   - export DOCKER_IMAGE1="matchbox/nci-match-ir-ecosystem-api"
   - export DOCKER_IMAGE2="matchbox/nci-match-ir-ecosystem-processor"
-    - echo "TravisBuild=$TRAVIS_BUILD_NUMBER" > build_number.html &&
-        echo "Commit=$TRAVIS_COMMIT" >> build_number.html       &&
-        echo "TravisBuildID=$TRAVIS_BUILD_ID" >> build_number.html    &&
-        echo "Author=$AUTHOR" >> build_number.html              &&
-        echo "BuildTime=$DATE" >> build_number.html             &&
-        echo "Docker=$DOCKER_IMAGE:$DATE" >> build_number.html
+  - echo "TravisBuild=$TRAVIS_BUILD_NUMBER" > build_number.html &&
+    echo "Commit=$TRAVIS_COMMIT" >> build_number.html       &&
+    echo "TravisBuildID=$TRAVIS_BUILD_ID" >> build_number.html    &&
+    echo "Author=$AUTHOR" >> build_number.html              &&
+    echo "BuildTime=$DATE" >> build_number.html             &&
+    echo "Docker=$DOCKER_IMAGE:$DATE" >> build_number.html
   - cat ./build_number.html
 install: pip install -r requirements.txt
 script:
