@@ -131,7 +131,7 @@ def process_ir_file(file_process_message):
     if any(key in new_file_process_message for key in ('vcf_name', 'dna_bam_name', 'cdna_bam_name','qc_name')):
         try:
             # process vcf, dna_bam, or cdna_bam file
-            updated_file_process_message = process_file_message(new_file_process_message, id_token)
+            updated_file_process_message = process_file_message(new_file_process_message)
 
         except Exception as e:
             stack = inspect.stack()
