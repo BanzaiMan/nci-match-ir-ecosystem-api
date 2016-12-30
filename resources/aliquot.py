@@ -108,7 +108,6 @@ class Aliquot(Resource):
 
             try:
                 for distinct_task in distinct_tasks_list:
-                    distinct_task.update({"auth_token": auth_token})
                     self.logger.debug("Adding task to queue: " + str(distinct_task))
                     CeleryTaskAccessor().process_file(distinct_task)
             except Exception as e:

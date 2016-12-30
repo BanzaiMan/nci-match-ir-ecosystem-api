@@ -120,11 +120,7 @@ def batch_delete_ir(query_parameters):
 # as updating both S3 and dynamodb.
 @app.task
 def process_ir_file(file_process_message):
-
-    id_token = file_process_message['auth_token']
-    # file_process_message.pop('auth_token')
     new_file_process_message = file_process_message.copy()
-    new_file_process_message.pop('auth_token')
 
     if new_file_process_message['molecular_id'] .startswith('SC_'):
         logger.info("Updating sample_controls table before processing file" + str(new_file_process_message))
@@ -151,7 +147,7 @@ def process_ir_file(file_process_message):
 
 
 # process vcf, bam files based on message dictionary key: vcf_name, dna_bam_name, or cdna_bam_name
-def process_file_message(file_process_message, id_token):
+def process_file_message(file_process_message):
     logger.debug("Processing file message in function process_file_message()" + str(file_process_message))
     unicode_free_dictionary = ast.literal_eval(json.dumps(file_process_message))
     logger.debug("After Removing unicode" + str(unicode_free_dictionary))
@@ -175,10 +171,10 @@ def process_file_message(file_process_message, id_token):
         raise
 
     else:
-        return communicate_s3_patienteco_ruleengine(unicode_free_dictionary, new_file_path, key, id_token)
+        return communicate_s3_patienteco_ruleengine(unicode_free_dictionary, new_file_path, key)
 
 
-def communicate_s3_patienteco_ruleengine(file_process_dictionary, new_file_path, key, id_token):
+def communicate_s3_patienteco_ruleengine(file_process_dictionary, new_file_path, key):
 
     new_file_name = secure_filename(os.path.basename(new_file_path))
     new_file_s3_path = file_process_dictionary['ion_reporter_id'] + "/" + file_process_dictionary['molecular_id'] + \
@@ -206,7 +202,7 @@ def communicate_s3_patienteco_ruleengine(file_process_dictionary, new_file_path,
             else:
                 # post tsv name to patient ecosystem for patient only
 
-                post_tsv_info(file_process_dictionary, new_file_name, id_token)
+                post_tsv_info(file_process_dictionary, new_file_name)
 
         # remove converted tsv or bai file from local machine
         if os.path.exists(new_file_path):
@@ -259,8 +255,8 @@ def process_bam(dictionary, nucleic_acid_type):
             return new_file_path, key, downloaded_file_path
 
 
-def post_tsv_info(dictionary, tsv_file_name, id_token):
-
+def post_tsv_info(dictionary, tsv_file_name):
+    id_token = Auth0Authenticate.get_id_token()
     patient_url = (__builtin__.environment_config[__builtin__.environment]['patient_endpoint']
            + __builtin__.environment_config[__builtin__.environment]['patient_post_path'] + "/"
                    + dictionary['molecular_id'])

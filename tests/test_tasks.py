@@ -110,7 +110,7 @@ class TestTasks(unittest.TestCase):
         instance = mock_token.return_value
         instance.return_value = True
 
-        return_value = tasks.process_file_message(file_process_message, id_token='auth_token')
+        return_value = tasks.process_file_message(file_process_message)
         print "===================" + str(return_value)
         assert (return_value == expected_return)
 
@@ -156,7 +156,7 @@ class TestTasks(unittest.TestCase):
         instance.return_value = True
 
         try:
-            tasks.process_file_message(file_process_message, id_token='auth_token')
+            tasks.process_file_message(file_process_message)
         except Exception as e:
             print "==================" + e.message
             assert exception_message in e.message
@@ -192,7 +192,7 @@ class TestTasks(unittest.TestCase):
         sf_instance.bam_to_bai.return_value = True
 
         try:
-            tasks.process_file_message(file_process_message, id_token='auth_token')
+            tasks.process_file_message(file_process_message)
         except Exception as e:
             print "==================" + e.message
             assert exception_message in e.message
@@ -228,7 +228,7 @@ class TestTasks(unittest.TestCase):
         sf_instance.bam_to_bai.side_effect = Exception(exception_message)
 
         try:
-            tasks.process_file_message(file_process_message, id_token='auth_token')
+            tasks.process_file_message(file_process_message)
         except Exception as e:
             print "==================" + e.message
             assert exception_message in e.message
