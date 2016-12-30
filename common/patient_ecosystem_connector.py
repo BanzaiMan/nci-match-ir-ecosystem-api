@@ -1,5 +1,6 @@
 import requests
 import logging
+from common.auth0_authenticate import Auth0Authenticate
 import __builtin__
 
 
@@ -14,8 +15,8 @@ class PatientEcosystemConnector(object):
         self.logger.debug("Checking if molecular id: " + str(molecular_id) + " is in patient ecosystem")
         self.logger.debug("Retrieving ID token.")
 
-        # id_token = Auth0Authenticate.get_id_token()
-        headers = {'authorization': auth_token}
+        id_token = Auth0Authenticate.get_id_token()
+        headers = {'authorization': id_token}
 
         url = (__builtin__.environment_config[__builtin__.environment]['patient_endpoint']
                + __builtin__.environment_config[__builtin__.environment]['shipments_path'])
