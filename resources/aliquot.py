@@ -61,6 +61,7 @@ class Aliquot(Resource):
                 item.update({"molecular_id_type": "patient"})
                 return jsonify(item)
             else:
+                self.logger.error("Molecular id: " + str(molecular_id) + " was not found in sample control table or patient ecosystem; PTeco returned: " + str(pt_statuscode))
                 AbortLogger.log_and_abort(pt_statuscode, self.logger.debug, str(
                     molecular_id + " was not found. Invalid molecular_id or invalid projection key entered. Status code: " + str(pt_statuscode)))
 
