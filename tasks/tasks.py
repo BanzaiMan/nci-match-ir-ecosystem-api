@@ -200,7 +200,7 @@ def communicate_s3_patienteco_ruleengine(file_process_dictionary, new_file_path,
                     logger.error(MESSAGE_SERVICE_FAILURE.substitute(service_name='Rules Engine',
                                                                     s3_path= new_file_s3_path, path='None',
                                                                     message=e.message))
-                    raise Exception('Failure to process tsv using rules engine for: \n ' +str(file_process_dictionary) +
+                    raise Exception(' Failure to process tsv using rules engine for: \n ' +str(file_process_dictionary) +
                                     'due to: ' + e.message)
             else:
                 # post tsv name to patient ecosystem for patient only
@@ -284,11 +284,11 @@ def post_tsv_info(dictionary, tsv_file_name, id_token):
         else:
             logger.error(MESSAGE_SERVICE_FAILURE.substitute(service_name='Patient Ecosystem',
                                                             s3_path=dictionary['tsv_name'],
-                                                           path=patient_url, message="Error Code: " + str(r.status_code))
+                                                           path=patient_url, message="Error Code: " + str(r.status_code) + "URL: " + patient_url)
                                                             )
             raise Exception(MESSAGE_SERVICE_FAILURE.substitute(service_name='Patient Ecosystem',
                                                                s3_path=dictionary['tsv_name'],
-                                                               path=patient_url, message="Error Code: " + str(r.status_code))
+                                                               path=patient_url, message="Error Code: " + str(r.status_code) + "URL: " + patient_url)
                                                                 )
 
 
@@ -313,9 +313,9 @@ def process_rule_by_tsv(dictionary, tsv_file_name):
         rule_response = requests.post(url, data=json.dumps([]), headers=headers)
     except Exception as e:
         logger.error(MESSAGE_SERVICE_FAILURE.substitute(service_name='Rules Engine', s3_path=dictionary['tsv_name'],
-                                                        path=url, message=e.message))
+                                                        path=url, message=e.message + "URL: " + url))
         raise Exception(MESSAGE_SERVICE_FAILURE.substitute(service_name='Rules Engine', s3_path=dictionary['tsv_name'],
-                                                        path=url, message=e.message))
+                                                        path=url, message=e.message + "URL: " + url))
     else:
         if rule_response.status_code ==200:
             var_dict = rule_response.json()

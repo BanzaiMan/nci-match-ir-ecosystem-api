@@ -62,7 +62,7 @@ class Aliquot(Resource):
                 return jsonify(item)
             else:
                 AbortLogger.log_and_abort(pt_statuscode, self.logger.debug, str(
-                    molecular_id + " was not found. Invalid molecular_id or invalid projection key entered."))
+                    molecular_id + " was not found. Invalid molecular_id or invalid projection key entered. Status code: " + str(pt_statuscode)))
 
     @cross_origin(headers=['Content-Type', 'Authorization'])
     @requires_auth
