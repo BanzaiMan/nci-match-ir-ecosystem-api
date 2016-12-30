@@ -260,7 +260,7 @@ def post_tsv_info(dictionary, tsv_file_name):
     patient_url = (__builtin__.environment_config[__builtin__.environment]['patient_endpoint']
            + __builtin__.environment_config[__builtin__.environment]['patient_post_path'] + "/"
                    + dictionary['molecular_id'])
-    headers = {'authorization': "Bearer " + id_token}
+    headers = {'Content-type': 'application/json', 'authorization': "Bearer " + id_token}
     content = {'tsv_file_name': tsv_file_name,
                'ion_reporter_id': dictionary['ion_reporter_id'],
                 'molecular_id': dictionary['molecular_id'],
@@ -281,11 +281,11 @@ def post_tsv_info(dictionary, tsv_file_name):
         else:
             logger.error(MESSAGE_SERVICE_FAILURE.substitute(service_name='Patient Ecosystem',
                                                             s3_path=dictionary['tsv_name'],
-                                                           path=patient_url, message="Error Code: " + str(r.status_code) + "URL: " + patient_url)
+                                                           path=patient_url, message="Error Code: " + str(r.status_code) + "URL: " + patient_url + "JSON: " + dictionary)
                                                             )
             raise Exception(MESSAGE_SERVICE_FAILURE.substitute(service_name='Patient Ecosystem',
                                                                s3_path=dictionary['tsv_name'],
-                                                               path=patient_url, message="Error Code: " + str(r.status_code) + "URL: " + patient_url)
+                                                               path=patient_url, message="Error Code: " + str(r.status_code) + "URL: " + patient_url + "JSON: " + dictionary)
                                                                 )
 
 
