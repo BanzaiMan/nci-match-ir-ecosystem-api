@@ -122,9 +122,10 @@ def batch_delete_ir(query_parameters):
 def process_ir_file(file_process_message):
 
     id_token = file_process_message['auth_token']
-    file_process_message.pop('auth_token')
+    # file_process_message.pop('auth_token')
     new_file_process_message = file_process_message.copy()
-    
+    new_file_process_message.pop('auth_token')
+
     if new_file_process_message['molecular_id'] .startswith('SC_'):
         logger.info("Updating sample_controls table before processing file" + str(new_file_process_message))
         # after running SampleControlAccessor().update(file_process_message), key 'molecular_id' will be
