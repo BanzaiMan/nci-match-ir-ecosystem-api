@@ -267,7 +267,7 @@ def post_tsv_info(dictionary, tsv_file_name):
                 'analysis_id': dictionary['analysis_id']}
     logger.info("Posting tsv file name to Patient Ecosystem for " + dictionary['molecular_id'] + "\n" + str(content))
     try:
-        r = requests.post(patient_url, json=json.dumps(content), headers=headers)
+        r = requests.post(patient_url, data=json.dumps(content), headers=headers)
     except Exception as e:
         logger.error(MESSAGE_SERVICE_FAILURE.substitute(service_name='Patient Ecosystem',
                                                         s3_path=dictionary['tsv_name'],
