@@ -281,11 +281,11 @@ def post_tsv_info(dictionary, tsv_file_name):
         else:
             logger.error(MESSAGE_SERVICE_FAILURE.substitute(service_name='Patient Ecosystem',
                                                             s3_path=dictionary['tsv_name'],
-                                                           path=patient_url, message="Error Code: " + str(r.status_code) + "URL: " + patient_url + "JSON: " + dictionary)
+                                                           path=patient_url, message="Error Code: " + str(r.status_code) + "URL: " + patient_url + "JSON: " + str(dictionary))
                                                             )
             raise Exception(MESSAGE_SERVICE_FAILURE.substitute(service_name='Patient Ecosystem',
                                                                s3_path=dictionary['tsv_name'],
-                                                               path=patient_url, message="Error Code: " + str(r.status_code) + "URL: " + patient_url + "JSON: " + dictionary)
+                                                               path=patient_url, message="Error Code: " + str(r.status_code) + "URL: " + patient_url + "JSON: " + str(dictionary))
                                                                 )
 
 
