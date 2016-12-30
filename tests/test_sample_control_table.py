@@ -1,5 +1,6 @@
-import unittest
 from mock import patch
+patch('resources.auth0_resource.requires_auth', lambda x: x).start()
+import unittest
 import app
 import json
 from ddt import ddt, data, unpack

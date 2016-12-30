@@ -1,5 +1,6 @@
-from unittest import TestCase
 from mock import patch
+patch('resources.auth0_resource.requires_auth', lambda x: x).start()
+from unittest import TestCase
 from resources.s3_authentication_policy import s3_resource
 from ddt import ddt, data, unpack
 import app

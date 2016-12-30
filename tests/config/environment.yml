@@ -2,7 +2,7 @@ development:
   dynamo_endpoint: "http://localhost:8000"
   patient_endpoint: "http://localhost:10240"
   rule_endpoint: "http://localhost:10250"
-  patient_post_path: "/api/v1/patients/ir"
+  patient_post_path: "/api/v1/patients/variant_report"
   rule_path: "/api/v1/rules/sample_control_report/"
   shipments_path: "/api/v1/shipments/"
   bot_name: "ir_ecosystem_bot"
@@ -25,7 +25,7 @@ development:
 test:
   dynamo_endpoint: "https://dynamodb.us-east-1.amazonaws.com"
   patient_endpoint: "https://pedmatch-int.nci.nih.gov"
-  patient_post_path: "/api/v1/patients/ir"
+  patient_post_path: "/api/v1/patients/variant_report"
   rule_path: "/api/v1/rules/sample_control_report/"
   shipments_path: "/api/v1/patients/shipments/"
   bot_name: "ir_ecosystem_bot"

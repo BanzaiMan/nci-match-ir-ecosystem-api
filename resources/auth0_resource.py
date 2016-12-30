@@ -19,8 +19,8 @@ def authenticate(error):
 
 
 def requires_auth(function):
-  if os.environ['ENVIRONMENT'] == 'development' or os.environ['ENVIRONMENT']== 'test':
-    return function
+  # if os.environ['ENVIRONMENT'] == 'development' or os.environ['ENVIRONMENT']== 'test':
+  #   return function
   @wraps(function)
   def decorated(*args, **kwargs):
     auth = request.headers.get('Authorization', None)
