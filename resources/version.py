@@ -1,8 +1,10 @@
 from flask_restful import Resource
-
+import urllib
+import os
 
 class Version(Resource):
 
     @staticmethod
     def get():
-        return {'version': '1.0'}
+        page = urllib.urlopen(os.path.abspath("build_number.html")).read()
+        return page
