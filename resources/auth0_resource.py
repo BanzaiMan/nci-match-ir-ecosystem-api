@@ -19,7 +19,7 @@ def authenticate(error):
 
 
 def requires_auth(function):
-  if os.environ['ENVIRONMENT'] == 'development' or os.environ['UNITTEST']== 'true':
+  if os.environ['ENVIRONMENT'] == 'development' or os.environ['ENVIRONMENT']== 'test':
     return function
   @wraps(function)
   def decorated(*args, **kwargs):
